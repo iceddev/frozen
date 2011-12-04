@@ -25,6 +25,8 @@ dojo.declare("mwe.GameAction",null,{
 	behavior: 0,
 	amount :  0,
 	state : 0,
+	x : -1,
+	y : -1,
 	
     statics: {
 		/**
@@ -42,7 +44,8 @@ dojo.declare("mwe.GameAction",null,{
 	
 		STATE_RELEASED : 0,
 		STATE_PRESSED : 1,
-		STATE_WAITING_FOR_RELEASE : 2
+		STATE_WAITING_FOR_RELEASE : 2,
+		STATE_MOVED : 3
 	},
 
     /**
@@ -112,6 +115,14 @@ dojo.declare("mwe.GameAction",null,{
 		this.state = this.statics.STATE_RELEASED;
 	},
 	
+	/**
+	Signals that a movement has occurred
+	*/
+	move: function(x, y) {
+		this.x = x;
+		this.y = y;
+	},
+	
 	
 	/**
 	Returns whether the key was pressed or not since last
@@ -126,6 +137,15 @@ dojo.declare("mwe.GameAction",null,{
 		}
 	},
 	
+	
+	/**
+	Gets the current position of the mouse/touch if its registered
+	as a mouse/touch action
+	*/
+	getPosition : function() {
+		var self = this;
+		return {x:self.x, y:self.y};
+	},
 	
 	/**
 	For keys, this is the number of times the key was
