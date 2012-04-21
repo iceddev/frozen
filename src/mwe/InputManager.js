@@ -71,32 +71,28 @@ dojo.declare("mwe.InputManager",null,{
 	},
 	
 	
-	mouseUp: function(e){
-		
-		
+	mouseUp: function(e) {
+		this.mouseAction.release();
 	},
 	
 	mouseDown: function(e){
-		
-		
+		this.mouseAction.press();
 	},
 	
 	mouseMove: function(e){
-		
+		this.mouseAction.move(e.clientX, e.clientY);
 	},
 	
 	touchStart: function(e){
-		
-		
+		this.touchAction.press();
 	},
 	
 	touchEnd: function(e){
-		
-		
+		this.touchAction.release();
 	},
 	
 	touchMove: function(e){
-		
+		this.touchAction.move(e.clientX, e.clientY);
 	},
 	
 	
