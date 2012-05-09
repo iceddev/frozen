@@ -6,13 +6,13 @@ dojo.provide("mwe.Animation");
 
 
 dojo.declare("mwe.AnimFrame",null,{
-	endTime: 0,
-	imgSlotX: 0,
-	imgSlotY: 0,
-	image: null,
+    endTime: 0,
+    imgSlotX: 0,
+    imgSlotY: 0,
+    image: null,
 
     constructor: function(args){
-		dojo.safeMixin(this, args);
+        dojo.safeMixin(this, args);
     }
 });
 
@@ -32,35 +32,35 @@ dojo.declare("mwe.Animation",null,{
         Creates a new, empty Animation.
     */
     constructor: function(args){
-		dojo.safeMixin(this, args);
-		//this.frames= args.frames;
-		this.start();
+        dojo.safeMixin(this, args);
+        //this.frames= args.frames;
+        this.start();
     },
-    
-    
+
+
     createFromTile: function(frameCount,frameTimes,img,h,w,ySlot){
-		var anim = new mwe.Animation({
-			image: img,
-			height: h,
-			width: w			
-		});
-		
-		var isFTArray = dojo.isArray(frameTimes);
-		
-		var currentFrameTime = 1;
-		if(!ySlot){
-			ySlot = 0;
-		}
-		for(var j = 0; j < frameCount; j++){
-			if(isFTArray){
-				currentFrameTime = frameTimes[j];
-			}else{
-				currentFrameTime = frameTimes;
-			}
-			anim.addFrame(currentFrameTime,j,ySlot);
-		}
-		return anim;			
-	},
+        var anim = new mwe.Animation({
+            image: img,
+            height: h,
+            width: w
+        });
+
+        var isFTArray = dojo.isArray(frameTimes);
+
+        var currentFrameTime = 1;
+        if(!ySlot){
+            ySlot = 0;
+        }
+        for(var j = 0; j < frameCount; j++){
+            if(isFTArray){
+                currentFrameTime = frameTimes[j];
+            }else{
+                currentFrameTime = frameTimes;
+            }
+            anim.addFrame(currentFrameTime,j,ySlot);
+        }
+        return anim;
+    },
 
     /**
         Creates a duplicate of this animation. The list of frames
@@ -78,9 +78,9 @@ dojo.declare("mwe.Animation",null,{
     */
     addFrame: function(duration,imageSlotX,imageSlotY)
     {
-		if(!this.frames){
-			this.frames = [];
-		}
+        if(!this.frames){
+            this.frames = [];
+        }
         this.totalDuration += duration;
         this.frames.push(new mwe.AnimFrame({endTime: this.totalDuration, image: this.image, imgSlotX: imageSlotX, imgSlotY: imageSlotY}));
     },
@@ -123,13 +123,13 @@ dojo.declare("mwe.Animation",null,{
     getFrame: function(i) {
         return this.frames[i];
     },
-    
+
     /**
-    	Gets this Animation's current animation frame. Returns null if this
-    	animation has no frames.
+        Gets this Animation's current animation frame. Returns null if this
+        animation has no frames.
      */
     getCurrentFrame: function() {
-    	 if (this.frames.length == 0) {
+         if (this.frames.length === 0) {
              return null;
          }
          else {
@@ -137,13 +137,3 @@ dojo.declare("mwe.Animation",null,{
          }
     }
 });
-
-
-
-
-
-
-
-
-
-
