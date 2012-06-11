@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare'], function(declare){
+define(['dojo/_base/declare', 'dojo/dom'], function(declare, dom){
 
   return declare(null, {
     statics: {
@@ -61,7 +61,7 @@ define(['dojo/_base/declare'], function(declare){
     */
     init: function() {
       if(!this.canvas){
-        this.canvas = dojo.byId(this.canvasId);
+        this.canvas = dom.byId(this.canvasId);
       }
       if(!this.canvas){
         alert('Sorry, your browser does not support canvas.  I recommend any browser but Internet Explorer');
