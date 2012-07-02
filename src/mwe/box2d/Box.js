@@ -16,152 +16,125 @@ limitations under the License.
 
 **/
 
-dojo.provide("mwe.box2d.Box");
+define([
+  'dojo/_base/declare',
+  './box2d.min.js'
+], function(declare){
 
-/**
+  // box2d globals
+  var b2Vec2 = Box2D.b2Vec2
+    , b2BodyDef = Box2D.b2BodyDef
+    , b2Body = Box2D.b2Body
+    , b2FixtureDef = Box2D.b2FixtureDef
+    , b2World = Box2D.b2World
+    , b2PolygonShape = Box2D.b2PolygonShape
+    , b2CircleShape = Box2D.b2CircleShape;
 
-This holds the state of the box2d world and has convenience methods to easily create and manipulate it.
-
-The box2dweb library ( http://code.google.com/p/box2dweb ) must be included before requiring this module
-
-*/
-
-
-// box2d globals
-var   b2Vec2 = Box2D.Common.Math.b2Vec2
-, b2BodyDef = Box2D.Dynamics.b2BodyDef
-, b2Body = Box2D.Dynamics.b2Body
-, b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-, b2Fixture = Box2D.Dynamics.b2Fixture
-, b2World = Box2D.Dynamics.b2World
-, b2MassData = Box2D.Collision.Shapes.b2MassData
-, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-, b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-, b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-
-
-
-dojo.declare("mwe.box2d.Box",null,{
-  intervalRate : 60,
-  adaptive : false,
-  width : 640,
-  height : 480,
-  scale : 30,
-  bodiesMap : null,
-  fixturesMap: null,
-  world : null,
-  gravityX : 0,
-  gravityY: 10,
-  allowSleep: true,
-
+  return declare(null, {
+    intervalRate: 60,
+    adaptive: false,
+    width: 640,
+    height: 480,
+    scale: 30,
+    bodiesMap: [],
+    fixturesMap: [],
+    world: null,
+    gravityX: 0,
+    gravityY: 10,
+    allowSleep: true,
     constructor: function(args){
-      dojo.safeMixin(this, args);
+      declare.safeMixin(this, args);
       if(args.intervalRate){
-       this.intervalRate = parseInt(args.intervalRate,10);
+        this.intervalRate = parseInt(args.intervalRate, 10);
       }
 
-      if(!this.bodiesMap){
-        this.bodiesMap = [];
-      }
-      if(!this.fixturesMap){
-        this.fixturesMap = [];
-      }
-
-      this.world = new b2World(
-        new b2Vec2(this.gravityX, this.gravityY)
-    ,  this.allowSleep
-      );
-
+      this.world = new b2World(new b2Vec2(this.gravityX, this.gravityY), this.allowSleep);
     },
-
-    update : function() {
+    update: function() {
+      // TODO: use window.performance.now()???
       var start = Date.now();
       var stepRate = (this.adaptive) ? (now - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
-      this.world.Step(
-    stepRate   //frame-rate
-  ,  10       //velocity iterations
-  ,  10       //position iterations
-      );
+      this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
       this.world.ClearForces();
       return (Date.now() - start);
     },
-
-  getState : function() {
-    var state = {};
-    for (var b = this.world.GetBodyList(); b; b = b.m_next) {
-      if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
-          state[b.GetUserData()] = {x: b.GetPosition().x, y: b.GetPosition().y, angle: b.GetAngle(), center: {x: b.GetWorldCenter().x, y: b.GetWorldCenter().y}};
+    getState: function() {
+      var state = {};
+      for (var b = this.world.GetBodyList(); b; b = b.m_next) {
+        if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() !== null) {
+          state[b.GetUserData()] = {
+            x: b.GetPosition().x,
+            y: b.GetPosition().y,
+            angle: b.GetAngle(),
+            center: {
+              x: b.GetWorldCenter().x,
+              y: b.GetWorldCenter().y
+            }
+          };
+        }
       }
-    }
-    return state;
-  },
-
-  setBodies : function(bodyEntities) {
+      return state;
+    },
+    setBodies: function(bodyEntities) {
       console.log('bodies',bodyEntities);
       for(var id in bodyEntities) {
-          var entity = bodyEntities[id];
-          this.addBody(entity);
+        var entity = bodyEntities[id];
+        this.addBody(entity);
       }
       this.ready = true;
-  },
+    },
+    addBody: function(entity) {
+      var bodyDef = new b2BodyDef();
+      var fixDef = new b2FixtureDef();
+      fixDef.restitution = entity.restitution;
+      fixDef.density = entity.density;
+      fixDef.friction = entity.friction;
 
-  addBody : function(entity) {
-    var bodyDef = new b2BodyDef();
-    var fixDef = new b2FixtureDef();
-    fixDef.restitution = entity.restitution;
-    fixDef.density = entity.density;
-    fixDef.friction = entity.friction;
+      if(entity.staticBody){
+        bodyDef.type =  b2Body.b2_staticBody;
+      } else {
+        bodyDef.type = b2Body.b2_dynamicBody;
+      }
 
-
-    if(entity.staticBody){
-      bodyDef.type =  b2Body.b2_staticBody;
-    }else{
-      bodyDef.type = b2Body.b2_dynamicBody;
+      if (entity.radius) {
+        fixDef.shape = new b2CircleShape(entity.radius);
+      } else if (entity.points) {
+        var points = [];
+        for (var i = 0; i < entity.points.length; i++) {
+          var vec = new b2Vec2();
+          vec.Set(entity.points[i].x, entity.points[i].y);
+          points[i] = vec;
+        }
+        fixDef.shape = new b2PolygonShape();
+        fixDef.shape.SetAsArray(points, points.length);
+      } else {
+        fixDef.shape = new b2PolygonShape();
+        fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
+      }
+      bodyDef.position.x = entity.x;
+      bodyDef.position.y = entity.y;
+      bodyDef.userData = entity.id;
+      bodyDef.linearDamping = entity.linearDamping;
+      bodyDef.angularDamping = entity.angularDamping;
+      this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
+      this.bodiesMap[entity.id].CreateFixture(fixDef);
+    },
+    applyImpulse : function(bodyId, degrees, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyImpulse(
+        new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
+        Math.sin(degrees * (Math.PI / 180)) * power),
+        body.GetWorldCenter()
+      );
+    },
+    removeBody : function(id) {
+      if(this.bodiesMap[id]){
+        this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
+        this.world.DestroyBody(this.bodiesMap[id]);
+        delete this.fixturesMap[id];
+        delete this.bodiesMap[id];
+      }
     }
-
-
-    if (entity.radius) {
-  fixDef.shape = new b2CircleShape(entity.radius);
-    } else if (entity.points) {
-  var points = [];
-  for (var i = 0; i < entity.points.length; i++) {
-      var vec = new b2Vec2();
-      vec.Set(entity.points[i].x, entity.points[i].y);
-      points[i] = vec;
-  }
-  fixDef.shape = new b2PolygonShape();
-  fixDef.shape.SetAsArray(points, points.length);
-    } else {
-  fixDef.shape = new b2PolygonShape();
-  fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
-    }
-    bodyDef.position.x = entity.x;
-    bodyDef.position.y = entity.y;
-    bodyDef.userData = entity.id;
-    bodyDef.linearDamping = entity.linearDamping;
-    bodyDef.angularDamping = entity.angularDamping;
-    this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
-    this.bodiesMap[entity.id].CreateFixture(fixDef);
-
-  },
-
-  applyImpulse : function(bodyId, degrees, power) {
-    //console.log('bodiesMap',this.bodiesMap);
-    var body = this.bodiesMap[bodyId];
-    body.ApplyImpulse(new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-          Math.sin(degrees * (Math.PI / 180)) * power),
-          body.GetWorldCenter());
-    //console.log('applying impluse',bodyId, degrees, power);
-  },
-
-  removeBody : function(id) {
-    if(this.bodiesMap[id]){
-      this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
-      this.world.DestroyBody(this.bodiesMap[id]);
-      delete this.fixturesMap[id];
-      delete this.bodiesMap[id];
-    }
-  }
-
+  });
 
 });
