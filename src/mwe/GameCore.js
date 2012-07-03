@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/dom'], function(declare, dom){
+define(['dojo/_base/declare', 'dojo/dom', './InputManager'], function(declare, dom, InputManager){
 
   return declare(null, {
     statics: {
@@ -86,7 +86,7 @@ define(['dojo/_base/declare', 'dojo/dom'], function(declare, dom){
         this.width = this.canvas.width;
       }
       if(!this.inputManager){
-        this.inputManager = new mwe.InputManager({
+        this.inputManager = new InputManager({
           canvas: this.canvas
         });
       }

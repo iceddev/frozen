@@ -17,18 +17,20 @@ limitations under the License.
 **/
 
 define([
-  'dojo/_base/declare',
-  './box2d.min.js'
+  'dojo/_base/declare'
 ], function(declare){
 
   // box2d globals
-  var b2Vec2 = Box2D.b2Vec2
-    , b2BodyDef = Box2D.b2BodyDef
-    , b2Body = Box2D.b2Body
-    , b2FixtureDef = Box2D.b2FixtureDef
-    , b2World = Box2D.b2World
-    , b2PolygonShape = Box2D.b2PolygonShape
-    , b2CircleShape = Box2D.b2CircleShape;
+  var b2Vec2 = Box2D.Common.Math.b2Vec2
+    , b2BodyDef = Box2D.Dynamics.b2BodyDef
+    , b2Body = Box2D.Dynamics.b2Body
+    , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+    , b2Fixture = Box2D.Dynamics.b2Fixture
+    , b2World = Box2D.Dynamics.b2World
+    , b2MassData = Box2D.Collision.Shapes.b2MassData
+    , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+    , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+    , b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 
   return declare(null, {
     intervalRate: 60,
@@ -127,12 +129,9 @@ define([
         body.GetWorldCenter()
       );
     },
-    removeBody : function(id) {
+    removeBody: function(id) {
       if(this.bodiesMap[id]){
-        this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
         this.world.DestroyBody(this.bodiesMap[id]);
-        delete this.fixturesMap[id];
-        delete this.bodiesMap[id];
       }
     }
   });
