@@ -16,82 +16,68 @@ limitations under the License.
 
 **/
 
-dojo.provide("mwe.ResourceManager");
-
-
 /*********************** mwe.ResourceManager ********************************************/
+define(['dojo/_base/declare'], function(declare){
 
-dojo.declare("mwe.ResourceManager",null,{
-
-
-  imageCount: 0,
-  loadedImages: 0,
-  allLoaded: false,
-
-  imageDir : 'images/',
-  imgList: [],
-
-  constructor: function(args){
-    dojo.safeMixin(this, args);
-
-
-  },
-
+  return declare(null, {
+    imageCount: 0,
+    loadedImages: 0,
+    allLoaded: false,
+    imageDir: 'images/',
+    imgList: [],
+    constructor: function(args){
+      declare.safeMixin(this, args);
+    },
     /**
-    Gets an image.
-  */
-  loadImage: function(filename,width, height) {
-
-
-    //if we already have the image, just return it
-    for(i=0;i<this.imgList.length;i++){
-      if(this.imgList[i].name == filename ){
-        return this.imgList[i].img;
+      Gets an image.
+    */
+    loadImage: function(filename, width, height){
+      //if we already have the image, just return it
+      for(var i = 0; i < this.imgList.length; i++){
+        if(this.imgList[i].name == filename){
+          return this.imgList[i].img;
+        }
       }
-    }
 
-    this.allLoaded = false;
+      this.allLoaded = false;
 
       var img = new Image();
-
       if(this.imageDir){
         filename = this.imageDir + filename;
       }
       img.src = filename;
-
-      this.imgList.push({name:filename,img:img});
-
+      this.imgList.push({
+        name: filename,
+        img: img
+      });
       return img;
-  },
-
-  resourcesReady: function(){
-    if(this.allLoaded){
-      return true;
-    }else{
-      for(i=0; i<this.imgList.length; i++){
-        if(!this.imgList[i].img.complete){
-          return false;
+    },
+    resourcesReady: function(){
+      if(this.allLoaded){
+        return true;
+      }else{
+        for(var i = 0; i < this.imgList.length; i++){
+          if(!this.imgList[i].img.complete){
+            return false;
+          }
+        }
+        this.allLoaded = true;
+        return true;
+      }
+    },
+    getPercentComplete: function(){
+      var numComplete = 0.0;
+      for(var i = 0; i < this.imgList.length; i++){
+        if(this.imgList[i].img.complete){
+          numComplete = numComplete + 1.0;
         }
       }
-      this.allLoaded = true;
-      return true;
-    }
-  },
-
-  getPercentComplete: function(){
-    var numComplete = 0.0;
-    for(i=0; i<this.imgList.length; i++){
-      if(this.imgList[i].img.complete){
-        numComplete = numComplete + 1.0;
+      if(this.imgList.length === 0){
+        return 0;
+      }else{
+        return Math.round((numComplete / this.imgList.length) * 100.0);
       }
     }
-    if(this.imgList.length === 0){
-      return 0;
-    }else{
-      return Math.round((numComplete/this.imgList.length) * 100.0);
-    }
-
-
-  }
+  });
 
 });

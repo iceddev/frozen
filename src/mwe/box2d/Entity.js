@@ -16,54 +16,58 @@ limitations under the License.
 
 **/
 
-dojo.provide("mwe.box2d.Entity");
+define([
+  'dojo/_base/declare',
+  'dojo/_base/lang'
+], function(declare, lang){
 
-dojo.declare("mwe.box2d.Entity", null, {
-        id: 0,
-        x: 0,
-        y: 0,
-        angle: 0,
-        center: 0,
-        restitution : 0.3,
-      density : 1.0,
-      friction : 0.9,
-      linearDamping : 0,
-    angularDamping : 0,
-    staticBody : false,
+  return declare(null, {
+    id: 0,
+    x: 0,
+    y: 0,
+    angle: 0,
+    center: 0,
+    restitution: 0.3,
+    density: 1.0,
+    friction: 0.9,
+    linearDamping: 0,
+    angularDamping: 0,
+    staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
+    constructor: function(/* Object */args){
+      declare.safeMixin(this, args);
+    },
+    update: function(state){
+      lang.mixin(this, state);
+    },
+    draw: function(ctx, scale){
+      //black circle in entity's location
+      ctx.fillStyle = 'black';
+      ctx.beginPath();
+      ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fill();
 
-        constructor: function(/* Object */args){
-            dojo.safeMixin(this, args);
-        },
-        update: function(state){
-            dojo.mixin(this, state);
-        },
-        draw: function(ctx){
+      //yellow circle in entity's geometric center
+      ctx.fillStyle = 'yellow';
+      ctx.beginPath();
+      ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // TODO: re-implement or remove
+    // build: function(def) {
+    //   if (def.radius) {
+    //     return new CircleEntity(def);
+    //   } else if (def.points) {
+    //     return new PolygonEntity(def);
+    //   } else if (def.img) {
+    //     return new ImageEntity(def);
+    //   }else {
+    //     return new RectangleEntity(def);
+    //   }
+    // }
+  });
 
-          //black circle in entity's location
-          ctx.fillStyle = 'black';
-          ctx.beginPath();
-          ctx.arc(this.x * SCALE, this.y * SCALE, 4, 0, Math.PI * 2, true);
-          ctx.closePath();
-          ctx.fill();
-
-          //yellow circle in entity's geometric center
-          ctx.fillStyle = 'yellow';
-          ctx.beginPath();
-          ctx.arc(this.center.x * SCALE, this.center.y * SCALE, 2, 0, Math.PI * 2, true);
-          ctx.closePath();
-          ctx.fill();
-        },
-        build : function(def) {
-          if (def.radius) {
-            return new CircleEntity(def);
-          } else if (def.points) {
-            return new PolygonEntity(def);
-          } else if (def.img) {
-            return new ImageEntity(def);
-          }else {
-            return new RectangleEntity(def);
-          }
-        }
-    });
+});

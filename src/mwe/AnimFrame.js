@@ -16,30 +16,16 @@ limitations under the License.
 
 **/
 
-define([
-  'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+/*********************** mwe.AnimFrame ********************************************/
+define(['dojo/_base/declare'], function(declare){
 
-  return declare([Entity], {
-    radius: 1,
-    constructor: function(/* Object */args){
+  return declare(null, {
+    endTime: 0,
+    imgSlotX: 0,
+    imgSlotY: 0,
+    image: null,
+    constructor: function(args){
       declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.strokeStyle = '#000000';
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.stroke();
-
-      this.inherited(arguments);
     }
   });
 
