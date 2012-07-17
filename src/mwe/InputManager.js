@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.InputManager ********************************************/
-define(['./GameAction', 'dojo/_base/declare', 'dojo/_base/connect', 'dojo/dom-geometry'], function(GameAction, declare, connect, domGeom){
+define(['./GameAction', 'dojo/_base/declare', 'dojo/_base/connect', 'dojo/dom-geometry', 'dojo/domReady!'], function(GameAction, declare, connect, domGeom){
 
   return declare(null, {
     keyActions: [],
