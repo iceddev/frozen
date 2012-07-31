@@ -111,7 +111,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
     },
     keyReleased : function(e) {
       var gameAction = this.getKeyAction(e);
-      if (gameAction !== null) {
+      if (gameAction) {
         gameAction.release();
       }
       // TODO: make sure the key isn't processed for anything else
