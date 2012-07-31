@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/dom', './InputManager'], function(declare, dom, InputManager){
+define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager'], function(declare, dom, InputManager, ResourceManager){
 
   return declare(null, {
     statics: {
@@ -48,14 +48,15 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager'], function(declare, d
     run: function() {
       if(!this.isRunning){
         this.init();
-        this.loadResources(this.canvas);
+        this.loadResources(this.resourceManager);       
+        this.initInput(this.inputManager);
         this.launchLoop();
       }
     },
     /**
       Should be overidden in the subclasses to create images
     */
-    loadResources: function(canvas){},
+    loadResources: function(resourceManager){},
     /**
       Sets full screen mode and initiates and objects.
     */
@@ -85,13 +86,21 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager'], function(declare, d
       } else {
         this.width = this.canvas.width;
       }
+      
       if(!this.inputManager){
         this.inputManager = new InputManager({
           canvas: this.canvas
         });
       }
-      this.initInput(this.inputManager);
+      
+      if(!this.resourceManager){
+        this.resourceManager = new ResourceManager();
+      }
+      this.loadResources(this.resourceManager);
+            
       this.isRunning = true;
+      
+      
     },
     /**
       Should be overidden in the subclasses to map input to actions
