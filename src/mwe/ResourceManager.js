@@ -23,7 +23,7 @@ define(['dojo/_base/declare'], function(declare){
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
-    imageDir: 'images/',
+    imageDir: null,
     imgList: [],
     constructor: function(args){
       declare.safeMixin(this, args);
