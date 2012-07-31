@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.InputManager ********************************************/
-define(['./GameAction', 'dojo/_base/declare', 'dojo/_base/connect', 'dojo/dom-geometry', 'dojo/domReady!'], function(GameAction, declare, connect, domGeom){
+define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'], function(GameAction, declare, on, domGeom, lang){
 
   return declare(null, {
     keyActions: [],
@@ -27,15 +27,31 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/_base/connect', 'dojo/dom-ge
     constructor: function(args){
       declare.safeMixin(this, args);
       // TODO: switch to dojo/on
-      connect(document, 'onkeydown', this, this.keyPressed);
-      connect(document, 'onkeyup', this, this.keyReleased);
-      connect(this.canvas, 'onmousedown', this, this.mouseDown);
-      connect(document, 'onmouseup', this, this.mouseUp);
-      connect(this.canvas, 'onmousemove', this, this.mouseMove);
+      on(document, 'keydown', lang.hitch(this, "keyPressed"));
+      on(document, 'keyup', lang.hitch(this, "keyReleased"));
+      on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
+      on(document, 'mouseup', lang.hitch(this, "mouseUp"));
+      on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
 
-      connect(document, 'ontouchend', this, this.touchEnd);
-      connect(this.canvas, 'ontouchstart', this, this.touchStart);
-      connect(this.canvas, 'ontouchmove', this, this.touchMove);
+      on(document, 'touchend', lang.hitch(this, "touchEnd"));
+      on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
+      on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
+      
+      if(!this.mouseAction){
+        this.mouseAction = {
+          move: function(){},
+          press: function(){},
+          release: function(){}
+        };
+      }
+      
+      if(!this.touchAction){
+        this.touchAction = {
+          move: function(){},
+          press: function(){},
+          release: function(){}
+        };
+      }
     },
     /**
       Maps a GameAction to a specific key. The key codes are defined in java.awt.KeyEvent.
