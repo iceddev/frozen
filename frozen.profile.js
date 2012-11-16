@@ -7,13 +7,13 @@ var profile = (function(){
     mini: true,
     selectorEngine: "acme",
 
-    dojoBootText: "require.boot && require.apply(null, require.boot);",
+    dojoBootText: "(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();",
 
     packages: [
       { name: 'dojo', location: '../../dojo/dojo-release-1.8.0-src/dojo' },
       { name: 'dijit', location: '../../dojo/dojo-release-1.8.0-src/dijit' },
       { name: 'dojox', location: '../../dojo/dojo-release-1.8.0-src/dojox' },
-      { name: 'frozen', location: './src' }
+      { name: 'frozen', location: './src', main: 'GameCore' }
     ],
 
     defaultConfig: {

@@ -1907,10 +1907,15 @@
 				},
 				{
 					 location:"../frozen",
+					 main:"GameCore",
 					 name:"frozen"
 				}
 		]
-});require.boot && require.apply(null, require.boot);require({cache:{
+});require({cache:{
+'dist/frozen':function(){
+define([], 1);
+
+},
 'frozen/box2d/Box':function(){
 /**
 
@@ -7513,4 +7518,4 @@ define(['dojo/_base/declare'], function(declare){
 });
 
 }}});
-frozen/box2d/Box,frozen/box2d/CircleEntity,frozen/box2d/Entity,frozen/box2d/PolygonEntity,frozen/box2d/RectangleEntity,frozen/reiner/Creature,frozen/AnimFrame,frozen/Animation,frozen/GameAction,frozen/GameCore,frozen/InputManager,frozen/ResourceManager,frozen/Sprite
+(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();
