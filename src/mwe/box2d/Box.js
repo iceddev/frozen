@@ -21,16 +21,14 @@ define([
 ], function(declare){
 
   // box2d globals
-  var b2Vec2 = Box2D.Common.Math.b2Vec2
-    , b2BodyDef = Box2D.Dynamics.b2BodyDef
-    , b2Body = Box2D.Dynamics.b2Body
-    , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-    , b2Fixture = Box2D.Dynamics.b2Fixture
-    , b2World = Box2D.Dynamics.b2World
-    , b2MassData = Box2D.Collision.Shapes.b2MassData
-    , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-    , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    , b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+
+  var b2Vec2 = Box2D.b2Vec2
+  , b2BodyDef = Box2D.b2BodyDef
+  , b2Body = Box2D.b2Body
+  , b2FixtureDef = Box2D.b2FixtureDef
+  , b2World = Box2D.b2World
+  , b2PolygonShape = Box2D.b2PolygonShape
+  , b2CircleShape = Box2D.b2CircleShape;
 
   return declare(null, {
     intervalRate: 60,
