@@ -27,17 +27,17 @@ define([
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
-    draw: function(ctx){
+    draw: function(ctx, scale){
       ctx.save();
-      ctx.translate(this.x * SCALE, this.y * SCALE);
+      ctx.translate(this.x * scale, this.y * scale);
       ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * SCALE, -(this.y) * SCALE);
+      ctx.translate(-(this.x) * scale, -(this.y) * scale);
       ctx.fillStyle = this.color;
       ctx.fillRect(
-        (this.x-this.halfWidth) * SCALE,
-        (this.y-this.halfHeight) * SCALE,
-        (this.halfWidth*2) * SCALE,
-        (this.halfHeight*2) * SCALE
+        (this.x-this.halfWidth) * scale,
+        (this.y-this.halfHeight) * scale,
+        (this.halfWidth*2) * scale,
+        (this.halfHeight*2) * scale
       );
       ctx.restore();
       this.inherited(arguments);

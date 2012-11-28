@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager'], function(declare, dom, InputManager, ResourceManager){
+define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
   return declare(null, {
     statics: {
@@ -40,7 +40,7 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
       Signals the game loop that it's time to quit
     */
     stop: function() {
-        isRunning = false;
+        this.isRunning = false;
     },
     /**
       Calls init() and gameLoop()
@@ -48,7 +48,7 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
     run: function() {
       if(!this.isRunning){
         this.init();
-        this.loadResources(this.resourceManager);       
+        this.loadResources(this.resourceManager);
         this.initInput(this.inputManager);
         this.launchLoop();
       }
@@ -142,28 +142,14 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
       var startTime = Date.now();
       this.currTime = startTime;
       this.prevTime = startTime;
-      // shim layer with setTimeout fallback
-      window.requestAnimFrame = (function(){
-        return window.requestAnimationFrame  ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function(/* function */ callback, /* DOMElement */ element){
-            window.setTimeout(callback, 1000 / 60);
-          };
-      })();
 
-      var thisgame = this;
-
-      (function animloop(){
-        thisgame.gameLoop();
-        requestAnimFrame(animloop, document);
-      })();
+      //need to keep the context defined here so the game loop has access to it
+      this.loopRunner = lang.hitch(this, this.loopRunner);
+      window.requestAnimationFrame(this.loopRunner);
     },
     loopRunner: function(){
       this.gameLoop();
-      requestAnimFrame(this.loopRunner, this.canvas);
+      window.requestAnimationFrame(this.loopRunner);
     },
     /**
       Updates the state of the game/animation based on the amount of elapsed time that has passed.

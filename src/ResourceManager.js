@@ -34,7 +34,7 @@ define(['dojo/_base/declare'], function(declare){
     loadImage: function(filename, width, height){
       //if we already have the image, just return it
       for(var i = 0; i < this.imgList.length; i++){
-        if(this.imgList[i].name == filename){
+        if(this.imgList[i].name === filename){
           return this.imgList[i].img;
         }
       }

@@ -10,9 +10,9 @@ var profile = (function(){
     dojoBootText: "(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();",
 
     packages: [
-      { name: 'dojo', location: '../../dojo/dojo-release-1.8.0-src/dojo' },
-      { name: 'dijit', location: '../../dojo/dojo-release-1.8.0-src/dijit' },
-      { name: 'dojox', location: '../../dojo/dojo-release-1.8.0-src/dojox' },
+      { name: 'dojo', location: '../../dojo/dojo-release-1.8.1-src/dojo' },
+      { name: 'dijit', location: '../../dojo/dojo-release-1.8.1-src/dijit' },
+      { name: 'dojox', location: '../../dojo/dojo-release-1.8.1-src/dojox' },
       { name: 'frozen', location: './src', main: 'GameCore' }
     ],
 

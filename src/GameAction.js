@@ -124,9 +124,9 @@ define(['dojo/_base/declare'], function(declare){
     getAmount: function() {
       var retVal = this.amount;
       if (retVal !== 0) {
-        if (this.state == this.statics.STATE_RELEASED) {
-          amount = 0;
-        } else if (this.behavior == this.statics.DETECT_INITAL_PRESS_ONLY) {
+        if (this.state === this.statics.STATE_RELEASED) {
+          this.amount = 0;
+        } else if (this.behavior === this.statics.DETECT_INITAL_PRESS_ONLY) {
           this.state = this.statics.STATE_WAITING_FOR_RELEASE;
           this.amount = 0;
         }

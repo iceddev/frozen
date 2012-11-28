@@ -6,6 +6,7 @@ module.exports = function(grunt) {
     lint: {
       files: ['grunt.js', 'src/**/*.js', 'test/**/*.js']
     },
+
     test: {
       files: ['test/**/*.js']
     },
@@ -31,9 +32,17 @@ module.exports = function(grunt) {
         sub: true,
         undef: true,
         boss: true,
-        eqnull: true
+        eqnull: true,
+        browser: true,
+        laxcomma: true
       },
-      globals: {}
+      globals: {
+        define: true,
+        require: true,
+        alert: true,
+        Box2D: true,
+        console: true
+      }
     }
   });
 

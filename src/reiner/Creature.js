@@ -60,7 +60,7 @@ define([
       this.x += this.dx * elapsedTime;
       this.y += this.dy * elapsedTime;
 
-      if(this.state != this.statics.STATE_DYING){
+      if(this.state !== this.statics.STATE_DYING){
         if(this.dx > 0 && this.dy === 0){
           this.direction = this.statics.EAST;
         } else if(this.dx === 0 && this.dy < 0){
@@ -108,7 +108,7 @@ define([
           width: w,
           image: img
         });
-        for(j = 0; j < frameCount; j++){
+        for(var j = 0; j < frameCount; j++){
           if(isFTArray){
             currentFrameTime = frameTimes[j];
           } else {
