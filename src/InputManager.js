@@ -30,6 +30,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
       on(document, 'keydown', lang.hitch(this, "keyPressed"));
       on(document, 'keyup', lang.hitch(this, "keyReleased"));
       on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
+      
       on(document, 'mouseup', lang.hitch(this, "mouseUp"));
       on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
 
@@ -38,19 +39,11 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
       on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
       
       if(!this.mouseAction){
-        this.mouseAction = {
-          move: function(){},
-          press: function(){},
-          release: function(){}
-        };
+        this.mouseAction = new GameAction();
       }
       
       if(!this.touchAction){
-        this.touchAction = {
-          move: function(){},
-          press: function(){},
-          release: function(){}
-        };
+        this.touchAction = new GameAction();
       }
     },
     /**
@@ -70,6 +63,8 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
         ga.behavior = ga.statics.DETECT_INITAL_PRESS_ONLY;
       }
       this.mapToKey(ga,keyCode);
+
+      return ga;
     },
     setMouseAction: function(gameAction){
       this.mouseAction = gameAction;

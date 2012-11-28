@@ -3420,7 +3420,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define(["require", "module"], function(require, module){
+define("dojo/has", ["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -5209,6 +5209,9 @@ define(['dojo/_base/declare'], function(declare){
     */
     press: function() {
       this.state = this.statics.STATE_PRESSED;
+      if(this.behavior === this.statics.DETECT_INITAL_PRESS_ONLY){
+        this.pressAmt(1);
+      }
     },
     /**
       Signals that the key was pressed a specified number of times, or that the mouse move a specified distance.
@@ -5216,7 +5219,7 @@ define(['dojo/_base/declare'], function(declare){
     pressAmt: function(amount) {
       if (this.state !== this.statics.STATE_WAITING_FOR_RELEASE) {
         this.amount += amount;
-        this.state = this.statics.STATE_PRESSED;
+        this.state = this.statics.STATE_WAITING_FOR_RELEASE;
       }
     },
     /**
@@ -5471,7 +5474,7 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
 
 },
 'dojo/dom':function(){
-define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
+define(["./sniff", "./_base/lang", "./_base/window"],
 		function(has, lang, win){
 	// module:
 	//		dojo/dom
@@ -5791,6 +5794,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
       on(document, 'keydown', lang.hitch(this, "keyPressed"));
       on(document, 'keyup', lang.hitch(this, "keyReleased"));
       on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
+      
       on(document, 'mouseup', lang.hitch(this, "mouseUp"));
       on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
 
@@ -5799,19 +5803,11 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
       on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
       
       if(!this.mouseAction){
-        this.mouseAction = {
-          move: function(){},
-          press: function(){},
-          release: function(){}
-        };
+        this.mouseAction = new GameAction();
       }
       
       if(!this.touchAction){
-        this.touchAction = {
-          move: function(){},
-          press: function(){},
-          release: function(){}
-        };
+        this.touchAction = new GameAction();
       }
     },
     /**
@@ -5831,6 +5827,8 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
         ga.behavior = ga.statics.DETECT_INITAL_PRESS_ONLY;
       }
       this.mapToKey(ga,keyCode);
+
+      return ga;
     },
     setMouseAction: function(gameAction){
       this.mouseAction = gameAction;
@@ -5896,7 +5894,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
 
 },
 'dojo/on':function(){
-define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6416,7 +6414,7 @@ define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], func
 
 },
 'dojo/dom-geometry':function(){
-define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
+define(["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -7548,7 +7546,7 @@ define(
 });
 },
 'dojo/keys':function(){
-define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
+define(["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys

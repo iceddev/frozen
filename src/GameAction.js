@@ -74,6 +74,9 @@ define(['dojo/_base/declare'], function(declare){
     */
     press: function() {
       this.state = this.statics.STATE_PRESSED;
+      if(this.behavior === this.statics.DETECT_INITAL_PRESS_ONLY){
+        this.pressAmt(1);
+      }
     },
     /**
       Signals that the key was pressed a specified number of times, or that the mouse move a specified distance.
@@ -81,7 +84,7 @@ define(['dojo/_base/declare'], function(declare){
     pressAmt: function(amount) {
       if (this.state !== this.statics.STATE_WAITING_FOR_RELEASE) {
         this.amount += amount;
-        this.state = this.statics.STATE_PRESSED;
+        this.state = this.statics.STATE_WAITING_FOR_RELEASE;
       }
     },
     /**
