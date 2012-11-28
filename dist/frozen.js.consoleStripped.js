@@ -3420,7 +3420,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define("dojo/has", ["require", "module"], function(require, module){
+define(["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -5361,21 +5361,21 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       } else {
         this.width = this.canvas.width;
       }
-      
+
       if(!this.inputManager){
         this.inputManager = new InputManager({
           canvas: this.canvas
         });
       }
-      
+
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();
       }
       this.loadResources(this.resourceManager);
-            
+
       this.isRunning = true;
-      
-      
+
+
     },
     /**
       Should be overidden in the subclasses to map input to actions
@@ -5400,11 +5400,11 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       } else {
         this.handleInput(this.inputManager,this.elapsedTime);
         if(!this.paused){
-        // update
-        this.update(this.elapsedTime);
-      }
-      // draw the screen
-      this.context.save();
+          // update
+          this.update(this.elapsedTime);
+        }
+        // draw the screen
+        this.context.save();
         this.draw(this.context);
         this.context.restore();
       }
@@ -5471,7 +5471,7 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
 
 },
 'dojo/dom':function(){
-define(["./sniff", "./_base/lang", "./_base/window"],
+define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
 		function(has, lang, win){
 	// module:
 	//		dojo/dom
@@ -5896,7 +5896,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
 
 },
 'dojo/on':function(){
-define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6416,7 +6416,7 @@ define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./
 
 },
 'dojo/dom-geometry':function(){
-define(["./sniff", "./_base/window","./dom", "./dom-style"],
+define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -7548,7 +7548,7 @@ define(
 });
 },
 'dojo/keys':function(){
-define(["./_base/kernel", "./sniff"], function(dojo, has){
+define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys

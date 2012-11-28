@@ -86,21 +86,21 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       } else {
         this.width = this.canvas.width;
       }
-      
+
       if(!this.inputManager){
         this.inputManager = new InputManager({
           canvas: this.canvas
         });
       }
-      
+
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();
       }
       this.loadResources(this.resourceManager);
-            
+
       this.isRunning = true;
-      
-      
+
+
     },
     /**
       Should be overidden in the subclasses to map input to actions
@@ -125,11 +125,11 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       } else {
         this.handleInput(this.inputManager,this.elapsedTime);
         if(!this.paused){
-        // update
-        this.update(this.elapsedTime);
-      }
-      // draw the screen
-      this.context.save();
+          // update
+          this.update(this.elapsedTime);
+        }
+        // draw the screen
+        this.context.save();
         this.draw(this.context);
         this.context.restore();
       }
