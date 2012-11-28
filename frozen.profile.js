@@ -79,7 +79,8 @@ var profile = (function(){
           'frozen/GameCore',
           'frozen/InputManager',
           'frozen/ResourceManager',
-          'frozen/Sprite'
+          'frozen/Sprite',
+          'dojo/keys'
         ],
         customBase: true,
         boot: true
