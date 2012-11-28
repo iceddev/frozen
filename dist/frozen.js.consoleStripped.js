@@ -117,9 +117,9 @@
 
 		// this will be the global require function; define it immediately so we can start hanging things off of it
 		req = function(
-			config,       //(object, optional) hash of configuration properties
+			config,		  //(object, optional) hash of configuration properties
 			dependencies, //(array of commonjs.moduleId, optional) list of modules to be loaded before applying callback
-			callback      //(function, optional) lamda expression to apply to module values implied by dependencies
+			callback	  //(function, optional) lamda expression to apply to module values implied by dependencies
 		){
 			return contextRequire(config, dependencies, callback, 0, req);
 		},
@@ -394,14 +394,14 @@
 			// Modules go through several phases in creation:
 			//
 			// 1. Requested: some other module's definition or a require application contained the requested module in
-			//    its dependency vector or executing code explicitly demands a module via req.require.
+			//	  its dependency vector or executing code explicitly demands a module via req.require.
 			//
 			// 2. Injected: a script element has been appended to the insert-point element demanding the resource implied by the URL
 			//
 			// 3. Loaded: the resource injected in [2] has been evalated.
 			//
 			// 4. Defined: the resource contained a define statement that advised the loader about the module. Notice that some
-			//    resources may just contain a bundle of code and never formally define a module via define
+			//	  resources may just contain a bundle of code and never formally define a module via define
 			//
 			// 5. Evaluated: the module was defined via define and the loader has evaluated the factory and computed a result.
 			= {},
@@ -510,6 +510,14 @@
 				packs[name] = packageInfo;
 			},
 
+			delayedModuleConfig
+				// module config cannot be consummed until the loader is completely initialized; therefore, all
+				// module config detected during booting is memorized and applied at the end of loader initialization
+				// TODO: this is a bit of a kludge; all config should be moved to end of loader initialization, but
+				// we'll delay this chore and do it with a final loader 1.x cleanup after the 2.x loader prototyping is complete
+				= [],
+
+
 			config = function(config, booting, referenceModule){
 				for(var p in config){
 					if(p=="waitSeconds"){
@@ -593,9 +601,13 @@
 					aliases.push(pair);
 				});
 
-				for(p in config.config){
-					var module = getModule(p, referenceModule);
-					module.config = mix(module.config || {}, config.config[p]);
+				if(booting){
+					delayedModuleConfig.push({config:config.config});
+				}else{
+					for(p in config.config){
+						var module = getModule(p, referenceModule);
+						module.config = mix(module.config || {}, config.config[p]);
+					}
 				}
 
 				// push in any new cache values
@@ -929,6 +941,7 @@
 				}
 				mapItem = mapItem || mapProgs.star;
 				mapItem = mapItem && runMapProg(mid, mapItem[1]);
+
 				if(mapItem){
 					mid = mapItem[1] + mid.substring(mapItem[3]);
 					}
@@ -1155,9 +1168,9 @@
 				}
 			}
 			// delete references to synthetic modules
-	        if (/^require\*/.test(module.mid)) {
-	            delete modules[module.mid];
-	        }
+			if (/^require\*/.test(module.mid)) {
+				delete modules[module.mid];
+			}
 		},
 
 		circleTrace = [],
@@ -1873,7 +1886,8 @@
 	}
 
 	if( 1 ){
-		var bootDeps = dojoSniffConfig.deps ||  userConfig.deps || defaultConfig.deps,
+		forEach(delayedModuleConfig, function(c){ config(c); });
+		var bootDeps = dojoSniffConfig.deps ||	userConfig.deps || defaultConfig.deps,
 			bootCallback = dojoSniffConfig.callback || userConfig.callback || defaultConfig.callback;
 		req.boot = (bootDeps || bootCallback) ? [bootDeps || [], bootCallback] : 0;
 	}
@@ -1941,13 +1955,13 @@ define([
 
   // box2d globals
 
-  var b2Vec2 = Box2D.b2Vec2
-  , b2BodyDef = Box2D.b2BodyDef
+  var B2Vec2 = Box2D.b2Vec2
+  , B2BodyDef = Box2D.b2BodyDef
   , b2Body = Box2D.b2Body
-  , b2FixtureDef = Box2D.b2FixtureDef
-  , b2World = Box2D.b2World
-  , b2PolygonShape = Box2D.b2PolygonShape
-  , b2CircleShape = Box2D.b2CircleShape;
+  , B2FixtureDef = Box2D.b2FixtureDef
+  , B2World = Box2D.b2World
+  , B2PolygonShape = Box2D.b2PolygonShape
+  , B2CircleShape = Box2D.b2CircleShape;
 
   return declare(null, {
     intervalRate: 60,
@@ -1967,12 +1981,12 @@ define([
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
 
-      this.world = new b2World(new b2Vec2(this.gravityX, this.gravityY), this.allowSleep);
+      this.world = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
     },
     update: function() {
       // TODO: use window.performance.now()???
       var start = Date.now();
-      var stepRate = (this.adaptive) ? (now - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
+      var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
       this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
       this.world.ClearForces();
       return (Date.now() - start);
@@ -2003,8 +2017,8 @@ define([
       this.ready = true;
     },
     addBody: function(entity) {
-      var bodyDef = new b2BodyDef();
-      var fixDef = new b2FixtureDef();
+      var bodyDef = new B2BodyDef();
+      var fixDef = new B2FixtureDef();
       fixDef.restitution = entity.restitution;
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
@@ -2016,18 +2030,18 @@ define([
       }
 
       if (entity.radius) {
-        fixDef.shape = new b2CircleShape(entity.radius);
+        fixDef.shape = new B2CircleShape(entity.radius);
       } else if (entity.points) {
         var points = [];
         for (var i = 0; i < entity.points.length; i++) {
-          var vec = new b2Vec2();
+          var vec = new B2Vec2();
           vec.Set(entity.points[i].x, entity.points[i].y);
           points[i] = vec;
         }
-        fixDef.shape = new b2PolygonShape();
+        fixDef.shape = new B2PolygonShape();
         fixDef.shape.SetAsArray(points, points.length);
       } else {
-        fixDef.shape = new b2PolygonShape();
+        fixDef.shape = new B2PolygonShape();
         fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
       }
       bodyDef.position.x = entity.x;
@@ -2041,7 +2055,7 @@ define([
     applyImpulse : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
-        new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
+        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
         Math.sin(degrees * (Math.PI / 180)) * power),
         body.GetWorldCenter()
       );
@@ -3185,7 +3199,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 	dojo.isAsync = ! 1  || require.async;
 	dojo.locale = config.locale;
 
-	var rev = "$Rev: 29458 $".match(/\d+/);
+	var rev = "$Rev: 29801 $".match(/\d+/);
 	dojo.version = {
 		// summary:
 		//		Version number of the Dojo Toolkit
@@ -3198,7 +3212,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 		//		- flag: String: Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
 		//		- revision: Number: The SVN rev from which dojo was pulled
 
-		major: 1, minor: 8, patch: 0, flag: "",
+		major: 1, minor: 8, patch: 1, flag: "",
 		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			var v = dojo.version;
@@ -4380,7 +4394,7 @@ define(["./kernel", "../has", "../sniff"], function(dojo, has){
 
 },
 'dojo/sniff':function(){
-define(["./has"], function(has){
+define("dojo/sniff", ["./has"], function(has){
 	// module:
 	//		dojo/sniff
 
@@ -4658,17 +4672,17 @@ define([
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
-    draw: function(ctx){
+    draw: function(ctx, scale){
       ctx.save();
-      ctx.translate(this.x * SCALE, this.y * SCALE);
+      ctx.translate(this.x * scale, this.y * scale);
       ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * SCALE, -(this.y) * SCALE);
+      ctx.translate(-(this.x) * scale, -(this.y) * scale);
       ctx.fillStyle = this.color;
       ctx.fillRect(
-        (this.x-this.halfWidth) * SCALE,
-        (this.y-this.halfHeight) * SCALE,
-        (this.halfWidth*2) * SCALE,
-        (this.halfHeight*2) * SCALE
+        (this.x-this.halfWidth) * scale,
+        (this.y-this.halfHeight) * scale,
+        (this.halfWidth*2) * scale,
+        (this.halfHeight*2) * scale
       );
       ctx.restore();
       this.inherited(arguments);
@@ -4740,7 +4754,7 @@ define([
       this.x += this.dx * elapsedTime;
       this.y += this.dy * elapsedTime;
 
-      if(this.state != this.statics.STATE_DYING){
+      if(this.state !== this.statics.STATE_DYING){
         if(this.dx > 0 && this.dy === 0){
           this.direction = this.statics.EAST;
         } else if(this.dx === 0 && this.dy < 0){
@@ -4788,7 +4802,7 @@ define([
           width: w,
           image: img
         });
-        for(j = 0; j < frameCount; j++){
+        for(var j = 0; j < frameCount; j++){
           if(isFTArray){
             currentFrameTime = frameTimes[j];
           } else {
@@ -5245,9 +5259,9 @@ define(['dojo/_base/declare'], function(declare){
     getAmount: function() {
       var retVal = this.amount;
       if (retVal !== 0) {
-        if (this.state == this.statics.STATE_RELEASED) {
-          amount = 0;
-        } else if (this.behavior == this.statics.DETECT_INITAL_PRESS_ONLY) {
+        if (this.state === this.statics.STATE_RELEASED) {
+          this.amount = 0;
+        } else if (this.behavior === this.statics.DETECT_INITAL_PRESS_ONLY) {
           this.state = this.statics.STATE_WAITING_FOR_RELEASE;
           this.amount = 0;
         }
@@ -5278,7 +5292,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager'], function(declare, dom, InputManager, ResourceManager){
+define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
   return declare(null, {
     statics: {
@@ -5301,7 +5315,7 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
       Signals the game loop that it's time to quit
     */
     stop: function() {
-        isRunning = false;
+        this.isRunning = false;
     },
     /**
       Calls init() and gameLoop()
@@ -5309,7 +5323,7 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
     run: function() {
       if(!this.isRunning){
         this.init();
-        this.loadResources(this.resourceManager);       
+        this.loadResources(this.resourceManager);
         this.initInput(this.inputManager);
         this.launchLoop();
       }
@@ -5403,28 +5417,14 @@ define(['dojo/_base/declare', 'dojo/dom', './InputManager', './ResourceManager']
       var startTime = Date.now();
       this.currTime = startTime;
       this.prevTime = startTime;
-      // shim layer with setTimeout fallback
-      window.requestAnimFrame = (function(){
-        return window.requestAnimationFrame  ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function(/* function */ callback, /* DOMElement */ element){
-            window.setTimeout(callback, 1000 / 60);
-          };
-      })();
 
-      var thisgame = this;
-
-      (function animloop(){
-        thisgame.gameLoop();
-        requestAnimFrame(animloop, document);
-      })();
+      //need to keep the context defined here so the game loop has access to it
+      this.loopRunner = lang.hitch(this, this.loopRunner);
+      window.requestAnimationFrame(this.loopRunner);
     },
     loopRunner: function(){
       this.gameLoop();
-      requestAnimFrame(this.loopRunner, this.canvas);
+      window.requestAnimationFrame(this.loopRunner);
     },
     /**
       Updates the state of the game/animation based on the amount of elapsed time that has passed.
@@ -5937,7 +5937,7 @@ define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./
 		//		|	obj.onfoo({key:"value"});
 		//		If you use on.emit on a DOM node, it will use native event dispatching when possible.
 
-		if(target.on && typeof type != "function"){ 
+		if(typeof target.on == "function" && typeof type != "function"){
 			// delegate to the target's on() method, so it can handle it's own listening if it wants
 			return target.on(type, listener);
 		}
@@ -7333,7 +7333,7 @@ define(["./sniff", "./dom"], function(has, dom){
 
 },
 'dojo/domReady':function(){
-define("dojo/domReady", ['./has'], function(has){
+define(['./has'], function(has){
 	var global = this,
 		doc = document,
 		readyStates = { 'loaded': 1, 'complete': 1 },
@@ -7469,7 +7469,7 @@ define(['dojo/_base/declare'], function(declare){
     loadImage: function(filename, width, height){
       //if we already have the image, just return it
       for(var i = 0; i < this.imgList.length; i++){
-        if(this.imgList[i].name == filename){
+        if(this.imgList[i].name === filename){
           return this.imgList[i].img;
         }
       }
@@ -7517,5 +7517,34 @@ define(['dojo/_base/declare'], function(declare){
 
 });
 
+},
+'frozen/RAF':function(){
+define(
+  function(){
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame){
+      window.requestAnimationFrame = function(callback, element) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+      };
+    }
+
+    if (!window.cancelAnimationFrame){
+      window.cancelAnimationFrame = function(id) {
+        clearTimeout(id);
+      };
+    }
+
+});
 }}});
 (function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();
