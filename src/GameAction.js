@@ -24,8 +24,6 @@ define(['dojo/_base/declare'], function(declare){
     behavior: 0,
     amount:  0,
     state: 0,
-    x: -1,
-    y: -1,
     statics: {
       /**
         Normal behavior. The isPressed() method returns true as long as the key is held down.
@@ -93,13 +91,7 @@ define(['dojo/_base/declare'], function(declare){
     release: function() {
       this.state = this.statics.STATE_RELEASED;
     },
-    /**
-      Signals that a movement has occurred
-    */
-    move: function(x, y) {
-      this.x = x;
-      this.y = y;
-    },
+
     /**
       Returns whether the key was pressed or not since last checked.
     */
@@ -109,16 +101,6 @@ define(['dojo/_base/declare'], function(declare){
       } else {
         return false;
       }
-    },
-    /**
-      Gets the current position of the mouse/touch if its registered as a mouse/touch action
-    */
-    getPosition: function() {
-      var self = this;
-      return {
-        x: self.x,
-        y: self.y
-      };
     },
     /**
       For keys, this is the number of times the key was pressed since it was last checked.

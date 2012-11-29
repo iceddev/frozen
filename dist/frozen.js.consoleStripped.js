@@ -5159,8 +5159,6 @@ define(['dojo/_base/declare'], function(declare){
     behavior: 0,
     amount:  0,
     state: 0,
-    x: -1,
-    y: -1,
     statics: {
       /**
         Normal behavior. The isPressed() method returns true as long as the key is held down.
@@ -5228,13 +5226,7 @@ define(['dojo/_base/declare'], function(declare){
     release: function() {
       this.state = this.statics.STATE_RELEASED;
     },
-    /**
-      Signals that a movement has occurred
-    */
-    move: function(x, y) {
-      this.x = x;
-      this.y = y;
-    },
+
     /**
       Returns whether the key was pressed or not since last checked.
     */
@@ -5244,16 +5236,6 @@ define(['dojo/_base/declare'], function(declare){
       } else {
         return false;
       }
-    },
-    /**
-      Gets the current position of the mouse/touch if its registered as a mouse/touch action
-    */
-    getPosition: function() {
-      var self = this;
-      return {
-        x: self.x,
-        y: self.y
-      };
     },
     /**
       For keys, this is the number of times the key was pressed since it was last checked.
@@ -5270,6 +5252,43 @@ define(['dojo/_base/declare'], function(declare){
         }
       }
       return retVal;
+    }
+  });
+
+});
+},
+'frozen/MouseAction':function(){
+/**
+
+ Copyright 2012 Luis Montes
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+**/
+
+/*********************** MouseAction ********************************************/
+define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
+
+  return declare([GameAction], {
+    startPosition: null,
+    endPosition: null,
+    position: null,
+    /**
+      Creates new mouse action.
+    */
+    constructor: function(args){
+      declare.safeMixin(this, args);
+      this.reset();
     }
   });
 
@@ -5781,33 +5800,40 @@ limitations under the License.
 **/
 
 /*********************** mwe.InputManager ********************************************/
-define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'], function(GameAction, declare, on, domGeom, lang){
+define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
+  function(GameAction, MouseAction, declare, on, domGeom, lang){
 
   return declare(null, {
     keyActions: [],
     mouseAction: null,
     touchAction: null,
     canvas: null,
+    handleMouse: true,
+    handleTouch: true,
     constructor: function(args){
       declare.safeMixin(this, args);
       // TODO: switch to dojo/on
       on(document, 'keydown', lang.hitch(this, "keyPressed"));
       on(document, 'keyup', lang.hitch(this, "keyReleased"));
-      on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
-      
-      on(document, 'mouseup', lang.hitch(this, "mouseUp"));
-      on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
 
-      on(document, 'touchend', lang.hitch(this, "touchEnd"));
-      on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
-      on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
-      
+      if(this.handleMouse){
+        on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
+        on(document, 'mouseup', lang.hitch(this, "mouseUp"));
+        on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
+      }
+
+      if(this.handleTouch){
+        on(document, 'touchend', lang.hitch(this, "touchEnd"));
+        on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
+        on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
+      }
+
       if(!this.mouseAction){
-        this.mouseAction = new GameAction();
+        this.mouseAction = new MouseAction();
       }
       
       if(!this.touchAction){
-        this.touchAction = new GameAction();
+        this.touchAction = new MouseAction();
       }
     },
     /**
@@ -5838,21 +5864,27 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
     },
     mouseUp: function(e) {
       this.mouseAction.release();
+      this.mouseAction.endPosition = this.getMouseLoc(e);
     },
     mouseDown: function(e){
       this.mouseAction.press();
+      this.mouseAction.startPosition = this.getMouseLoc(e);
+      this.mouseAction.position = this.mouseAction.startPosition;
     },
     mouseMove: function(e){
-      this.mouseAction.move(e.clientX, e.clientY);
+      this.mouseAction.position = this.getMouseLoc(e);
     },
     touchStart: function(e){
       this.touchAction.press();
+      this.touchAction.startPosition = this.getMouseLoc(e.changedTouches[0]);
+      this.touchAction.position = this.touchAction.startPosition;
     },
     touchEnd: function(e){
       this.touchAction.release();
+      this.mouseAction.endPosition = this.getMouseLoc(e);
     },
     touchMove: function(e){
-      this.touchAction.move(e.clientX, e.clientY);
+      this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
     },
     getKeyAction: function(e) {
       if (this.keyActions.length) {
@@ -5882,7 +5914,7 @@ define(['./GameAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'd
       Get the mouse pointer location within the canvas' coordinates, not the page's
     */
     getMouseLoc: function(evt){
-      var coordsM = domGeom.getContentBox(this.canvas);
+      var coordsM = domGeom.position(this.canvas);
       return {
         x: Math.round(evt.clientX - coordsM.x),
         y: Math.round(evt.clientY - coordsM.y)

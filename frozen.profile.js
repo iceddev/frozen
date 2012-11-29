@@ -76,6 +76,7 @@ var profile = (function(){
           'frozen/AnimFrame',
           'frozen/Animation',
           'frozen/GameAction',
+          'frozen/MouseAction',
           'frozen/GameCore',
           'frozen/InputManager',
           'frozen/ResourceManager',
