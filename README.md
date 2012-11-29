@@ -26,7 +26,7 @@ require(['frozen/GameCore'], function(GameCore){
 });
 ```
 
-## GameCore - [GameCore Example](https://github.com/iceddev/frozen/tree/js2.0/examples/animation)
+## GameCore - [Example](https://github.com/iceddev/frozen/tree/js2.0/examples/animation)
 
 ```javascript
 require(['frozen/GameCore'], function(GameCore){
