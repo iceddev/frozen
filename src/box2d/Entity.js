@@ -31,6 +31,8 @@ define([
     density: 1.0,
     friction: 0.9,
     linearDamping: 0,
+    linearVelocity: null,
+    angularVelocity: 0,
     angularDamping: 0,
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',

@@ -72,7 +72,9 @@ define([
             center: {
               x: b.GetWorldCenter().x,
               y: b.GetWorldCenter().y
-            }
+            },
+            linearVelocity: b.m_linearVelocity,
+            angularVelocity: b.m_angularVelocity
           };
         }
       }
