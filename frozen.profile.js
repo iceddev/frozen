@@ -80,6 +80,8 @@ var profile = (function(){
           'frozen/GameCore',
           'frozen/InputManager',
           'frozen/ResourceManager',
+          'frozen/shims/AudioContext',
+          'frozen/shims/RAF',
           'frozen/Sprite',
           'dojo/keys'
         ],

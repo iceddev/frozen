@@ -17,7 +17,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './RAF'], function(declare, lang, dom, InputManager, ResourceManager){
+define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
   return declare(null, {
     statics: {

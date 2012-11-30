@@ -5314,7 +5314,7 @@ limitations under the License.
 **/
 
 /*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './RAF'], function(declare, lang, dom, InputManager, ResourceManager){
+define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
   return declare(null, {
     statics: {
@@ -7481,48 +7481,121 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.ResourceManager ********************************************/
-define(['dojo/_base/declare'], function(declare){
+/*********************** ResourceManager ********************************************/
+define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
   return declare(null, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
-    imgList: [],
+    soundsDir: null,
+    audioContext: null,
+    resourceList: [],
     constructor: function(args){
       declare.safeMixin(this, args);
+      if(window.AudioContext){
+        this.audioContext = new window.AudioContext();
+      }else{
+        0 && console.log('WebAudio not supported');
+      }
+      
     },
     /**
       Gets an image.
     */
     loadImage: function(filename, width, height){
       //if we already have the image, just return it
-      for(var i = 0; i < this.imgList.length; i++){
-        if(this.imgList[i].name === filename){
-          return this.imgList[i].img;
+      for(var i = 0; i < this.resourceList.length; i++){
+        if(this.resourceList[i].name === filename){
+          return this.resourceList[i].img;
         }
       }
 
       this.allLoaded = false;
 
       var img = new Image();
+      var imgWrapper = {
+        name: filename,
+        img: img,
+        complete: false
+      };
+
       if(this.imageDir){
         filename = this.imageDir + filename;
       }
+      img.onload = function(){
+        imgWrapper.complete = true;
+      };
       img.src = filename;
-      this.imgList.push({
-        name: filename,
-        img: img
-      });
+      
+      this.resourceList.push(imgWrapper);
       return img;
+    },
+    loadSound: function(filename){
+
+      if(this.soundsDir){
+        filename = this.soundsDir + filename;
+      }
+
+      var soundObj = {
+          name: filename,
+          buffer: null,
+          complete: false
+      };
+
+      if(this.audioContext){
+        
+        this.resourceList.push(soundObj);
+
+        //if the browser AudioContext, it's new enough for XMLHttpRequest
+        var request = new XMLHttpRequest();
+        request.open('GET', filename, true);
+        request.responseType = 'arraybuffer';
+
+        //TODO fix scope in onload callback
+        var audioContext = this.audioContext;
+        // Decode asynchronously
+        request.onload = function() {
+          audioContext.decodeAudioData(request.response,
+            function(buffer) {
+              soundObj.buffer = buffer;
+              soundObj.complete = true;
+            },
+            function(er){
+              0 && console.info('error loading sound',er);
+            }
+          );
+        };
+        request.send();
+
+      }
+
+      return soundObj;
+    },
+    playSound: function(sound, loop, noteOn){
+      noteOn = noteOn || 0;
+      if(this.audioContext && sound){
+        var buffer = sound.buffer || sound;
+        if(buffer){
+          try{
+            var source = this.audioContext.createBufferSource(); // creates a sound source
+            source.buffer = buffer;                  // tell the source which sound to play
+            source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
+            source.noteOn(noteOn);                       // play the source now
+          }catch(se){
+            0 && console.info('error playing sound',se);
+          }
+        }
+      }
     },
     resourcesReady: function(){
       if(this.allLoaded){
         return true;
       }else{
-        for(var i = 0; i < this.imgList.length; i++){
-          if(!this.imgList[i].img.complete){
+        for(var i = 0; i < this.resourceList.length; i++){
+
+          if(!this.resourceList[i].complete){
             return false;
           }
         }
@@ -7532,15 +7605,15 @@ define(['dojo/_base/declare'], function(declare){
     },
     getPercentComplete: function(){
       var numComplete = 0.0;
-      for(var i = 0; i < this.imgList.length; i++){
-        if(this.imgList[i].img.complete){
+      for(var i = 0; i < this.resourceList.length; i++){
+        if(this.resourceList[i].complete){
           numComplete = numComplete + 1.0;
         }
       }
-      if(this.imgList.length === 0){
+      if(this.resourceList.length === 0){
         return 0;
       }else{
-        return Math.round((numComplete / this.imgList.length) * 100.0);
+        return Math.round((numComplete / this.resourceList.length) * 100.0);
       }
     }
   });
@@ -7548,7 +7621,17 @@ define(['dojo/_base/declare'], function(declare){
 });
 
 },
-'frozen/RAF':function(){
+'frozen/shims/AudioContext':function(){
+define(
+  function(){
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+    for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
+      window.AudioContext = window[vendors[x]+'AudioContext'];
+    }
+});
+},
+'frozen/shims/RAF':function(){
 define(
   function(){
     var lastTime = 0;
