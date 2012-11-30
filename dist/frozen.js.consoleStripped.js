@@ -1955,13 +1955,16 @@ define([
 
   // box2d globals
 
-  var B2Vec2 = Box2D.b2Vec2
-  , B2BodyDef = Box2D.b2BodyDef
-  , b2Body = Box2D.b2Body
-  , B2FixtureDef = Box2D.b2FixtureDef
-  , B2World = Box2D.b2World
-  , B2PolygonShape = Box2D.b2PolygonShape
-  , B2CircleShape = Box2D.b2CircleShape;
+  var B2Vec2 = Box2D.Common.Math.b2Vec2
+    , B2BodyDef = Box2D.Dynamics.b2BodyDef
+    , B2Body = Box2D.Dynamics.b2Body
+    , B2FixtureDef = Box2D.Dynamics.b2FixtureDef
+    , B2Fixture = Box2D.Dynamics.b2Fixture
+    , B2World = Box2D.Dynamics.b2World
+    , B2MassData = Box2D.Collision.Shapes.b2MassData
+    , B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+    , B2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 
   return declare(null, {
     intervalRate: 60,
@@ -2024,9 +2027,9 @@ define([
       fixDef.friction = entity.friction;
 
       if(entity.staticBody){
-        bodyDef.type =  b2Body.b2_staticBody;
+        bodyDef.type =  B2Body.b2_staticBody;
       } else {
-        bodyDef.type = b2Body.b2_dynamicBody;
+        bodyDef.type = B2Body.b2_dynamicBody;
       }
 
       if (entity.radius) {
