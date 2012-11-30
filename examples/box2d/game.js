@@ -2,10 +2,10 @@
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d/Box', 'frozen/box2d/RectangleEntity', 'frozen/box2d/PolygonEntity', 'frozen/box2d/CircleEntity'],
  function(GameCore, ResourceManager, keys, Box, Rectangle, Polygon, Circle){
 
-  var x = 100;
-  var y = 100;
+  //dimensions same as canvas.
   var gameH = 480;
   var gameW = 770;
+  
   var speed = 8;
 
   var output = document.getElementById('output');
