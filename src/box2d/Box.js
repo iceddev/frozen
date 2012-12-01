@@ -45,6 +45,8 @@ define([
     gravityX: 0,
     gravityY: 10,
     allowSleep: true,
+    resolveCollisions: false,
+    contactListener: null,
     constructor: function(args){
       declare.safeMixin(this, args);
       if(args.intervalRate){
@@ -52,6 +54,10 @@ define([
       }
 
       this.world = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
+
+      if(this.resolveCollisions){
+        this.addContactListener(this.contactListener || this);
+      }
     },
     update: function() {
       // TODO: use window.performance.now()???
@@ -132,10 +138,52 @@ define([
         body.GetWorldCenter()
       );
     },
+    applyForce : function(bodyId, degrees, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyForce(
+        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
+        Math.sin(degrees * (Math.PI / 180)) * power),
+        body.GetWorldCenter()
+      );
+    },
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         this.world.DestroyBody(this.bodiesMap[id]);
       }
+    },
+    addContactListener: function(callbacks) {
+      var listener = new Box2D.Dynamics.b2ContactListener();
+      if (callbacks.beginContact) {
+        listener.BeginContact = function(contact) {
+          callbacks.beginContact(contact.GetFixtureA().GetBody().GetUserData(),
+                                 contact.GetFixtureB().GetBody().GetUserData());
+          };
+      }
+      if (callbacks.EndContact){
+
+        listener.endContact = function(contact) {
+          callbacks.endContact(contact.GetFixtureA().GetBody().GetUserData(),
+                               contact.GetFixtureB().GetBody().GetUserData());
+        };
+      }
+      if (callbacks.postSolve){
+
+        listener.PostSolve = function(contact, impulse) {
+          callbacks.postSolve(contact.GetFixtureA().GetBody().GetUserData(),
+                               contact.GetFixtureB().GetBody().GetUserData(),
+                               impulse.normalImpulses[0]);
+        };
+      }
+      this.world.SetContactListener(listener);
+    },
+    beginContact: function(contact){
+
+    },
+    endContact: function(contact){
+
+    },
+    postSolve: function(contact, impulse){
+
     }
   });
 
