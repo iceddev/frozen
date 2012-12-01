@@ -31,7 +31,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
 
 
   // create our box2d instance
-  box = new Box({intervalRate:60, adaptive:false, width:gameW, height:gameH, scale:SCALE, gravityY:9.8});
+  box = new Box({intervalRate:60, adaptive:false, width:gameW, height:gameH, scale:SCALE, gravityY:9.8, resolveCollisions: true,
+   postSolve: function(idA, idB, impulse){
+    if(impulse > 3){
+      console.log(idA, idB, impulse);
+    }
+   }});
   
 
   //create each of the shapes in the world
