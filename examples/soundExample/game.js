@@ -16,51 +16,53 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
   var game = new GameCore({
     canvasId: 'canvas',
     resourceManager: rm,
-    draw: function(context){
-      context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(nyan, x, y);
-    },
-    initInput: function(){
+    initInput: function(im){ //im = this.inputManager
       //tells the input manager to listen for key events
-      this.inputManager.addKeyAction(keys.LEFT_ARROW);
-      this.inputManager.addKeyAction(keys.RIGHT_ARROW);
-      this.inputManager.addKeyAction(keys.UP_ARROW);
-      this.inputManager.addKeyAction(keys.DOWN_ARROW);
+      im.addKeyAction(keys.LEFT_ARROW);
+      im.addKeyAction(keys.RIGHT_ARROW);
+      im.addKeyAction(keys.UP_ARROW);
+      im.addKeyAction(keys.DOWN_ARROW);
 
       //the extra param says to only detect inital press
-      this.inputManager.addKeyAction(keys.SPACE, true);
+      im.addKeyAction(keys.SPACE, true);
     },
-    update: function(millis){
-      
+    handleInput: function(im){
+
       //just an example showing how to check for presses, could be done more effeciently
 
-      if(this.inputManager.keyActions[keys.LEFT_ARROW].isPressed()){
+      if(im.keyActions[keys.LEFT_ARROW].isPressed()){
         x-= speed;
       }
 
-      if(this.inputManager.keyActions[keys.RIGHT_ARROW].isPressed()){
+      if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
         x+= speed;
       }
 
-      if(this.inputManager.keyActions[keys.UP_ARROW].isPressed()){
+      if(im.keyActions[keys.UP_ARROW].isPressed()){
         y-= speed;
       }
 
-      if(this.inputManager.keyActions[keys.DOWN_ARROW].isPressed()){
+      if(im.keyActions[keys.DOWN_ARROW].isPressed()){
         y+= speed;
       }
 
       //.play sounds with the space bar !
-      if(this.inputManager.keyActions[keys.SPACE].getAmount()){
+      if(im.keyActions[keys.SPACE].getAmount()){
         rm.playSound(yipee);
       }
 
       // move to the mouse's location
-      if(this.inputManager.mouseAction.isPressed()){
-        x = this.inputManager.mouseAction.position.x;
-        y = this.inputManager.mouseAction.position.y;
+      if(im.mouseAction.isPressed()){
+        x = im.mouseAction.position.x;
+        y = im.mouseAction.position.y;
       }
-
+    },
+    update: function(millis){
+      //no real game state to update in this example
+    },
+    draw: function(context){
+      context.drawImage(backImg, 0, 0, this.width, this.height);
+      context.drawImage(nyan, x, y);
     }
   });
 

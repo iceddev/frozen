@@ -43,8 +43,8 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
     halfHeight: 40 / SCALE,
     staticBody: true
   });
-  box.addBody(ground);
-  world[geomId] = ground;
+  box.addBody(ground); //add the shape to the box
+  world[geomId] = ground; //keep a reference to the shape for fast lookup
 
   celing = new Rectangle({
     id: geomId,
@@ -157,28 +157,45 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
   var game = new GameCore({
     canvasId: 'canvas',
     resourceManager: rm,
-    draw: function(context){
-      context.drawImage(backImg, 0, 0, this.width, this.height);
-      //ground.draw(context, SCALE);
-      //moon.draw(context, SCALE);
-      //pyramid.draw(context, SCALE);
-      nyan.draw(context, SCALE);
-      yarn.draw(context, SCALE);
-    },
-    initInput: function(){
+    initInput: function(im){
       //tells the input manager to listen for key events
-      this.inputManager.addKeyAction(keys.LEFT_ARROW);
-      this.inputManager.addKeyAction(keys.RIGHT_ARROW);
-      this.inputManager.addKeyAction(keys.UP_ARROW);
+      im.addKeyAction(keys.LEFT_ARROW);
+      im.addKeyAction(keys.RIGHT_ARROW);
+      im.addKeyAction(keys.UP_ARROW);
 
       //the extra param says to only detect inital press
-      this.inputManager.addKeyAction(keys.SPACE, true);
+      im.addKeyAction(keys.SPACE, true);
+    },
+    handleInput: function(im){
+      if(im.keyActions[keys.LEFT_ARROW].isPressed()){
+        box.applyImpulse(nyan.id, 180, speed);
+      }
+
+      if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
+        box.applyImpulse(nyan.id, 0, speed);
+      }
+
+      if(im.keyActions[keys.UP_ARROW].isPressed()){
+        box.applyImpulse(nyan.id, 270, speed);
+      }
+
+      //.play sounds with the space bar !
+      if(im.keyActions[keys.SPACE].getAmount()){
+        rm.playSound(yipee);
+      }
+
+      //when creating geometry, you may want to use the to determine where you are on the canvas
+      //if(im.mouseAction.position){
+        //output.innerHTML = 'x: ' + im.mouseAction.position.x + ' y: ' + im.mouseAction.position.y;
+      //}
     },
     update: function(millis){
       
+      //have box2d do an interation
       box.update();
-      var bodiesState = box.getState();
 
+      //update the dyanmic shapes with box2d calculations
+      var bodiesState = box.getState();
       for (var id in bodiesState) {
         var entity = world[id];
         if (entity && !entity.staticBody){
@@ -186,41 +203,19 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
         }
       }
 
-      //just an example showing how to check for presses, could be done more effeciently
-
-      if(this.inputManager.keyActions[keys.LEFT_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 180, speed);
-      }
-
-      if(this.inputManager.keyActions[keys.RIGHT_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 0, speed);
-      }
-
-      if(this.inputManager.keyActions[keys.UP_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 270, speed);
-      }
-
-
-
-      //.play sounds with the space bar !
-      if(this.inputManager.keyActions[keys.SPACE].getAmount()){
-        rm.playSound(yipee);
-      }
-
-
-      //when creating geometry, you may want to use the to determine where you are on the canvas
-      //if(this.inputManager.mouseAction.position){
-        //output.innerHTML = 'x: ' + this.inputManager.mouseAction.position.x + ' y: ' + this.inputManager.mouseAction.position.y;
-      //}
-
+    },
+    draw: function(context){
+      context.drawImage(backImg, 0, 0, this.width, this.height);
+      //ground.draw(context, SCALE);
+      //moon.draw(context, SCALE);
+      //pyramid.draw(context, SCALE);
+      nyan.draw(context, SCALE);
+      yarn.draw(context, SCALE);
     }
   });
 
   //if you want to take a look at the game object in dev tools
   console.log(game);
-
-
-  
 
   //launch the game!
   game.run();

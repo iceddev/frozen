@@ -7589,7 +7589,11 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
             var source = this.audioContext.createBufferSource(); // creates a sound source
             source.buffer = buffer;                  // tell the source which sound to play
             source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
+            if(loop){
+              source.loop = true;
+            }
             source.noteOn(noteOn);                       // play the source now
+            return source;
           }catch(se){
             console.info('error playing sound',se);
           }

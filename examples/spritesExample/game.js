@@ -1,14 +1,18 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
+require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'dojo/keys'], function(GameCore, ResourceManager, Sprite, Animation, keys){
 
-  var x = 100;
-  var y = 100;
-  var speed = 2.5;
+  var speed = 0.5;
 
   //setup a ResourceManager to use in the game
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
-  var nyan = rm.loadImage('images/nyan.png');
+  var spriteImg = rm.loadImage('images/walking.png');
+
+  //new sprite object maintian position, and velocities
+  var sprite = new Sprite({x:100,y:100, w:96, h: 96, dx:0, dy: 0});
+
+  //set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
+  sprite.anim = new Animation().createFromTile(8,100,spriteImg,96,96);
   
   //setup a GameCore instance
   var game = new GameCore({
@@ -23,30 +27,33 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
     },
     handleInput: function(im){
 
-      //just an example showing how to check for presses, could be done more effeciently
-
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-        x-= speed;
+        sprite.dx = speed * -1;
       }
-
-      if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-        x+= speed;
+      else if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
+        sprite.dx = speed;
+      }
+      else{
+        sprite.dx = 0;
       }
 
       if(im.keyActions[keys.UP_ARROW].isPressed()){
-        y-= speed;
+        sprite.dy = speed * -1;
       }
-
-      if(im.keyActions[keys.DOWN_ARROW].isPressed()){
-        y+= speed;
+      else if(im.keyActions[keys.DOWN_ARROW].isPressed()){
+        sprite.dy = speed;
+      }
+      else{
+        sprite.dy = 0;
       }
     },
     update: function(millis){
-      //no real game state to update in this example
+      // update the sprite based on how many milliseconds have passed
+      sprite.update(millis);
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(nyan, x, y);
+      sprite.drawCurrentFrame(context);
     }
   });
 
