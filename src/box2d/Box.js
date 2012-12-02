@@ -128,7 +128,7 @@ define([
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
       this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
-      this.bodiesMap[entity.id].CreateFixture(fixDef);
+      this.fixturesMap[entity.id] = this.bodiesMap[entity.id].CreateFixture(fixDef);
     },
     applyImpulse : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
@@ -148,7 +148,10 @@ define([
     },
     removeBody: function(id) {
       if(this.bodiesMap[id]){
+        this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
         this.world.DestroyBody(this.bodiesMap[id]);
+        delete this.fixturesMap[id];
+        delete this.bodiesMap[id];
       }
     },
     addContactListener: function(callbacks) {
