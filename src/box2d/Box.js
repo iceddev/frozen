@@ -47,6 +47,7 @@ define([
     allowSleep: true,
     resolveCollisions: false,
     contactListener: null,
+    collisions: null,
     constructor: function(args){
       declare.safeMixin(this, args);
       if(args.intervalRate){
@@ -61,6 +62,11 @@ define([
     },
     update: function() {
       // TODO: use window.performance.now()???
+
+      if(this.resolveCollisions){
+        this.collisions = {};
+      }
+
       var start = Date.now();
       var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
       this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
@@ -82,6 +88,9 @@ define([
             linearVelocity: b.m_linearVelocity,
             angularVelocity: b.m_angularVelocity
           };
+          if(this.resolveCollisions){
+            state[b.GetUserData()].collisions = this.collisions[b.GetUserData()] || null;
+          }
         }
       }
       return state;
@@ -179,14 +188,17 @@ define([
       }
       this.world.SetContactListener(listener);
     },
-    beginContact: function(contact){
+    beginContact: function(idA, idB){
 
     },
-    endContact: function(contact){
+    endContact: function(idA, idB){
 
     },
-    postSolve: function(contact, impulse){
-
+    postSolve: function(idA, idB, impulse){
+      this.collisions[idA] = this.collisions[idA] || [];
+      this.collisions[idA].push({id: idB, impulse: impulse});
+      this.collisions[idB] = this.collisions[idB] || [];
+      this.collisions[idB].push({id: idA, impulse: impulse});
     }
   });
 
