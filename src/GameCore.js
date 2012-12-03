@@ -71,7 +71,7 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       if(!this.context){
         this.context = this.canvas.getContext(this.contextType);
       }
-      if(!this.canvas){
+      if(!this.context){
         alert('Sorry, your browser does not support a ' + this.contextType + ' drawing surface on canvas.  I recommend any browser but Internet Explorer');
         return;
       }
