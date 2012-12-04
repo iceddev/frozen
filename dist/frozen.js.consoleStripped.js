@@ -2088,6 +2088,26 @@ define([
         body.GetWorldCenter()
       );
     },
+    applyImpulseRadians : function(bodyId, radians, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyImpulse(
+        new B2Vec2(Math.cos(radians) * power,
+        Math.sin(radians) * power),
+        body.GetWorldCenter()
+      );
+    },
+    applyForceRadians : function(bodyId, radians, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyForce(
+        new B2Vec2(Math.cos(radians) * power,
+        Math.sin(radians) * power),
+        body.GetWorldCenter()
+      );
+    },
+    applyTorque : function(bodyId, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyTorque(power);
+    },
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
@@ -5880,11 +5900,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     canvas: null,
     handleMouse: true,
     handleTouch: true,
+    handleKeys: true,
     constructor: function(args){
       declare.safeMixin(this, args);
-      // TODO: switch to dojo/on
-      on(document, 'keydown', lang.hitch(this, "keyPressed"));
-      on(document, 'keyup', lang.hitch(this, "keyReleased"));
+      
+      if(this.handleKeys){
+        on(document, 'keydown', lang.hitch(this, "keyDown"));
+        //on(document, 'keypress', lang.hitch(this, "keyPressed"));
+        on(document, 'keyup', lang.hitch(this, "keyReleased"));
+      }
 
       if(this.handleMouse){
         on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
@@ -5958,7 +5982,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     },
     getKeyAction: function(e) {
       if (this.keyActions.length) {
-        return this.keyActions[e.keyCode];
+        return this.keyActions[e.keyCode] || this.keyActions[String.fromCharCode(e.keyCode)];
       } else {
         return null;
       }
@@ -5968,17 +5992,18 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       if (gameAction && !gameAction.isPressed()) {
         gameAction.press();
       }
-      // TODO: make sure the key isn't processed for anything else
+    },
+    keyDown: function(e) {
+      var gameAction = this.getKeyAction(e);
+      if (gameAction && !gameAction.isPressed()) {
+        gameAction.press();
+      }
     },
     keyReleased : function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction) {
         gameAction.release();
       }
-      // TODO: make sure the key isn't processed for anything else
-    },
-    keyTyped: function(e) {
-      // TODO: make sure the key isn't processed for anything else
     },
     /**
       Get the mouse pointer location within the canvas' coordinates, not the page's
@@ -7732,6 +7757,109 @@ define(
       };
     }
 
+});
+},
+'frozen/utils':function(){
+define(['./utils/degreesToRadians',
+        './utils/radiansToDegrees',
+        './utils/pointInPolygon',
+        './utils/distance',
+        './utils/degreesFromCenter',
+        './utils/radiansFromCenter'
+], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter){
+   
+  return {
+    degreesToRadians: degreesToRadians,
+    radiansToDegrees: radiansToDegrees,
+    pointInPolygon: pointInPolygon,
+    distance: distance,
+    degreesFromCenter: degreesFromCenter,
+    radiansFromCenter: radiansFromCenter
+  };
+});
+},
+'frozen/utils/degreesToRadians':function(){
+define(function(){
+  var radConst = Math.PI / 180.0;
+  return function(degrees){
+      return degrees * radConst;
+    };
+});
+},
+'frozen/utils/radiansToDegrees':function(){
+define(function(){
+  var degConst = 180.0 / Math.PI;
+  return function(radians){
+      return radians * degConst;
+    };
+});
+},
+'frozen/utils/pointInPolygon':function(){
+define(function(){
+  return function(pt, polygon){
+      var poly = polygon.points || polygon;
+      for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
+        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
+      }
+      return c;
+    };
+});
+},
+'frozen/utils/distance':function(){
+define(function(){
+  return function(p1, p2){
+      return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
+    };
+});
+},
+'frozen/utils/degreesFromCenter':function(){
+define(['./radiansToDegrees','./radiansFromCenter'
+], function(radiansToDegrees, radiansFromCenter){
+  return function(center, pt){
+      return radiansToDegrees(radiansFromCenter(center, pt));
+    };
+});
+},
+'frozen/utils/radiansFromCenter':function(){
+define(function(){
+  return function(center, pt){
+      //same point
+      if((center.x === pt.x) && (center.y === pt.y)){
+        return 0;
+      }else if(center.x === pt.x){
+        if(center.y < pt.y){
+          return 0;
+        }else{
+          return Math.PI;
+        }
+      }else if(center.y === pt.y){
+        if(center.x > pt.x){
+          return 1.5 * Math.PI;
+        }else{
+          return Math.PI / 2;
+        }
+      }else if((center.x < pt.x) && (center.y > pt.y)){
+        //quadrant 1
+        //0 && console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
+        return Math.atan((pt.x - center.x)/(center.y - pt.y));
+      }
+      else if((center.x < pt.x) && (center.y < pt.y)){
+        //quadrant 2
+        //0 && console.log('quad2',center.x,center.y,pt.x,pt.y);
+        return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+      }
+      else if((center.x > pt.x) && (center.y < pt.y)){
+        //quadrant 3
+        //0 && console.log('quad3',center.x,center.y,pt.x,pt.y);
+        return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
+      }
+      else{
+        //quadrant 4
+        //0 && console.log('quad4',center.x,center.y,pt.x,pt.y);
+        return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
+      }
+
+    };
 });
 },
 'dojo/keys':function(){
