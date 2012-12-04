@@ -27,11 +27,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     canvas: null,
     handleMouse: true,
     handleTouch: true,
+    handleKeys: true,
     constructor: function(args){
       declare.safeMixin(this, args);
-      // TODO: switch to dojo/on
-      on(document, 'keydown', lang.hitch(this, "keyPressed"));
-      on(document, 'keyup', lang.hitch(this, "keyReleased"));
+      
+      if(this.handleKeys){
+        on(document, 'keydown', lang.hitch(this, "keyDown"));
+        //on(document, 'keypress', lang.hitch(this, "keyPressed"));
+        on(document, 'keyup', lang.hitch(this, "keyReleased"));
+      }
 
       if(this.handleMouse){
         on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
@@ -105,7 +109,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     },
     getKeyAction: function(e) {
       if (this.keyActions.length) {
-        return this.keyActions[e.keyCode];
+        return this.keyActions[e.keyCode] || this.keyActions[String.fromCharCode(e.keyCode)];
       } else {
         return null;
       }
@@ -115,17 +119,18 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       if (gameAction && !gameAction.isPressed()) {
         gameAction.press();
       }
-      // TODO: make sure the key isn't processed for anything else
+    },
+    keyDown: function(e) {
+      var gameAction = this.getKeyAction(e);
+      if (gameAction && !gameAction.isPressed()) {
+        gameAction.press();
+      }
     },
     keyReleased : function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction) {
         gameAction.release();
       }
-      // TODO: make sure the key isn't processed for anything else
-    },
-    keyTyped: function(e) {
-      // TODO: make sure the key isn't processed for anything else
     },
     /**
       Get the mouse pointer location within the canvas' coordinates, not the page's
