@@ -34,7 +34,8 @@ module.exports = function(grunt) {
         boss: true,
         eqnull: true,
         browser: true,
-        laxcomma: true
+        laxcomma: true,
+        expr: true
       },
       globals: {
         define: true,

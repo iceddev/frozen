@@ -83,6 +83,7 @@ var profile = (function(){
           'frozen/shims/AudioContext',
           'frozen/shims/RAF',
           'frozen/Sprite',
+          'frozen/utils',
           'dojo/keys'
         ],
         customBase: true,
