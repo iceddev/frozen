@@ -155,6 +155,26 @@ define([
         body.GetWorldCenter()
       );
     },
+    applyImpulseRadians : function(bodyId, radians, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyImpulse(
+        new B2Vec2(Math.cos(radians) * power,
+        Math.sin(radians) * power),
+        body.GetWorldCenter()
+      );
+    },
+    applyForceRadians : function(bodyId, radians, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyForce(
+        new B2Vec2(Math.cos(radians) * power,
+        Math.sin(radians) * power),
+        body.GetWorldCenter()
+      );
+    },
+    applyTorque : function(bodyId, power) {
+      var body = this.bodiesMap[bodyId];
+      body.ApplyTorque(power);
+    },
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
