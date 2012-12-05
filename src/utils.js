@@ -1,9 +1,10 @@
-define(['./utils/degreesToRadians',
-        './utils/radiansToDegrees',
-        './utils/pointInPolygon',
-        './utils/distance',
-        './utils/degreesFromCenter',
-        './utils/radiansFromCenter'
+define([
+  './utils/degreesToRadians',
+  './utils/radiansToDegrees',
+  './utils/pointInPolygon',
+  './utils/distance',
+  './utils/degreesFromCenter',
+  './utils/radiansFromCenter'
 ], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter){
    
   return {
