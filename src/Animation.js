@@ -34,6 +34,10 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       this.start();
     },
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
+      //Deprecated method, use createFromSheet()
+      return this.createFromSheet(frameCount, frameTimes, img, w, h, ySlot);
+    },
+    createFromSheet: function(frameCount, frameTimes, img, w, h, ySlot){
       var anim = new Animation({
         image: img,
         height: h,
@@ -122,6 +126,10 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       } else {
         return this.getFrame(this.currFrameIndex);
       }
+    },
+    draw: function(context, x, y){
+      var cf = this.getCurrentFrame();
+      context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);
     }
   });
 

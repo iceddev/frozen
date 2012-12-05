@@ -129,11 +129,19 @@ define(['dojo/_base/declare'], function(declare){
       Gets this Sprite's current animation frame.
     */
     getCurrentFrame: function(){
-      return this.anim.getCurrentFrame();
+      if(this.anim){
+        return this.anim.getCurrentFrame();
+      }
     },
     drawCurrentFrame: function(context){
+      //this method is deprecated, use the draw() function
       var cf = this.anim.getCurrentFrame();
       context.drawImage(this.anim.image, cf.imgSlotX * this.anim.width, cf.imgSlotY * this.anim.height, this.anim.width, this.anim.height, this.x,this.y, this.anim.width, this.anim.height);
+    },
+    draw: function(context){
+      if(this.anim){
+        this.anim.draw(context, this.x, this.y);
+      }
     },
     clone: function() {
       return new Sprite({
