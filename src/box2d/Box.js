@@ -95,6 +95,16 @@ define([
       }
       return state;
     },
+    updateExternalState: function(world){
+      //update the dyanmic shapes with box2d calculations
+      var bodiesState = this.getState();
+      for (var id in bodiesState) {
+        var entity = world[id];
+        if (entity && !entity.staticBody){
+          entity.update(bodiesState[id]);
+        }
+      }
+    },
     setBodies: function(bodyEntities) {
       console.log('bodies',bodyEntities);
       for(var id in bodyEntities) {
@@ -139,35 +149,39 @@ define([
       this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
       this.fixturesMap[entity.id] = this.bodiesMap[entity.id].CreateFixture(fixDef);
     },
-    applyImpulse : function(bodyId, degrees, power) {
+    setPosition: function(bodyId, x, y){
+      var body = this.bodiesMap[bodyId];
+      body.SetPosition(new B2Vec2(x, y));
+    },
+    applyImpulseDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
-        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-        Math.sin(degrees * (Math.PI / 180)) * power),
+        new B2Vec2(Math.sin(degrees * (Math.PI / 180)) * power,
+        Math.cos(degrees * (Math.PI / 180)) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyForce : function(bodyId, degrees, power) {
+    applyForceDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
-        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-        Math.sin(degrees * (Math.PI / 180)) * power),
+        new B2Vec2(Math.sin(degrees * (Math.PI / 180)) * power,
+        Math.cos(degrees * (Math.PI / 180)) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyImpulseRadians : function(bodyId, radians, power) {
+    applyImpulse : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
-        new B2Vec2(Math.cos(radians) * power,
-        Math.sin(radians) * power),
+        new B2Vec2(Math.sin(radians) * power,
+        Math.cos(radians) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyForceRadians : function(bodyId, radians, power) {
+    applyForce : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
-        new B2Vec2(Math.cos(radians) * power,
-        Math.sin(radians) * power),
+        new B2Vec2(Math.sin(radians) * power,
+        Math.cos(radians) * power * -1),
         body.GetWorldCenter()
       );
     },
