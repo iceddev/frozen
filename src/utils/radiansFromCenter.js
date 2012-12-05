@@ -1,5 +1,10 @@
 define(function(){
+  var origin = {x: 0.0, y: 0.0};
   return function(center, pt){
+
+      //if null or zero is passed in for center, we'll use the origin
+      center = center || origin;
+
       //same point
       if((center.x === pt.x) && (center.y === pt.y)){
         return 0;
