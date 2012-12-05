@@ -2028,6 +2028,16 @@ define([
       }
       return state;
     },
+    updateExternalState: function(world){
+      //update the dyanmic shapes with box2d calculations
+      var bodiesState = this.getState();
+      for (var id in bodiesState) {
+        var entity = world[id];
+        if (entity && !entity.staticBody){
+          entity.update(bodiesState[id]);
+        }
+      }
+    },
     setBodies: function(bodyEntities) {
       0 && console.log('bodies',bodyEntities);
       for(var id in bodyEntities) {
@@ -2072,35 +2082,39 @@ define([
       this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
       this.fixturesMap[entity.id] = this.bodiesMap[entity.id].CreateFixture(fixDef);
     },
-    applyImpulse : function(bodyId, degrees, power) {
+    setPosition: function(bodyId, x, y){
+      var body = this.bodiesMap[bodyId];
+      body.SetPosition(new B2Vec2(x, y));
+    },
+    applyImpulseDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
-        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-        Math.sin(degrees * (Math.PI / 180)) * power),
+        new B2Vec2(Math.sin(degrees * (Math.PI / 180)) * power,
+        Math.cos(degrees * (Math.PI / 180)) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyForce : function(bodyId, degrees, power) {
+    applyForceDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
-        new B2Vec2(Math.cos(degrees * (Math.PI / 180)) * power,
-        Math.sin(degrees * (Math.PI / 180)) * power),
+        new B2Vec2(Math.sin(degrees * (Math.PI / 180)) * power,
+        Math.cos(degrees * (Math.PI / 180)) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyImpulseRadians : function(bodyId, radians, power) {
+    applyImpulse : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
-        new B2Vec2(Math.cos(radians) * power,
-        Math.sin(radians) * power),
+        new B2Vec2(Math.sin(radians) * power,
+        Math.cos(radians) * power * -1),
         body.GetWorldCenter()
       );
     },
-    applyForceRadians : function(bodyId, radians, power) {
+    applyForce : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
-        new B2Vec2(Math.cos(radians) * power,
-        Math.sin(radians) * power),
+        new B2Vec2(Math.sin(radians) * power,
+        Math.cos(radians) * power * -1),
         body.GetWorldCenter()
       );
     },
@@ -5039,11 +5053,19 @@ define(['dojo/_base/declare'], function(declare){
       Gets this Sprite's current animation frame.
     */
     getCurrentFrame: function(){
-      return this.anim.getCurrentFrame();
+      if(this.anim){
+        return this.anim.getCurrentFrame();
+      }
     },
     drawCurrentFrame: function(context){
+      //this method is deprecated, use the draw() function
       var cf = this.anim.getCurrentFrame();
       context.drawImage(this.anim.image, cf.imgSlotX * this.anim.width, cf.imgSlotY * this.anim.height, this.anim.width, this.anim.height, this.x,this.y, this.anim.width, this.anim.height);
+    },
+    draw: function(context){
+      if(this.anim){
+        this.anim.draw(context, this.x, this.y);
+      }
     },
     clone: function() {
       return new Sprite({
@@ -5093,6 +5115,10 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       this.start();
     },
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
+      //Deprecated method, use createFromSheet()
+      return this.createFromSheet(frameCount, frameTimes, img, w, h, ySlot);
+    },
+    createFromSheet: function(frameCount, frameTimes, img, w, h, ySlot){
       var anim = new Animation({
         image: img,
         height: h,
@@ -5181,6 +5207,10 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       } else {
         return this.getFrame(this.currFrameIndex);
       }
+    },
+    draw: function(context, x, y){
+      var cf = this.getCurrentFrame();
+      context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);
     }
   });
 
@@ -7760,12 +7790,13 @@ define(
 });
 },
 'frozen/utils':function(){
-define(['./utils/degreesToRadians',
-        './utils/radiansToDegrees',
-        './utils/pointInPolygon',
-        './utils/distance',
-        './utils/degreesFromCenter',
-        './utils/radiansFromCenter'
+define([
+  './utils/degreesToRadians',
+  './utils/radiansToDegrees',
+  './utils/pointInPolygon',
+  './utils/distance',
+  './utils/degreesFromCenter',
+  './utils/radiansFromCenter'
 ], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter){
    
   return {
@@ -7822,7 +7853,12 @@ define(['./radiansToDegrees','./radiansFromCenter'
 },
 'frozen/utils/radiansFromCenter':function(){
 define(function(){
+  var origin = {x: 0.0, y: 0.0};
   return function(center, pt){
+
+      //if null or zero is passed in for center, we'll use the origin
+      center = center || origin;
+
       //same point
       if((center.x === pt.x) && (center.y === pt.y)){
         return 0;
