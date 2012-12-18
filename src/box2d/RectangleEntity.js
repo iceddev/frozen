@@ -18,8 +18,8 @@ limitations under the License.
 
 /**
  * This Entity represents a Rectangle
- * @name MultiPolygonEntity
- * @class MultiPolygonEntity
+ * @name RectangleEntity
+ * @class RectangleEntity
  * @extends Entity
  */
 

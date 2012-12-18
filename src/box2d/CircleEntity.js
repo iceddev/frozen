@@ -20,7 +20,6 @@ limitations under the License.
  * This represents a Circly body and shape in a Box2d world
  * @name CircleEntity
  * @class CircleEntity
- * @memberOf box2d
  * @extends Entity
  */
 
@@ -36,7 +35,7 @@ define([
     },
 
     /**
-      * Draws the Entity at a given scale
+      * Draws the CircelEntity at a given scale
       * @name CircleEntity#draw
       * @function
     */

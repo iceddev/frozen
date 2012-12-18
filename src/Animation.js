@@ -158,7 +158,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     },
 
     /**
-      * Draws the current frame into a 2d context
+      * Draws the current frame into a 2d context.
       * @name Animation#draw
       * @function
       * @param {2dContext} context The HTML5 drawing canvas

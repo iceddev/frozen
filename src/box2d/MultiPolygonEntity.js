@@ -37,8 +37,8 @@ define([
       * Draws each polygon in the entity
       * @name MultiPolygonEntity#draw
       * @function
-      * @param {2dContext} ctx
-      * @param {Number} scale
+      * @param {2dContext} ctx the HTML5 2d drawing context
+      * @param {Number} scale the scale to draw the entity at
       *
       */
     draw: function(ctx, scale){

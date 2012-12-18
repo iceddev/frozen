@@ -20,7 +20,6 @@ limitations under the License.
  * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
  * @name Entity
  * @class Entity
- * @memberOf box2d
  */
 
 define([
