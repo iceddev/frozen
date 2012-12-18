@@ -22,10 +22,10 @@ module.exports = function(grunt) {
       }
     },
     jsdoc : {
-        dist : {
-            src: ['src/**/*.js'],
-            dest: 'doc'
-        }
+      dist : {
+        src: ['src/**/*.js'],
+        dest: 'doc'
+      }
     },
     jshint: {
       options: {
