@@ -198,15 +198,8 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
       
       //have box2d do an interation
       box.update();
-
-      //update the dyanmic shapes with box2d calculations
-      var bodiesState = box.getState();
-      for (var id in bodiesState) {
-        var entity = world[id];
-        if (entity && !entity.staticBody){
-          entity.update(bodiesState[id]);
-        }
-      }
+      //have update local objects with box2d calculations
+      box.updateExternalState(world);
 
     },
     draw: function(context){

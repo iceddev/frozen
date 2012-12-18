@@ -23,6 +23,20 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
  * The GameCore class provides the base to build games on.
  * @name GameCore
  * @class GameCore
+ * @example
+var myGame = new GameCore({
+  canvasId: 'myCanvas',
+  update: function(millis){
+    // do updating of game state
+  },
+  draw: function(context){
+    // do drawing of the game
+  }
+});
+
+//start the game
+myGame.run();
+
  */
 
   return declare(null, {
