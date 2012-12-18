@@ -16,7 +16,11 @@ limitations under the License.
 
 **/
 
-/*********************** ResourceManager ********************************************/
+ /**
+ * The ResourceManager handles DOM events for use in games.
+ * @name ResourceManager
+ * @class ResourceManager
+ */
 define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
   return declare(null, {
@@ -36,10 +40,15 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       }
       
     },
+
     /**
-      Gets an image.
+      * Loads an image, and tracks if it has finished loading
+      * @name ResourceManager#loadImage
+      * @function
+      * @param {String} filename Filename of the image relative the Game's HTML page.
+      *
     */
-    loadImage: function(filename, width, height){
+    loadImage: function(filename){
       //if we already have the image, just return it
       for(var i = 0; i < this.resourceList.length; i++){
         if(this.resourceList[i].name === filename){
@@ -67,6 +76,14 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       this.resourceList.push(imgWrapper);
       return img;
     },
+
+    /**
+      * Loads an sound file, and tracks if it has finished loading
+      * @name ResourceManager#loadSound
+      * @function
+      * @param {String} filename Filename of the sound relative the Game's HTML page.
+      *
+    */
     loadSound: function(filename){
 
       if(this.soundsDir){
@@ -108,6 +125,16 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
       return soundObj;
     },
+
+    /**
+      * Plays a sound that was loaded from loadSound()
+      * @name ResourceManager#playSound
+      * @function
+      * @param {Object} sound A sound object that was returned from loadSound()
+      * @param {Boolean} loop whether or not to loop the sound (default: false)
+      * @param {Number} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      *
+    */
     playSound: function(sound, loop, noteOn){
       noteOn = noteOn || 0;
       if(this.audioContext && sound){
@@ -128,6 +155,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         }
       }
     },
+
+    /**
+      * Checks whether the resources have finished loading
+      * @name ResourceManager#resourcesReady
+      * @function
+    */
     resourcesReady: function(){
       if(this.allLoaded){
         return true;
@@ -142,6 +175,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         return true;
       }
     },
+
+    /**
+      * Gets the percentage of resources loaded.
+      * @name ResourceManager#getPercentComplete
+      * @function
+    */
     getPercentComplete: function(){
       var numComplete = 0.0;
       for(var i = 0; i < this.resourceList.length; i++){

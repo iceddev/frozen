@@ -16,16 +16,19 @@ limitations under the License.
 
 **/
 
-/*********************** MouseAction ********************************************/
+ /**
+ * A GameAction that handles Mouse events
+ * @name MouseAction
+ * @class MouseAction
+ * @extends {GameAction}
+ */
 define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
 
   return declare([GameAction], {
     startPosition: null,
     endPosition: null,
     position: null,
-    /**
-      Creates new mouse action.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
       this.reset();

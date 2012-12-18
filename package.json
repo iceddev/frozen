@@ -2,6 +2,8 @@
   "name": "frozen",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt-dojo": "~0.1.0"
+    "grunt-dojo": "~0.1.0",
+    "grunt-jsdoc-plugin" : "*",
+    "jsdoc" : "git://github.com/jsdoc3/jsdoc.git"
   }
 }

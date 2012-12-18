@@ -16,6 +16,14 @@ limitations under the License.
 
 **/
 
+/**
+ * This represents a Circly body and shape in a Box2d world
+ * @name CircleEntity
+ * @class CircleEntity
+ * @memberOf box2d
+ * @extends Entity
+ */
+
 define([
   'dojo/_base/declare',
   './Entity'
@@ -26,6 +34,12 @@ define([
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
+
+    /**
+      * Draws the Entity at a given scale
+      * @name CircleEntity#draw
+      * @function
+    */
     draw: function(ctx, scale){
       ctx.fillStyle = this.color;
       ctx.beginPath();

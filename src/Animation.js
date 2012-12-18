@@ -16,8 +16,13 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.Animation ********************************************/
 define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFrame, declare, lang){
+
+ /**
+ * Represents a series of frames that can be rendered as an animation.
+ * @name Animation
+ * @class Animation
+ */
 
   var Animation = declare(null, {
     currFrameIndex: 0,
@@ -26,9 +31,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     height: 64,
     width: 64,
     image: null,
-    /**
-      Creates a new, empty Animation.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
       this.start();
@@ -60,10 +63,14 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       }
       return anim;
     },
+
     /**
-      Creates a duplicate of this animation. The list of frames
-      are shared between the two Animations, but each Animation
-      can be animated independently.
+      * Creates a duplicate of this animation. The list of frames
+      * are shared between the two Animations, but each Animation
+      * can be animated independently.
+      * @name Animation#clone
+      * @function
+      *
     */
     clone: function(){
       return new Animation({
@@ -72,8 +79,15 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         totalDuration: this.totalDuration
       });
     },
+
     /**
-      Adds an image to the animation with the specified duration (time to display the image).
+      * Adds an image to the animation with the specified duration (time to display the image).
+      * @name Animation#addFrame
+      * @function
+      * @param {Number} duration
+      * @param {Number} imageSlotX
+      * @param {Number} imageSlotY
+      *
     */
     addFrame: function(duration, imageSlotX, imageSlotY){
       if(!this.frames){
@@ -87,15 +101,25 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         imgSlotY: imageSlotY
       }));
     },
+
     /**
-      Starts this animation over from the beginning.
+      * Starts this animation over from the beginning.
+      * @name Animation#start
+      * @function
+      *
     */
     start: function(){
       this.animTime = 0;
       this.currFrameIndex = 0;
     },
+
+
     /**
-      Updates this animation's current image (frame), if neccesary.
+      * Updates this animation's current image (frame), if neccesary.
+      * @name Animation#update
+      * @function
+      * @param {Number} elapsedTime Elapsed time in milliseconds
+      *
     */
     update: function(elapsedTime){
       if (this.frames.length > 1) {
@@ -117,8 +141,13 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     getFrame: function(i){
       return this.frames[i];
     },
+
+
     /**
-      Gets this Animation's current animation frame. Returns null if this animation has no frames.
+      * Gets this Animation's current animation frame. Returns null if this animation has no frames.
+      * @name Animation#getCurrentFrame
+      * @function
+      *
     */
     getCurrentFrame: function(){
       if (this.frames.length === 0) {
@@ -127,6 +156,16 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         return this.getFrame(this.currFrameIndex);
       }
     },
+
+    /**
+      * Draws the current frame into a 2d context
+      * @name Animation#draw
+      * @function
+      * @param {2dContext} context The HTML5 drawing canvas
+      * @param {Number} x The x coordinate in the graphics context
+      * @param {Number} y The y coordinate in the graphics context
+      *
+    */
     draw: function(context, x, y){
       var cf = this.getCurrentFrame();
       context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);

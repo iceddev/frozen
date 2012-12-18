@@ -16,7 +16,12 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.AnimFrame ********************************************/
+ /**
+ * Represents a a single frame in an animation.
+ * @name AnimationFrame
+ * @class AnimationFrame
+ */
+
 define(['dojo/_base/declare'], function(declare){
 
   return declare(null, {

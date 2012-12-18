@@ -16,6 +16,13 @@ limitations under the License.
 
 **/
 
+/**
+ * This Entity represents a Rectangle
+ * @name MultiPolygonEntity
+ * @class MultiPolygonEntity
+ * @extends Entity
+ */
+
 define([
   'dojo/_base/declare',
   './Entity'

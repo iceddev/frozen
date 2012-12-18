@@ -1950,8 +1950,9 @@ limitations under the License.
 **/
 
 define([
-  'dojo/_base/declare'
-], function(declare){
+  'dojo/_base/declare',
+  'dojo/_base/lang'
+], function(declare, lang){
 
   // box2d globals
 
@@ -1964,7 +1965,8 @@ define([
     , B2MassData = Box2D.Collision.Shapes.b2MassData
     , B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
     , B2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
   return declare(null, {
     intervalRate: 60,
@@ -2033,7 +2035,7 @@ define([
       var bodiesState = this.getState();
       for (var id in bodiesState) {
         var entity = world[id];
-        if (entity && !entity.staticBody){
+        if (entity){ //&& !entity.staticBody){
           entity.update(bodiesState[id]);
         }
       }
@@ -2049,6 +2051,7 @@ define([
     addBody: function(entity) {
       var bodyDef = new B2BodyDef();
       var fixDef = new B2FixtureDef();
+      var i,j,points,vec,vecs;
       fixDef.restitution = entity.restitution;
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
@@ -2059,28 +2062,50 @@ define([
         bodyDef.type = B2Body.b2_dynamicBody;
       }
 
-      if (entity.radius) {
-        fixDef.shape = new B2CircleShape(entity.radius);
-      } else if (entity.points) {
-        var points = [];
-        for (var i = 0; i < entity.points.length; i++) {
-          var vec = new B2Vec2();
-          vec.Set(entity.points[i].x, entity.points[i].y);
-          points[i] = vec;
-        }
-        fixDef.shape = new B2PolygonShape();
-        fixDef.shape.SetAsArray(points, points.length);
-      } else {
-        fixDef.shape = new B2PolygonShape();
-        fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
-      }
       bodyDef.position.x = entity.x;
       bodyDef.position.y = entity.y;
       bodyDef.userData = entity.id;
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
-      this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
-      this.fixturesMap[entity.id] = this.bodiesMap[entity.id].CreateFixture(fixDef);
+      var body = this.world.CreateBody(bodyDef);
+      
+
+      if (entity.radius) { //circle
+        fixDef.shape = new B2CircleShape(entity.radius);
+        body.CreateFixture(fixDef);
+      } else if (entity.points) { //polygon
+        points = [];
+        for (i = 0; i < entity.points.length; i++) {
+          vec = new B2Vec2();
+          vec.Set(entity.points[i].x, entity.points[i].y);
+          points[i] = vec;
+        }
+        fixDef.shape = new B2PolygonShape();
+        fixDef.shape.SetAsArray(points, points.length);
+        body.CreateFixture(fixDef);
+      } else if(entity.polys) { //complex object
+          for (j = 0; j < entity.polys.length; j++) {
+              points = entity.polys[j];
+              vecs = [];
+              for (i = 0; i < points.length; i++) {
+                  vec = new B2Vec2();
+                  vec.Set(points[i].x, points[i].y);
+                  vecs[i] = vec;
+              }
+              fixDef.shape = new B2PolygonShape();
+              fixDef.shape.SetAsArray(vecs, vecs.length);
+              body.CreateFixture(fixDef);
+          }
+      } else { //rectangle
+        fixDef.shape = new B2PolygonShape();
+        fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
+        body.CreateFixture(fixDef);
+      }
+      
+      //this.fixturesMap[entity.id] =
+      
+
+      this.bodiesMap[entity.id] = body;
     },
     setPosition: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
@@ -2126,7 +2151,7 @@ define([
       if(this.bodiesMap[id]){
         this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
         this.world.DestroyBody(this.bodiesMap[id]);
-        delete this.fixturesMap[id];
+        //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
       }
     },
@@ -2154,6 +2179,16 @@ define([
         };
       }
       this.world.SetContactListener(listener);
+    },
+    addRevoluteJoint : function(body1Id, body2Id, jointAttributes) {
+      var body1 = this.bodiesMap[body1Id];
+      var body2 = this.bodiesMap[body2Id];
+      var joint = new B2RevoluteJointDef();
+      joint.Initialize(body1, body2, body1.GetWorldCenter());
+      if (jointAttributes) {
+        lang.mixin(joint, jointAttributes);
+      }
+      this.world.CreateJoint(joint);
     },
     beginContact: function(idA, idB){
 
@@ -4587,6 +4622,14 @@ limitations under the License.
 
 **/
 
+/**
+ * This represents a Circly body and shape in a Box2d world
+ * @name CircleEntity
+ * @class CircleEntity
+ * @memberOf box2d
+ * @extends Entity
+ */
+
 define([
   'dojo/_base/declare',
   './Entity'
@@ -4597,6 +4640,12 @@ define([
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
+
+    /**
+      * Draws the Entity at a given scale
+      * @name CircleEntity#draw
+      * @function
+    */
     draw: function(ctx, scale){
       ctx.fillStyle = this.color;
       ctx.beginPath();
@@ -4635,6 +4684,13 @@ limitations under the License.
 
 **/
 
+/**
+ * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
+ * @name Entity
+ * @class Entity
+ * @memberOf box2d
+ */
+
 define([
   'dojo/_base/declare',
   'dojo/_base/lang'
@@ -4662,6 +4718,14 @@ define([
     update: function(state){
       lang.mixin(this, state);
     },
+
+    /**
+      * Draws the Entity at a given scale
+      * @name Entity#draw
+      * @function
+      * @param {2dContext} ctx the HTML5 2d drawing context
+      * @param {Number} scale the scale to draw the entity at
+    */
     draw: function(ctx, scale){
       //black circle in entity's location
       ctx.fillStyle = 'black';
@@ -4677,18 +4741,7 @@ define([
       ctx.closePath();
       ctx.fill();
     }
-    // TODO: re-implement or remove
-    // build: function(def) {
-    //   if (def.radius) {
-    //     return new CircleEntity(def);
-    //   } else if (def.points) {
-    //     return new PolygonEntity(def);
-    //   } else if (def.img) {
-    //     return new ImageEntity(def);
-    //   }else {
-    //     return new RectangleEntity(def);
-    //   }
-    // }
+    
   });
 
 });
@@ -4711,6 +4764,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 **/
+
+/**
+ * This Entity represents a polygon which is build from an array of points.
+ * @name PolygonEntity
+ * @class PolygonEntity
+ * @extends Entity
+*/
 
 define([
   'dojo/_base/declare',
@@ -4746,6 +4806,76 @@ define([
 
 });
 },
+'frozen/box2d/MultiPolygonEntity':function(){
+/**
+
+ Copyright 2012 Luis Montes
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+**/
+
+/**
+ * This Entity is for building complex and possibly concave shapes
+ * @name MultiPolygonEntity
+ * @class MultiPolygonEntity
+ * @extends Entity
+ */
+
+define([
+  'dojo/_base/declare',
+  './Entity'
+], function(declare, Entity){
+
+  return declare([Entity], {
+    polys: [],
+    constructor: function(/* Object */args){
+      declare.safeMixin(this, args);
+    },
+    /**
+      * Draws each polygon in the entity
+      * @name MultiPolygonEntity#draw
+      * @function
+      * @param {2dContext} ctx
+      * @param {Number} scale
+      *
+      */
+    draw: function(ctx, scale){
+      ctx.save();
+      ctx.translate(this.x * scale, this.y * scale);
+      ctx.rotate(this.angle);
+      ctx.translate(-(this.x) * scale, -(this.y) * scale);
+      ctx.fillStyle = this.color;
+
+      for(var j = 0; j < this.polys.length; j++){
+        ctx.beginPath();
+        ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+        for (var i = 1; i < this.polys[j].length; i++) {
+           ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+        }
+        ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      ctx.restore();
+      this.inherited(arguments);
+    }
+  });
+
+});
+},
 'frozen/box2d/RectangleEntity':function(){
 /**
 
@@ -4764,6 +4894,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 **/
+
+/**
+ * This Entity represents a Rectangle
+ * @name MultiPolygonEntity
+ * @class MultiPolygonEntity
+ * @extends Entity
+ */
 
 define([
   'dojo/_base/declare',
@@ -4940,7 +5077,12 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.Sprite ********************************************/
+ /**
+ * The Sprite class represents a simple animated character for a game
+ * @name Sprite
+ * @class Sprite
+ */
+
 define(['dojo/_base/declare'], function(declare){
 
   var Sprite = declare(null, {
@@ -4952,80 +5094,103 @@ define(['dojo/_base/declare'], function(declare){
     dy: 0.0,
     name: null,
     collisionRadius: 40,
-    /**
-      Creates a new Sprite object.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
     },
+
     /**
-      Updates this Sprite's Animation and its position based on the velocity.
+      * Updates this Sprite's Animation and its position based on the velocity.
+      * @name Sprite#update
+      * @function
+      * @param {Number} elapsedTime The elapsed time in milliseconds since the previous update
+      *
     */
     update: function(elapsedTime){
       this.x += this.dx * elapsedTime;
       this.y += this.dy * elapsedTime;
       this.anim.update(elapsedTime);
     },
-    /**
-      Gets this Sprite's current x position.
-    */
+
+
     getX: function(){
       return this.x;
     },
-    /**
-      Gets this Sprite's current y position.
-    */
+
     getY: function(){
       return this.y;
     },
-    /**
-      Sets this Sprite's current x position.
-    */
+
     setX: function(x){
       this.x = x;
     },
-    /**
-      Sets this Sprite's current y position.
-    */
+
     setY: function(y){
       this.y = y;
     },
+
     /**
-      Gets this Sprite's width, based on the size of the current image.
+      * Gets this Sprite's width, based on the size of the current image.
+      * @name Sprite#getWidth
+      * @function
+      *
     */
     getWidth: function(){
       return this.anim.width;
     },
+
     /**
-      Gets this Sprite's height, based on the size of the current image.
+      * Gets this Sprite's height, based on the size of the current image.
+      * @name Sprite#getHeight
+      * @function
+      *
     */
     getHeight: function(){
       return this.anim.height;
     },
+
     /**
-      Gets the horizontal velocity of this Sprite in pixels per millisecond.
+      * Gets the horizontal velocity of this Sprite in pixels per millisecond.
+      * @name Sprite#getVelocityX
+      * @function
+      *
     */
     getVelocityX: function(){
       return this.dx;
     },
+
     /**
-      Gets the vertical velocity of this Sprite in pixels per millisecond.
+      * Gets the vertical velocity of this Sprite in pixels per millisecond.
+      * @name Sprite#getVelocityY
+      * @function
+      *
     */
     getVelocityY: function(){
       return this.dy;
     },
+
     /**
-      Sets the horizontal velocity of this Sprite in pixels per millisecond.
+      * Sets the horizontal velocity of this Sprite in pixels per millisecond.
+      * @name Sprite#setVelocityX
+      * @function
+      * @param {Number} dx the x velocity in pixels per millisecond
+      *
     */
     setVelocityX: function(dx){
       this.dx = this.limitSpeed(dx);
     },
+
     /**
-      Sets the vertical velocity of this Sprite in pixels per millisecond.
+      * Sets the vertical velocity of this Sprite in pixels per millisecond.
+      * @name Sprite#setVelocityY
+      * @function
+      * @param {Number} dy the y velocity in pixels per millisecond
+      *
     */
     setVelocityY: function(dy) {
       this.dy = this.limitSpeed(dy);
     },
+
     limitSpeed: function(v){
       if(this.getMaxSpeed()){
         if(Math.abs(v) > this.getMaxSpeed()){
@@ -5043,30 +5208,50 @@ define(['dojo/_base/declare'], function(declare){
         return v;
       }
     },
-    /**
-      Gets the maximum speed of this Creature.
-    */
+
+
     getMaxSpeed: function(){
       return this.maxSpeed;
     },
+
     /**
-      Gets this Sprite's current animation frame.
+      * Gets this Sprite's current animation frame.
+      * @name Sprite#getCurrentFrame
+      * @function
+      *
     */
     getCurrentFrame: function(){
       if(this.anim){
         return this.anim.getCurrentFrame();
       }
     },
+
+    /**
+      * @name Sprite#drawCurrentFrame
+      * @function
+      * @param {2dContext} context the HTML5 drawing context
+      * @deprecated use draw()
+      *
+    */
     drawCurrentFrame: function(context){
       //this method is deprecated, use the draw() function
       var cf = this.anim.getCurrentFrame();
       context.drawImage(this.anim.image, cf.imgSlotX * this.anim.width, cf.imgSlotY * this.anim.height, this.anim.width, this.anim.height, this.x,this.y, this.anim.width, this.anim.height);
     },
+
+    /**
+      * Draws the sprite
+      * @name Sprite#draw
+      * @function
+      * @param {2dContext} context the HTML5 drawing context
+      *
+    */
     draw: function(context){
       if(this.anim){
         this.anim.draw(context, this.x, this.y);
       }
     },
+
     clone: function() {
       return new Sprite({
         anim: this.anim.clone()
@@ -5097,8 +5282,13 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.Animation ********************************************/
 define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFrame, declare, lang){
+
+ /**
+ * Represents a series of frames that can be rendered as an animation.
+ * @name Animation
+ * @class Animation
+ */
 
   var Animation = declare(null, {
     currFrameIndex: 0,
@@ -5107,9 +5297,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     height: 64,
     width: 64,
     image: null,
-    /**
-      Creates a new, empty Animation.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
       this.start();
@@ -5141,10 +5329,14 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
       }
       return anim;
     },
+
     /**
-      Creates a duplicate of this animation. The list of frames
-      are shared between the two Animations, but each Animation
-      can be animated independently.
+      * Creates a duplicate of this animation. The list of frames
+      * are shared between the two Animations, but each Animation
+      * can be animated independently.
+      * @name Animation#clone
+      * @function
+      *
     */
     clone: function(){
       return new Animation({
@@ -5153,8 +5345,15 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         totalDuration: this.totalDuration
       });
     },
+
     /**
-      Adds an image to the animation with the specified duration (time to display the image).
+      * Adds an image to the animation with the specified duration (time to display the image).
+      * @name Animation#addFrame
+      * @function
+      * @param {Number} duration
+      * @param {Number} imageSlotX
+      * @param {Number} imageSlotY
+      *
     */
     addFrame: function(duration, imageSlotX, imageSlotY){
       if(!this.frames){
@@ -5168,15 +5367,25 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         imgSlotY: imageSlotY
       }));
     },
+
     /**
-      Starts this animation over from the beginning.
+      * Starts this animation over from the beginning.
+      * @name Animation#start
+      * @function
+      *
     */
     start: function(){
       this.animTime = 0;
       this.currFrameIndex = 0;
     },
+
+
     /**
-      Updates this animation's current image (frame), if neccesary.
+      * Updates this animation's current image (frame), if neccesary.
+      * @name Animation#update
+      * @function
+      * @param {Number} elapsedTime Elapsed time in milliseconds
+      *
     */
     update: function(elapsedTime){
       if (this.frames.length > 1) {
@@ -5198,8 +5407,13 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     getFrame: function(i){
       return this.frames[i];
     },
+
+
     /**
-      Gets this Animation's current animation frame. Returns null if this animation has no frames.
+      * Gets this Animation's current animation frame. Returns null if this animation has no frames.
+      * @name Animation#getCurrentFrame
+      * @function
+      *
     */
     getCurrentFrame: function(){
       if (this.frames.length === 0) {
@@ -5208,6 +5422,16 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
         return this.getFrame(this.currFrameIndex);
       }
     },
+
+    /**
+      * Draws the current frame into a 2d context
+      * @name Animation#draw
+      * @function
+      * @param {2dContext} context The HTML5 drawing canvas
+      * @param {Number} x The x coordinate in the graphics context
+      * @param {Number} y The y coordinate in the graphics context
+      *
+    */
     draw: function(context, x, y){
       var cf = this.getCurrentFrame();
       context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);
@@ -5237,7 +5461,12 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.AnimFrame ********************************************/
+ /**
+ * Represents a a single frame in an animation.
+ * @name AnimationFrame
+ * @class AnimationFrame
+ */
+
 define(['dojo/_base/declare'], function(declare){
 
   return declare(null, {
@@ -5271,7 +5500,12 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.GameAction ********************************************/
+ /**
+ * The GameAction handles DOM events for use in games.
+ * @name GameAction
+ * @class GameAction
+ */
+
 define(['dojo/_base/declare'], function(declare){
 
   return declare(null, {
@@ -5295,35 +5529,43 @@ define(['dojo/_base/declare'], function(declare){
       STATE_WAITING_FOR_RELEASE: 2,
       STATE_MOVED: 3
     },
-    /**
-      Creates new game action.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
       this.reset();
     },
-    /**
-      Gets the name of this GameAction.
-    */
+
     getName: function() {
       return this.name;
     },
+
     /**
-      Resets this GameAction so that it appears like it hasn't been pressed.
+      * Resets this GameAction so that it appears like it hasn't been pressed.
+      * @name GameAction#reset
+      * @function
+      *
     */
     reset : function() {
       this.state = this.statics.STATE_RELEASED;
       this.amount = 0;
     },
+
     /**
-      Taps this GameAction. Same as calling press() followed by release().
+      * Taps this GameAction. Same as calling press() followed by release().
+      * @name GameAction#tap
+      * @function
+      *
     */
     tap: function() {
       this.press();
       this.release();
     },
+
     /**
-      Signals that the key was pressed.
+      * Signals that the key was pressed.
+      * @name GameAction#press
+      * @function
+      *
     */
     press: function() {
       this.state = this.statics.STATE_PRESSED;
@@ -5331,8 +5573,13 @@ define(['dojo/_base/declare'], function(declare){
         this.pressAmt(1);
       }
     },
+
     /**
-      Signals that the key was pressed a specified number of times, or that the mouse move a specified distance.
+      * Signals that the key was pressed a specified number of times, or that the mouse move a specified distance.
+      * @name GameAction#pressAmt
+      * @function
+      * @param {Number} amount the number of times the key is pressed
+      *
     */
     pressAmt: function(amount) {
       if (this.state !== this.statics.STATE_WAITING_FOR_RELEASE) {
@@ -5340,15 +5587,22 @@ define(['dojo/_base/declare'], function(declare){
         this.state = this.statics.STATE_WAITING_FOR_RELEASE;
       }
     },
+
     /**
-      Signals that the key was released
+      * Signals that the key was released
+      * @name GameAction#release
+      * @function
+      *
     */
     release: function() {
       this.state = this.statics.STATE_RELEASED;
     },
 
     /**
-      Returns whether the key was pressed or not since last checked.
+      * Returns whether the key was pressed or not since last checked.
+      * @name GameAction#isPressed
+      * @function
+      *
     */
     isPressed: function() {
       if(this.state === this.statics.STATE_PRESSED){
@@ -5357,9 +5611,16 @@ define(['dojo/_base/declare'], function(declare){
         return false;
       }
     },
+
     /**
-      For keys, this is the number of times the key was pressed since it was last checked.
-      For mouse movement, this is the distance moved.
+      * For keys, this is the number of times the key was pressed since it was last checked.
+      * For mouse movement, this is the distance moved.
+      *
+      * This Resets the amount to zero after being checked!
+      *
+      * @name GameAction#getAmount
+      * @function
+      *
     */
     getAmount: function() {
       var retVal = this.amount;
@@ -5396,16 +5657,19 @@ limitations under the License.
 
 **/
 
-/*********************** MouseAction ********************************************/
+ /**
+ * A GameAction that handles Mouse events
+ * @name MouseAction
+ * @class MouseAction
+ * @extends {GameAction}
+ */
 define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
 
   return declare([GameAction], {
     startPosition: null,
     endPosition: null,
     position: null,
-    /**
-      Creates new mouse action.
-    */
+
     constructor: function(args){
       declare.safeMixin(this, args);
       this.reset();
@@ -5436,6 +5700,12 @@ limitations under the License.
 /*********************** mwe.GameCore ********************************************/
 define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
+ /**
+ * The GameCore class provides the base to build games on.
+ * @name GameCore
+ * @class GameCore
+ */
+
   return declare(null, {
     statics: {
       FONT_SIZE: 24
@@ -5454,13 +5724,19 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       declare.safeMixin(this, args);
     },
     /**
-      Signals the game loop that it's time to quit
+      * Signals the game loop that it's time to quit
+      * @name GameCore#stop
+      * @function
+      *
     */
     stop: function() {
         this.isRunning = false;
     },
     /**
-      Calls init() and gameLoop()
+      * Launches the game.
+      * @name GameCore#run
+      * @function
+      *
     */
     run: function() {
       if(!this.isRunning){
@@ -5471,11 +5747,18 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       }
     },
     /**
-      Should be overidden in the subclasses to create images
+      * Can be overidden in GameCore subclasses to load images and sounds
+      * @name GameCore#loadResources
+      * @function
+      * @param {ResourceManager} resourceManager
+      *
     */
     loadResources: function(resourceManager){},
     /**
-      Sets full screen mode and initiates and objects.
+      * Sets the screen mode and initiates and objects.
+      * @name GameCore#init
+      * @function
+      *
     */
     init: function() {
       if(!this.canvas){
@@ -5520,15 +5803,27 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
 
     },
     /**
-      Should be overidden in the subclasses to map input to actions
+      * Can be overidden in the subclasses to map user input to actions
+      * @name GameCore#initInput
+      * @function
+      * @param {InputManager} inputManager
+      *
     */
     initInput: function(inputManager) {},
     /**
-      Should be overidden in the subclasses to deal with user input
+      * Can be overidden in the subclasses to deal with user input before updating the game state
+      * @name GameCore#handleInput
+      * @function
+      * @param {InputManager} inputManager
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
     handleInput: function(inputManager,elapsedTime) {},
     /**
-      Runs through the game loop until stop() is called.
+      * Runs through the game loop until stop() is called.
+      * @name GameCore#gameLoop
+      * @function
+      *
     */
     gameLoop: function() {
       this.currTime = new Date().getTime();
@@ -5552,7 +5847,10 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       }
     },
     /**
-      Launches the game loop.
+      * Launches the game loop.
+      * @name GameCore#launchLoop
+      * @function
+      *
     */
     launchLoop: function(){
       this.elapsedTime = 0;
@@ -5569,17 +5867,27 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       window.requestAnimationFrame(this.loopRunner);
     },
     /**
-      Updates the state of the game/animation based on the amount of elapsed time that has passed.
+      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
+      * @name GameCore#update
+      * @function
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
-    update: function(elapsedTime) {
-      //overide this function in your game instance
-    },
+    update: function(elapsedTime) {},
     /**
-      Override this if want to use it update sprites/objects on loading screen
+      * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
+      * @name GameCore#updateLoadingScreen
+      * @function
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
     updateLoadingScreen: function(elapsedTime) {},
     /**
-      Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+      * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+      * @name GameCore#draw
+      * @function
+      * @param {Context} context An HTML5 canvas drawing context.
+      *
     */
     draw: function(context){
       if(this.contextType === '2d'){
@@ -5587,6 +5895,14 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
         context.fillText("This game does not have its own draw function!", 10, 50);
       }
     },
+    /**
+      * Draws the progress of the resource manger to the screen while loading.
+      * Subclasses or instances may override for custom loading animations.
+      * @name GameCore#drawLoadingScreen
+      * @function
+      * @param {Context} context An HTML5 canvas drawing context.
+      *
+    */
     drawLoadingScreen: function(context){
       if(this.resourceManager && (this.contextType === '2d')){
         context.fillStyle   = this.loadingBackground;
@@ -5919,7 +6235,11 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.InputManager ********************************************/
+ /**
+ * The InputManager handles DOM events for use in games.
+ * @name InputManager
+ * @class InputManager
+ */
 define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
   function(GameAction, MouseAction, declare, on, domGeom, lang){
 
@@ -5931,6 +6251,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleMouse: true,
     handleTouch: true,
     handleKeys: true,
+
     constructor: function(args){
       declare.safeMixin(this, args);
       
@@ -5960,9 +6281,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
         this.touchAction = new MouseAction();
       }
     },
+
     /**
-      Maps a GameAction to a specific key. The key codes are defined in java.awt.KeyEvent.
-      If the key already has a GameAction mapped to it, the new GameAction overwrites it.
+      * Maps a GameAction to a specific key. The key codes are defined in dojo.keys.
+      * If the key already has a GameAction mapped to it, the new GameAction overwrites it.
+      * @name InputManager#mapToKey
+      * @function
+      * @param {GameAction} gameAction the GameAction to map
+      * @param {Object} keyCode dojo.keys key code, or character
+      *
     */
     mapToKey: function(gameAction, keyCode) {
       if(!this.keyActions){
@@ -5970,6 +6297,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       }
       this.keyActions[keyCode] = gameAction;
     },
+
+    /**
+      * Adds a GameAction to a key
+      * @name InputManager#addKeyAction
+      * @function
+      * @param {Object} keyCode dojo.keys key code, or character
+      * @param {Boolean=} initialPressOnly do only one fire of the action per keypress
+      *
+    */
     addKeyAction: function(keyCode, initialPressOnly){
       // TODO: Remove dependency on GameAction
       var ga = new GameAction();
@@ -6035,9 +6371,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
         gameAction.release();
       }
     },
-    /**
-      Get the mouse pointer location within the canvas' coordinates, not the page's
-    */
+
     getMouseLoc: function(evt){
       var coordsM = domGeom.position(this.canvas);
       return {
@@ -7606,7 +7940,11 @@ limitations under the License.
 
 **/
 
-/*********************** ResourceManager ********************************************/
+ /**
+ * The ResourceManager handles DOM events for use in games.
+ * @name ResourceManager
+ * @class ResourceManager
+ */
 define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
   return declare(null, {
@@ -7626,10 +7964,15 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       }
       
     },
+
     /**
-      Gets an image.
+      * Loads an image, and tracks if it has finished loading
+      * @name ResourceManager#loadImage
+      * @function
+      * @param {String} filename Filename of the image relative the Game's HTML page.
+      *
     */
-    loadImage: function(filename, width, height){
+    loadImage: function(filename){
       //if we already have the image, just return it
       for(var i = 0; i < this.resourceList.length; i++){
         if(this.resourceList[i].name === filename){
@@ -7657,6 +8000,14 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       this.resourceList.push(imgWrapper);
       return img;
     },
+
+    /**
+      * Loads an sound file, and tracks if it has finished loading
+      * @name ResourceManager#loadSound
+      * @function
+      * @param {String} filename Filename of the sound relative the Game's HTML page.
+      *
+    */
     loadSound: function(filename){
 
       if(this.soundsDir){
@@ -7698,6 +8049,16 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
       return soundObj;
     },
+
+    /**
+      * Plays a sound that was loaded from loadSound()
+      * @name ResourceManager#playSound
+      * @function
+      * @param {Object} sound A sound object that was returned from loadSound()
+      * @param {Boolean} loop whether or not to loop the sound (default: false)
+      * @param {Number} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      *
+    */
     playSound: function(sound, loop, noteOn){
       noteOn = noteOn || 0;
       if(this.audioContext && sound){
@@ -7718,6 +8079,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         }
       }
     },
+
+    /**
+      * Checks whether the resources have finished loading
+      * @name ResourceManager#resourcesReady
+      * @function
+    */
     resourcesReady: function(){
       if(this.allLoaded){
         return true;
@@ -7732,6 +8099,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         return true;
       }
     },
+
+    /**
+      * Gets the percentage of resources loaded.
+      * @name ResourceManager#getPercentComplete
+      * @function
+    */
     getPercentComplete: function(){
       var numComplete = 0.0;
       for(var i = 0; i < this.resourceList.length; i++){
@@ -7796,16 +8169,92 @@ define([
   './utils/pointInPolygon',
   './utils/distance',
   './utils/degreesFromCenter',
-  './utils/radiansFromCenter'
-], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter){
-   
+  './utils/radiansFromCenter',
+  './utils/scalePoints',
+  './utils/translatePoints'
+], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+ /**
+ * Math utility libraries
+ * @name utils
+ */
   return {
+    /**
+      * Convert degrees to raidans
+      * @name utils#degreesToRadians
+      * @function
+      * @param {Number} degrees
+      *
+    */
     degreesToRadians: degreesToRadians,
+
+    /**
+      * Convert radians to degrees
+      * @name utils#radiansToDegrees
+      * @function
+      * @param {Number} radians
+      *
+    */
     radiansToDegrees: radiansToDegrees,
+
+    /**
+      * Checks if a point is in a polygon
+      * @name utils#pointInPolygon
+      * @function
+      * @param {Object} point Object with an x and y value
+      * @param {Array} polygon Array of points
+      *
+    */
     pointInPolygon: pointInPolygon,
+
+    /**
+      * Returns the distance between 2 points
+      * @name utils#distance
+      * @function
+      * @param {Object} point1 Object with an x and y value
+      * @param {Object} point2 Object with an x and y value
+      *
+    */
     distance: distance,
+
+    /**
+      * Degrees a point is offset from a center point
+      * @name utils#degreesFromCenter
+      * @function
+      * @param {Object} center Object with an x and y value
+      * @param {Object} point Object with an x and y value
+      *
+    */
     degreesFromCenter: degreesFromCenter,
-    radiansFromCenter: radiansFromCenter
+
+    /**
+      * Radians a point is offset from a center point
+      * @name utils#radiansFromCenter
+      * @function
+      * @param {Object} center Object with an x and y value
+      * @param {Object} point Object with an x and y value
+      *
+    */
+    radiansFromCenter: radiansFromCenter,
+
+    /**
+      * Scale a point or array of points.
+      * @name utils#scalePoints
+      * @function
+      * @param {Object|Array} points A point or array of points
+      * @param {Object} scale Object with an x and y value
+      *
+    */
+    scalePoints: scalePoints,
+
+    /**
+      * Translate a point or array of points
+      * @name utils#translatePoints
+      * @function
+      * @param {Object|Array} points A point or array of points
+      * @param {Object} offset Object with an x and y value
+      *
+    */
+    translatePoints: translatePoints
   };
 });
 },
@@ -7896,6 +8345,400 @@ define(function(){
       }
 
     };
+});
+},
+'frozen/utils/scalePoints':function(){
+define([
+  'dojo/_base/array',
+  'dojo/_base/lang'
+], function(array, lang){
+  
+  var scalePoints = function(points, scale){
+    if(lang.isArray(points)){
+      array.forEach(points, function(point){
+        scalePoints(point, scale);
+      });
+    }else{
+      points.x = points.x * scale;
+      points.y = points.y * scale;
+    }
+    return points;
+  };
+
+  return scalePoints;
+});
+},
+'dojo/_base/array':function(){
+define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
+	// module:
+	//		dojo/_base/array
+
+	// our old simple function builder stuff
+	var cache = {}, u;
+
+	function buildFn(fn){
+		return cache[fn] = new Function("item", "index", "array", fn); // Function
+	}
+	// magic snippet: if(typeof fn == "string") fn = cache[fn] || buildFn(fn);
+
+	// every & some
+
+	function everyOrSome(some){
+		var every = !some;
+		return function(a, fn, o){
+			var i = 0, l = a && a.length || 0, result;
+			if(l && typeof a == "string") a = a.split("");
+			if(typeof fn == "string") fn = cache[fn] || buildFn(fn);
+			if(o){
+				for(; i < l; ++i){
+					result = !fn.call(o, a[i], i, a);
+					if(some ^ result){
+						return !result;
+					}
+				}
+			}else{
+				for(; i < l; ++i){
+					result = !fn(a[i], i, a);
+					if(some ^ result){
+						return !result;
+					}
+				}
+			}
+			return every; // Boolean
+		};
+	}
+
+	// indexOf, lastIndexOf
+
+	function index(up){
+		var delta = 1, lOver = 0, uOver = 0;
+		if(!up){
+			delta = lOver = uOver = -1;
+		}
+		return function(a, x, from, last){
+			if(last && delta > 0){
+				// TODO: why do we use a non-standard signature? why do we need "last"?
+				return array.lastIndexOf(a, x, from);
+			}
+			var l = a && a.length || 0, end = up ? l + uOver : lOver, i;
+			if(from === u){
+				i = up ? lOver : l + uOver;
+			}else{
+				if(from < 0){
+					i = l + from;
+					if(i < 0){
+						i = lOver;
+					}
+				}else{
+					i = from >= l ? l + uOver : from;
+				}
+			}
+			if(l && typeof a == "string") a = a.split("");
+			for(; i != end; i += delta){
+				if(a[i] == x){
+					return i; // Number
+				}
+			}
+			return -1; // Number
+		};
+	}
+
+	var array = {
+		// summary:
+		//		The Javascript v1.6 array extensions.
+
+		every: everyOrSome(false),
+		/*=====
+		 every: function(arr, callback, thisObject){
+			 // summary:
+			 //		Determines whether or not every item in arr satisfies the
+			 //		condition implemented by callback.
+			 // arr: Array|String
+			 //		the array to iterate on. If a string, operates on individual characters.
+			 // callback: Function|String
+			 //		a function is invoked with three arguments: item, index,
+			 //		and array and returns true if the condition is met.
+			 // thisObject: Object?
+			 //		may be used to scope the call to callback
+			 // returns: Boolean
+			 // description:
+			 //		This function corresponds to the JavaScript 1.6 Array.every() method, with one difference: when
+			 //		run over sparse arrays, this implementation passes the "holes" in the sparse array to
+			 //		the callback function with a value of undefined. JavaScript 1.6's every skips the holes in the sparse array.
+			 //		For more details, see:
+			 //		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/every
+			 // example:
+			 //	|	// returns false
+			 //	|	array.every([1, 2, 3, 4], function(item){ return item>1; });
+			 // example:
+			 //	|	// returns true
+			 //	|	array.every([1, 2, 3, 4], function(item){ return item>0; });
+		 },
+		 =====*/
+
+		some: everyOrSome(true),
+		/*=====
+		some: function(arr, callback, thisObject){
+			// summary:
+			//		Determines whether or not any item in arr satisfies the
+			//		condition implemented by callback.
+			// arr: Array|String
+			//		the array to iterate over. If a string, operates on individual characters.
+			// callback: Function|String
+			//		a function is invoked with three arguments: item, index,
+			//		and array and returns true if the condition is met.
+			// thisObject: Object?
+			//		may be used to scope the call to callback
+			// returns: Boolean
+			// description:
+			//		This function corresponds to the JavaScript 1.6 Array.some() method, with one difference: when
+			//		run over sparse arrays, this implementation passes the "holes" in the sparse array to
+			//		the callback function with a value of undefined. JavaScript 1.6's some skips the holes in the sparse array.
+			//		For more details, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/some
+			// example:
+			//	| // is true
+			//	| array.some([1, 2, 3, 4], function(item){ return item>1; });
+			// example:
+			//	| // is false
+			//	| array.some([1, 2, 3, 4], function(item){ return item<1; });
+		},
+		=====*/
+
+		indexOf: index(true),
+		/*=====
+		indexOf: function(arr, value, fromIndex, findLast){
+			// summary:
+			//		locates the first index of the provided value in the
+			//		passed array. If the value is not found, -1 is returned.
+			// description:
+			//		This method corresponds to the JavaScript 1.6 Array.indexOf method, with one difference: when
+			//		run over sparse arrays, the Dojo function invokes the callback for every index whereas JavaScript
+			//		1.6's indexOf skips the holes in the sparse array.
+			//		For details on this method, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/indexOf
+			// arr: Array
+			// value: Object
+			// fromIndex: Integer?
+			// findLast: Boolean?
+			// returns: Number
+		},
+		=====*/
+
+		lastIndexOf: index(false),
+		/*=====
+		lastIndexOf: function(arr, value, fromIndex){
+			// summary:
+			//		locates the last index of the provided value in the passed
+			//		array. If the value is not found, -1 is returned.
+			// description:
+			//		This method corresponds to the JavaScript 1.6 Array.lastIndexOf method, with one difference: when
+			//		run over sparse arrays, the Dojo function invokes the callback for every index whereas JavaScript
+			//		1.6's lastIndexOf skips the holes in the sparse array.
+			//		For details on this method, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/lastIndexOf
+			// arr: Array,
+			// value: Object,
+			// fromIndex: Integer?
+			// returns: Number
+		},
+		=====*/
+
+		forEach: function(arr, callback, thisObject){
+			// summary:
+			//		for every item in arr, callback is invoked. Return values are ignored.
+			//		If you want to break out of the loop, consider using array.every() or array.some().
+			//		forEach does not allow breaking out of the loop over the items in arr.
+			// arr:
+			//		the array to iterate over. If a string, operates on individual characters.
+			// callback:
+			//		a function is invoked with three arguments: item, index, and array
+			// thisObject:
+			//		may be used to scope the call to callback
+			// description:
+			//		This function corresponds to the JavaScript 1.6 Array.forEach() method, with one difference: when
+			//		run over sparse arrays, this implementation passes the "holes" in the sparse array to
+			//		the callback function with a value of undefined. JavaScript 1.6's forEach skips the holes in the sparse array.
+			//		For more details, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/forEach
+			// example:
+			//	| // log out all members of the array:
+			//	| array.forEach(
+			//	|		[ "thinger", "blah", "howdy", 10 ],
+			//	|		function(item){
+			//	|			0 && console.log(item);
+			//	|		}
+			//	| );
+			// example:
+			//	| // log out the members and their indexes
+			//	| array.forEach(
+			//	|		[ "thinger", "blah", "howdy", 10 ],
+			//	|		function(item, idx, arr){
+			//	|			0 && console.log(item, "at index:", idx);
+			//	|		}
+			//	| );
+			// example:
+			//	| // use a scoped object member as the callback
+			//	|
+			//	| var obj = {
+			//	|		prefix: "logged via obj.callback:",
+			//	|		callback: function(item){
+			//	|			0 && console.log(this.prefix, item);
+			//	|		}
+			//	| };
+			//	|
+			//	| // specifying the scope function executes the callback in that scope
+			//	| array.forEach(
+			//	|		[ "thinger", "blah", "howdy", 10 ],
+			//	|		obj.callback,
+			//	|		obj
+			//	| );
+			//	|
+			//	| // alternately, we can accomplish the same thing with lang.hitch()
+			//	| array.forEach(
+			//	|		[ "thinger", "blah", "howdy", 10 ],
+			//	|		lang.hitch(obj, "callback")
+			//	| );
+			// arr: Array|String
+			// callback: Function|String
+			// thisObject: Object?
+
+			var i = 0, l = arr && arr.length || 0;
+			if(l && typeof arr == "string") arr = arr.split("");
+			if(typeof callback == "string") callback = cache[callback] || buildFn(callback);
+			if(thisObject){
+				for(; i < l; ++i){
+					callback.call(thisObject, arr[i], i, arr);
+				}
+			}else{
+				for(; i < l; ++i){
+					callback(arr[i], i, arr);
+				}
+			}
+		},
+
+		map: function(arr, callback, thisObject, Ctr){
+			// summary:
+			//		applies callback to each element of arr and returns
+			//		an Array with the results
+			// arr: Array|String
+			//		the array to iterate on. If a string, operates on
+			//		individual characters.
+			// callback: Function|String
+			//		a function is invoked with three arguments, (item, index,
+			//		array),	 and returns a value
+			// thisObject: Object?
+			//		may be used to scope the call to callback
+			// returns: Array
+			// description:
+			//		This function corresponds to the JavaScript 1.6 Array.map() method, with one difference: when
+			//		run over sparse arrays, this implementation passes the "holes" in the sparse array to
+			//		the callback function with a value of undefined. JavaScript 1.6's map skips the holes in the sparse array.
+			//		For more details, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/map
+			// example:
+			//	| // returns [2, 3, 4, 5]
+			//	| array.map([1, 2, 3, 4], function(item){ return item+1 });
+
+			// TODO: why do we have a non-standard signature here? do we need "Ctr"?
+			var i = 0, l = arr && arr.length || 0, out = new (Ctr || Array)(l);
+			if(l && typeof arr == "string") arr = arr.split("");
+			if(typeof callback == "string") callback = cache[callback] || buildFn(callback);
+			if(thisObject){
+				for(; i < l; ++i){
+					out[i] = callback.call(thisObject, arr[i], i, arr);
+				}
+			}else{
+				for(; i < l; ++i){
+					out[i] = callback(arr[i], i, arr);
+				}
+			}
+			return out; // Array
+		},
+
+		filter: function(arr, callback, thisObject){
+			// summary:
+			//		Returns a new Array with those items from arr that match the
+			//		condition implemented by callback.
+			// arr: Array
+			//		the array to iterate over.
+			// callback: Function|String
+			//		a function that is invoked with three arguments (item,
+			//		index, array). The return of this function is expected to
+			//		be a boolean which determines whether the passed-in item
+			//		will be included in the returned array.
+			// thisObject: Object?
+			//		may be used to scope the call to callback
+			// returns: Array
+			// description:
+			//		This function corresponds to the JavaScript 1.6 Array.filter() method, with one difference: when
+			//		run over sparse arrays, this implementation passes the "holes" in the sparse array to
+			//		the callback function with a value of undefined. JavaScript 1.6's filter skips the holes in the sparse array.
+			//		For more details, see:
+			//		https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/filter
+			// example:
+			//	| // returns [2, 3, 4]
+			//	| array.filter([1, 2, 3, 4], function(item){ return item>1; });
+
+			// TODO: do we need "Ctr" here like in map()?
+			var i = 0, l = arr && arr.length || 0, out = [], value;
+			if(l && typeof arr == "string") arr = arr.split("");
+			if(typeof callback == "string") callback = cache[callback] || buildFn(callback);
+			if(thisObject){
+				for(; i < l; ++i){
+					value = arr[i];
+					if(callback.call(thisObject, value, i, arr)){
+						out.push(value);
+					}
+				}
+			}else{
+				for(; i < l; ++i){
+					value = arr[i];
+					if(callback(value, i, arr)){
+						out.push(value);
+					}
+				}
+			}
+			return out; // Array
+		},
+
+		clearCache: function(){
+			cache = {};
+		}
+	};
+
+
+	 1  && lang.mixin(dojo, array);
+
+	return array;
+});
+
+},
+'frozen/utils/translatePoints':function(){
+define([
+  'dojo/_base/array',
+  'dojo/_base/lang'
+], function(array, lang){
+  
+  var translatePoints = function(points, translation){
+    if(lang.isArray(points)){
+      array.forEach(points, function(point){
+        translatePoints(point, translation);
+      });
+    }else{
+      if(translation.hasOwnProperty('x')){
+        points.x+= translation.x;
+      }
+
+      if(translation.hasOwnProperty('y')){
+        points.y+= translation.y;
+      }
+      
+    }
+    return points;
+  };
+
+  return translatePoints;
 });
 },
 'dojo/keys':function(){

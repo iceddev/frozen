@@ -19,6 +19,12 @@ limitations under the License.
 /*********************** mwe.GameCore ********************************************/
 define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
 
+ /**
+ * The GameCore class provides the base to build games on.
+ * @name GameCore
+ * @class GameCore
+ */
+
   return declare(null, {
     statics: {
       FONT_SIZE: 24
@@ -37,13 +43,19 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       declare.safeMixin(this, args);
     },
     /**
-      Signals the game loop that it's time to quit
+      * Signals the game loop that it's time to quit
+      * @name GameCore#stop
+      * @function
+      *
     */
     stop: function() {
         this.isRunning = false;
     },
     /**
-      Calls init() and gameLoop()
+      * Launches the game.
+      * @name GameCore#run
+      * @function
+      *
     */
     run: function() {
       if(!this.isRunning){
@@ -54,11 +66,18 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       }
     },
     /**
-      Should be overidden in the subclasses to create images
+      * Can be overidden in GameCore subclasses to load images and sounds
+      * @name GameCore#loadResources
+      * @function
+      * @param {ResourceManager} resourceManager
+      *
     */
     loadResources: function(resourceManager){},
     /**
-      Sets full screen mode and initiates and objects.
+      * Sets the screen mode and initiates and objects.
+      * @name GameCore#init
+      * @function
+      *
     */
     init: function() {
       if(!this.canvas){
@@ -103,15 +122,27 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
 
     },
     /**
-      Should be overidden in the subclasses to map input to actions
+      * Can be overidden in the subclasses to map user input to actions
+      * @name GameCore#initInput
+      * @function
+      * @param {InputManager} inputManager
+      *
     */
     initInput: function(inputManager) {},
     /**
-      Should be overidden in the subclasses to deal with user input
+      * Can be overidden in the subclasses to deal with user input before updating the game state
+      * @name GameCore#handleInput
+      * @function
+      * @param {InputManager} inputManager
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
     handleInput: function(inputManager,elapsedTime) {},
     /**
-      Runs through the game loop until stop() is called.
+      * Runs through the game loop until stop() is called.
+      * @name GameCore#gameLoop
+      * @function
+      *
     */
     gameLoop: function() {
       this.currTime = new Date().getTime();
@@ -135,7 +166,10 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       }
     },
     /**
-      Launches the game loop.
+      * Launches the game loop.
+      * @name GameCore#launchLoop
+      * @function
+      *
     */
     launchLoop: function(){
       this.elapsedTime = 0;
@@ -152,17 +186,27 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
       window.requestAnimationFrame(this.loopRunner);
     },
     /**
-      Updates the state of the game/animation based on the amount of elapsed time that has passed.
+      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
+      * @name GameCore#update
+      * @function
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
-    update: function(elapsedTime) {
-      //overide this function in your game instance
-    },
+    update: function(elapsedTime) {},
     /**
-      Override this if want to use it update sprites/objects on loading screen
+      * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
+      * @name GameCore#updateLoadingScreen
+      * @function
+      * @param {Number} elapsedTime elapsed time in milliseconds
+      *
     */
     updateLoadingScreen: function(elapsedTime) {},
     /**
-      Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+      * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+      * @name GameCore#draw
+      * @function
+      * @param {Context} context An HTML5 canvas drawing context.
+      *
     */
     draw: function(context){
       if(this.contextType === '2d'){
@@ -170,6 +214,14 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
         context.fillText("This game does not have its own draw function!", 10, 50);
       }
     },
+    /**
+      * Draws the progress of the resource manger to the screen while loading.
+      * Subclasses or instances may override for custom loading animations.
+      * @name GameCore#drawLoadingScreen
+      * @function
+      * @param {Context} context An HTML5 canvas drawing context.
+      *
+    */
     drawLoadingScreen: function(context){
       if(this.resourceManager && (this.contextType === '2d')){
         context.fillStyle   = this.loadingBackground;

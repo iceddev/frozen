@@ -71,6 +71,7 @@ var profile = (function(){
           'frozen/box2d/CircleEntity',
           'frozen/box2d/Entity',
           'frozen/box2d/PolygonEntity',
+          'frozen/box2d/MultiPolygonEntity',
           'frozen/box2d/RectangleEntity',
           'frozen/reiner/Creature',
           'frozen/AnimFrame',

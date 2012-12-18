@@ -16,6 +16,13 @@ limitations under the License.
 
 **/
 
+/**
+ * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
+ * @name Entity
+ * @class Entity
+ * @memberOf box2d
+ */
+
 define([
   'dojo/_base/declare',
   'dojo/_base/lang'
@@ -43,6 +50,14 @@ define([
     update: function(state){
       lang.mixin(this, state);
     },
+
+    /**
+      * Draws the Entity at a given scale
+      * @name Entity#draw
+      * @function
+      * @param {2dContext} ctx the HTML5 2d drawing context
+      * @param {Number} scale the scale to draw the entity at
+    */
     draw: function(ctx, scale){
       //black circle in entity's location
       ctx.fillStyle = 'black';
@@ -58,18 +73,7 @@ define([
       ctx.closePath();
       ctx.fill();
     }
-    // TODO: re-implement or remove
-    // build: function(def) {
-    //   if (def.radius) {
-    //     return new CircleEntity(def);
-    //   } else if (def.points) {
-    //     return new PolygonEntity(def);
-    //   } else if (def.img) {
-    //     return new ImageEntity(def);
-    //   }else {
-    //     return new RectangleEntity(def);
-    //   }
-    // }
+    
   });
 
 });

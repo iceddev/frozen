@@ -16,7 +16,11 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.InputManager ********************************************/
+ /**
+ * The InputManager handles DOM events for use in games.
+ * @name InputManager
+ * @class InputManager
+ */
 define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
   function(GameAction, MouseAction, declare, on, domGeom, lang){
 
@@ -28,6 +32,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleMouse: true,
     handleTouch: true,
     handleKeys: true,
+
     constructor: function(args){
       declare.safeMixin(this, args);
       
@@ -57,9 +62,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
         this.touchAction = new MouseAction();
       }
     },
+
     /**
-      Maps a GameAction to a specific key. The key codes are defined in java.awt.KeyEvent.
-      If the key already has a GameAction mapped to it, the new GameAction overwrites it.
+      * Maps a GameAction to a specific key. The key codes are defined in dojo.keys.
+      * If the key already has a GameAction mapped to it, the new GameAction overwrites it.
+      * @name InputManager#mapToKey
+      * @function
+      * @param {GameAction} gameAction the GameAction to map
+      * @param {Object} keyCode dojo.keys key code, or character
+      *
     */
     mapToKey: function(gameAction, keyCode) {
       if(!this.keyActions){
@@ -67,6 +78,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       }
       this.keyActions[keyCode] = gameAction;
     },
+
+    /**
+      * Adds a GameAction to a key
+      * @name InputManager#addKeyAction
+      * @function
+      * @param {Object} keyCode dojo.keys key code, or character
+      * @param {Boolean=} initialPressOnly do only one fire of the action per keypress
+      *
+    */
     addKeyAction: function(keyCode, initialPressOnly){
       // TODO: Remove dependency on GameAction
       var ga = new GameAction();
@@ -132,9 +152,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
         gameAction.release();
       }
     },
-    /**
-      Get the mouse pointer location within the canvas' coordinates, not the page's
-    */
+
     getMouseLoc: function(evt){
       var coordsM = domGeom.position(this.canvas);
       return {

@@ -21,6 +21,12 @@ module.exports = function(grunt) {
         cwd: './'
       }
     },
+    jsdoc : {
+        dist : {
+            src: ['src/**/*.js'],
+            dest: 'doc'
+        }
+    },
     jshint: {
       options: {
         curly: true,
@@ -48,6 +54,8 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-dojo');
+
+  grunt.loadNpmTasks('grunt-jsdoc-plugin');
 
   // Default task.
   grunt.registerTask('default', 'lint test');

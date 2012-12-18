@@ -16,6 +16,13 @@ limitations under the License.
 
 **/
 
+/**
+ * This Entity represents a polygon which is build from an array of points.
+ * @name PolygonEntity
+ * @class PolygonEntity
+ * @extends Entity
+*/
+
 define([
   'dojo/_base/declare',
   './Entity'

@@ -17,8 +17,9 @@ limitations under the License.
 **/
 
 define([
-  'dojo/_base/declare'
-], function(declare){
+  'dojo/_base/declare',
+  'dojo/_base/lang'
+], function(declare, lang){
 
   // box2d globals
 
@@ -31,7 +32,8 @@ define([
     , B2MassData = Box2D.Collision.Shapes.b2MassData
     , B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
     , B2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
   return declare(null, {
     intervalRate: 60,
@@ -100,7 +102,7 @@ define([
       var bodiesState = this.getState();
       for (var id in bodiesState) {
         var entity = world[id];
-        if (entity && !entity.staticBody){
+        if (entity){ //&& !entity.staticBody){
           entity.update(bodiesState[id]);
         }
       }
@@ -116,6 +118,7 @@ define([
     addBody: function(entity) {
       var bodyDef = new B2BodyDef();
       var fixDef = new B2FixtureDef();
+      var i,j,points,vec,vecs;
       fixDef.restitution = entity.restitution;
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
@@ -126,28 +129,50 @@ define([
         bodyDef.type = B2Body.b2_dynamicBody;
       }
 
-      if (entity.radius) {
-        fixDef.shape = new B2CircleShape(entity.radius);
-      } else if (entity.points) {
-        var points = [];
-        for (var i = 0; i < entity.points.length; i++) {
-          var vec = new B2Vec2();
-          vec.Set(entity.points[i].x, entity.points[i].y);
-          points[i] = vec;
-        }
-        fixDef.shape = new B2PolygonShape();
-        fixDef.shape.SetAsArray(points, points.length);
-      } else {
-        fixDef.shape = new B2PolygonShape();
-        fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
-      }
       bodyDef.position.x = entity.x;
       bodyDef.position.y = entity.y;
       bodyDef.userData = entity.id;
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
-      this.bodiesMap[entity.id] = this.world.CreateBody(bodyDef);
-      this.fixturesMap[entity.id] = this.bodiesMap[entity.id].CreateFixture(fixDef);
+      var body = this.world.CreateBody(bodyDef);
+      
+
+      if (entity.radius) { //circle
+        fixDef.shape = new B2CircleShape(entity.radius);
+        body.CreateFixture(fixDef);
+      } else if (entity.points) { //polygon
+        points = [];
+        for (i = 0; i < entity.points.length; i++) {
+          vec = new B2Vec2();
+          vec.Set(entity.points[i].x, entity.points[i].y);
+          points[i] = vec;
+        }
+        fixDef.shape = new B2PolygonShape();
+        fixDef.shape.SetAsArray(points, points.length);
+        body.CreateFixture(fixDef);
+      } else if(entity.polys) { //complex object
+          for (j = 0; j < entity.polys.length; j++) {
+              points = entity.polys[j];
+              vecs = [];
+              for (i = 0; i < points.length; i++) {
+                  vec = new B2Vec2();
+                  vec.Set(points[i].x, points[i].y);
+                  vecs[i] = vec;
+              }
+              fixDef.shape = new B2PolygonShape();
+              fixDef.shape.SetAsArray(vecs, vecs.length);
+              body.CreateFixture(fixDef);
+          }
+      } else { //rectangle
+        fixDef.shape = new B2PolygonShape();
+        fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
+        body.CreateFixture(fixDef);
+      }
+      
+      //this.fixturesMap[entity.id] =
+      
+
+      this.bodiesMap[entity.id] = body;
     },
     setPosition: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
@@ -193,7 +218,7 @@ define([
       if(this.bodiesMap[id]){
         this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
         this.world.DestroyBody(this.bodiesMap[id]);
-        delete this.fixturesMap[id];
+        //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
       }
     },
@@ -221,6 +246,16 @@ define([
         };
       }
       this.world.SetContactListener(listener);
+    },
+    addRevoluteJoint : function(body1Id, body2Id, jointAttributes) {
+      var body1 = this.bodiesMap[body1Id];
+      var body2 = this.bodiesMap[body2Id];
+      var joint = new B2RevoluteJointDef();
+      joint.Initialize(body1, body2, body1.GetWorldCenter());
+      if (jointAttributes) {
+        lang.mixin(joint, jointAttributes);
+      }
+      this.world.CreateJoint(joint);
     },
     beginContact: function(idA, idB){
 
