@@ -1949,6 +1949,12 @@ limitations under the License.
 
 **/
 
+/**
+ * This wraps the box2d world that contains bodies, shapes, and performs the physics calculations.
+ * @name Box
+ * @class Box
+ */
+
 define([
   'dojo/_base/declare',
   'dojo/_base/lang'
@@ -1995,7 +2001,13 @@ define([
         this.addContactListener(this.contactListener || this);
       }
     },
-    update: function() {
+
+    /**
+      * Update the box2d physics calculations
+      * @name Box#update
+      * @function
+    */
+    update: function(millis) {
       // TODO: use window.performance.now()???
 
       if(this.resolveCollisions){
@@ -2003,11 +2015,23 @@ define([
       }
 
       var start = Date.now();
-      var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
-      this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
-      this.world.ClearForces();
+      if(millis){
+        this.world.Step(millis / 1000 /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.world.ClearForces();
+      }else{
+        var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
+        this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.world.ClearForces();
+      }
+
       return (Date.now() - start);
     },
+
+    /**
+      * Gets the current state of the objects in the box2d world.
+      * @name Box#getState
+      * @function
+    */
     getState: function() {
       var state = {};
       for (var b = this.world.GetBodyList(); b; b = b.m_next) {
@@ -2030,16 +2054,24 @@ define([
       }
       return state;
     },
-    updateExternalState: function(world){
+
+    /**
+      * Updates the state in the Entity objects that are modified by box2d calculations.
+      * @name Box#updateExternalState
+      * @function
+      * @param {Object|Array} entities An array or map of Entity objects
+    */
+    updateExternalState: function(entities){
       //update the dyanmic shapes with box2d calculations
       var bodiesState = this.getState();
       for (var id in bodiesState) {
-        var entity = world[id];
-        if (entity){ //&& !entity.staticBody){
+        var entity = entities[id];
+        if (entity){
           entity.update(bodiesState[id]);
         }
       }
     },
+
     setBodies: function(bodyEntities) {
       console.log('bodies',bodyEntities);
       for(var id in bodyEntities) {
@@ -2048,6 +2080,13 @@ define([
       }
       this.ready = true;
     },
+
+    /**
+      * Add an Entity to the box2d world which will internally be converted to a box2d body and fixture
+      * @name Box#addBody
+      * @function
+      * @param {Entity} entity Any Entity object
+    */
     addBody: function(entity) {
       var bodyDef = new B2BodyDef();
       var fixDef = new B2FixtureDef();
@@ -2101,16 +2140,54 @@ define([
         fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
         body.CreateFixture(fixDef);
       }
-      
-      //this.fixturesMap[entity.id] =
-      
+         
 
       this.bodiesMap[entity.id] = body;
     },
+
+    /**
+      * Set the position of an entity.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setPosition
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} x The new x coordinate in box2d space
+      * @param {Number} y The new y coordinate in box2d space
+    */
     setPosition: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
       body.SetPosition(new B2Vec2(x, y));
     },
+
+    /**
+      * Set the linear velocity of an entity.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setLinearVelocity
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} x The new x component of the velocity
+      * @param {Number} y The new y component of the velocity
+    */
+    setLinearVelocity: function(bodyId, x, y){
+      var body = this.bodiesMap[bodyId];
+      body.SetLinearVelocity(new B2Vec2(x, y));
+    },
+
+    /**
+      * Apply an impulse to a body at an angle in degrees
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#applyImpulseDegrees
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} degrees The angle in which to apply the impulse.
+      * @param {Number} power The impulse power.
+    */
     applyImpulseDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
@@ -2119,6 +2196,18 @@ define([
         body.GetWorldCenter()
       );
     },
+
+    /**
+      * Apply a force to a body at an angle in degrees
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#applyForceDegrees
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} degrees The angle in which to apply the force.
+      * @param {Number} power The power of the force. (The ability to destroy a planet is insignificant next to this)
+    */
     applyForceDegrees : function(bodyId, degrees, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
@@ -2127,6 +2216,18 @@ define([
         body.GetWorldCenter()
       );
     },
+
+    /**
+      * Apply an impulse to a body at an angle in radians
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#applyImpulse
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} radians The angle in which to apply the impulse.
+      * @param {Number} power The impulse power.
+    */
     applyImpulse : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyImpulse(
@@ -2135,6 +2236,18 @@ define([
         body.GetWorldCenter()
       );
     },
+
+    /**
+      * Apply a force to a body at an angle in radians
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#applyForce
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} radians The angle in which to apply the force.
+      * @param {Number} power The power of the force. (The ability to destroy a planet is insignificant next to this)
+    */
     applyForce : function(bodyId, radians, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyForce(
@@ -2143,10 +2256,32 @@ define([
         body.GetWorldCenter()
       );
     },
+
+    /**
+      * Apply torque (rotation force) to a body.
+      * Positive values are clockwise, negative values are counter-clockwise.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#applyTorque
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} power The power of the torque.
+    */
     applyTorque : function(bodyId, power) {
       var body = this.bodiesMap[bodyId];
       body.ApplyTorque(power);
     },
+
+    /**
+      * Remove a body from the box2d world
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#removeBody
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+    */
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
@@ -2180,6 +2315,18 @@ define([
       }
       this.world.SetContactListener(listener);
     },
+
+    /**
+      * Add a revolute joint between two bodies at the center of the first body.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#addRevoluteJoint
+      * @function
+      * @param {Number} body1Id The id of the first Entity/Body
+      * @param {Number} body2Id The id of the second Entity/Body
+      * @param {Object} jointAttributes Any box2d jointAttributes you wish to mixin to the joint.
+    */
     addRevoluteJoint : function(body1Id, body2Id, jointAttributes) {
       var body1 = this.bodiesMap[body1Id];
       var body2 = this.bodiesMap[body2Id];
@@ -4626,7 +4773,6 @@ limitations under the License.
  * This represents a Circly body and shape in a Box2d world
  * @name CircleEntity
  * @class CircleEntity
- * @memberOf box2d
  * @extends Entity
  */
 
@@ -4642,7 +4788,7 @@ define([
     },
 
     /**
-      * Draws the Entity at a given scale
+      * Draws the CircelEntity at a given scale
       * @name CircleEntity#draw
       * @function
     */
@@ -4688,7 +4834,6 @@ limitations under the License.
  * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
  * @name Entity
  * @class Entity
- * @memberOf box2d
  */
 
 define([
@@ -4712,7 +4857,7 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
-    constructor: function(/* Object */args){
+    constructor: function(args){
       declare.safeMixin(this, args);
     },
     update: function(state){
@@ -4846,8 +4991,8 @@ define([
       * Draws each polygon in the entity
       * @name MultiPolygonEntity#draw
       * @function
-      * @param {2dContext} ctx
-      * @param {Number} scale
+      * @param {2dContext} ctx the HTML5 2d drawing context
+      * @param {Number} scale the scale to draw the entity at
       *
       */
     draw: function(ctx, scale){
@@ -4897,8 +5042,8 @@ limitations under the License.
 
 /**
  * This Entity represents a Rectangle
- * @name MultiPolygonEntity
- * @class MultiPolygonEntity
+ * @name RectangleEntity
+ * @class RectangleEntity
  * @extends Entity
  */
 
@@ -5424,7 +5569,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     },
 
     /**
-      * Draws the current frame into a 2d context
+      * Draws the current frame into a 2d context.
       * @name Animation#draw
       * @function
       * @param {2dContext} context The HTML5 drawing canvas
@@ -5704,6 +5849,20 @@ define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', '
  * The GameCore class provides the base to build games on.
  * @name GameCore
  * @class GameCore
+ * @example
+var myGame = new GameCore({
+  canvasId: 'myCanvas',
+  update: function(millis){
+    // do updating of game state
+  },
+  draw: function(context){
+    // do drawing of the game
+  }
+});
+
+//start the game
+myGame.run();
+
  */
 
   return declare(null, {

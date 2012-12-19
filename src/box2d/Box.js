@@ -74,7 +74,7 @@ define([
       * @name Box#update
       * @function
     */
-    update: function() {
+    update: function(millis) {
       // TODO: use window.performance.now()???
 
       if(this.resolveCollisions){
@@ -82,9 +82,15 @@ define([
       }
 
       var start = Date.now();
-      var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
-      this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
-      this.world.ClearForces();
+      if(millis){
+        this.world.Step(millis / 1000 /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.world.ClearForces();
+      }else{
+        var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
+        this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.world.ClearForces();
+      }
+
       return (Date.now() - start);
     },
 
@@ -126,7 +132,7 @@ define([
       //update the dyanmic shapes with box2d calculations
       var bodiesState = this.getState();
       for (var id in bodiesState) {
-        var entity = world[id];
+        var entity = entities[id];
         if (entity){
           entity.update(bodiesState[id]);
         }
@@ -220,6 +226,22 @@ define([
     setPosition: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
       body.SetPosition(new B2Vec2(x, y));
+    },
+
+    /**
+      * Set the linear velocity of an entity.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setLinearVelocity
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} x The new x component of the velocity
+      * @param {Number} y The new y component of the velocity
+    */
+    setLinearVelocity: function(bodyId, x, y){
+      var body = this.bodiesMap[bodyId];
+      body.SetLinearVelocity(new B2Vec2(x, y));
     },
 
     /**

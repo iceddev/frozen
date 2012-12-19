@@ -43,7 +43,7 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
-    constructor: function(/* Object */args){
+    constructor: function(args){
       declare.safeMixin(this, args);
     },
     update: function(state){
