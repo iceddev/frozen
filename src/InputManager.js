@@ -32,7 +32,8 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleMouse: true,
     handleTouch: true,
     handleKeys: true,
-
+    gameArea: null,
+    canvasPercentage: null,
     constructor: function(args){
       declare.safeMixin(this, args);
       
@@ -50,6 +51,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
       if(this.handleTouch){
         on(document, 'touchend', lang.hitch(this, "touchEnd"));
+        //on(document, 'touchcancel', lang.hitch(this, "touchEnd"));
         on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
         on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
       }
@@ -60,6 +62,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       
       if(!this.touchAction){
         this.touchAction = new MouseAction();
+      }
+
+      if(this.gameArea && this.canvasPercentage){
+        //on(window, 'touchmove', lang.hitch(this, "resize"));
+        //on(window, 'orientationchange', lang.hitch(this, "resize"));
+        window.addEventListener('resize', lang.hitch(this, "resize"), false);
+        window.addEventListener('orientationchange', lang.hitch(this, "resize"), false);
+        //window.addEventListener('resize', this.resize, false);
+        //window.addEventListener('orientationchange', this.resize, false);
       }
     },
 
@@ -126,6 +137,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     },
     touchMove: function(e){
       this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
+      e.preventDefault();
     },
     getKeyAction: function(e) {
       if (this.keyActions.length) {
@@ -155,10 +167,41 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
     getMouseLoc: function(evt){
       var coordsM = domGeom.position(this.canvas);
-      return {
-        x: Math.round(evt.clientX - coordsM.x),
-        y: Math.round(evt.clientY - coordsM.y)
-      };
+      if(this.zoomRatio){
+        return {
+          x: Math.round((evt.clientX - coordsM.x) / this.zoomRatio),
+          y: Math.round((evt.clientY - coordsM.y) / this.zoomRatio)
+        };
+      }else{
+        return {
+          x: Math.round(evt.clientX - coordsM.x),
+          y: Math.round(evt.clientY - coordsM.y)
+        };
+      }
+    },
+
+    resize: function(){
+      if(this.gameArea && this.canvasPercentage && this.canvas){
+        var widthToHeight = this.canvas.width / this.canvas.height;
+        var newWidth = window.innerWidth;
+        var newHeight = window.innerHeight;
+        var newWidthToHeight = newWidth / newHeight;
+
+        if (newWidthToHeight > widthToHeight) {
+            newWidth = Math.round(newHeight * widthToHeight);
+            this.gameArea.style.height = newHeight + 'px';
+            this.gameArea.style.width = newWidth + 'px';
+            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+        } else {
+            newHeight = Math.round(newWidth / widthToHeight);
+            this.gameArea.style.width = newWidth + 'px';
+            this.gameArea.style.height = newHeight + 'px';
+            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+        }
+
+        this.canvas.style.width = Math.floor(this.canvasPercentage * 100) + '%';
+        this.canvas.style.height = Math.floor(this.canvasPercentage * 100) + '%';
+      }
     }
   });
 

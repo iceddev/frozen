@@ -4984,6 +4984,7 @@ define([
 
   return declare([Entity], {
     polys: [],
+    points: null,
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
@@ -5879,6 +5880,8 @@ myGame.run();
     inputManager: null,
     loadingForeground: '#00F',
     loadingBackground: '#FFF',
+    gameAreaId: null,
+    canvasPercentage: 0,
     constructor: function(args){
       declare.safeMixin(this, args);
     },
@@ -5946,11 +5949,24 @@ myGame.run();
         this.width = this.canvas.width;
       }
 
+
       if(!this.inputManager){
-        this.inputManager = new InputManager({
+        //hande resizing if gameArea and canvasPercentage are specified
+        if(this.gameAreaId && this.canvasPercentage){
+          this.inputManager = new InputManager({
+            canvas: this.canvas,
+            gameArea: dom.byId(this.gameAreaId),
+            canvasPercentage: this.canvasPercentage
+          });
+        }else{
+          this.inputManager = new InputManager({
           canvas: this.canvas
         });
+        }
+        
       }
+
+      this.inputManager.resize();
 
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();
@@ -6410,7 +6426,8 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleMouse: true,
     handleTouch: true,
     handleKeys: true,
-
+    gameArea: null,
+    canvasPercentage: null,
     constructor: function(args){
       declare.safeMixin(this, args);
       
@@ -6428,6 +6445,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
       if(this.handleTouch){
         on(document, 'touchend', lang.hitch(this, "touchEnd"));
+        //on(document, 'touchcancel', lang.hitch(this, "touchEnd"));
         on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
         on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
       }
@@ -6438,6 +6456,15 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       
       if(!this.touchAction){
         this.touchAction = new MouseAction();
+      }
+
+      if(this.gameArea && this.canvasPercentage){
+        //on(window, 'touchmove', lang.hitch(this, "resize"));
+        //on(window, 'orientationchange', lang.hitch(this, "resize"));
+        window.addEventListener('resize', lang.hitch(this, "resize"), false);
+        window.addEventListener('orientationchange', lang.hitch(this, "resize"), false);
+        //window.addEventListener('resize', this.resize, false);
+        //window.addEventListener('orientationchange', this.resize, false);
       }
     },
 
@@ -6504,6 +6531,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     },
     touchMove: function(e){
       this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
+      e.preventDefault();
     },
     getKeyAction: function(e) {
       if (this.keyActions.length) {
@@ -6533,10 +6561,41 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
     getMouseLoc: function(evt){
       var coordsM = domGeom.position(this.canvas);
-      return {
-        x: Math.round(evt.clientX - coordsM.x),
-        y: Math.round(evt.clientY - coordsM.y)
-      };
+      if(this.zoomRatio){
+        return {
+          x: Math.round((evt.clientX - coordsM.x) / this.zoomRatio),
+          y: Math.round((evt.clientY - coordsM.y) / this.zoomRatio)
+        };
+      }else{
+        return {
+          x: Math.round(evt.clientX - coordsM.x),
+          y: Math.round(evt.clientY - coordsM.y)
+        };
+      }
+    },
+
+    resize: function(){
+      if(this.gameArea && this.canvasPercentage && this.canvas){
+        var widthToHeight = this.canvas.width / this.canvas.height;
+        var newWidth = window.innerWidth;
+        var newHeight = window.innerHeight;
+        var newWidthToHeight = newWidth / newHeight;
+
+        if (newWidthToHeight > widthToHeight) {
+            newWidth = Math.round(newHeight * widthToHeight);
+            this.gameArea.style.height = newHeight + 'px';
+            this.gameArea.style.width = newWidth + 'px';
+            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+        } else {
+            newHeight = Math.round(newWidth / widthToHeight);
+            this.gameArea.style.width = newWidth + 'px';
+            this.gameArea.style.height = newHeight + 'px';
+            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+        }
+
+        this.canvas.style.width = Math.floor(this.canvasPercentage * 100) + '%';
+        this.canvas.style.height = Math.floor(this.canvasPercentage * 100) + '%';
+      }
     }
   });
 
@@ -8214,11 +8273,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       * @name ResourceManager#playSound
       * @function
       * @param {Object} sound A sound object that was returned from loadSound()
-      * @param {Boolean} loop whether or not to loop the sound (default: false)
-      * @param {Number} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      * @param {Boolean=} loop whether or not to loop the sound (default: false)
+      * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      * @param {Number=} gain The volume of the playback from 0 to 1.0
       *
     */
-    playSound: function(sound, loop, noteOn){
+    playSound: function(sound, loop, noteOn, gain){
       noteOn = noteOn || 0;
       if(this.audioContext && sound){
         var buffer = sound.buffer || sound;
@@ -8226,9 +8286,16 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
           try{
             var source = this.audioContext.createBufferSource(); // creates a sound source
             source.buffer = buffer;                  // tell the source which sound to play
-            source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
             if(loop){
               source.loop = true;
+            }
+            if(gain){
+              var gainNode = this.audioContext.createGainNode();
+              gainNode.gain.value = gain;
+              source.connect(gainNode);
+              gainNode.connect(this.audioContext.destination);
+            }else{
+              source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
             }
             source.noteOn(noteOn);                       // play the source now
             return source;

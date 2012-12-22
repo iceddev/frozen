@@ -53,6 +53,8 @@ myGame.run();
     inputManager: null,
     loadingForeground: '#00F',
     loadingBackground: '#FFF',
+    gameAreaId: null,
+    canvasPercentage: 0,
     constructor: function(args){
       declare.safeMixin(this, args);
     },
@@ -120,11 +122,24 @@ myGame.run();
         this.width = this.canvas.width;
       }
 
+
       if(!this.inputManager){
-        this.inputManager = new InputManager({
+        //hande resizing if gameArea and canvasPercentage are specified
+        if(this.gameAreaId && this.canvasPercentage){
+          this.inputManager = new InputManager({
+            canvas: this.canvas,
+            gameArea: dom.byId(this.gameAreaId),
+            canvasPercentage: this.canvasPercentage
+          });
+        }else{
+          this.inputManager = new InputManager({
           canvas: this.canvas
         });
+        }
+        
       }
+
+      this.inputManager.resize();
 
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();

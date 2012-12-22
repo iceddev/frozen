@@ -131,11 +131,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       * @name ResourceManager#playSound
       * @function
       * @param {Object} sound A sound object that was returned from loadSound()
-      * @param {Boolean} loop whether or not to loop the sound (default: false)
-      * @param {Number} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      * @param {Boolean=} loop whether or not to loop the sound (default: false)
+      * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+      * @param {Number=} gain The volume of the playback from 0 to 1.0
       *
     */
-    playSound: function(sound, loop, noteOn){
+    playSound: function(sound, loop, noteOn, gain){
       noteOn = noteOn || 0;
       if(this.audioContext && sound){
         var buffer = sound.buffer || sound;
@@ -143,9 +144,16 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
           try{
             var source = this.audioContext.createBufferSource(); // creates a sound source
             source.buffer = buffer;                  // tell the source which sound to play
-            source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
             if(loop){
               source.loop = true;
+            }
+            if(gain){
+              var gainNode = this.audioContext.createGainNode();
+              gainNode.gain.value = gain;
+              source.connect(gainNode);
+              gainNode.connect(this.audioContext.destination);
+            }else{
+              source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
             }
             source.noteOn(noteOn);                       // play the source now
             return source;

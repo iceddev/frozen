@@ -30,6 +30,7 @@ define([
 
   return declare([Entity], {
     polys: [],
+    points: null,
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
