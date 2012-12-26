@@ -126,6 +126,8 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'dojo/_base/d
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
+    gameAreaId: 'container',
+    canvasPercentage: 0.95,
     resourceManager: rm,
     initInput: function(im){
       //tells the input manager to listen for key events

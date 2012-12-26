@@ -9,7 +9,7 @@ define(function(){
       if((center.x === pt.x) && (center.y === pt.y)){
         return 0;
       }else if(center.x === pt.x){
-        if(center.y < pt.y){
+        if(center.y > pt.y){
           return 0;
         }else{
           return Math.PI;

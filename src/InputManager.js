@@ -188,8 +188,8 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
         var newWidthToHeight = newWidth / newHeight;
 
         if (newWidthToHeight > widthToHeight) {
-            newWidth = Math.round(newHeight * widthToHeight);
-            this.gameArea.style.height = newHeight + 'px';
+            newWidth = newHeight * widthToHeight;
+            this.gameArea.style.height = Math.round(newHeight) + 'px';
             this.gameArea.style.width = newWidth + 'px';
             this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
         } else {

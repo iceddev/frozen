@@ -133,7 +133,8 @@ define([
       var bodiesState = this.getState();
       for (var id in bodiesState) {
         var entity = entities[id];
-        if (entity){
+        //update any dynamic bodies
+        if (entity && !entity.staticBody){
           entity.update(bodiesState[id]);
         }
       }
@@ -171,6 +172,7 @@ define([
       bodyDef.position.x = entity.x;
       bodyDef.position.y = entity.y;
       bodyDef.userData = entity.id;
+      bodyDef.angle = entity.angle;
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
       var body = this.world.CreateBody(bodyDef);
@@ -226,6 +228,21 @@ define([
     setPosition: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
       body.SetPosition(new B2Vec2(x, y));
+    },
+
+    /**
+      * Set the angle of an entity.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setAngle
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+      * @param {Number} angle The new angle of the body in radians
+    */
+    setAngle: function(bodyId, angle){
+      var body = this.bodiesMap[bodyId];
+      body.SetAngle(angle);
     },
 
     /**
@@ -351,7 +368,9 @@ define([
     */
     removeBody: function(id) {
       if(this.bodiesMap[id]){
-        this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
+        if(this.fixturesMap[id]){
+          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);  
+        }        
         this.world.DestroyBody(this.bodiesMap[id]);
         //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
