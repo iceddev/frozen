@@ -310,9 +310,11 @@
 	//
 	// loader eval
 	//
-	var eval_ =
+	var eval_ = function(){};
+	if(! 1 ){
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
-		new Function('return eval(arguments[0]);');
+		eval_ = new Function('return eval(arguments[0]);');
+	}
 
 	req.eval =
 		function(text, hint){
@@ -586,7 +588,7 @@
 				forEach(mapProgs, function(item){
 					item[1] = computeMapProg(item[1], []);
 					if(item[0]=="*"){
-						mapProgs.star = item[1];
+						mapProgs.star = item;
 					}
 				});
 
@@ -1281,8 +1283,8 @@
 	}
 
 	if( 1 ){
-		if(has("dojo-loader-eval-hint-url")===undefined){
-			has.add("dojo-loader-eval-hint-url", 1);
+		if( 0 ===undefined){
+			 0 && has.add("dojo-loader-eval-hint-url", 1);
 		}
 
 		var fixupUrl= function(url){
@@ -1342,7 +1344,7 @@
 						if(text===cached){
 							cached.call(null);
 						}else{
-							req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
+							req.eval(text,  0  ? module.url : module.mid);
 						}
 					}catch(e){
 						signal(error, makeError("evalModuleThrew", module));
@@ -1351,7 +1353,7 @@
 					if(text===cached){
 						cached.call(null);
 					}else{
-						req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
+						req.eval(text,  0  ? module.url : module.mid);
 					}
 				}
 				injectingCachedModule = 0;
@@ -2378,7 +2380,13 @@ define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
 	//		dojo/_base/declare
 
 	var mix = lang.mixin, op = Object.prototype, opts = op.toString,
-		xtor = new Function, counter = 0, cname = "constructor";
+		xtor, counter = 0, cname = "constructor";
+
+	if(! 1 ){
+		xtor = new Function;
+	} else {
+		xtor = function(){};
+	}
 
 	function err(msg, cls){ throw new Error("declare" + (cls ? " " + cls : "") + ": " + msg); }
 
@@ -3502,7 +3510,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 	dojo.isAsync = ! 1  || require.async;
 	dojo.locale = config.locale;
 
-	var rev = "$Rev: 29801 $".match(/\d+/);
+	var rev = "$Rev: 30226 $".match(/\d+/);
 	dojo.version = {
 		// summary:
 		//		Version number of the Dojo Toolkit
@@ -3515,7 +3523,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 		//		- flag: String: Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
 		//		- revision: Number: The SVN rev from which dojo was pulled
 
-		major: 1, minor: 8, patch: 1, flag: "",
+		major: 1, minor: 8, patch: 3, flag: "",
 		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			var v = dojo.version;
@@ -3529,8 +3537,9 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 	// is migrated. Absent specific advice otherwise, set extend-dojo to truthy.
 	 1 || has.add("extend-dojo", 1);
 
-
-	(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
+	if(! 1 ){
+		(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
+	}
 	/*=====
 	dojo.eval = function(scriptText){
 		// summary:
@@ -3568,11 +3577,11 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 		};
 	}
 
-	 1 || has.add("dojo-guarantee-console",
+	 0 && has.add("dojo-guarantee-console",
 		// ensure that console.log, console.warn, etc. are defined
 		1
 	);
-	if( 1 ){
+	if( 0 ){
 		typeof console != "undefined" || (console = {});
 		//	Be careful to leave 'log' always at the end
 		var cn = [
@@ -3723,7 +3732,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define("dojo/has", ["require", "module"], function(require, module){
+define(["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -6123,8 +6132,8 @@ myGame.run();
 
 },
 'dojo/dom':function(){
-define(["./sniff", "./_base/lang", "./_base/window"],
-		function(has, lang, win){
+define("dojo/dom", ["./sniff", "./_base/window"],
+		function(has, win){
 	// module:
 	//		dojo/dom
 
@@ -6237,9 +6246,34 @@ define(["./sniff", "./_base/lang", "./_base/window"],
 	};
 
 
-			// TODO: do we need this function in the base?
+	// TODO: do we need setSelectable in the base?
 
-	dom.setSelectable = function(/*DOMNode|String*/ node, /*Boolean*/ selectable){
+	// Add feature test for user-select CSS property
+	// (currently known to work in all but IE < 10 and Opera)
+	has.add("css-user-select", function(global, doc, element){
+		// Avoid exception when dom.js is loaded in non-browser environments
+		if(!element){ return false; }
+		
+		var style = element.style;
+		var prefixes = ["Khtml", "O", "ms", "Moz", "Webkit"],
+			i = prefixes.length,
+			name = "userSelect",
+			prefix;
+
+		// Iterate prefixes from most to least likely
+		do{
+			if(typeof style[name] !== "undefined"){
+				// Supported; return property name
+				return name;
+			}
+		}while(i-- && (name = prefixes[i] + "UserSelect"));
+
+		// Not supported if we didn't return before now
+		return false;
+	});
+
+	/*=====
+	dom.setSelectable = function(node, selectable){
 		// summary:
 		//		Enable or disable selection on a node
 		// node: DOMNode|String
@@ -6253,20 +6287,32 @@ define(["./sniff", "./_base/lang", "./_base/window"],
 		// example:
 		//		Make the node id="bar" selectable
 		//	|	dojo.setSelectable("bar", true);
+	};
+	=====*/
 
+	var cssUserSelect = has("css-user-select");
+	dom.setSelectable = cssUserSelect ? function(node, selectable){
+		// css-user-select returns a (possibly vendor-prefixed) CSS property name
+		dom.byId(node).style[cssUserSelect] = selectable ? "" : "none";
+	} : function(node, selectable){
 		node = dom.byId(node);
-		if(has("mozilla")){
-			node.style.MozUserSelect = selectable ? "" : "none";
-		}else if(has("khtml") || has("webkit")){
-			node.style.KhtmlUserSelect = selectable ? "auto" : "none";
-		}else if(has("ie")){
-			var v = (node.unselectable = selectable ? "" : "on"),
-				cs = node.getElementsByTagName("*"), i = 0, l = cs.length;
-			for(; i < l; ++i){
-				cs.item(i).unselectable = v;
+
+		// (IE < 10 / Opera) Fall back to setting/removing the
+		// unselectable attribute on the element and all its children
+		var nodes = node.getElementsByTagName("*"),
+			i = nodes.length;
+
+		if(selectable){
+			node.removeAttribute("unselectable");
+			while(i--){
+				nodes[i].removeAttribute("unselectable");
+			}
+		}else{
+			node.setAttribute("unselectable", "on");
+			while(i--){
+				nodes[i].setAttribute("unselectable", "on");
 			}
 		}
-		//FIXME: else?  Opera?
 	};
 
 	return dom;
@@ -6622,7 +6668,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
 },
 'dojo/on':function(){
-define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6921,9 +6967,6 @@ define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./
 			focusin: "focus",
 			focusout: "blur"
 		};
-		if(has("opera")){
-			captures.keydown = "keypress"; // this one needs to be transformed because Opera doesn't support repeating keys on keydown (and keypress works because it incorrectly fires on all keydown events)
-		}
 
 		// emiter that works with native event handling
 		on.emit = function(target, type, event){
@@ -7142,7 +7185,7 @@ define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./
 
 },
 'dojo/dom-geometry':function(){
-define(["./sniff", "./_base/window","./dom", "./dom-style"],
+define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -7673,8 +7716,8 @@ define(["./sniff", "./_base/window","./dom", "./dom-style"],
 			ret = node.getBoundingClientRect();
 		ret = {x: ret.left, y: ret.top, w: ret.right - ret.left, h: ret.bottom - ret.top};
 
-		if(has("ie")){
-			// On IE there's a 2px offset that we need to adjust for, see dojo.getIeDocumentElementOffset()
+		if(has("ie") < 9){
+			// On IE<9 there's a 2px offset that we need to adjust for, see dojo.getIeDocumentElementOffset()
 			var offset = geom.getIeDocumentElementOffset(node.ownerDocument);
 
 			// fixes the position in IE, quirks mode
@@ -7891,7 +7934,7 @@ define(["./sniff", "./dom"], function(has, dom){
 	};
 
 	var _getOpacity =
-		has("ie") < 9 || (has("ie") && has("quirks")) ? function(node){
+		has("ie") < 9 || (has("ie") < 10 && has("quirks")) ? function(node){
 			try{
 				return af(node).Opacity / 100; // Number
 			}catch(e){
@@ -7903,7 +7946,7 @@ define(["./sniff", "./dom"], function(has, dom){
 		};
 
 	var _setOpacity =
-		has("ie") < 9 || (has("ie") && has("quirks")) ? function(/*DomNode*/ node, /*Number*/ opacity){
+		has("ie") < 9 || (has("ie") < 10 && has("quirks")) ? function(/*DomNode*/ node, /*Number*/ opacity){
 			var ov = opacity * 100, opaque = opacity == 1;
 			node.style.zoom = opaque ? "" : 1;
 
@@ -8987,7 +9030,7 @@ define([
 });
 },
 'dojo/keys':function(){
-define(["./_base/kernel", "./sniff"], function(dojo, has){
+define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys

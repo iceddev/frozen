@@ -10,9 +10,9 @@ var profile = (function(){
     dojoBootText: "(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();",
 
     packages: [
-      { name: 'dojo', location: '../../dojo/dojo-release-1.8.1-src/dojo' },
-      { name: 'dijit', location: '../../dojo/dojo-release-1.8.1-src/dijit' },
-      { name: 'dojox', location: '../../dojo/dojo-release-1.8.1-src/dojox' },
+      { name: 'dojo', location: '../../dojo/dojo-release-1.8.3-src/dojo' },
+      { name: 'dijit', location: '../../dojo/dojo-release-1.8.3-src/dijit' },
+      { name: 'dojox', location: '../../dojo/dojo-release-1.8.3-src/dojox' },
       { name: 'frozen', location: './src', main: 'GameCore' }
     ],
 
@@ -39,7 +39,7 @@ var profile = (function(){
       "dojo-debug-messages": 0,
       "dojo-dom-ready-api": 1,
       "dojo-firebug": 0,
-      "dojo-guarantee-console": 1,
+      "dojo-guarantee-console": 0,
       "dojo-has-api": 1,
       "dojo-inject-api": 1,
       "dojo-loader": 1,
@@ -57,7 +57,9 @@ var profile = (function(){
       "dojo-v1x-i18n-Api": 1,
       "dom": 1,
       "host-browser": 1,
-      "extend-dojo": 1
+      "extend-dojo": 1,
+      "dojo-loader-eval-hint-url": 0,
+      "csp-restrictions": 1
     },
 
     layers: {

@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     },
     dojo: {
       frozen: {
-        dojo: '../../dojo/dojo-release-1.8.1-src/dojo/dojo.js',
+        dojo: '../../dojo/dojo-release-1.8.3-src/dojo/dojo.js',
         profile: 'frozen.profile.js',
         cwd: './'
       }
