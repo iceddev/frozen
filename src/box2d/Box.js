@@ -23,9 +23,12 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
+
+  'use strict';
 
   // box2d globals
 
@@ -41,7 +44,7 @@ define([
     , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
-  return declare(null, {
+  return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
     width: 640,
@@ -57,7 +60,6 @@ define([
     contactListener: null,
     collisions: null,
     constructor: function(args){
-      declare.safeMixin(this, args);
       if(args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
@@ -176,7 +178,7 @@ define([
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
       var body = this.world.CreateBody(bodyDef);
-      
+
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
@@ -209,7 +211,7 @@ define([
         fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
         body.CreateFixture(fixDef);
       }
-         
+
 
       this.bodiesMap[entity.id] = body;
     },
@@ -369,8 +371,8 @@ define([
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         if(this.fixturesMap[id]){
-          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);  
-        }        
+          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
+        }
         this.world.DestroyBody(this.bodiesMap[id]);
         //delete this.fixturesMap[id];
         delete this.bodiesMap[id];

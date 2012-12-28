@@ -22,9 +22,14 @@ limitations under the License.
  * @class Sprite
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  var Sprite = declare(null, {
+  'use strict';
+
+  var Sprite = dcl(Mixer, {
     // position (pixels)
     x: 0.0,
     y: 0.0,
@@ -33,10 +38,6 @@ define(['dojo/_base/declare'], function(declare){
     dy: 0.0,
     name: null,
     collisionRadius: 40,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
 
     /**
       * Updates this Sprite's Animation and its position based on the velocity.

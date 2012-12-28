@@ -23,11 +23,14 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     id: 0,
     x: 0,
     y: 0,
@@ -43,9 +46,6 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     update: function(state){
       lang.mixin(this, state);
     },
@@ -72,7 +72,7 @@ define([
       ctx.closePath();
       ctx.fill();
     }
-    
+
   });
 
 });

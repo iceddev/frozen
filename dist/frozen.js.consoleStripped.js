@@ -310,11 +310,11 @@
 	//
 	// loader eval
 	//
-	var eval_ = function(){};
-	if(! 1 ){
+	var eval_ =  1  ?
+		// noop eval if there are csp restrictions
+		function(){} :
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
-		eval_ = new Function('return eval(arguments[0]);');
-	}
+		new Function('return eval(arguments[0]);');
 
 	req.eval =
 		function(text, hint){
@@ -1922,6 +1922,11 @@
 					 name:"dojox"
 				},
 				{
+					 location:"../dcl",
+					 main:"dcl",
+					 name:"dcl"
+				},
+				{
 					 location:"../frozen",
 					 main:"GameCore",
 					 name:"frozen"
@@ -1958,9 +1963,12 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
+
+  'use strict';
 
   // box2d globals
 
@@ -1976,7 +1984,7 @@ define([
     , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
-  return declare(null, {
+  return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
     width: 640,
@@ -1992,7 +2000,6 @@ define([
     contactListener: null,
     collisions: null,
     constructor: function(args){
-      declare.safeMixin(this, args);
       if(args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
@@ -2111,7 +2118,7 @@ define([
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
       var body = this.world.CreateBody(bodyDef);
-      
+
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
@@ -2144,7 +2151,7 @@ define([
         fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
         body.CreateFixture(fixDef);
       }
-         
+
 
       this.bodiesMap[entity.id] = body;
     },
@@ -2304,8 +2311,8 @@ define([
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         if(this.fixturesMap[id]){
-          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);  
-        }        
+          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
+        }
         this.world.DestroyBody(this.bodiesMap[id]);
         //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
@@ -2374,1058 +2381,934 @@ define([
 
 });
 },
-'dojo/_base/declare':function(){
-define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
-	// module:
-	//		dojo/_base/declare
+'dcl/dcl':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["./mini"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("./mini"));
+	}else{
+		dcl = factory(dcl);
+	}
+})(function(dcl){
+	"use strict";
 
-	var mix = lang.mixin, op = Object.prototype, opts = op.toString,
-		xtor, counter = 0, cname = "constructor";
+	function nop(){}
 
-	if(! 1 ){
-		xtor = new Function;
-	} else {
-		xtor = function(){};
+	var Advice = dcl(dcl.Super, {
+		//declaredClass: "dcl.Advice",
+		constructor: function(){
+			this.b = this.f.before;
+			this.a = this.f.after;
+			this.f = this.f.around;
+		}
+	});
+	function advise(f){ return new Advice(f); }
+
+	function makeAOPStub(b, a, f){
+		var sb = b || nop,
+			sa = a || nop,
+			sf = f || nop,
+			x = function(){
+				var r;
+				// running the before chain
+				sb.apply(this, arguments);
+				// running the around chain
+				try{
+					r = sf.apply(this, arguments);
+				}catch(e){
+					r = e;
+				}
+				// running the after chain
+				sa.call(this, arguments, r);
+				if(r instanceof Error){
+					throw r;
+				}
+				return r;
+			};
+		x.advices = {b: b, a: a, f: f};
+		return x;
 	}
 
-	function err(msg, cls){ throw new Error("declare" + (cls ? " " + cls : "") + ": " + msg); }
-
-	// C3 Method Resolution Order (see http://www.python.org/download/releases/2.3/mro/)
-	function c3mro(bases, className){
-		var result = [], roots = [{cls: 0, refs: []}], nameMap = {}, clsCount = 1,
-			l = bases.length, i = 0, j, lin, base, top, proto, rec, name, refs;
-
-		// build a list of bases naming them if needed
-		for(; i < l; ++i){
-			base = bases[i];
-			if(!base){
-				err("mixin #" + i + " is unknown. Did you use dojo.require to pull it in?", className);
-			}else if(opts.call(base) != "[object Function]"){
-				err("mixin #" + i + " is not a callable constructor.", className);
+	function chain(id){
+		return function(ctor, name){
+			var m = ctor._m, c;
+			if(m){
+				c = (+m.w[name] || 0);
+				if(c && c != id){
+					dcl._e("set chaining", name, ctor, id, c);
+				}
+				m.w[name] = id;
 			}
-			lin = base._meta ? base._meta.bases : [base];
-			top = 0;
-			// add bases to the name map
-			for(j = lin.length - 1; j >= 0; --j){
-				proto = lin[j].prototype;
-				if(!proto.hasOwnProperty("declaredClass")){
-					proto.declaredClass = "uniqName_" + (counter++);
-				}
-				name = proto.declaredClass;
-				if(!nameMap.hasOwnProperty(name)){
-					nameMap[name] = {count: 0, refs: [], cls: lin[j]};
-					++clsCount;
-				}
-				rec = nameMap[name];
-				if(top && top !== rec){
-					rec.refs.push(top);
-					++top.count;
-				}
-				top = rec;
-			}
-			++top.count;
-			roots[0].refs.push(top);
-		}
-
-		// remove classes without external references recursively
-		while(roots.length){
-			top = roots.pop();
-			result.push(top.cls);
-			--clsCount;
-			// optimization: follow a single-linked chain
-			while(refs = top.refs, refs.length == 1){
-				top = refs[0];
-				if(!top || --top.count){
-					// branch or end of chain => do not end to roots
-					top = 0;
-					break;
-				}
-				result.push(top.cls);
-				--clsCount;
-			}
-			if(top){
-				// branch
-				for(i = 0, l = refs.length; i < l; ++i){
-					top = refs[i];
-					if(!--top.count){
-						roots.push(top);
-					}
-				}
-			}
-		}
-		if(clsCount){
-			err("can't build consistent linearization", className);
-		}
-
-		// calculate the superclass offset
-		base = bases[0];
-		result[0] = base ?
-			base._meta && base === result[result.length - base._meta.bases.length] ?
-				base._meta.bases.length : 1 : 0;
-
-		return result;
+		};
 	}
 
-	function inherited(args, a, f){
-		var name, chains, bases, caller, meta, base, proto, opf, pos,
-			cache = this._inherited = this._inherited || {};
-
-		// crack arguments
-		if(typeof args == "string"){
-			name = args;
-			args = a;
-			a = f;
-		}
-		f = 0;
-
-		caller = args.callee;
-		name = name || caller.nom;
-		if(!name){
-			err("can't deduce a name to call inherited()", this.declaredClass);
-		}
-
-		meta = this.constructor._meta;
-		bases = meta.bases;
-
-		pos = cache.p;
-		if(name != cname){
-			// method
-			if(cache.c !== caller){
-				// cache bust
-				pos = 0;
-				base = bases[0];
-				meta = base._meta;
-				if(meta.hidden[name] !== caller){
-					// error detection
-					chains = meta.chains;
-					if(chains && typeof chains[name] == "string"){
-						err("calling chained method with inherited: " + name, this.declaredClass);
-					}
-					// find caller
-					do{
-						meta = base._meta;
-						proto = base.prototype;
-						if(meta && (proto[name] === caller && proto.hasOwnProperty(name) || meta.hidden[name] === caller)){
-							break;
-						}
-					}while(base = bases[++pos]); // intentional assignment
-					pos = base ? pos : -1;
-				}
-			}
-			// find next
-			base = bases[++pos];
-			if(base){
-				proto = base.prototype;
-				if(base._meta && proto.hasOwnProperty(name)){
-					f = proto[name];
-				}else{
-					opf = op[name];
-					do{
-						proto = base.prototype;
-						f = proto[name];
-						if(f && (base._meta ? proto.hasOwnProperty(name) : f !== opf)){
-							break;
-						}
-					}while(base = bases[++pos]); // intentional assignment
-				}
-			}
-			f = base && f || op[name];
-		}else{
-			// constructor
-			if(cache.c !== caller){
-				// cache bust
-				pos = 0;
-				meta = bases[0]._meta;
-				if(meta && meta.ctor !== caller){
-					// error detection
-					chains = meta.chains;
-					if(!chains || chains.constructor !== "manual"){
-						err("calling chained constructor with inherited", this.declaredClass);
-					}
-					// find caller
-					while(base = bases[++pos]){ // intentional assignment
-						meta = base._meta;
-						if(meta && meta.ctor === caller){
-							break;
-						}
-					}
-					pos = base ? pos : -1;
-				}
-			}
-			// find next
-			while(base = bases[++pos]){	// intentional assignment
-				meta = base._meta;
-				f = meta ? meta.ctor : base;
-				if(f){
-					break;
-				}
-			}
-			f = base && f;
-		}
-
-		// cache the found super method
-		cache.c = f;
-		cache.p = pos;
-
-		// now we have the result
-		if(f){
-			return a === true ? f : f.apply(this, a || args);
-		}
-		// intentionally no return if a super method was not found
-	}
-
-	function getInherited(name, args){
-		if(typeof name == "string"){
-			return this.__inherited(name, args, true);
-		}
-		return this.__inherited(name, true);
-	}
-
-	function inherited__debug(args, a1, a2){
-		var f = this.getInherited(args, a1);
-		if(f){ return f.apply(this, a2 || a1 || args); }
-		// intentionally no return if a super method was not found
-	}
-
-	var inheritedImpl = dojo.config.isDebug ? inherited__debug : inherited;
-
-	// emulation of "instanceof"
-	function isInstanceOf(cls){
-		var bases = this.constructor._meta.bases;
-		for(var i = 0, l = bases.length; i < l; ++i){
-			if(bases[i] === cls){
+	dcl.mix(dcl, {
+		// public API
+		Advice: Advice,
+		advise: advise,
+		// expose helper methods
+		before: function(f){ return new Advice({before: f}); },
+		after: function(f){ return new Advice({after: f}); },
+		around: dcl.superCall,
+		// chains
+		chainBefore: chain(1),
+		chainAfter:  chain(2),
+		isInstanceOf: function(o, ctor){
+			if(o instanceof ctor){
 				return true;
 			}
-		}
-		return this instanceof cls;
-	}
-
-	function mixOwn(target, source){
-		// add props adding metadata for incoming functions skipping a constructor
-		for(var name in source){
-			if(name != cname && source.hasOwnProperty(name)){
-				target[name] = source[name];
-			}
-		}
-		if(has("bug-for-in-skips-shadowed")){
-			for(var extraNames= lang._extraNames, i= extraNames.length; i;){
-				name = extraNames[--i];
-				if(name != cname && source.hasOwnProperty(name)){
-					  target[name] = source[name];
-				}
-			}
-		}
-	}
-
-	// implementation of safe mixin function
-	function safeMixin(target, source){
-		// summary:
-		//		Mix in properties skipping a constructor and decorating functions
-		//		like it is done by declare().
-		// target: Object
-		//		Target object to accept new properties.
-		// source: Object
-		//		Source object for new properties.
-		// description:
-		//		This function is used to mix in properties like lang.mixin does,
-		//		but it skips a constructor property and decorates functions like
-		//		declare() does.
-		//
-		//		It is meant to be used with classes and objects produced with
-		//		declare. Functions mixed in with dojo.safeMixin can use
-		//		this.inherited() like normal methods.
-		//
-		//		This function is used to implement extend() method of a constructor
-		//		produced with declare().
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		m1: function(){
-		//	|			0 && console.log("A.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			0 && console.log("A.m2");
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		m1: function(){
-		//	|			this.inherited(arguments);
-		//	|			0 && console.log("B.m1");
-		//	|		}
-		//	|	});
-		//	|	B.extend({
-		//	|		m2: function(){
-		//	|			this.inherited(arguments);
-		//	|			0 && console.log("B.m2");
-		//	|		}
-		//	|	});
-		//	|	var x = new B();
-		//	|	dojo.safeMixin(x, {
-		//	|		m1: function(){
-		//	|			this.inherited(arguments);
-		//	|			0 && console.log("X.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			this.inherited(arguments);
-		//	|			0 && console.log("X.m2");
-		//	|		}
-		//	|	});
-		//	|	x.m2();
-		//	|	// prints:
-		//	|	// A.m1
-		//	|	// B.m1
-		//	|	// X.m1
-
-		var name, t;
-		// add props adding metadata for incoming functions skipping a constructor
-		for(name in source){
-			t = source[name];
-			if((t !== op[name] || !(name in op)) && name != cname){
-				if(opts.call(t) == "[object Function]"){
-					// non-trivial function method => attach its name
-					t.nom = name;
-				}
-				target[name] = t;
-			}
-		}
-		if(has("bug-for-in-skips-shadowed")){
-			for(var extraNames= lang._extraNames, i= extraNames.length; i;){
-				name = extraNames[--i];
-				t = source[name];
-				if((t !== op[name] || !(name in op)) && name != cname){
-					if(opts.call(t) == "[object Function]"){
-						// non-trivial function method => attach its name
-						  t.nom = name;
+			var t = o.constructor._m, i;
+			if(t){
+				for(t = t.b, i = t.length - 1; i >= 0; --i){
+					if(t[i] === ctor){
+						return true;
 					}
-					target[name] = t;
 				}
 			}
+			return false;
+		},
+		// protected API starts with _ (don't use it!)
+		_sb: /*stub*/ function(id, bases, name, chains){
+			var f = chains[name] = dcl._ec(bases, name, "f"),
+				b = dcl._ec(bases, name, "b").reverse(),
+				a = dcl._ec(bases, name, "a");
+			f = id ? dcl._st(f, id == 1 ? function(f){ return dcl._sc(f.reverse()); } : dcl._sc, name) : dcl._ss(f, name);
+			return !b.length && !a.length ? f || new Function : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
 		}
-		return target;
+	});
+
+	return dcl;
+});
+
+},
+'dcl/mini':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define([], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory();
+	}else{
+		dcl = factory();
 	}
+})(function(){
+	"use strict";
 
-	function extend(source){
-		declare.safeMixin(this.prototype, source);
-		return this;
-	}
+	var counter = 0, cname = "constructor", pname = "prototype", F = new Function, empty = {},
+		mix, extractChain, stubSuper, stubChain, stubChainSuper, post;
 
-	function createSubclass(mixins){
-		return declare([this].concat(mixins));
-	}
+	function dcl(superClass, props){
+		var bases = [0], proto, base, ctor, m, o, r, b, i, j = 0, n;
 
-	// chained constructor compatible with the legacy declare()
-	function chainedConstructor(bases, ctorSpecial){
-		return function(){
-			var a = arguments, args = a, a0 = a[0], f, i, m,
-				l = bases.length, preArgs;
-
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
-
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) call two types of the preamble
-			if(ctorSpecial && (a0 && a0.preamble || this.preamble)){
-				// full blown ritual
-				preArgs = new Array(bases.length);
-				// prepare parameters
-				preArgs[0] = a;
-				for(i = 0;;){
-					// process the preamble of the 1st argument
-					a0 = a[0];
-					if(a0){
-						f = a0.preamble;
-						if(f){
-							a = f.apply(this, a) || a;
+		if(superClass){
+			if(superClass instanceof Array){
+				// mixins: C3 MRO
+				m = {}; b = superClass.slice(0).reverse();
+				for(i = b.length - 1; i >= 0; --i){
+					base = b[i];
+					// pre-process a base
+					// 1) add a unique id
+					base._u = base._u || counter++;
+					// 2) build a connection map and the base list
+					if((proto = base._m)){   // intentional assignment
+						for(r = proto.b, j = r.length - 1; j > 0; --j){
+							n = r[j]._u;
+							m[n] = (m[n] || 0) + 1;
+						}
+						b[i] = r.slice(0);
+					}else{
+						b[i] = [base];
+					}
+				}
+				// build output
+				o = {};
+				c: while(b.length){
+					for(i = 0; i < b.length; ++i){
+						r = b[i];
+						base = r[0];
+						n = base._u;
+						if(!m[n]){
+							if(!o[n]){
+								bases.push(base);
+								o[n] = 1;
+							}
+							r.shift();
+							if(r.length){
+								--m[r[0]._u];
+							}else{
+								b.splice(i, 1);
+							}
+							continue c;
 						}
 					}
-					// process the preamble of this class
-					f = bases[i].prototype;
-					f = f.hasOwnProperty("preamble") && f.preamble;
-					if(f){
-						a = f.apply(this, a) || a;
-					}
-					// one peculiarity of the preamble:
-					// it is called if it is not needed,
-					// e.g., there is no constructor to call
-					// let's watch for the last constructor
-					// (see ticket #9795)
-					if(++i == l){
-						break;
-					}
-					preArgs[i] = a;
+					// error
+					dcl._e("cycle", props, b);
+				}
+				// calculate a base class
+				superClass = superClass[0];
+				j = bases.length - ((m = superClass._m) && superClass === bases[bases.length - (j = m.b.length)] ? j : 1) - 1; // intentional assignments
+			}else{
+				// 1) add a unique id
+				superClass._u = superClass._u || counter++;
+				// 2) single inheritance
+				bases = bases.concat((m = superClass._m) ? m.b : superClass);   // intentional assignment
+			}
+		}
+		// create a base class
+		proto = superClass ? dcl.delegate(superClass[pname]) : {};
+		// the next line assumes that constructor is actually named "constructor", should be changed if desired
+		r = superClass && (m = superClass._m) ? dcl.delegate(m.w) : {constructor: 2};   // intentional assignment
+
+		// create prototype: mix in mixins and props
+		for(; j > 0; --j){
+			base = bases[j];
+			m = base._m;
+			mix(proto, m && m.h || base[pname]);
+			if(m){
+				for(n in (b = m.w)){    // intentional assignment
+					r[n] = (+r[n] || 0) | b[n];
 				}
 			}
-			// 2) call all non-trivial constructors using prepared arguments
-			for(i = l - 1; i >= 0; --i){
-				f = bases[i];
-				m = f._meta;
-				f = m ? m.ctor : f;
-				if(f){
-					f.apply(this, preArgs ? preArgs[i] : a);
-				}
+		}
+		for(n in props){
+			if(isSuper(m = props[n])){  // intentional assignment
+				r[n] = +r[n] || 0;
+			}else{
+				proto[n] = m;
 			}
-			// 3) continue the original ritual: call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, args);
-			}
-		};
+		}
+
+		// create stubs with fake constructor
+		o = {b: bases, h: props, w: r, c: {}};
+		bases[0] = {_m: o, prototype: proto};
+		buildStubs(o, proto);
+		ctor = proto[cname];
+
+		// put in place all decorations and return a constructor
+		ctor._m  = o;
+		ctor[pname] = proto;
+		//proto.constructor = ctor; // uncomment if constructor is not named "constructor"
+		bases[0] = ctor;
+
+		return dcl._p(ctor);    // fully prepared constructor
 	}
 
+	// decorators
 
-	// chained constructor compatible with the legacy declare()
-	function singleConstructor(ctor, ctorSpecial){
-		return function(){
-			var a = arguments, t = a, a0 = a[0], f;
+	function Super(f){ this.f = f; }
+	function isSuper(f){ return f instanceof Super; }
 
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
+	// utilities
 
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) call two types of the preamble
-			if(ctorSpecial){
-				// full blown ritual
-				if(a0){
-					// process the preamble of the 1st argument
-					f = a0.preamble;
-					if(f){
-						t = f.apply(this, t) || t;
-					}
-				}
-				f = this.preamble;
-				if(f){
-					// process the preamble of this class
-					f.apply(this, t);
-					// one peculiarity of the preamble:
-					// it is called even if it is not needed,
-					// e.g., there is no constructor to call
-					// let's watch for the last constructor
-					// (see ticket #9795)
-				}
-			}
-			// 2) call a constructor
-			if(ctor){
-				ctor.apply(this, a);
-			}
-			// 3) continue the original ritual: call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, a);
-			}
-		};
-	}
-
-	// plain vanilla constructor (can use inherited() to call its base constructor)
-	function simpleConstructor(bases){
-		return function(){
-			var a = arguments, i = 0, f, m;
-
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
-
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) do not call the preamble
-			// 2) call the top constructor (it can use this.inherited())
-			for(; f = bases[i]; ++i){ // intentional assignment
-				m = f._meta;
-				f = m ? m.ctor : f;
-				if(f){
-					f.apply(this, a);
-					break;
+	(mix = function(a, b){
+		for(var n in b){
+			a[n] = b[n];
+		}
+	})(dcl, {
+		// piblic API
+		mix: mix,
+		delegate: function(o){
+			F[pname] = o;
+			var t = new F;
+			F[pname] = null;
+			return t;
+		},
+		Super: Super,
+		superCall: function(f){ return new Super(f); },
+		// protected API starts with _ (don't use it!)
+		_p: function(ctor){ return ctor; },   // identity, used to hang on advices
+		_e: function(m){ throw Error("dcl: " + m); },  // error function, augmented by debug.js
+		_f: function(f, a, n){ var t = f.f(a); t.ctr = f.ctr; return t; },  // supercall instantiation, augmented by debug.js
+		// the "buildStubs()" helpers, can be overwritten
+		_ec: extractChain = function(bases, name, advice){
+			var i = bases.length - 1, r = [], b, f, around = advice == "f";
+			for(; b = bases[i]; --i){
+				// next line contains 5 intentional assignments
+				if((f = b._m) ? (f = f.h).hasOwnProperty(name) && (isSuper(f = f[name]) ? (around ? f.f : (f = f[advice])) : around) : around && (f = b[pname][name]) && f !== empty[name]){
+					f.ctr = b;
+					r.push(f);
 				}
 			}
-			// 3) call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, a);
-			}
-		};
-	}
-
-	function chain(name, bases, reversed){
-		return function(){
-			var b, m, f, i = 0, step = 1;
-			if(reversed){
-				i = bases.length - 1;
-				step = -1;
-			}
-			for(; b = bases[i]; i += step){ // intentional assignment
-				m = b._meta;
-				f = (m ? m.hidden : b.prototype)[name];
-				if(f){
+			return r;
+		},
+		_sc: stubChain = function(chain){ // this is "after" chain
+			var l = chain.length, f;
+			return !l ? 0 : l == 1 ?
+				(f = chain[0], function(){
 					f.apply(this, arguments);
-				}
-			}
-		};
-	}
-
-	// forceNew(ctor)
-	// return a new object that inherits from ctor.prototype but
-	// without actually running ctor on the object.
-	function forceNew(ctor){
-		// create object with correct prototype using a do-nothing
-		// constructor
-		xtor.prototype = ctor.prototype;
-		var t = new xtor;
-		xtor.prototype = null;	// clean up
-		return t;
-	}
-
-	// applyNew(args)
-	// just like 'new ctor()' except that the constructor and its arguments come
-	// from args, which must be an array or an arguments object
-	function applyNew(args){
-		// create an object with ctor's prototype but without
-		// calling ctor on it.
-		var ctor = args.callee, t = forceNew(ctor);
-		// execute the real constructor on the new object
-		ctor.apply(t, args);
-		return t;
-	}
-
-	function declare(className, superclass, props){
-		// summary:
-		//		Create a feature-rich constructor from compact notation.
-		// className: String?
-		//		The optional name of the constructor (loosely, a "class")
-		//		stored in the "declaredClass" property in the created prototype.
-		//		It will be used as a global name for a created constructor.
-		// superclass: Function|Function[]
-		//		May be null, a Function, or an Array of Functions. This argument
-		//		specifies a list of bases (the left-most one is the most deepest
-		//		base).
-		// props: Object
-		//		An object whose properties are copied to the created prototype.
-		//		Add an instance-initialization function by making it a property
-		//		named "constructor".
-		// returns: dojo/_base/declare.__DeclareCreatedObject
-		//		New constructor function.
-		// description:
-		//		Create a constructor using a compact notation for inheritance and
-		//		prototype extension.
-		//
-		//		Mixin ancestors provide a type of multiple inheritance.
-		//		Prototypes of mixin ancestors are copied to the new class:
-		//		changes to mixin prototypes will not affect classes to which
-		//		they have been mixed in.
-		//
-		//		Ancestors can be compound classes created by this version of
-		//		declare(). In complex cases all base classes are going to be
-		//		linearized according to C3 MRO algorithm
-		//		(see http://www.python.org/download/releases/2.3/mro/ for more
-		//		details).
-		//
-		//		"className" is cached in "declaredClass" property of the new class,
-		//		if it was supplied. The immediate super class will be cached in
-		//		"superclass" property of the new class.
-		//
-		//		Methods in "props" will be copied and modified: "nom" property
-		//		(the declared name of the method) will be added to all copied
-		//		functions to help identify them for the internal machinery. Be
-		//		very careful, while reusing methods: if you use the same
-		//		function under different names, it can produce errors in some
-		//		cases.
-		//
-		//		It is possible to use constructors created "manually" (without
-		//		declare()) as bases. They will be called as usual during the
-		//		creation of an instance, their methods will be chained, and even
-		//		called by "this.inherited()".
-		//
-		//		Special property "-chains-" governs how to chain methods. It is
-		//		a dictionary, which uses method names as keys, and hint strings
-		//		as values. If a hint string is "after", this method will be
-		//		called after methods of its base classes. If a hint string is
-		//		"before", this method will be called before methods of its base
-		//		classes.
-		//
-		//		If "constructor" is not mentioned in "-chains-" property, it will
-		//		be chained using the legacy mode: using "after" chaining,
-		//		calling preamble() method before each constructor, if available,
-		//		and calling postscript() after all constructors were executed.
-		//		If the hint is "after", it is chained as a regular method, but
-		//		postscript() will be called after the chain of constructors.
-		//		"constructor" cannot be chained "before", but it allows
-		//		a special hint string: "manual", which means that constructors
-		//		are not going to be chained in any way, and programmer will call
-		//		them manually using this.inherited(). In the latter case
-		//		postscript() will be called after the construction.
-		//
-		//		All chaining hints are "inherited" from base classes and
-		//		potentially can be overridden. Be very careful when overriding
-		//		hints! Make sure that all chained methods can work in a proposed
-		//		manner of chaining.
-		//
-		//		Once a method was chained, it is impossible to unchain it. The
-		//		only exception is "constructor". You don't need to define a
-		//		method in order to supply a chaining hint.
-		//
-		//		If a method is chained, it cannot use this.inherited() because
-		//		all other methods in the hierarchy will be called automatically.
-		//
-		//		Usually constructors and initializers of any kind are chained
-		//		using "after" and destructors of any kind are chained as
-		//		"before". Note that chaining assumes that chained methods do not
-		//		return any value: any returned value will be discarded.
-		//
-		// example:
-		//	|	declare("my.classes.bar", my.classes.foo, {
-		//	|		// properties to be added to the class prototype
-		//	|		someValue: 2,
-		//	|		// initialization function
-		//	|		constructor: function(){
-		//	|			this.myComplicatedObject = new ReallyComplicatedObject();
-		//	|		},
-		//	|		// other functions
-		//	|		someMethod: function(){
-		//	|			doStuff();
-		//	|		}
-		//	|	});
-		//
-		// example:
-		//	|	var MyBase = declare(null, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyClass1 = declare(MyBase, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyClass2 = declare(MyBase, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyDiamond = declare([MyClass1, MyClass2], {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//
-		// example:
-		//	|	var F = function(){ 0 && console.log("raw constructor"); };
-		//	|	F.prototype.method = function(){
-		//	|		0 && console.log("raw method");
-		//	|	};
-		//	|	var A = declare(F, {
-		//	|		constructor: function(){
-		//	|			0 && console.log("A.constructor");
-		//	|		},
-		//	|		method: function(){
-		//	|			0 && console.log("before calling F.method...");
-		//	|			this.inherited(arguments);
-		//	|			0 && console.log("...back in A");
-		//	|		}
-		//	|	});
-		//	|	new A().method();
-		//	|	// will print:
-		//	|	// raw constructor
-		//	|	// A.constructor
-		//	|	// before calling F.method...
-		//	|	// raw method
-		//	|	// ...back in A
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			destroy: "before"
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		constructor: function(){
-		//	|			0 && console.log("B.constructor");
-		//	|		},
-		//	|		destroy: function(){
-		//	|			0 && console.log("B.destroy");
-		//	|		}
-		//	|	});
-		//	|	var C = declare(B, {
-		//	|		constructor: function(){
-		//	|			0 && console.log("C.constructor");
-		//	|		},
-		//	|		destroy: function(){
-		//	|			0 && console.log("C.destroy");
-		//	|		}
-		//	|	});
-		//	|	new C().destroy();
-		//	|	// prints:
-		//	|	// B.constructor
-		//	|	// C.constructor
-		//	|	// C.destroy
-		//	|	// B.destroy
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			constructor: "manual"
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		constructor: function(){
-		//	|			// ...
-		//	|			// call the base constructor with new parameters
-		//	|			this.inherited(arguments, [1, 2, 3]);
-		//	|			// ...
-		//	|		}
-		//	|	});
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			m1: "before"
-		//	|		},
-		//	|		m1: function(){
-		//	|			0 && console.log("A.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			0 && console.log("A.m2");
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		"-chains-": {
-		//	|			m2: "after"
-		//	|		},
-		//	|		m1: function(){
-		//	|			0 && console.log("B.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			0 && console.log("B.m2");
-		//	|		}
-		//	|	});
-		//	|	var x = new B();
-		//	|	x.m1();
-		//	|	// prints:
-		//	|	// B.m1
-		//	|	// A.m1
-		//	|	x.m2();
-		//	|	// prints:
-		//	|	// A.m2
-		//	|	// B.m2
-
-		// crack parameters
-		if(typeof className != "string"){
-			props = superclass;
-			superclass = className;
-			className = "";
-		}
-		props = props || {};
-
-		var proto, i, t, ctor, name, bases, chains, mixins = 1, parents = superclass;
-
-		// build a prototype
-		if(opts.call(superclass) == "[object Array]"){
-			// C3 MRO
-			bases = c3mro(superclass, className);
-			t = bases[0];
-			mixins = bases.length - t;
-			superclass = bases[mixins];
-		}else{
-			bases = [0];
-			if(superclass){
-				if(opts.call(superclass) == "[object Function]"){
-					t = superclass._meta;
-					bases = bases.concat(t ? t.bases : superclass);
+				}) :
+				function(){
+					for(var i = 0; i < l; ++i){
+						chain[i].apply(this, arguments);
+					}
+				};
+		},
+		_ss: stubSuper = function(chain, name){
+			var i = 0, f, p = empty[name];
+			for(; f = chain[i]; ++i){
+				if(isSuper(f)){
+					p = chain[i] = dcl._f(f, p, name);
 				}else{
-					err("base class is not a callable constructor.", className);
-				}
-			}else if(superclass !== null){
-				err("unknown base class. Did you use dojo.require to pull it in?", className);
-			}
-		}
-		if(superclass){
-			for(i = mixins - 1;; --i){
-				proto = forceNew(superclass);
-				if(!i){
-					// stop if nothing to add (the last base)
-					break;
-				}
-				// mix in properties
-				t = bases[i];
-				(t._meta ? mixOwn : mix)(proto, t.prototype);
-				// chain in new constructor
-				ctor = new Function;
-				ctor.superclass = superclass;
-				ctor.prototype = proto;
-				superclass = proto.constructor = ctor;
-			}
-		}else{
-			proto = {};
-		}
-		// add all properties
-		declare.safeMixin(proto, props);
-		// add constructor
-		t = props.constructor;
-		if(t !== op.constructor){
-			t.nom = cname;
-			proto.constructor = t;
-		}
-
-		// collect chains and flags
-		for(i = mixins - 1; i; --i){ // intentional assignment
-			t = bases[i]._meta;
-			if(t && t.chains){
-				chains = mix(chains || {}, t.chains);
-			}
-		}
-		if(proto["-chains-"]){
-			chains = mix(chains || {}, proto["-chains-"]);
-		}
-
-		// build ctor
-		t = !chains || !chains.hasOwnProperty(cname);
-		bases[0] = ctor = (chains && chains.constructor === "manual") ? simpleConstructor(bases) :
-			(bases.length == 1 ? singleConstructor(props.constructor, t) : chainedConstructor(bases, t));
-
-		// add meta information to the constructor
-		ctor._meta  = {bases: bases, hidden: props, chains: chains,
-			parents: parents, ctor: props.constructor};
-		ctor.superclass = superclass && superclass.prototype;
-		ctor.extend = extend;
-		ctor.createSubclass = createSubclass;
-		ctor.prototype = proto;
-		proto.constructor = ctor;
-
-		// add "standard" methods to the prototype
-		proto.getInherited = getInherited;
-		proto.isInstanceOf = isInstanceOf;
-		proto.inherited    = inheritedImpl;
-		proto.__inherited  = inherited;
-
-		// add name if specified
-		if(className){
-			proto.declaredClass = className;
-			lang.setObject(className, ctor);
-		}
-
-		// build chains and add them to the prototype
-		if(chains){
-			for(name in chains){
-				if(proto[name] && typeof chains[name] == "string" && name != cname){
-					t = proto[name] = chain(name, bases, chains[name] === "after");
-					t.nom = name;
+					p = f;
 				}
 			}
+			return name != cname ? p : function(){ p.apply(this, arguments); };
+		},
+		_st: stubChainSuper = function(chain, stub, name){
+			var i = 0, f, t, pi = 0;
+			for(; f = chain[i]; ++i){
+				if(isSuper(f)){
+					t = i - pi;
+					t = chain[i] = dcl._f(f, !t ? 0 : t == 1 ? chain[pi] : stub(chain.slice(pi, i)), name);
+					pi = i;
+				}
+			}
+			t = i - pi;
+			return !t ? 0 : t == 1 && name != cname ? chain[pi] : stub(pi ? chain.slice(pi) : chain);
+		},
+		_sb: /*stub*/ function(id, bases, name, chains){
+			var f = chains[name] = extractChain(bases, name, "f");
+			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || new Function;
 		}
-		// chained methods do not return values
-		// no need to chain "invisible" functions
+	});
 
-		return ctor;	// Function
+	function buildStubs(meta, proto){
+		var weaver = meta.w, bases = meta.b, chains = meta.c;
+		for(var name in weaver){
+			proto[name] = dcl._sb(weaver[name], bases, name, chains);
+		}
 	}
 
-	/*=====
-	declare.__DeclareCreatedObject = {
+	return dcl;
+});
+
+},
+'dcl/bases/Mixer':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["../mini"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("../mini"));
+	}else{
+		dclBasesMixer = factory(dcl);
+	}
+})(function(dcl){
+	"use strict";
+	return dcl(null, {
+		declaredClass: "dcl/bases/Mixer",
+		constructor: function(x){
+			dcl.mix(this, x);
+		}
+	});
+});
+
+},
+'dojo/_base/lang':function(){
+define(["./kernel", "../has", "../sniff"], function(dojo, has){
+	// module:
+	//		dojo/_base/lang
+
+	has.add("bug-for-in-skips-shadowed", function(){
+		// if true, the for-in iterator skips object properties that exist in Object's prototype (IE 6 - ?)
+		for(var i in {toString: 1}){
+			return 0;
+		}
+		return 1;
+	});
+
+	// Helper methods
+	var _extraNames =
+			has("bug-for-in-skips-shadowed") ?
+				"hasOwnProperty.valueOf.isPrototypeOf.propertyIsEnumerable.toLocaleString.toString.constructor".split(".") : [],
+
+		_extraLen = _extraNames.length,
+
+		getProp = function(/*Array*/parts, /*Boolean*/create, /*Object*/context){
+			var p, i = 0, dojoGlobal = dojo.global;
+			if(!context){
+				if(!parts.length){
+					return dojoGlobal;
+				}else{
+					p = parts[i++];
+					try{
+						context = dojo.scopeMap[p] && dojo.scopeMap[p][1];
+					}catch(e){}
+					context = context || (p in dojoGlobal ? dojoGlobal[p] : (create ? dojoGlobal[p] = {} : undefined));
+				}
+			}
+			while(context && (p = parts[i++])){
+				context = (p in context ? context[p] : (create ? context[p] = {} : undefined));
+			}
+			return context; // mixed
+		},
+
+		opts = Object.prototype.toString,
+
+		efficient = function(obj, offset, startWith){
+			return (startWith||[]).concat(Array.prototype.slice.call(obj, offset||0));
+		},
+
+		_pattern = /\{([^\}]+)\}/g;
+
+	// Module export
+	var lang = {
 		// summary:
-		//		dojo/_base/declare() returns a constructor `C`.   `new C()` returns an Object with the following
-		//		methods, in addition to the methods and properties specified via the arguments passed to declare().
+		//		This module defines Javascript language extensions.
 
-		inherited: function(name, args, newArgs){
-			// summary:
-			//		Calls a super method.
-			// name: String?
-			//		The optional method name. Should be the same as the caller's
-			//		name. Usually "name" is specified in complex dynamic cases, when
-			//		the calling method was dynamically added, undecorated by
-			//		declare(), and it cannot be determined.
-			// args: Arguments
-			//		The caller supply this argument, which should be the original
-			//		"arguments".
-			// newArgs: Object?
-			//		If "true", the found function will be returned without
-			//		executing it.
-			//		If Array, it will be used to call a super method. Otherwise
-			//		"args" will be used.
-			// returns:
-			//		Whatever is returned by a super method, or a super method itself,
-			//		if "true" was specified as newArgs.
-			// description:
-			//		This method is used inside method of classes produced with
-			//		declare() to call a super method (next in the chain). It is
-			//		used for manually controlled chaining. Consider using the regular
-			//		chaining, because it is faster. Use "this.inherited()" only in
-			//		complex cases.
-			//
-			//		This method cannot me called from automatically chained
-			//		constructors including the case of a special (legacy)
-			//		constructor chaining. It cannot be called from chained methods.
-			//
-			//		If "this.inherited()" cannot find the next-in-chain method, it
-			//		does nothing and returns "undefined". The last method in chain
-			//		can be a default method implemented in Object, which will be
-			//		called last.
-			//
-			//		If "name" is specified, it is assumed that the method that
-			//		received "args" is the parent method for this call. It is looked
-			//		up in the chain list and if it is found the next-in-chain method
-			//		is called. If it is not found, the first-in-chain method is
-			//		called.
-			//
-			//		If "name" is not specified, it will be derived from the calling
-			//		method (using a methoid property "nom").
-			//
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method1: function(a, b, c){
-			//	|			this.inherited(arguments);
-			//	|		},
-			//	|		method2: function(a, b){
-			//	|			return this.inherited(arguments, [a + b]);
-			//	|		}
-			//	|	});
-			//	|	// next method is not in the chain list because it is added
-			//	|	// manually after the class was created.
-			//	|	B.prototype.method3 = function(){
-			//	|		0 && console.log("This is a dynamically-added method.");
-			//	|		this.inherited("method3", arguments);
-			//	|	};
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method: function(a, b){
-			//	|			var super = this.inherited(arguments, true);
-			//	|			// ...
-			//	|			if(!super){
-			//	|				0 && console.log("there is no super method");
-			//	|				return 0;
-			//	|			}
-			//	|			return super.apply(this, arguments);
-			//	|		}
-			//	|	});
-			return	{};	// Object
-		},
+		// _extraNames: String[]
+		//		Lists property names that must be explicitly processed during for-in iteration
+		//		in environments that have has("bug-for-in-skips-shadowed") true.
+		_extraNames:_extraNames,
 
-		getInherited: function(name, args){
+		_mixin: function(dest, source, copyFunc){
 			// summary:
-			//		Returns a super method.
-			// name: String?
-			//		The optional method name. Should be the same as the caller's
-			//		name. Usually "name" is specified in complex dynamic cases, when
-			//		the calling method was dynamically added, undecorated by
-			//		declare(), and it cannot be determined.
-			// args: Arguments
-			//		The caller supply this argument, which should be the original
-			//		"arguments".
-			// returns:
-			//		Returns a super method (Function) or "undefined".
-			// description:
-			//		This method is a convenience method for "this.inherited()".
-			//		It uses the same algorithm but instead of executing a super
-			//		method, it returns it, or "undefined" if not found.
-			//
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method: function(a, b){
-			//	|			var super = this.getInherited(arguments);
-			//	|			// ...
-			//	|			if(!super){
-			//	|				0 && console.log("there is no super method");
-			//	|				return 0;
-			//	|			}
-			//	|			return super.apply(this, arguments);
-			//	|		}
-			//	|	});
-			return	{};	// Object
-		},
-
-		isInstanceOf: function(cls){
-			// summary:
-			//		Checks the inheritance chain to see if it is inherited from this
-			//		class.
-			// cls: Function
-			//		Class constructor.
-			// returns:
-			//		"true", if this object is inherited from this class, "false"
-			//		otherwise.
-			// description:
-			//		This method is used with instances of classes produced with
-			//		declare() to determine of they support a certain interface or
-			//		not. It models "instanceof" operator.
-			//
-			// example:
-			//	|	var A = declare(null, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var B = declare(null, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var C = declare([A, B], {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var D = declare(A, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|
-			//	|	var a = new A(), b = new B(), c = new C(), d = new D();
-			//	|
-			//	|	0 && console.log(a.isInstanceOf(A)); // true
-			//	|	0 && console.log(b.isInstanceOf(A)); // false
-			//	|	0 && console.log(c.isInstanceOf(A)); // true
-			//	|	0 && console.log(d.isInstanceOf(A)); // true
-			//	|
-			//	|	0 && console.log(a.isInstanceOf(B)); // false
-			//	|	0 && console.log(b.isInstanceOf(B)); // true
-			//	|	0 && console.log(c.isInstanceOf(B)); // true
-			//	|	0 && console.log(d.isInstanceOf(B)); // false
-			//	|
-			//	|	0 && console.log(a.isInstanceOf(C)); // false
-			//	|	0 && console.log(b.isInstanceOf(C)); // false
-			//	|	0 && console.log(c.isInstanceOf(C)); // true
-			//	|	0 && console.log(d.isInstanceOf(C)); // false
-			//	|
-			//	|	0 && console.log(a.isInstanceOf(D)); // false
-			//	|	0 && console.log(b.isInstanceOf(D)); // false
-			//	|	0 && console.log(c.isInstanceOf(D)); // false
-			//	|	0 && console.log(d.isInstanceOf(D)); // true
-			return	{};	// Object
-		},
-
-		extend: function(source){
-			// summary:
-			//		Adds all properties and methods of source to constructor's
-			//		prototype, making them available to all instances created with
-			//		constructor. This method is specific to constructors created with
-			//		declare().
+			//		Copies/adds all properties of source to dest; returns dest.
+			// dest: Object
+			//		The object to which to copy/add all properties contained in source.
 			// source: Object
-			//		Source object which properties are going to be copied to the
-			//		constructor's prototype.
+			//		The object from which to draw all properties to copy into dest.
+			// copyFunc: Function?
+			//		The process used to copy/add a property in source; defaults to the Javascript assignment operator.
+			// returns:
+			//		dest, as modified
 			// description:
-			//		Adds source properties to the constructor's prototype. It can
-			//		override existing properties.
-			//
-			//		This method is similar to dojo.extend function, but it is specific
-			//		to constructors produced by declare(). It is implemented
-			//		using dojo.safeMixin, and it skips a constructor property,
-			//		and properly decorates copied functions.
-			//
+			//		All properties, including functions (sometimes termed "methods"), excluding any non-standard extensions
+			//		found in Object.prototype, are copied/added to dest. Copying/adding each particular property is
+			//		delegated to copyFunc (if any); copyFunc defaults to the Javascript assignment operator if not provided.
+			//		Notice that by default, _mixin executes a so-called "shallow copy" and aggregate types are copied/added by reference.
+			var name, s, i, empty = {};
+			for(name in source){
+				// the (!(name in empty) || empty[name] !== s) condition avoids copying properties in "source"
+				// inherited from Object.prototype.	 For example, if dest has a custom toString() method,
+				// don't overwrite it with the toString() method that source inherited from Object.prototype
+				s = source[name];
+				if(!(name in dest) || (dest[name] !== s && (!(name in empty) || empty[name] !== s))){
+					dest[name] = copyFunc ? copyFunc(s) : s;
+				}
+			}
+
+			if(has("bug-for-in-skips-shadowed")){
+				if(source){
+					for(i = 0; i < _extraLen; ++i){
+						name = _extraNames[i];
+						s = source[name];
+						if(!(name in dest) || (dest[name] !== s && (!(name in empty) || empty[name] !== s))){
+							dest[name] = copyFunc ? copyFunc(s) : s;
+						}
+					}
+				}
+			}
+
+			return dest; // Object
+		},
+
+		mixin: function(dest, sources){
+			// summary:
+			//		Copies/adds all properties of one or more sources to dest; returns dest.
+			// dest: Object
+			//		The object to which to copy/add all properties contained in source. If dest is falsy, then
+			//		a new object is manufactured before copying/adding properties begins.
+			// sources: Object...
+			//		One of more objects from which to draw all properties to copy into dest. sources are processed
+			//		left-to-right and if more than one of these objects contain the same property name, the right-most
+			//		value "wins".
+			// returns: Object
+			//		dest, as modified
+			// description:
+			//		All properties, including functions (sometimes termed "methods"), excluding any non-standard extensions
+			//		found in Object.prototype, are copied/added from sources to dest. sources are processed left to right.
+			//		The Javascript assignment operator is used to copy/add each property; therefore, by default, mixin
+			//		executes a so-called "shallow copy" and aggregate types are copied/added by reference.
 			// example:
-			//	|	var A = declare(null, {
-			//	|		m1: function(){},
-			//	|		s1: "Popokatepetl"
+			//		make a shallow copy of an object
+			//	|	var copy = lang.mixin({}, source);
+			// example:
+			//		many class constructors often take an object which specifies
+			//		values to be configured on the object. In this case, it is
+			//		often simplest to call `lang.mixin` on the `this` object:
+			//	|	declare("acme.Base", null, {
+			//	|		constructor: function(properties){
+			//	|			// property configuration:
+			//	|			lang.mixin(this, properties);
+			//	|
+			//	|			0 && console.log(this.quip);
+			//	|			//	...
+			//	|		},
+			//	|		quip: "I wasn't born yesterday, you know - I've seen movies.",
+			//	|		// ...
 			//	|	});
-			//	|	A.extend({
-			//	|		m1: function(){},
-			//	|		m2: function(){},
-			//	|		f1: true,
-			//	|		d1: 42
-			//	|	});
+			//	|
+			//	|	// create an instance of the class and configure it
+			//	|	var b = new acme.Base({quip: "That's what it does!" });
+			// example:
+			//		copy in properties from multiple objects
+			//	|	var flattened = lang.mixin(
+			//	|		{
+			//	|			name: "Frylock",
+			//	|			braces: true
+			//	|		},
+			//	|		{
+			//	|			name: "Carl Brutanananadilewski"
+			//	|		}
+			//	|	);
+			//	|
+			//	|	// will print "Carl Brutanananadilewski"
+			//	|	0 && console.log(flattened.name);
+			//	|	// will print "true"
+			//	|	0 && console.log(flattened.braces);
+
+			if(!dest){ dest = {}; }
+			for(var i = 1, l = arguments.length; i < l; i++){
+				lang._mixin(dest, arguments[i]);
+			}
+			return dest; // Object
+		},
+
+		setObject: function(name, value, context){
+			// summary:
+			//		Set a property from a dot-separated string, such as "A.B.C"
+			// description:
+			//		Useful for longer api chains where you have to test each object in
+			//		the chain, or when you have an object reference in string format.
+			//		Objects are created as needed along `path`. Returns the passed
+			//		value if setting is successful or `undefined` if not.
+			// name: String
+			//		Path to a property, in the form "A.B.C".
+			// value: anything
+			//		value or object to place at location given by name
+			// context: Object?
+			//		Optional. Object to use as root of path. Defaults to
+			//		`dojo.global`.
+			// example:
+			//		set the value of `foo.bar.baz`, regardless of whether
+			//		intermediate objects already exist:
+			//	| lang.setObject("foo.bar.baz", value);
+			// example:
+			//		without `lang.setObject`, we often see code like this:
+			//	| // ensure that intermediate objects are available
+			//	| if(!obj["parent"]){ obj.parent = {}; }
+			//	| if(!obj.parent["child"]){ obj.parent.child = {}; }
+			//	| // now we can safely set the property
+			//	| obj.parent.child.prop = "some value";
+			//		whereas with `lang.setObject`, we can shorten that to:
+			//	| lang.setObject("parent.child.prop", "some value", obj);
+
+			var parts = name.split("."), p = parts.pop(), obj = getProp(parts, true, context);
+			return obj && p ? (obj[p] = value) : undefined; // Object
+		},
+
+		getObject: function(name, create, context){
+			// summary:
+			//		Get a property from a dot-separated string, such as "A.B.C"
+			// description:
+			//		Useful for longer api chains where you have to test each object in
+			//		the chain, or when you have an object reference in string format.
+			// name: String
+			//		Path to an property, in the form "A.B.C".
+			// create: Boolean?
+			//		Optional. Defaults to `false`. If `true`, Objects will be
+			//		created at any point along the 'path' that is undefined.
+			// context: Object?
+			//		Optional. Object to use as root of path. Defaults to
+			//		'dojo.global'. Null may be passed.
+			return getProp(name.split("."), create, context); // Object
+		},
+
+		exists: function(name, obj){
+			// summary:
+			//		determine if an object supports a given method
+			// description:
+			//		useful for longer api chains where you have to test each object in
+			//		the chain. Useful for object and method detection.
+			// name: String
+			//		Path to an object, in the form "A.B.C".
+			// obj: Object?
+			//		Object to use as root of path. Defaults to
+			//		'dojo.global'. Null may be passed.
+			// example:
+			//	| // define an object
+			//	| var foo = {
+			//	|		bar: { }
+			//	| };
+			//	|
+			//	| // search the global scope
+			//	| lang.exists("foo.bar"); // true
+			//	| lang.exists("foo.bar.baz"); // false
+			//	|
+			//	| // search from a particular scope
+			//	| lang.exists("bar", foo); // true
+			//	| lang.exists("bar.baz", foo); // false
+			return lang.getObject(name, false, obj) !== undefined; // Boolean
+		},
+
+		// Crockford (ish) functions
+
+		isString: function(it){
+			// summary:
+			//		Return true if it is a String
+			// it: anything
+			//		Item to test.
+			return (typeof it == "string" || it instanceof String); // Boolean
+		},
+
+		isArray: function(it){
+			// summary:
+			//		Return true if it is an Array.
+			//		Does not work on Arrays created in other windows.
+			// it: anything
+			//		Item to test.
+			return it && (it instanceof Array || typeof it == "array"); // Boolean
+		},
+
+		isFunction: function(it){
+			// summary:
+			//		Return true if it is a Function
+			// it: anything
+			//		Item to test.
+			return opts.call(it) === "[object Function]";
+		},
+
+		isObject: function(it){
+			// summary:
+			//		Returns true if it is a JavaScript object (or an Array, a Function
+			//		or null)
+			// it: anything
+			//		Item to test.
+			return it !== undefined &&
+				(it === null || typeof it == "object" || lang.isArray(it) || lang.isFunction(it)); // Boolean
+		},
+
+		isArrayLike: function(it){
+			// summary:
+			//		similar to isArray() but more permissive
+			// it: anything
+			//		Item to test.
+			// returns:
+			//		If it walks like a duck and quacks like a duck, return `true`
+			// description:
+			//		Doesn't strongly test for "arrayness".  Instead, settles for "isn't
+			//		a string or number and has a length property". Arguments objects
+			//		and DOM collections will return true when passed to
+			//		isArrayLike(), but will return false when passed to
+			//		isArray().
+			return it && it !== undefined && // Boolean
+				// keep out built-in constructors (Number, String, ...) which have length
+				// properties
+				!lang.isString(it) && !lang.isFunction(it) &&
+				!(it.tagName && it.tagName.toLowerCase() == 'form') &&
+				(lang.isArray(it) || isFinite(it.length));
+		},
+
+		isAlien: function(it){
+			// summary:
+			//		Returns true if it is a built-in function or some other kind of
+			//		oddball that *should* report as a function but doesn't
+			return it && !lang.isFunction(it) && /\{\s*\[native code\]\s*\}/.test(String(it)); // Boolean
+		},
+
+		extend: function(ctor, props){
+			// summary:
+			//		Adds all properties and methods of props to constructor's
+			//		prototype, making them available to all instances created with
+			//		constructor.
+			// ctor: Object
+			//		Target constructor to extend.
+			// props: Object
+			//		One or more objects to mix into ctor.prototype
+			for(var i=1, l=arguments.length; i<l; i++){
+				lang._mixin(ctor.prototype, arguments[i]);
+			}
+			return ctor; // Object
+		},
+
+		_hitchArgs: function(scope, method){
+			var pre = lang._toArray(arguments, 2);
+			var named = lang.isString(method);
+			return function(){
+				// arrayify arguments
+				var args = lang._toArray(arguments);
+				// locate our method
+				var f = named ? (scope||dojo.global)[method] : method;
+				// invoke with collected args
+				return f && f.apply(scope || this, pre.concat(args)); // mixed
+			}; // Function
+		},
+
+		hitch: function(scope, method){
+			// summary:
+			//		Returns a function that will only ever execute in the a given scope.
+			//		This allows for easy use of object member functions
+			//		in callbacks and other places in which the "this" keyword may
+			//		otherwise not reference the expected scope.
+			//		Any number of default positional arguments may be passed as parameters
+			//		beyond "method".
+			//		Each of these values will be used to "placehold" (similar to curry)
+			//		for the hitched function.
+			// scope: Object
+			//		The scope to use when method executes. If method is a string,
+			//		scope is also the object containing method.
+			// method: Function|String...
+			//		A function to be hitched to scope, or the name of the method in
+			//		scope to be hitched.
+			// example:
+			//	|	lang.hitch(foo, "bar")();
+			//		runs foo.bar() in the scope of foo
+			// example:
+			//	|	lang.hitch(foo, myFunction);
+			//		returns a function that runs myFunction in the scope of foo
+			// example:
+			//		Expansion on the default positional arguments passed along from
+			//		hitch. Passed args are mixed first, additional args after.
+			//	|	var foo = { bar: function(a, b, c){ 0 && console.log(a, b, c); } };
+			//	|	var fn = lang.hitch(foo, "bar", 1, 2);
+			//	|	fn(3); // logs "1, 2, 3"
+			// example:
+			//	|	var foo = { bar: 2 };
+			//	|	lang.hitch(foo, function(){ this.bar = 10; })();
+			//		execute an anonymous function in scope of foo
+			if(arguments.length > 2){
+				return lang._hitchArgs.apply(dojo, arguments); // Function
+			}
+			if(!method){
+				method = scope;
+				scope = null;
+			}
+			if(lang.isString(method)){
+				scope = scope || dojo.global;
+				if(!scope[method]){ throw(['lang.hitch: scope["', method, '"] is null (scope="', scope, '")'].join('')); }
+				return function(){ return scope[method].apply(scope, arguments || []); }; // Function
+			}
+			return !scope ? method : function(){ return method.apply(scope, arguments || []); }; // Function
+		},
+
+		delegate: (function(){
+			// boodman/crockford delegation w/ cornford optimization
+			function TMP(){}
+			return function(obj, props){
+				TMP.prototype = obj;
+				var tmp = new TMP();
+				TMP.prototype = null;
+				if(props){
+					lang._mixin(tmp, props);
+				}
+				return tmp; // Object
+			};
+		})(),
+		/*=====
+		delegate: function(obj, props){
+			// summary:
+			//		Returns a new object which "looks" to obj for properties which it
+			//		does not have a value for. Optionally takes a bag of properties to
+			//		seed the returned object with initially.
+			// description:
+			//		This is a small implementation of the Boodman/Crockford delegation
+			//		pattern in JavaScript. An intermediate object constructor mediates
+			//		the prototype chain for the returned object, using it to delegate
+			//		down to obj for property lookup when object-local lookup fails.
+			//		This can be thought of similarly to ES4's "wrap", save that it does
+			//		not act on types but rather on pure objects.
+			// obj: Object
+			//		The object to delegate to for properties not found directly on the
+			//		return object or in props.
+			// props: Object...
+			//		an object containing properties to assign to the returned object
+			// returns:
+			//		an Object of anonymous type
+			// example:
+			//	|	var foo = { bar: "baz" };
+			//	|	var thinger = lang.delegate(foo, { thud: "xyzzy"});
+			//	|	thinger.bar == "baz"; // delegated to foo
+			//	|	foo.thud == undefined; // by definition
+			//	|	thinger.thud == "xyzzy"; // mixed in from props
+			//	|	foo.bar = "thonk";
+			//	|	thinger.bar == "thonk"; // still delegated to foo's bar
+		},
+		=====*/
+
+		_toArray: has("ie") ?
+			(function(){
+				function slow(obj, offset, startWith){
+					var arr = startWith||[];
+					for(var x = offset || 0; x < obj.length; x++){
+						arr.push(obj[x]);
+					}
+					return arr;
+				}
+				return function(obj){
+					return ((obj.item) ? slow : efficient).apply(this, arguments);
+				};
+			})() : efficient,
+		/*=====
+		 _toArray: function(obj, offset, startWith){
+			 // summary:
+			 //		Converts an array-like object (i.e. arguments, DOMCollection) to an
+			 //		array. Returns a new Array with the elements of obj.
+			 // obj: Object
+			 //		the object to "arrayify". We expect the object to have, at a
+			 //		minimum, a length property which corresponds to integer-indexed
+			 //		properties.
+			 // offset: Number?
+			 //		the location in obj to start iterating from. Defaults to 0.
+			 //		Optional.
+			 // startWith: Array?
+			 //		An array to pack with the properties of obj. If provided,
+			 //		properties in obj are appended at the end of startWith and
+			 //		startWith is the returned array.
+		 },
+		 =====*/
+
+		partial: function(/*Function|String*/ method /*, ...*/){
+			// summary:
+			//		similar to hitch() except that the scope object is left to be
+			//		whatever the execution context eventually becomes.
+			// description:
+			//		Calling lang.partial is the functional equivalent of calling:
+			//		|	lang.hitch(null, funcName, ...);
+			// method:
+			//		The function to "wrap"
+			var arr = [ null ];
+			return lang.hitch.apply(dojo, arr.concat(lang._toArray(arguments))); // Function
+		},
+
+		clone: function(/*anything*/ src){
+			// summary:
+			//		Clones objects (including DOM nodes) and all children.
+			//		Warning: do not clone cyclic structures.
+			// src:
+			//		The object to clone
+			if(!src || typeof src != "object" || lang.isFunction(src)){
+				// null, undefined, any non-object, or function
+				return src;	// anything
+			}
+			if(src.nodeType && "cloneNode" in src){
+				// DOM Node
+				return src.cloneNode(true); // Node
+			}
+			if(src instanceof Date){
+				// Date
+				return new Date(src.getTime());	// Date
+			}
+			if(src instanceof RegExp){
+				// RegExp
+				return new RegExp(src);   // RegExp
+			}
+			var r, i, l;
+			if(lang.isArray(src)){
+				// array
+				r = [];
+				for(i = 0, l = src.length; i < l; ++i){
+					if(i in src){
+						r.push(lang.clone(src[i]));
+					}
+				}
+				// we don't clone functions for performance reasons
+				//		}else if(d.isFunction(src)){
+				//			// function
+				//			r = function(){ return src.apply(this, arguments); };
+			}else{
+				// generic objects
+				r = src.constructor ? new src.constructor() : {};
+			}
+			return lang._mixin(r, src, lang.clone);
+		},
+
+
+		trim: String.prototype.trim ?
+			function(str){ return str.trim(); } :
+			function(str){ return str.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); },
+		/*=====
+		 trim: function(str){
+			 // summary:
+			 //		Trims whitespace from both sides of the string
+			 // str: String
+			 //		String to be trimmed
+			 // returns: String
+			 //		Returns the trimmed string
+			 // description:
+			 //		This version of trim() was selected for inclusion into the base due
+			 //		to its compact size and relatively good performance
+			 //		(see [Steven Levithan's blog](http://blog.stevenlevithan.com/archives/faster-trim-javascript)
+			 //		Uses String.prototype.trim instead, if available.
+			 //		The fastest but longest version of this function is located at
+			 //		lang.string.trim()
+		 },
+		 =====*/
+
+		replace: function(tmpl, map, pattern){
+			// summary:
+			//		Performs parameterized substitutions on a string. Throws an
+			//		exception if any parameter is unmatched.
+			// tmpl: String
+			//		String to be used as a template.
+			// map: Object|Function
+			//		If an object, it is used as a dictionary to look up substitutions.
+			//		If a function, it is called for every substitution with following parameters:
+			//		a whole match, a name, an offset, and the whole template
+			//		string (see https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace
+			//		for more details).
+			// pattern: RegEx?
+			//		Optional regular expression objects that overrides the default pattern.
+			//		Must be global and match one item. The default is: /\{([^\}]+)\}/g,
+			//		which matches patterns like that: "{xxx}", where "xxx" is any sequence
+			//		of characters, which doesn't include "}".
+			// returns: String
+			//		Returns the substituted string.
+			// example:
+			//	|	// uses a dictionary for substitutions:
+			//	|	lang.replace("Hello, {name.first} {name.last} AKA {nick}!",
+			//	|		{
+			//	|			nick: "Bob",
+			//	|			name: {
+			//	|				first:	"Robert",
+			//	|				middle: "X",
+			//	|				last:		"Cringely"
+			//	|			}
+			//	|		});
+			//	|	// returns: Hello, Robert Cringely AKA Bob!
+			// example:
+			//	|	// uses an array for substitutions:
+			//	|	lang.replace("Hello, {0} {2}!",
+			//	|		["Robert", "X", "Cringely"]);
+			//	|	// returns: Hello, Robert Cringely!
+			// example:
+			//	|	// uses a function for substitutions:
+			//	|	function sum(a){
+			//	|		var t = 0;
+			//	|		arrayforEach(a, function(x){ t += x; });
+			//	|		return t;
+			//	|	}
+			//	|	lang.replace(
+			//	|		"{count} payments averaging {avg} USD per payment.",
+			//	|		lang.hitch(
+			//	|			{ payments: [11, 16, 12] },
+			//	|			function(_, key){
+			//	|				switch(key){
+			//	|					case "count": return this.payments.length;
+			//	|					case "min":		return Math.min.apply(Math, this.payments);
+			//	|					case "max":		return Math.max.apply(Math, this.payments);
+			//	|					case "sum":		return sum(this.payments);
+			//	|					case "avg":		return sum(this.payments) / this.payments.length;
+			//	|				}
+			//	|			}
+			//	|		)
+			//	|	);
+			//	|	// prints: 3 payments averaging 13 USD per payment.
+			// example:
+			//	|	// uses an alternative PHP-like pattern for substitutions:
+			//	|	lang.replace("Hello, ${0} ${2}!",
+			//	|		["Robert", "X", "Cringely"], /\$\{([^\}]+)\}/g);
+			//	|	// returns: Hello, Robert Cringely!
+
+			return tmpl.replace(pattern || _pattern, lang.isFunction(map) ?
+				map : function(_, k){ return lang.getObject(k, false, map); });
 		}
 	};
-	=====*/
 
-	// For back-compat, remove for 2.0
-	dojo.safeMixin = declare.safeMixin = safeMixin;
-	dojo.declare = declare;
+	 1  && lang.mixin(dojo, lang);
 
-	return declare;
+	return lang;
 });
+
 
 },
 'dojo/_base/kernel':function(){
@@ -4097,614 +3980,6 @@ return {
 
 
 },
-'dojo/_base/lang':function(){
-define(["./kernel", "../has", "../sniff"], function(dojo, has){
-	// module:
-	//		dojo/_base/lang
-
-	has.add("bug-for-in-skips-shadowed", function(){
-		// if true, the for-in iterator skips object properties that exist in Object's prototype (IE 6 - ?)
-		for(var i in {toString: 1}){
-			return 0;
-		}
-		return 1;
-	});
-
-	// Helper methods
-	var _extraNames =
-			has("bug-for-in-skips-shadowed") ?
-				"hasOwnProperty.valueOf.isPrototypeOf.propertyIsEnumerable.toLocaleString.toString.constructor".split(".") : [],
-
-		_extraLen = _extraNames.length,
-
-		getProp = function(/*Array*/parts, /*Boolean*/create, /*Object*/context){
-			var p, i = 0, dojoGlobal = dojo.global;
-			if(!context){
-				if(!parts.length){
-					return dojoGlobal;
-				}else{
-					p = parts[i++];
-					try{
-						context = dojo.scopeMap[p] && dojo.scopeMap[p][1];
-					}catch(e){}
-					context = context || (p in dojoGlobal ? dojoGlobal[p] : (create ? dojoGlobal[p] = {} : undefined));
-				}
-			}
-			while(context && (p = parts[i++])){
-				context = (p in context ? context[p] : (create ? context[p] = {} : undefined));
-			}
-			return context; // mixed
-		},
-
-		opts = Object.prototype.toString,
-
-		efficient = function(obj, offset, startWith){
-			return (startWith||[]).concat(Array.prototype.slice.call(obj, offset||0));
-		},
-
-		_pattern = /\{([^\}]+)\}/g;
-
-	// Module export
-	var lang = {
-		// summary:
-		//		This module defines Javascript language extensions.
-
-		// _extraNames: String[]
-		//		Lists property names that must be explicitly processed during for-in iteration
-		//		in environments that have has("bug-for-in-skips-shadowed") true.
-		_extraNames:_extraNames,
-
-		_mixin: function(dest, source, copyFunc){
-			// summary:
-			//		Copies/adds all properties of source to dest; returns dest.
-			// dest: Object
-			//		The object to which to copy/add all properties contained in source.
-			// source: Object
-			//		The object from which to draw all properties to copy into dest.
-			// copyFunc: Function?
-			//		The process used to copy/add a property in source; defaults to the Javascript assignment operator.
-			// returns:
-			//		dest, as modified
-			// description:
-			//		All properties, including functions (sometimes termed "methods"), excluding any non-standard extensions
-			//		found in Object.prototype, are copied/added to dest. Copying/adding each particular property is
-			//		delegated to copyFunc (if any); copyFunc defaults to the Javascript assignment operator if not provided.
-			//		Notice that by default, _mixin executes a so-called "shallow copy" and aggregate types are copied/added by reference.
-			var name, s, i, empty = {};
-			for(name in source){
-				// the (!(name in empty) || empty[name] !== s) condition avoids copying properties in "source"
-				// inherited from Object.prototype.	 For example, if dest has a custom toString() method,
-				// don't overwrite it with the toString() method that source inherited from Object.prototype
-				s = source[name];
-				if(!(name in dest) || (dest[name] !== s && (!(name in empty) || empty[name] !== s))){
-					dest[name] = copyFunc ? copyFunc(s) : s;
-				}
-			}
-
-			if(has("bug-for-in-skips-shadowed")){
-				if(source){
-					for(i = 0; i < _extraLen; ++i){
-						name = _extraNames[i];
-						s = source[name];
-						if(!(name in dest) || (dest[name] !== s && (!(name in empty) || empty[name] !== s))){
-							dest[name] = copyFunc ? copyFunc(s) : s;
-						}
-					}
-				}
-			}
-
-			return dest; // Object
-		},
-
-		mixin: function(dest, sources){
-			// summary:
-			//		Copies/adds all properties of one or more sources to dest; returns dest.
-			// dest: Object
-			//		The object to which to copy/add all properties contained in source. If dest is falsy, then
-			//		a new object is manufactured before copying/adding properties begins.
-			// sources: Object...
-			//		One of more objects from which to draw all properties to copy into dest. sources are processed
-			//		left-to-right and if more than one of these objects contain the same property name, the right-most
-			//		value "wins".
-			// returns: Object
-			//		dest, as modified
-			// description:
-			//		All properties, including functions (sometimes termed "methods"), excluding any non-standard extensions
-			//		found in Object.prototype, are copied/added from sources to dest. sources are processed left to right.
-			//		The Javascript assignment operator is used to copy/add each property; therefore, by default, mixin
-			//		executes a so-called "shallow copy" and aggregate types are copied/added by reference.
-			// example:
-			//		make a shallow copy of an object
-			//	|	var copy = lang.mixin({}, source);
-			// example:
-			//		many class constructors often take an object which specifies
-			//		values to be configured on the object. In this case, it is
-			//		often simplest to call `lang.mixin` on the `this` object:
-			//	|	declare("acme.Base", null, {
-			//	|		constructor: function(properties){
-			//	|			// property configuration:
-			//	|			lang.mixin(this, properties);
-			//	|
-			//	|			0 && console.log(this.quip);
-			//	|			//	...
-			//	|		},
-			//	|		quip: "I wasn't born yesterday, you know - I've seen movies.",
-			//	|		// ...
-			//	|	});
-			//	|
-			//	|	// create an instance of the class and configure it
-			//	|	var b = new acme.Base({quip: "That's what it does!" });
-			// example:
-			//		copy in properties from multiple objects
-			//	|	var flattened = lang.mixin(
-			//	|		{
-			//	|			name: "Frylock",
-			//	|			braces: true
-			//	|		},
-			//	|		{
-			//	|			name: "Carl Brutanananadilewski"
-			//	|		}
-			//	|	);
-			//	|
-			//	|	// will print "Carl Brutanananadilewski"
-			//	|	0 && console.log(flattened.name);
-			//	|	// will print "true"
-			//	|	0 && console.log(flattened.braces);
-
-			if(!dest){ dest = {}; }
-			for(var i = 1, l = arguments.length; i < l; i++){
-				lang._mixin(dest, arguments[i]);
-			}
-			return dest; // Object
-		},
-
-		setObject: function(name, value, context){
-			// summary:
-			//		Set a property from a dot-separated string, such as "A.B.C"
-			// description:
-			//		Useful for longer api chains where you have to test each object in
-			//		the chain, or when you have an object reference in string format.
-			//		Objects are created as needed along `path`. Returns the passed
-			//		value if setting is successful or `undefined` if not.
-			// name: String
-			//		Path to a property, in the form "A.B.C".
-			// value: anything
-			//		value or object to place at location given by name
-			// context: Object?
-			//		Optional. Object to use as root of path. Defaults to
-			//		`dojo.global`.
-			// example:
-			//		set the value of `foo.bar.baz`, regardless of whether
-			//		intermediate objects already exist:
-			//	| lang.setObject("foo.bar.baz", value);
-			// example:
-			//		without `lang.setObject`, we often see code like this:
-			//	| // ensure that intermediate objects are available
-			//	| if(!obj["parent"]){ obj.parent = {}; }
-			//	| if(!obj.parent["child"]){ obj.parent.child = {}; }
-			//	| // now we can safely set the property
-			//	| obj.parent.child.prop = "some value";
-			//		whereas with `lang.setObject`, we can shorten that to:
-			//	| lang.setObject("parent.child.prop", "some value", obj);
-
-			var parts = name.split("."), p = parts.pop(), obj = getProp(parts, true, context);
-			return obj && p ? (obj[p] = value) : undefined; // Object
-		},
-
-		getObject: function(name, create, context){
-			// summary:
-			//		Get a property from a dot-separated string, such as "A.B.C"
-			// description:
-			//		Useful for longer api chains where you have to test each object in
-			//		the chain, or when you have an object reference in string format.
-			// name: String
-			//		Path to an property, in the form "A.B.C".
-			// create: Boolean?
-			//		Optional. Defaults to `false`. If `true`, Objects will be
-			//		created at any point along the 'path' that is undefined.
-			// context: Object?
-			//		Optional. Object to use as root of path. Defaults to
-			//		'dojo.global'. Null may be passed.
-			return getProp(name.split("."), create, context); // Object
-		},
-
-		exists: function(name, obj){
-			// summary:
-			//		determine if an object supports a given method
-			// description:
-			//		useful for longer api chains where you have to test each object in
-			//		the chain. Useful for object and method detection.
-			// name: String
-			//		Path to an object, in the form "A.B.C".
-			// obj: Object?
-			//		Object to use as root of path. Defaults to
-			//		'dojo.global'. Null may be passed.
-			// example:
-			//	| // define an object
-			//	| var foo = {
-			//	|		bar: { }
-			//	| };
-			//	|
-			//	| // search the global scope
-			//	| lang.exists("foo.bar"); // true
-			//	| lang.exists("foo.bar.baz"); // false
-			//	|
-			//	| // search from a particular scope
-			//	| lang.exists("bar", foo); // true
-			//	| lang.exists("bar.baz", foo); // false
-			return lang.getObject(name, false, obj) !== undefined; // Boolean
-		},
-
-		// Crockford (ish) functions
-
-		isString: function(it){
-			// summary:
-			//		Return true if it is a String
-			// it: anything
-			//		Item to test.
-			return (typeof it == "string" || it instanceof String); // Boolean
-		},
-
-		isArray: function(it){
-			// summary:
-			//		Return true if it is an Array.
-			//		Does not work on Arrays created in other windows.
-			// it: anything
-			//		Item to test.
-			return it && (it instanceof Array || typeof it == "array"); // Boolean
-		},
-
-		isFunction: function(it){
-			// summary:
-			//		Return true if it is a Function
-			// it: anything
-			//		Item to test.
-			return opts.call(it) === "[object Function]";
-		},
-
-		isObject: function(it){
-			// summary:
-			//		Returns true if it is a JavaScript object (or an Array, a Function
-			//		or null)
-			// it: anything
-			//		Item to test.
-			return it !== undefined &&
-				(it === null || typeof it == "object" || lang.isArray(it) || lang.isFunction(it)); // Boolean
-		},
-
-		isArrayLike: function(it){
-			// summary:
-			//		similar to isArray() but more permissive
-			// it: anything
-			//		Item to test.
-			// returns:
-			//		If it walks like a duck and quacks like a duck, return `true`
-			// description:
-			//		Doesn't strongly test for "arrayness".  Instead, settles for "isn't
-			//		a string or number and has a length property". Arguments objects
-			//		and DOM collections will return true when passed to
-			//		isArrayLike(), but will return false when passed to
-			//		isArray().
-			return it && it !== undefined && // Boolean
-				// keep out built-in constructors (Number, String, ...) which have length
-				// properties
-				!lang.isString(it) && !lang.isFunction(it) &&
-				!(it.tagName && it.tagName.toLowerCase() == 'form') &&
-				(lang.isArray(it) || isFinite(it.length));
-		},
-
-		isAlien: function(it){
-			// summary:
-			//		Returns true if it is a built-in function or some other kind of
-			//		oddball that *should* report as a function but doesn't
-			return it && !lang.isFunction(it) && /\{\s*\[native code\]\s*\}/.test(String(it)); // Boolean
-		},
-
-		extend: function(ctor, props){
-			// summary:
-			//		Adds all properties and methods of props to constructor's
-			//		prototype, making them available to all instances created with
-			//		constructor.
-			// ctor: Object
-			//		Target constructor to extend.
-			// props: Object
-			//		One or more objects to mix into ctor.prototype
-			for(var i=1, l=arguments.length; i<l; i++){
-				lang._mixin(ctor.prototype, arguments[i]);
-			}
-			return ctor; // Object
-		},
-
-		_hitchArgs: function(scope, method){
-			var pre = lang._toArray(arguments, 2);
-			var named = lang.isString(method);
-			return function(){
-				// arrayify arguments
-				var args = lang._toArray(arguments);
-				// locate our method
-				var f = named ? (scope||dojo.global)[method] : method;
-				// invoke with collected args
-				return f && f.apply(scope || this, pre.concat(args)); // mixed
-			}; // Function
-		},
-
-		hitch: function(scope, method){
-			// summary:
-			//		Returns a function that will only ever execute in the a given scope.
-			//		This allows for easy use of object member functions
-			//		in callbacks and other places in which the "this" keyword may
-			//		otherwise not reference the expected scope.
-			//		Any number of default positional arguments may be passed as parameters
-			//		beyond "method".
-			//		Each of these values will be used to "placehold" (similar to curry)
-			//		for the hitched function.
-			// scope: Object
-			//		The scope to use when method executes. If method is a string,
-			//		scope is also the object containing method.
-			// method: Function|String...
-			//		A function to be hitched to scope, or the name of the method in
-			//		scope to be hitched.
-			// example:
-			//	|	lang.hitch(foo, "bar")();
-			//		runs foo.bar() in the scope of foo
-			// example:
-			//	|	lang.hitch(foo, myFunction);
-			//		returns a function that runs myFunction in the scope of foo
-			// example:
-			//		Expansion on the default positional arguments passed along from
-			//		hitch. Passed args are mixed first, additional args after.
-			//	|	var foo = { bar: function(a, b, c){ 0 && console.log(a, b, c); } };
-			//	|	var fn = lang.hitch(foo, "bar", 1, 2);
-			//	|	fn(3); // logs "1, 2, 3"
-			// example:
-			//	|	var foo = { bar: 2 };
-			//	|	lang.hitch(foo, function(){ this.bar = 10; })();
-			//		execute an anonymous function in scope of foo
-			if(arguments.length > 2){
-				return lang._hitchArgs.apply(dojo, arguments); // Function
-			}
-			if(!method){
-				method = scope;
-				scope = null;
-			}
-			if(lang.isString(method)){
-				scope = scope || dojo.global;
-				if(!scope[method]){ throw(['lang.hitch: scope["', method, '"] is null (scope="', scope, '")'].join('')); }
-				return function(){ return scope[method].apply(scope, arguments || []); }; // Function
-			}
-			return !scope ? method : function(){ return method.apply(scope, arguments || []); }; // Function
-		},
-
-		delegate: (function(){
-			// boodman/crockford delegation w/ cornford optimization
-			function TMP(){}
-			return function(obj, props){
-				TMP.prototype = obj;
-				var tmp = new TMP();
-				TMP.prototype = null;
-				if(props){
-					lang._mixin(tmp, props);
-				}
-				return tmp; // Object
-			};
-		})(),
-		/*=====
-		delegate: function(obj, props){
-			// summary:
-			//		Returns a new object which "looks" to obj for properties which it
-			//		does not have a value for. Optionally takes a bag of properties to
-			//		seed the returned object with initially.
-			// description:
-			//		This is a small implementation of the Boodman/Crockford delegation
-			//		pattern in JavaScript. An intermediate object constructor mediates
-			//		the prototype chain for the returned object, using it to delegate
-			//		down to obj for property lookup when object-local lookup fails.
-			//		This can be thought of similarly to ES4's "wrap", save that it does
-			//		not act on types but rather on pure objects.
-			// obj: Object
-			//		The object to delegate to for properties not found directly on the
-			//		return object or in props.
-			// props: Object...
-			//		an object containing properties to assign to the returned object
-			// returns:
-			//		an Object of anonymous type
-			// example:
-			//	|	var foo = { bar: "baz" };
-			//	|	var thinger = lang.delegate(foo, { thud: "xyzzy"});
-			//	|	thinger.bar == "baz"; // delegated to foo
-			//	|	foo.thud == undefined; // by definition
-			//	|	thinger.thud == "xyzzy"; // mixed in from props
-			//	|	foo.bar = "thonk";
-			//	|	thinger.bar == "thonk"; // still delegated to foo's bar
-		},
-		=====*/
-
-		_toArray: has("ie") ?
-			(function(){
-				function slow(obj, offset, startWith){
-					var arr = startWith||[];
-					for(var x = offset || 0; x < obj.length; x++){
-						arr.push(obj[x]);
-					}
-					return arr;
-				}
-				return function(obj){
-					return ((obj.item) ? slow : efficient).apply(this, arguments);
-				};
-			})() : efficient,
-		/*=====
-		 _toArray: function(obj, offset, startWith){
-			 // summary:
-			 //		Converts an array-like object (i.e. arguments, DOMCollection) to an
-			 //		array. Returns a new Array with the elements of obj.
-			 // obj: Object
-			 //		the object to "arrayify". We expect the object to have, at a
-			 //		minimum, a length property which corresponds to integer-indexed
-			 //		properties.
-			 // offset: Number?
-			 //		the location in obj to start iterating from. Defaults to 0.
-			 //		Optional.
-			 // startWith: Array?
-			 //		An array to pack with the properties of obj. If provided,
-			 //		properties in obj are appended at the end of startWith and
-			 //		startWith is the returned array.
-		 },
-		 =====*/
-
-		partial: function(/*Function|String*/ method /*, ...*/){
-			// summary:
-			//		similar to hitch() except that the scope object is left to be
-			//		whatever the execution context eventually becomes.
-			// description:
-			//		Calling lang.partial is the functional equivalent of calling:
-			//		|	lang.hitch(null, funcName, ...);
-			// method:
-			//		The function to "wrap"
-			var arr = [ null ];
-			return lang.hitch.apply(dojo, arr.concat(lang._toArray(arguments))); // Function
-		},
-
-		clone: function(/*anything*/ src){
-			// summary:
-			//		Clones objects (including DOM nodes) and all children.
-			//		Warning: do not clone cyclic structures.
-			// src:
-			//		The object to clone
-			if(!src || typeof src != "object" || lang.isFunction(src)){
-				// null, undefined, any non-object, or function
-				return src;	// anything
-			}
-			if(src.nodeType && "cloneNode" in src){
-				// DOM Node
-				return src.cloneNode(true); // Node
-			}
-			if(src instanceof Date){
-				// Date
-				return new Date(src.getTime());	// Date
-			}
-			if(src instanceof RegExp){
-				// RegExp
-				return new RegExp(src);   // RegExp
-			}
-			var r, i, l;
-			if(lang.isArray(src)){
-				// array
-				r = [];
-				for(i = 0, l = src.length; i < l; ++i){
-					if(i in src){
-						r.push(lang.clone(src[i]));
-					}
-				}
-				// we don't clone functions for performance reasons
-				//		}else if(d.isFunction(src)){
-				//			// function
-				//			r = function(){ return src.apply(this, arguments); };
-			}else{
-				// generic objects
-				r = src.constructor ? new src.constructor() : {};
-			}
-			return lang._mixin(r, src, lang.clone);
-		},
-
-
-		trim: String.prototype.trim ?
-			function(str){ return str.trim(); } :
-			function(str){ return str.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); },
-		/*=====
-		 trim: function(str){
-			 // summary:
-			 //		Trims whitespace from both sides of the string
-			 // str: String
-			 //		String to be trimmed
-			 // returns: String
-			 //		Returns the trimmed string
-			 // description:
-			 //		This version of trim() was selected for inclusion into the base due
-			 //		to its compact size and relatively good performance
-			 //		(see [Steven Levithan's blog](http://blog.stevenlevithan.com/archives/faster-trim-javascript)
-			 //		Uses String.prototype.trim instead, if available.
-			 //		The fastest but longest version of this function is located at
-			 //		lang.string.trim()
-		 },
-		 =====*/
-
-		replace: function(tmpl, map, pattern){
-			// summary:
-			//		Performs parameterized substitutions on a string. Throws an
-			//		exception if any parameter is unmatched.
-			// tmpl: String
-			//		String to be used as a template.
-			// map: Object|Function
-			//		If an object, it is used as a dictionary to look up substitutions.
-			//		If a function, it is called for every substitution with following parameters:
-			//		a whole match, a name, an offset, and the whole template
-			//		string (see https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace
-			//		for more details).
-			// pattern: RegEx?
-			//		Optional regular expression objects that overrides the default pattern.
-			//		Must be global and match one item. The default is: /\{([^\}]+)\}/g,
-			//		which matches patterns like that: "{xxx}", where "xxx" is any sequence
-			//		of characters, which doesn't include "}".
-			// returns: String
-			//		Returns the substituted string.
-			// example:
-			//	|	// uses a dictionary for substitutions:
-			//	|	lang.replace("Hello, {name.first} {name.last} AKA {nick}!",
-			//	|		{
-			//	|			nick: "Bob",
-			//	|			name: {
-			//	|				first:	"Robert",
-			//	|				middle: "X",
-			//	|				last:		"Cringely"
-			//	|			}
-			//	|		});
-			//	|	// returns: Hello, Robert Cringely AKA Bob!
-			// example:
-			//	|	// uses an array for substitutions:
-			//	|	lang.replace("Hello, {0} {2}!",
-			//	|		["Robert", "X", "Cringely"]);
-			//	|	// returns: Hello, Robert Cringely!
-			// example:
-			//	|	// uses a function for substitutions:
-			//	|	function sum(a){
-			//	|		var t = 0;
-			//	|		arrayforEach(a, function(x){ t += x; });
-			//	|		return t;
-			//	|	}
-			//	|	lang.replace(
-			//	|		"{count} payments averaging {avg} USD per payment.",
-			//	|		lang.hitch(
-			//	|			{ payments: [11, 16, 12] },
-			//	|			function(_, key){
-			//	|				switch(key){
-			//	|					case "count": return this.payments.length;
-			//	|					case "min":		return Math.min.apply(Math, this.payments);
-			//	|					case "max":		return Math.max.apply(Math, this.payments);
-			//	|					case "sum":		return sum(this.payments);
-			//	|					case "avg":		return sum(this.payments) / this.payments.length;
-			//	|				}
-			//	|			}
-			//	|		)
-			//	|	);
-			//	|	// prints: 3 payments averaging 13 USD per payment.
-			// example:
-			//	|	// uses an alternative PHP-like pattern for substitutions:
-			//	|	lang.replace("Hello, ${0} ${2}!",
-			//	|		["Robert", "X", "Cringely"], /\$\{([^\}]+)\}/g);
-			//	|	// returns: Hello, Robert Cringely!
-
-			return tmpl.replace(pattern || _pattern, lang.isFunction(map) ?
-				map : function(_, k){ return lang.getObject(k, false, map); });
-		}
-	};
-
-	 1  && lang.mixin(dojo, lang);
-
-	return lang;
-});
-
-
-},
 'dojo/sniff':function(){
 define("dojo/sniff", ["./has"], function(has){
 	// module:
@@ -4805,36 +4080,38 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     radius: 1,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
 
     /**
       * Draws the CircelEntity at a given scale
       * @name CircleEntity#draw
       * @function
     */
-    draw: function(ctx, scale){
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.fill();
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
 
-      ctx.strokeStyle = '#000000';
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.stroke();
+        ctx.strokeStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.stroke();
 
-      this.inherited(arguments);
-    }
+        sup.apply(this, [ctx, scale]);
+      };
+    })
   });
 
 });
@@ -4865,11 +4142,14 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     id: 0,
     x: 0,
     y: 0,
@@ -4885,9 +4165,6 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     update: function(state){
       lang.mixin(this, state);
     },
@@ -4914,7 +4191,7 @@ define([
       ctx.closePath();
       ctx.fill();
     }
-    
+
   });
 
 });
@@ -4946,35 +4223,37 @@ limitations under the License.
 */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     points: [],
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      ctx.beginPath();
-      ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      for (var i = 1; i < this.points.length; i++) {
-         ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
-      }
-      ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        for (var i = 1; i < this.points.length; i++) {
+           ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
+        }
+        ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.restore();
-      this.inherited(arguments);
-    }
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    })
   });
 
 });
@@ -5006,16 +4285,16 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     polys: [],
     points: null,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
     /**
       * Draws each polygon in the entity
       * @name MultiPolygonEntity#draw
@@ -5024,28 +4303,30 @@ define([
       * @param {Number} scale the scale to draw the entity at
       *
       */
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      for(var j = 0; j < this.polys.length; j++){
-        ctx.beginPath();
-        ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        for (var i = 1; i < this.polys[j].length; i++) {
-           ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+        for(var j = 0; j < this.polys.length; j++){
+          ctx.beginPath();
+          ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          for (var i = 1; i < this.polys[j].length; i++) {
+             ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+          }
+          ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
         }
-        ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
 
-      ctx.restore();
-      this.inherited(arguments);
-    }
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    })
   });
 
 });
@@ -5077,31 +4358,33 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     halfWidth: 1,
     halfHeight: 1,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
-      ctx.fillRect(
-        (this.x-this.halfWidth) * scale,
-        (this.y-this.halfHeight) * scale,
-        (this.halfWidth*2) * scale,
-        (this.halfHeight*2) * scale
-      );
-      ctx.restore();
-      this.inherited(arguments);
-    }
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(
+          (this.x-this.halfWidth) * scale,
+          (this.y-this.halfHeight) * scale,
+          (this.halfWidth*2) * scale,
+          (this.halfHeight*2) * scale
+        );
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    })
   });
 
 });
@@ -5135,13 +4418,16 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang',
   '../Sprite',
   '../Animation'
-], function(declare, lang, Sprite, Animation){
+], function(dcl, Mixer, lang, Sprite, Animation){
 
-  return declare([Sprite], {
+  'use strict';
+
+  return dcl([Mixer, Sprite], {
     statics: {
       EAST: 0,
       NORTH: 1,
@@ -5160,10 +4446,9 @@ define([
     dyingAnims: [],
     idleAnims: [],
     direction: 0,
-    constructor: function(args){
+    constructor: function(){
       this.state = this.statics.STATE_IDLE;
       this.direction = this.statics.EAST;
-      declare.safeMixin(this, args);
     },
     update: function(elapsedTime){
       this.x += this.dx * elapsedTime;
@@ -5257,9 +4542,14 @@ limitations under the License.
  * @class Sprite
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  var Sprite = declare(null, {
+  'use strict';
+
+  var Sprite = dcl(Mixer, {
     // position (pixels)
     x: 0.0,
     y: 0.0,
@@ -5268,10 +4558,6 @@ define(['dojo/_base/declare'], function(declare){
     dy: 0.0,
     name: null,
     collisionRadius: 40,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
 
     /**
       * Updates this Sprite's Animation and its position based on the velocity.
@@ -5456,7 +4742,14 @@ limitations under the License.
 
 **/
 
-define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFrame, declare, lang){
+define([
+  './AnimFrame',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang'
+], function(AnimFrame, dcl, Mixer, lang){
+
+  'use strict';
 
  /**
  * Represents a series of frames that can be rendered as an animation.
@@ -5464,7 +4757,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
  * @class Animation
  */
 
-  var Animation = declare(null, {
+  var Animation = dcl(Mixer, {
     currFrameIndex: 0,
     animTime: 0,
     totalDuration: 0,
@@ -5472,8 +4765,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     width: 64,
     image: null,
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.start();
     },
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
@@ -5641,16 +4933,18 @@ limitations under the License.
  * @class AnimationFrame
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     endTime: 0,
     imgSlotX: 0,
     imgSlotY: 0,
-    image: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    }
+    image: null
   });
 
 });
@@ -5680,9 +4974,14 @@ limitations under the License.
  * @class GameAction
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     name: null,
     behavior: 0,
     amount:  0,
@@ -5704,8 +5003,7 @@ define(['dojo/_base/declare'], function(declare){
       STATE_MOVED: 3
     },
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.reset();
     },
 
@@ -5837,17 +5135,18 @@ limitations under the License.
  * @class MouseAction
  * @extends {GameAction}
  */
-define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './GameAction'
+], function(dcl, Mixer, GameAction){
 
-  return declare([GameAction], {
+  'use strict';
+
+  return dcl([Mixer, GameAction], {
     startPosition: null,
     endPosition: null,
-    position: null,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      this.reset();
-    }
+    position: null
   });
 
 });
@@ -5871,8 +5170,17 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang',
+  'dojo/dom',
+  './InputManager',
+  './ResourceManager',
+  './shims/RAF'
+], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+
+  'use strict';
 
  /**
  * The GameCore class provides the base to build games on.
@@ -5894,7 +5202,7 @@ myGame.run();
 
  */
 
-  return declare(null, {
+  return dcl(Mixer, {
     statics: {
       FONT_SIZE: 24
     },
@@ -5910,9 +5218,6 @@ myGame.run();
     loadingBackground: '#FFF',
     gameAreaId: null,
     canvasPercentage: 0,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     /**
       * Signals the game loop that it's time to quit
       * @name GameCore#stop
@@ -5991,7 +5296,7 @@ myGame.run();
           canvas: this.canvas
         });
         }
-        
+
       }
 
       this.inputManager.resize();
@@ -6480,10 +5785,20 @@ limitations under the License.
  * @name InputManager
  * @class InputManager
  */
-define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
-  function(GameAction, MouseAction, declare, on, domGeom, lang){
+define([
+  './GameAction',
+  './MouseAction',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/on',
+  'dojo/dom-geometry',
+  'dojo/_base/lang',
+  'dojo/domReady!'
+], function(GameAction, MouseAction, dcl, Mixer, on, domGeom, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     keyActions: [],
     mouseAction: null,
     touchAction: null,
@@ -6493,9 +5808,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleKeys: true,
     gameArea: null,
     canvasPercentage: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      
+    constructor: function(){
       if(this.handleKeys){
         on(document, 'keydown', lang.hitch(this, "keyDown"));
         //on(document, 'keypress', lang.hitch(this, "keyPressed"));
@@ -6518,7 +5831,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       if(!this.mouseAction){
         this.mouseAction = new MouseAction();
       }
-      
+
       if(!this.touchAction){
         this.touchAction = new MouseAction();
       }
@@ -8225,25 +7538,29 @@ limitations under the License.
  * @name ResourceManager
  * @class ResourceManager
  */
-define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './shims/AudioContext'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  var audioContext = null;
+  if(window.AudioContext){
+    audioContext = new window.AudioContext();
+  }else{
+    0 && console.log('WebAudio not supported');
+  }
+
+  return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundsDir: null,
-    audioContext: null,
+    audioContext: audioContext,
     resourceList: [],
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      if(window.AudioContext){
-        this.audioContext = new window.AudioContext();
-      }else{
-        0 && console.log('WebAudio not supported');
-      }
-      
-    },
 
     /**
       * Loads an image, and tracks if it has finished loading
@@ -8276,7 +7593,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         imgWrapper.complete = true;
       };
       img.src = filename;
-      
+
       this.resourceList.push(imgWrapper);
       return img;
     },
@@ -8301,7 +7618,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       };
 
       if(this.audioContext){
-        
+
         this.resourceList.push(soundObj);
 
         //if the browser AudioContext, it's new enough for XMLHttpRequest
@@ -8412,41 +7729,46 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
 },
 'frozen/shims/AudioContext':function(){
-define(
-  function(){
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
+define(function(){
 
-    for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
-      window.AudioContext = window[vendors[x]+'AudioContext'];
-    }
+  'use strict';
+
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
+    window.AudioContext = window[vendors[x]+'AudioContext'];
+  }
+
 });
 },
 'frozen/shims/RAF':function(){
-define(
-  function(){
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
+define(function(){
 
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
- 
-    if (!window.requestAnimationFrame){
-      window.requestAnimationFrame = function(callback, element) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-      };
-    }
+  'use strict';
 
-    if (!window.cancelAnimationFrame){
-      window.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-      };
-    }
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame){
+    window.requestAnimationFrame = function(callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+  }
+
+  if (!window.cancelAnimationFrame){
+    window.cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+  }
 
 });
 },
@@ -8461,6 +7783,9 @@ define([
   './utils/scalePoints',
   './utils/translatePoints'
 ], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+
+  'use strict';
+
  /**
  * Math utility libraries
  * @name utils
@@ -8548,91 +7873,119 @@ define([
 },
 'frozen/utils/degreesToRadians':function(){
 define(function(){
+
+  'use strict';
+
   var radConst = Math.PI / 180.0;
+
   return function(degrees){
-      return degrees * radConst;
-    };
+    return degrees * radConst;
+  };
+
 });
 },
 'frozen/utils/radiansToDegrees':function(){
 define(function(){
+
+  'use strict';
+
   var degConst = 180.0 / Math.PI;
+
   return function(radians){
-      return radians * degConst;
-    };
+    return radians * degConst;
+  };
+
 });
 },
 'frozen/utils/pointInPolygon':function(){
 define(function(){
+
+  'use strict';
+
+  // TODO: rewrite this
   return function(pt, polygon){
-      var poly = polygon.points || polygon;
-      for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
-        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
-      }
-      return c;
-    };
+    var poly = polygon.points || polygon;
+    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
+      ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
+    }
+    return c;
+  };
 });
 },
 'frozen/utils/distance':function(){
 define(function(){
+
+  'use strict';
+
   return function(p1, p2){
-      return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
-    };
+    return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
+  };
+
 });
 },
 'frozen/utils/degreesFromCenter':function(){
-define(['./radiansToDegrees','./radiansFromCenter'
+define([
+  './radiansToDegrees',
+  './radiansFromCenter'
 ], function(radiansToDegrees, radiansFromCenter){
+
+  'use strict';
+
   return function(center, pt){
-      return radiansToDegrees(radiansFromCenter(center, pt));
-    };
+    return radiansToDegrees(radiansFromCenter(center, pt));
+  };
+
 });
 },
 'frozen/utils/radiansFromCenter':function(){
 define(function(){
+
+  'use strict';
+
   var origin = {x: 0.0, y: 0.0};
   return function(center, pt){
 
-      //if null or zero is passed in for center, we'll use the origin
-      center = center || origin;
+    //if null or zero is passed in for center, we'll use the origin
+    center = center || origin;
 
-      //same point
-      if((center.x === pt.x) && (center.y === pt.y)){
+    //same point
+    if((center.x === pt.x) && (center.y === pt.y)){
+      return 0;
+    }else if(center.x === pt.x){
+      if(center.y > pt.y){
         return 0;
-      }else if(center.x === pt.x){
-        if(center.y > pt.y){
-          return 0;
-        }else{
-          return Math.PI;
-        }
-      }else if(center.y === pt.y){
-        if(center.x > pt.x){
-          return 1.5 * Math.PI;
-        }else{
-          return Math.PI / 2;
-        }
-      }else if((center.x < pt.x) && (center.y > pt.y)){
-        //quadrant 1
-        //0 && console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
-        return Math.atan((pt.x - center.x)/(center.y - pt.y));
+      }else{
+        return Math.PI;
       }
-      else if((center.x < pt.x) && (center.y < pt.y)){
-        //quadrant 2
-        //0 && console.log('quad2',center.x,center.y,pt.x,pt.y);
-        return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+    }else if(center.y === pt.y){
+      if(center.x > pt.x){
+        return 1.5 * Math.PI;
+      }else{
+        return Math.PI / 2;
       }
-      else if((center.x > pt.x) && (center.y < pt.y)){
-        //quadrant 3
-        //0 && console.log('quad3',center.x,center.y,pt.x,pt.y);
-        return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
-      }
-      else{
-        //quadrant 4
-        //0 && console.log('quad4',center.x,center.y,pt.x,pt.y);
-        return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
-      }
+    }else if((center.x < pt.x) && (center.y > pt.y)){
+      //quadrant 1
+      //0 && console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
+      return Math.atan((pt.x - center.x)/(center.y - pt.y));
+    }
+    else if((center.x < pt.x) && (center.y < pt.y)){
+      //quadrant 2
+      //0 && console.log('quad2',center.x,center.y,pt.x,pt.y);
+      return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+    }
+    else if((center.x > pt.x) && (center.y < pt.y)){
+      //quadrant 3
+      //0 && console.log('quad3',center.x,center.y,pt.x,pt.y);
+      return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
+    }
+    else{
+      //quadrant 4
+      //0 && console.log('quad4',center.x,center.y,pt.x,pt.y);
+      return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
+    }
 
-    };
+  };
+
 });
 },
 'frozen/utils/scalePoints':function(){
@@ -8640,7 +7993,9 @@ define([
   'dojo/_base/array',
   'dojo/_base/lang'
 ], function(array, lang){
-  
+
+  'use strict';
+
   var scalePoints = function(points, scale){
     if(lang.isArray(points)){
       array.forEach(points, function(point){
@@ -8654,6 +8009,7 @@ define([
   };
 
   return scalePoints;
+
 });
 },
 'dojo/_base/array':function(){
@@ -9007,7 +8363,9 @@ define([
   'dojo/_base/array',
   'dojo/_base/lang'
 ], function(array, lang){
-  
+
+  'use strict';
+
   var translatePoints = function(points, translation){
     if(lang.isArray(points)){
       array.forEach(points, function(point){
@@ -9021,12 +8379,13 @@ define([
       if(translation.hasOwnProperty('y')){
         points.y+= translation.y;
       }
-      
+
     }
     return points;
   };
 
   return translatePoints;
+
 });
 },
 'dojo/keys':function(){

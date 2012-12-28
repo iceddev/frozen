@@ -13,6 +13,7 @@ var profile = (function(){
       { name: 'dojo', location: '../../dojo/dojo-release-1.8.3-src/dojo' },
       { name: 'dijit', location: '../../dojo/dojo-release-1.8.3-src/dijit' },
       { name: 'dojox', location: '../../dojo/dojo-release-1.8.3-src/dojox' },
+      { name: 'dcl', location: '../dcl', main: 'dcl' },
       { name: 'frozen', location: './src', main: 'GameCore' }
     ],
 

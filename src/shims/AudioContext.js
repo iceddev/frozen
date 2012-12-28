@@ -1,8 +1,11 @@
-define(
-  function(){
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
+define(function(){
 
-    for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
-      window.AudioContext = window[vendors[x]+'AudioContext'];
-    }
+  'use strict';
+
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
+    window.AudioContext = window[vendors[x]+'AudioContext'];
+  }
+
 });

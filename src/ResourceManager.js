@@ -21,25 +21,29 @@ limitations under the License.
  * @name ResourceManager
  * @class ResourceManager
  */
-define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './shims/AudioContext'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  var audioContext = null;
+  if(window.AudioContext){
+    audioContext = new window.AudioContext();
+  }else{
+    console.log('WebAudio not supported');
+  }
+
+  return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundsDir: null,
-    audioContext: null,
+    audioContext: audioContext,
     resourceList: [],
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      if(window.AudioContext){
-        this.audioContext = new window.AudioContext();
-      }else{
-        console.log('WebAudio not supported');
-      }
-      
-    },
 
     /**
       * Loads an image, and tracks if it has finished loading
@@ -72,7 +76,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         imgWrapper.complete = true;
       };
       img.src = filename;
-      
+
       this.resourceList.push(imgWrapper);
       return img;
     },
@@ -97,7 +101,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       };
 
       if(this.audioContext){
-        
+
         this.resourceList.push(soundObj);
 
         //if the browser AudioContext, it's new enough for XMLHttpRequest

@@ -1,6 +1,8 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  'use strict';
+
   // Project configuration.
   grunt.initConfig({
     lint: {
@@ -41,7 +43,8 @@ module.exports = function(grunt) {
         eqnull: true,
         browser: true,
         laxcomma: true,
-        expr: true
+        expr: true,
+        strict: true
       },
       globals: {
         define: true,
