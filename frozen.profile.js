@@ -58,7 +58,6 @@ var profile = (function(){
       "dom": 1,
       "host-browser": 1,
       "extend-dojo": 1,
-      "dojo-loader-eval-hint-url": 0,
       "csp-restrictions": 1
     },
 

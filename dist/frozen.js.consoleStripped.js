@@ -310,11 +310,11 @@
 	//
 	// loader eval
 	//
-	var eval_ = function(){};
-	if(! 1 ){
+	var eval_ =  1  ?
+		// noop eval if there are csp restrictions
+		function(){} :
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
-		eval_ = new Function('return eval(arguments[0]);');
-	}
+		new Function('return eval(arguments[0]);');
 
 	req.eval =
 		function(text, hint){
@@ -1283,8 +1283,8 @@
 	}
 
 	if( 1 ){
-		if( 0 ===undefined){
-			 0 && has.add("dojo-loader-eval-hint-url", 1);
+		if(has("dojo-loader-eval-hint-url")===undefined){
+			has.add("dojo-loader-eval-hint-url", 1);
 		}
 
 		var fixupUrl= function(url){
@@ -1344,7 +1344,7 @@
 						if(text===cached){
 							cached.call(null);
 						}else{
-							req.eval(text,  0  ? module.url : module.mid);
+							req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
 						}
 					}catch(e){
 						signal(error, makeError("evalModuleThrew", module));
@@ -1353,7 +1353,7 @@
 					if(text===cached){
 						cached.call(null);
 					}else{
-						req.eval(text,  0  ? module.url : module.mid);
+						req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
 					}
 				}
 				injectingCachedModule = 0;
