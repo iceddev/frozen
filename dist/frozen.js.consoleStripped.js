@@ -310,9 +310,7 @@
 	//
 	// loader eval
 	//
-	var eval_ =  1  ?
-		// noop eval if there are csp restrictions
-		function(){} :
+	var eval_ =
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
 		new Function('return eval(arguments[0]);');
 
@@ -1283,8 +1281,8 @@
 	}
 
 	if( 1 ){
-		if( 0 ===undefined){
-			 0 && has.add("dojo-loader-eval-hint-url", 1);
+		if(has("dojo-loader-eval-hint-url")===undefined){
+			has.add("dojo-loader-eval-hint-url", 1);
 		}
 
 		var fixupUrl= function(url){
@@ -1344,7 +1342,7 @@
 						if(text===cached){
 							cached.call(null);
 						}else{
-							req.eval(text,  0  ? module.url : module.mid);
+							req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
 						}
 					}catch(e){
 						signal(error, makeError("evalModuleThrew", module));
@@ -1353,7 +1351,7 @@
 					if(text===cached){
 						cached.call(null);
 					}else{
-						req.eval(text,  0  ? module.url : module.mid);
+						req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
 					}
 				}
 				injectingCachedModule = 0;
@@ -1914,14 +1912,6 @@
 					 name:"dojo"
 				},
 				{
-					 location:"../dijit",
-					 name:"dijit"
-				},
-				{
-					 location:"../dojox",
-					 name:"dojox"
-				},
-				{
 					 location:"../dcl",
 					 main:"dcl",
 					 name:"dcl"
@@ -2474,7 +2464,7 @@ define([
 				b = dcl._ec(bases, name, "b").reverse(),
 				a = dcl._ec(bases, name, "a");
 			f = id ? dcl._st(f, id == 1 ? function(f){ return dcl._sc(f.reverse()); } : dcl._sc, name) : dcl._ss(f, name);
-			return !b.length && !a.length ? f || function(){} : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
+			return !b.length && !a.length ? f || new Function : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
 		}
 	});
 
@@ -2494,9 +2484,8 @@ define([
 })(function(){
 	"use strict";
 
-	var counter = 0, cname = "constructor", pname = "prototype",
-		F = function(){}, empty = {}, mix, extractChain,
-		stubSuper, stubChain, stubChainSuper, post;
+	var counter = 0, cname = "constructor", pname = "prototype", F = new Function, empty = {},
+		mix, extractChain, stubSuper, stubChain, stubChainSuper, post;
 
 	function dcl(superClass, props){
 		var bases = [0], proto, base, ctor, m, o, r, b, i, j = 0, n;
@@ -2669,7 +2658,7 @@ define([
 		},
 		_sb: /*stub*/ function(id, bases, name, chains){
 			var f = chains[name] = extractChain(bases, name, "f");
-			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || function(){};
+			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || new Function;
 		}
 	});
 
@@ -3421,9 +3410,8 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 	// is migrated. Absent specific advice otherwise, set extend-dojo to truthy.
 	 1 || has.add("extend-dojo", 1);
 
-	if(! 1 ){
-		(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
-	}
+
+	(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
 	/*=====
 	dojo.eval = function(scriptText){
 		// summary:
@@ -3715,7 +3703,7 @@ define(["require", "module"], function(require, module){
 
 	if( 1 ){
 		// Common application level tests
-		has.add("dom-addeventlistener", !!document.addEventListener);
+		 1 || has.add("dom-addeventlistener", !!document.addEventListener);
 		has.add("touch", "ontouchstart" in document);
 		// I don't know if any of these tests are really correct, just a rough guess
 		has.add("device-width", screen.availWidth || innerWidth);
@@ -6302,7 +6290,7 @@ define([
 
 },
 'dojo/on':function(){
-define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6595,7 +6583,7 @@ define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], func
 			};
 		}
 	} 
-	if(has("dom-addeventlistener")){
+	if( 1 ){
 		// normalize focusin and focusout
 		captures = {
 			focusin: "focus",
@@ -7404,7 +7392,7 @@ define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"]
 			event.layerX = event.offsetX;
 			event.layerY = event.offsetY;
 		}
-		if(!has("dom-addeventlistener")){
+		if(! 1 ){
 			// old IE version
 			// FIXME: scroll position query is duped from dojo.html to
 			// avoid dependency on that entire module. Now that HTML is in
@@ -7765,7 +7753,7 @@ define(['./has'], function(has){
 				readyQ.push(function(){ node.removeEventListener(event, detectReady, false); });
 			};
 
-		if(!has("dom-addeventlistener")){
+		if(! 1 ){
 			on = function(node, event){
 				event = "on" + event;
 				node.attachEvent(event, detectReady);
@@ -8187,13 +8175,7 @@ define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
 	//		dojo/_base/declare
 
 	var mix = lang.mixin, op = Object.prototype, opts = op.toString,
-		xtor, counter = 0, cname = "constructor";
-
-	if(! 1 ){
-		xtor = new Function;
-	} else {
-		xtor = function(){};
-	}
+		xtor = new Function, counter = 0, cname = "constructor";
 
 	function err(msg, cls){ throw new Error("declare" + (cls ? " " + cls : "") + ": " + msg); }
 
