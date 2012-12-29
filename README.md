@@ -22,7 +22,7 @@ In your HTML, just add
 ```javascript
 // require pulls in the modules you need, such as 'frozen/GameCore'
 require(['frozen/GameCore'], function(GameCore){
-  // Inside this function, we have access to all modules passed in as parameters
+	// Inside this function, we have access to all modules passed in as parameters
 });
 ```
 
@@ -30,25 +30,25 @@ require(['frozen/GameCore'], function(GameCore){
 
 ```javascript
 require(['frozen/GameCore'], function(GameCore){
-  // game state
-  var x = 0;
-  var y = 0;
+	// game state
+	var x = 0;
+	var y = 0;
 
-  //setup a GameCore instance
-  var game = new GameCore({
-    canvasId: 'canvas',
-    draw: function(context){
-      context.clearRect(0, 0, this.width, this.height);
-      context.fillRect(x, y, 50, 50);
-    },
-    update: function(millis){
-      x += 1;
-      y += 1;
-    }
-  });
+	//setup a GameCore instance
+	var game = new GameCore({
+		canvasId: 'canvas',
+		draw: function(context){
+			context.clearRect(0, 0, this.width, this.height);
+			context.fillRect(x, y, 50, 50);
+		},
+		update: function(millis){
+			x += 1;
+			y += 1;
+		}
+	});
 
-  //launch the game!
-  game.run();
+	//launch the game!
+	game.run();
 });
 ```
 
@@ -57,48 +57,48 @@ require(['frozen/GameCore'], function(GameCore){
 ```javascript
 require(['frozen/GameCore', 'dojo/keys'], function(GameCore, keys){
 
-  var x = 100;
-  var y = 100;
-  var speed = 2.5;
+	var x = 100;
+	var y = 100;
+	var speed = 2.5;
 
-  //setup a GameCore instance
-  var game = new GameCore({
-    canvasId: 'canvas',
-    draw: function(context){
-      context.clearRect(0, 0, this.width, this.height);
-      context.fillRect(x, y, 50, 50);
-    },
-    initInput: function(){
-      //tells the input manager to listen for key events
-      this.inputManager.addKeyAction(keys.LEFT_ARROW);
-      this.inputManager.addKeyAction(keys.RIGHT_ARROW);
-      this.inputManager.addKeyAction(keys.UP_ARROW);
-      this.inputManager.addKeyAction(keys.DOWN_ARROW);
-    },
-    update: function(millis){
+	//setup a GameCore instance
+	var game = new GameCore({
+		canvasId: 'canvas',
+		draw: function(context){
+			context.clearRect(0, 0, this.width, this.height);
+			context.fillRect(x, y, 50, 50);
+		},
+		initInput: function(){
+			//tells the input manager to listen for key events
+			this.inputManager.addKeyAction(keys.LEFT_ARROW);
+			this.inputManager.addKeyAction(keys.RIGHT_ARROW);
+			this.inputManager.addKeyAction(keys.UP_ARROW);
+			this.inputManager.addKeyAction(keys.DOWN_ARROW);
+		},
+		update: function(millis){
 
-      //just an example showing how to check for presses, could be done more effeciently
+			//just an example showing how to check for presses, could be done more effeciently
 
-      if(this.inputManager.keyActions[keys.LEFT_ARROW].isPressed()){
-        x-= speed;
-      }
+			if(this.inputManager.keyActions[keys.LEFT_ARROW].isPressed()){
+				x-= speed;
+			}
 
-      if(this.inputManager.keyActions[keys.RIGHT_ARROW].isPressed()){
-        x+= speed;
-      }
+			if(this.inputManager.keyActions[keys.RIGHT_ARROW].isPressed()){
+				x+= speed;
+			}
 
-      if(this.inputManager.keyActions[keys.UP_ARROW].isPressed()){
-        y-= speed;
-      }
+			if(this.inputManager.keyActions[keys.UP_ARROW].isPressed()){
+				y-= speed;
+			}
 
-      if(this.inputManager.keyActions[keys.DOWN_ARROW].isPressed()){
-        y+= speed;
-      }
-    }
-  });
+			if(this.inputManager.keyActions[keys.DOWN_ARROW].isPressed()){
+				y+= speed;
+			}
+		}
+	});
 
-  //launch the game!
-  game.run();
+	//launch the game!
+	game.run();
 });
 ```
 
@@ -107,33 +107,42 @@ require(['frozen/GameCore', 'dojo/keys'], function(GameCore, keys){
 ```javascript
 require(['frozen/GameCore', 'frozen/ResourceManager'], function(GameCore, ResourceManager){
 
-  var x = 0;
-  var y = 0;
-  var speed = 1;
+	var x = 0;
+	var y = 0;
+	var speed = 1;
 
-  //setup a ResourceManager to use in the game
-  var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
-  var nyan = rm.loadImage('images/nyan.png');
+	//setup a ResourceManager to use in the game
+	var rm = new ResourceManager();
+	var backImg = rm.loadImage('images/background.png');
+	var nyan = rm.loadImage('images/nyan.png');
 
-  //setup a GameCore instance
-  var game = new GameCore({
-    canvasId: 'canvas',
-    resourceManager: rm,
-    draw: function(context){
-      context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(nyan, x, y);
-    },
-    update: function(millis){
-      x += speed;
-      y += speed;
-    }
-  });
+	//setup a GameCore instance
+	var game = new GameCore({
+		canvasId: 'canvas',
+		resourceManager: rm,
+		draw: function(context){
+			context.drawImage(backImg, 0, 0, this.width, this.height);
+			context.drawImage(nyan, x, y);
+		},
+		update: function(millis){
+			x += speed;
+			y += speed;
+		}
+	});
 
-  //launch the game!
-  game.run();
+	//launch the game!
+	game.run();
 });
 ```
 
+## Building
+
+Warning: don't run `npm install` unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D
+
+If you want to build from source, run:
+
+1. `npm install` to get all the NPM dependencies and start the `volo add`
+2. `grunt dojo` to start the dojo build
+3. Optionally, `grunt jsdoc` will generate docs
 
 More documentation coming.  Promise :)
