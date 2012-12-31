@@ -71,6 +71,17 @@ define([
       ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
       ctx.closePath();
       ctx.fill();
+    },
+
+    /**
+      * Scales the position and dimensions of this shape.
+      * @name Entity#scaleShape
+      * @function
+      * @param {Number} scale the scale to multiply the dimentions by
+    */
+    scaleShape: function(scale){
+      this.x = this.x * scale;
+      this.y = this.y * scale;
     }
     
   });

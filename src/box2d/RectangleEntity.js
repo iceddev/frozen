@@ -48,6 +48,12 @@ define([
       );
       ctx.restore();
       this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.halfHeight = this.halfHeight * scale;
+      this.halfWidth = this.halfWidth * scale;
+      this.inherited(arguments);
     }
   });
 

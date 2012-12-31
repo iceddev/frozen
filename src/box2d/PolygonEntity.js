@@ -25,8 +25,9 @@ limitations under the License.
 
 define([
   'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  './Entity',
+  '../utils'
+], function(declare, Entity, utils){
 
   return declare([Entity], {
     points: [],
@@ -51,6 +52,11 @@ define([
       ctx.stroke();
 
       ctx.restore();
+      this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.points = utils.scalePoints(this.points, scale);
       this.inherited(arguments);
     }
   });

@@ -53,6 +53,11 @@ define([
       ctx.stroke();
 
       this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.radius = this.radius * scale;
+      this.inherited(arguments);
     }
   });
 

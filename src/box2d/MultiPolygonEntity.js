@@ -25,12 +25,12 @@ limitations under the License.
 
 define([
   'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  './Entity',
+  '../utils'
+], function(declare, Entity, utils){
 
   return declare([Entity], {
     polys: [],
-    points: null,
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
@@ -62,6 +62,11 @@ define([
       }
 
       ctx.restore();
+      this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.polys = utils.scalePoints(this.polys, scale);
       this.inherited(arguments);
     }
   });

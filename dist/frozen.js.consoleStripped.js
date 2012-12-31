@@ -4825,6 +4825,11 @@ define([
       ctx.stroke();
 
       this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.radius = this.radius * scale;
+      this.inherited(arguments);
     }
   });
 
@@ -4904,6 +4909,17 @@ define([
       ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
       ctx.closePath();
       ctx.fill();
+    },
+
+    /**
+      * Scales the position and dimensions of this shape.
+      * @name Entity#scaleShape
+      * @function
+      * @param {Number} scale the scale to multiply the dimentions by
+    */
+    scaleShape: function(scale){
+      this.x = this.x * scale;
+      this.y = this.y * scale;
     }
     
   });
@@ -4938,8 +4954,9 @@ limitations under the License.
 
 define([
   'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  './Entity',
+  '../utils'
+], function(declare, Entity, utils){
 
   return declare([Entity], {
     points: [],
@@ -4965,9 +4982,254 @@ define([
 
       ctx.restore();
       this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.points = utils.scalePoints(this.points, scale);
+      this.inherited(arguments);
     }
   });
 
+});
+},
+'frozen/utils':function(){
+define([
+  './utils/degreesToRadians',
+  './utils/radiansToDegrees',
+  './utils/pointInPolygon',
+  './utils/distance',
+  './utils/degreesFromCenter',
+  './utils/radiansFromCenter',
+  './utils/scalePoints',
+  './utils/translatePoints'
+], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+ /**
+ * Math utility libraries
+ * @name utils
+ */
+  return {
+    /**
+      * Convert degrees to raidans
+      * @name utils#degreesToRadians
+      * @function
+      * @param {Number} degrees
+      *
+    */
+    degreesToRadians: degreesToRadians,
+
+    /**
+      * Convert radians to degrees
+      * @name utils#radiansToDegrees
+      * @function
+      * @param {Number} radians
+      *
+    */
+    radiansToDegrees: radiansToDegrees,
+
+    /**
+      * Checks if a point is in a polygon
+      * @name utils#pointInPolygon
+      * @function
+      * @param {Object} point Object with an x and y value
+      * @param {Array} polygon Array of points
+      *
+    */
+    pointInPolygon: pointInPolygon,
+
+    /**
+      * Returns the distance between 2 points
+      * @name utils#distance
+      * @function
+      * @param {Object} point1 Object with an x and y value
+      * @param {Object} point2 Object with an x and y value
+      *
+    */
+    distance: distance,
+
+    /**
+      * Degrees a point is offset from a center point
+      * @name utils#degreesFromCenter
+      * @function
+      * @param {Object} center Object with an x and y value
+      * @param {Object} point Object with an x and y value
+      *
+    */
+    degreesFromCenter: degreesFromCenter,
+
+    /**
+      * Radians a point is offset from a center point
+      * @name utils#radiansFromCenter
+      * @function
+      * @param {Object} center Object with an x and y value
+      * @param {Object} point Object with an x and y value
+      *
+    */
+    radiansFromCenter: radiansFromCenter,
+
+    /**
+      * Scale a point or array of points.
+      * @name utils#scalePoints
+      * @function
+      * @param {Object|Array} points A point or array of points
+      * @param {Object} scale Object with an x and y value
+      *
+    */
+    scalePoints: scalePoints,
+
+    /**
+      * Translate a point or array of points
+      * @name utils#translatePoints
+      * @function
+      * @param {Object|Array} points A point or array of points
+      * @param {Object} offset Object with an x and y value
+      *
+    */
+    translatePoints: translatePoints
+  };
+});
+},
+'frozen/utils/degreesToRadians':function(){
+define(function(){
+  var radConst = Math.PI / 180.0;
+  return function(degrees){
+      return degrees * radConst;
+    };
+});
+},
+'frozen/utils/radiansToDegrees':function(){
+define(function(){
+  var degConst = 180.0 / Math.PI;
+  return function(radians){
+      return radians * degConst;
+    };
+});
+},
+'frozen/utils/pointInPolygon':function(){
+define(function(){
+  return function(pt, polygon){
+      var poly = polygon.points || polygon;
+      for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
+        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
+      }
+      return c;
+    };
+});
+},
+'frozen/utils/distance':function(){
+define(function(){
+  return function(p1, p2){
+      return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
+    };
+});
+},
+'frozen/utils/degreesFromCenter':function(){
+define(['./radiansToDegrees','./radiansFromCenter'
+], function(radiansToDegrees, radiansFromCenter){
+  return function(center, pt){
+      return radiansToDegrees(radiansFromCenter(center, pt));
+    };
+});
+},
+'frozen/utils/radiansFromCenter':function(){
+define(function(){
+  var origin = {x: 0.0, y: 0.0};
+  return function(center, pt){
+
+      //if null or zero is passed in for center, we'll use the origin
+      center = center || origin;
+
+      //same point
+      if((center.x === pt.x) && (center.y === pt.y)){
+        return 0;
+      }else if(center.x === pt.x){
+        if(center.y > pt.y){
+          return 0;
+        }else{
+          return Math.PI;
+        }
+      }else if(center.y === pt.y){
+        if(center.x > pt.x){
+          return 1.5 * Math.PI;
+        }else{
+          return Math.PI / 2;
+        }
+      }else if((center.x < pt.x) && (center.y > pt.y)){
+        //quadrant 1
+        //0 && console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
+        return Math.atan((pt.x - center.x)/(center.y - pt.y));
+      }
+      else if((center.x < pt.x) && (center.y < pt.y)){
+        //quadrant 2
+        //0 && console.log('quad2',center.x,center.y,pt.x,pt.y);
+        return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+      }
+      else if((center.x > pt.x) && (center.y < pt.y)){
+        //quadrant 3
+        //0 && console.log('quad3',center.x,center.y,pt.x,pt.y);
+        return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
+      }
+      else{
+        //quadrant 4
+        //0 && console.log('quad4',center.x,center.y,pt.x,pt.y);
+        return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
+      }
+
+    };
+});
+},
+'frozen/utils/scalePoints':function(){
+define([
+  'dojo/_base/lang'
+], function(lang){
+  
+  var scalePoints = function(points, scale){
+    if(lang.isArray(points)){
+      var newPoints = [];
+      points.forEach(function(point){
+        newPoints.push(scalePoints(point, scale));
+      });
+      points = newPoints;
+    }else{
+      if (typeof scale === 'object'){
+        points = {x: points.x * scale.x, y: points.y * scale.y};
+      }else{
+        points = {x: points.x * scale, y: points.y * scale};
+      }
+    }
+    return points;
+  };
+
+  return scalePoints;
+});
+},
+'frozen/utils/translatePoints':function(){
+define([
+  'dojo/_base/lang'
+], function(lang){
+  
+  var translatePoints = function(points, translation){
+    if(lang.isArray(points)){
+      var newPoints = [];
+      points.forEach(function(point){
+        newPoints.push(translatePoints(point, translation));
+      });
+      points = newPoints;
+    }else{
+      points = {x: points.x, y: points.y};
+
+      if(translation.hasOwnProperty('x')){
+        points.x+= translation.x;
+      }
+
+      if(translation.hasOwnProperty('y')){
+        points.y+= translation.y;
+      }
+      
+    }
+    return points;
+  };
+
+  return translatePoints;
 });
 },
 'frozen/box2d/MultiPolygonEntity':function(){
@@ -4998,12 +5260,12 @@ limitations under the License.
 
 define([
   'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  './Entity',
+  '../utils'
+], function(declare, Entity, utils){
 
   return declare([Entity], {
     polys: [],
-    points: null,
     constructor: function(/* Object */args){
       declare.safeMixin(this, args);
     },
@@ -5035,6 +5297,11 @@ define([
       }
 
       ctx.restore();
+      this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.polys = utils.scalePoints(this.polys, scale);
       this.inherited(arguments);
     }
   });
@@ -5091,6 +5358,12 @@ define([
         (this.halfHeight*2) * scale
       );
       ctx.restore();
+      this.inherited(arguments);
+    },
+
+    scaleShape: function(scale){
+      this.halfHeight = this.halfHeight * scale;
+      this.halfWidth = this.halfWidth * scale;
       this.inherited(arguments);
     }
   });
@@ -8405,246 +8678,6 @@ define(
       };
     }
 
-});
-},
-'frozen/utils':function(){
-define([
-  './utils/degreesToRadians',
-  './utils/radiansToDegrees',
-  './utils/pointInPolygon',
-  './utils/distance',
-  './utils/degreesFromCenter',
-  './utils/radiansFromCenter',
-  './utils/scalePoints',
-  './utils/translatePoints'
-], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
- /**
- * Math utility libraries
- * @name utils
- */
-  return {
-    /**
-      * Convert degrees to raidans
-      * @name utils#degreesToRadians
-      * @function
-      * @param {Number} degrees
-      *
-    */
-    degreesToRadians: degreesToRadians,
-
-    /**
-      * Convert radians to degrees
-      * @name utils#radiansToDegrees
-      * @function
-      * @param {Number} radians
-      *
-    */
-    radiansToDegrees: radiansToDegrees,
-
-    /**
-      * Checks if a point is in a polygon
-      * @name utils#pointInPolygon
-      * @function
-      * @param {Object} point Object with an x and y value
-      * @param {Array} polygon Array of points
-      *
-    */
-    pointInPolygon: pointInPolygon,
-
-    /**
-      * Returns the distance between 2 points
-      * @name utils#distance
-      * @function
-      * @param {Object} point1 Object with an x and y value
-      * @param {Object} point2 Object with an x and y value
-      *
-    */
-    distance: distance,
-
-    /**
-      * Degrees a point is offset from a center point
-      * @name utils#degreesFromCenter
-      * @function
-      * @param {Object} center Object with an x and y value
-      * @param {Object} point Object with an x and y value
-      *
-    */
-    degreesFromCenter: degreesFromCenter,
-
-    /**
-      * Radians a point is offset from a center point
-      * @name utils#radiansFromCenter
-      * @function
-      * @param {Object} center Object with an x and y value
-      * @param {Object} point Object with an x and y value
-      *
-    */
-    radiansFromCenter: radiansFromCenter,
-
-    /**
-      * Scale a point or array of points.
-      * @name utils#scalePoints
-      * @function
-      * @param {Object|Array} points A point or array of points
-      * @param {Object} scale Object with an x and y value
-      *
-    */
-    scalePoints: scalePoints,
-
-    /**
-      * Translate a point or array of points
-      * @name utils#translatePoints
-      * @function
-      * @param {Object|Array} points A point or array of points
-      * @param {Object} offset Object with an x and y value
-      *
-    */
-    translatePoints: translatePoints
-  };
-});
-},
-'frozen/utils/degreesToRadians':function(){
-define(function(){
-  var radConst = Math.PI / 180.0;
-  return function(degrees){
-      return degrees * radConst;
-    };
-});
-},
-'frozen/utils/radiansToDegrees':function(){
-define(function(){
-  var degConst = 180.0 / Math.PI;
-  return function(radians){
-      return radians * degConst;
-    };
-});
-},
-'frozen/utils/pointInPolygon':function(){
-define(function(){
-  return function(pt, polygon){
-      var poly = polygon.points || polygon;
-      for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
-        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
-      }
-      return c;
-    };
-});
-},
-'frozen/utils/distance':function(){
-define(function(){
-  return function(p1, p2){
-      return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
-    };
-});
-},
-'frozen/utils/degreesFromCenter':function(){
-define(['./radiansToDegrees','./radiansFromCenter'
-], function(radiansToDegrees, radiansFromCenter){
-  return function(center, pt){
-      return radiansToDegrees(radiansFromCenter(center, pt));
-    };
-});
-},
-'frozen/utils/radiansFromCenter':function(){
-define(function(){
-  var origin = {x: 0.0, y: 0.0};
-  return function(center, pt){
-
-      //if null or zero is passed in for center, we'll use the origin
-      center = center || origin;
-
-      //same point
-      if((center.x === pt.x) && (center.y === pt.y)){
-        return 0;
-      }else if(center.x === pt.x){
-        if(center.y > pt.y){
-          return 0;
-        }else{
-          return Math.PI;
-        }
-      }else if(center.y === pt.y){
-        if(center.x > pt.x){
-          return 1.5 * Math.PI;
-        }else{
-          return Math.PI / 2;
-        }
-      }else if((center.x < pt.x) && (center.y > pt.y)){
-        //quadrant 1
-        //0 && console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
-        return Math.atan((pt.x - center.x)/(center.y - pt.y));
-      }
-      else if((center.x < pt.x) && (center.y < pt.y)){
-        //quadrant 2
-        //0 && console.log('quad2',center.x,center.y,pt.x,pt.y);
-        return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
-      }
-      else if((center.x > pt.x) && (center.y < pt.y)){
-        //quadrant 3
-        //0 && console.log('quad3',center.x,center.y,pt.x,pt.y);
-        return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
-      }
-      else{
-        //quadrant 4
-        //0 && console.log('quad4',center.x,center.y,pt.x,pt.y);
-        return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
-      }
-
-    };
-});
-},
-'frozen/utils/scalePoints':function(){
-define([
-  'dojo/_base/lang'
-], function(lang){
-  
-  var scalePoints = function(points, scale){
-    if(lang.isArray(points)){
-      var newPoints = [];
-      points.forEach(function(point){
-        newPoints.push(scalePoints(point, scale));
-      });
-      points = newPoints;
-    }else{
-      if (typeof scale === 'object'){
-        points = {x: points.x * scale.x, y: points.y * scale.y};
-      }else{
-        points = {x: points.x * scale, y: points.y * scale};
-      }
-    }
-    return points;
-  };
-
-  return scalePoints;
-});
-},
-'frozen/utils/translatePoints':function(){
-define([
-  'dojo/_base/lang'
-], function(lang){
-  
-  var translatePoints = function(points, translation){
-    if(lang.isArray(points)){
-      var newPoints = [];
-      points.forEach(function(point){
-        newPoints.push(translatePoints(point, translation));
-      });
-      points = newPoints;
-    }else{
-      points = {x: points.x, y: points.y};
-
-      if(translation.hasOwnProperty('x')){
-        points.x+= translation.x;
-      }
-
-      if(translation.hasOwnProperty('y')){
-        points.y+= translation.y;
-      }
-      
-    }
-    return points;
-  };
-
-  return translatePoints;
 });
 },
 'dojo/keys':function(){
