@@ -1,14 +1,17 @@
 define([
-  'dojo/_base/array',
   'dojo/_base/lang'
-], function(array, lang){
+], function(lang){
   
   var translatePoints = function(points, translation){
     if(lang.isArray(points)){
-      array.forEach(points, function(point){
-        translatePoints(point, translation);
+      var newPoints = [];
+      points.forEach(function(point){
+        newPoints.push(translatePoints(point, translation));
       });
+      points = newPoints;
     }else{
+      points = {x: points.x, y: points.y};
+
       if(translation.hasOwnProperty('x')){
         points.x+= translation.x;
       }
