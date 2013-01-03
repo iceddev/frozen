@@ -88,7 +88,8 @@ var profile = (function(){
           'frozen/shims/RAF',
           'frozen/Sprite',
           'frozen/utils',
-          'dojo/keys'
+          'dojo/keys',
+          'dojo/_base/declare' // Legacy - TODO: remove in next version bump
         ],
         customBase: true,
         boot: true
