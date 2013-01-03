@@ -7851,8 +7851,9 @@ limitations under the License.
 define([
   'dcl',
   'dcl/bases/Mixer',
+  'dojo/on',
   './shims/AudioContext'
-], function(dcl, Mixer){
+], function(dcl, Mixer, on){
 
   'use strict';
 
@@ -7903,10 +7904,9 @@ define([
         img: img,
         complete: false
       };
-
-      img.onload = function(){
+      on(img, 'load', function(){
         imgWrapper.complete = true;
-      };
+      });
       img.src = filename;
 
       this.resourceList[filename] = imgWrapper;
@@ -7944,7 +7944,7 @@ define([
         //TODO fix scope in onload callback
         var audioContext = this.audioContext;
         // Decode asynchronously
-        request.onload = function() {
+        on(request, 'load', function() {
           audioContext.decodeAudioData(request.response,
             function(buffer) {
               soundObj.buffer = buffer;
@@ -7954,7 +7954,7 @@ define([
               0 && console.info('error loading sound',er);
             }
           );
-        };
+        });
         request.send();
 
       }
