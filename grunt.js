@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       frozen: {
         dojo: 'deps/dojo/dojo.js',
         profile: 'frozen.profile.js',
-        package: './',
+        'package': './',
         cwd: './'
       }
     },
