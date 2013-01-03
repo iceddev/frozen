@@ -3723,7 +3723,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define("dojo/has", ["require", "module"], function(require, module){
+define(["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -6396,7 +6396,7 @@ myGame.run();
 
 },
 'dojo/dom':function(){
-define(["./sniff", "./_base/lang", "./_base/window"],
+define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
 		function(has, lang, win){
 	// module:
 	//		dojo/dom
@@ -6895,7 +6895,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
 
 },
 'dojo/on':function(){
-define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -7415,7 +7415,7 @@ define("dojo/on", ["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./
 
 },
 'dojo/dom-geometry':function(){
-define(["./sniff", "./_base/window","./dom", "./dom-style"],
+define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -8462,9 +8462,9 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
-    soundsDir: null,
+    soundDir: null,
     audioContext: null,
-    resourceList: [],
+    resourceList: {},
     constructor: function(args){
       declare.safeMixin(this, args);
       if(window.AudioContext){
@@ -8472,7 +8472,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       }else{
         0 && console.log('WebAudio not supported');
       }
-      
+
     },
 
     /**
@@ -8483,11 +8483,13 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadImage: function(filename){
+      if(this.imageDir){
+        filename = this.imageDir + filename;
+      }
+
       //if we already have the image, just return it
-      for(var i = 0; i < this.resourceList.length; i++){
-        if(this.resourceList[i].name === filename){
-          return this.resourceList[i].img;
-        }
+      if(this.resourceList[filename]){
+        return this.resourceList[filename].img;
       }
 
       this.allLoaded = false;
@@ -8499,15 +8501,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         complete: false
       };
 
-      if(this.imageDir){
-        filename = this.imageDir + filename;
-      }
       img.onload = function(){
         imgWrapper.complete = true;
       };
       img.src = filename;
-      
-      this.resourceList.push(imgWrapper);
+
+      this.resourceList[filename] = imgWrapper;
       return img;
     },
 
@@ -8519,20 +8518,22 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadSound: function(filename){
-
       if(this.soundsDir){
         filename = this.soundsDir + filename;
       }
 
       var soundObj = {
-          name: filename,
-          buffer: null,
-          complete: false
+        name: filename,
+        buffer: null,
+        complete: false
       };
 
       if(this.audioContext){
-        
-        this.resourceList.push(soundObj);
+        if(this.resourceList[filename]){
+          return this.resourceList[filename];
+        }
+
+        this.resourceList[filename] = soundObj;
 
         //if the browser AudioContext, it's new enough for XMLHttpRequest
         var request = new XMLHttpRequest();
@@ -8607,9 +8608,9 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       if(this.allLoaded){
         return true;
       }else{
-        for(var i = 0; i < this.resourceList.length; i++){
-
-          if(!this.resourceList[i].complete){
+        for(var filename in this.resourceList){
+          var resource = this.resourceList[filename];
+          if(!resource.complete){
             return false;
           }
         }
@@ -8625,15 +8626,18 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
     */
     getPercentComplete: function(){
       var numComplete = 0.0;
-      for(var i = 0; i < this.resourceList.length; i++){
-        if(this.resourceList[i].complete){
+      var length = 0;
+      for(var filename in this.resourceList){
+        var resource = this.resourceList[filename];
+        length++;
+        if(resource.complete){
           numComplete = numComplete + 1.0;
         }
       }
-      if(this.resourceList.length === 0){
+      if(length === 0){
         return 0;
       }else{
-        return Math.round((numComplete / this.resourceList.length) * 100.0);
+        return Math.round((numComplete / length) * 100.0);
       }
     }
   });
@@ -8681,7 +8685,7 @@ define(
 });
 },
 'dojo/keys':function(){
-define(["./_base/kernel", "./sniff"], function(dojo, has){
+define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys
