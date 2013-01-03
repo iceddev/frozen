@@ -8457,6 +8457,14 @@ limitations under the License.
  */
 define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
+  function normalizePath(baseDir, path){
+    var joinedPath = path;
+    if(baseDir){
+      joinedPath = [baseDir, path].join('/');
+    }
+    return joinedPath.replace(/\/{2,}/g, '/');
+  }
+
   return declare(null, {
     imageCount: 0,
     loadedImages: 0,
@@ -8483,9 +8491,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadImage: function(filename){
-      if(this.imageDir){
-        filename = this.imageDir + filename;
-      }
+      filename = normalizePath(this.imageDir, filename);
 
       //if we already have the image, just return it
       if(this.resourceList[filename]){
@@ -8518,9 +8524,7 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadSound: function(filename){
-      if(this.soundsDir){
-        filename = this.soundsDir + filename;
-      }
+      filename = normalizePath(this.soundDir, filename);
 
       var soundObj = {
         name: filename,
