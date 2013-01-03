@@ -11,7 +11,7 @@
     "dependencies": {
       "dojo": "github:dojo/dojo/1.8.3",
       "util": "github:dojo/util/1.8.3",
-      "dcl": "github:uhop/dcl/1.0.1",
+      "dcl": "github:uhop/dcl/1.0.2",
       "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js"
     }
   },
