@@ -2464,7 +2464,7 @@ define([
 				b = dcl._ec(bases, name, "b").reverse(),
 				a = dcl._ec(bases, name, "a");
 			f = id ? dcl._st(f, id == 1 ? function(f){ return dcl._sc(f.reverse()); } : dcl._sc, name) : dcl._ss(f, name);
-			return !b.length && !a.length ? f || new Function : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
+			return !b.length && !a.length ? f || function(){} : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
 		}
 	});
 
@@ -2484,8 +2484,9 @@ define([
 })(function(){
 	"use strict";
 
-	var counter = 0, cname = "constructor", pname = "prototype", F = new Function, empty = {},
-		mix, extractChain, stubSuper, stubChain, stubChainSuper, post;
+	var counter = 0, cname = "constructor", pname = "prototype",
+		F = function(){}, empty = {}, mix, extractChain,
+		stubSuper, stubChain, stubChainSuper, post;
 
 	function dcl(superClass, props){
 		var bases = [0], proto, base, ctor, m, o, r, b, i, j = 0, n;
@@ -2658,7 +2659,7 @@ define([
 		},
 		_sb: /*stub*/ function(id, bases, name, chains){
 			var f = chains[name] = extractChain(bases, name, "f");
-			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || new Function;
+			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || function(){};
 		}
 	});
 
