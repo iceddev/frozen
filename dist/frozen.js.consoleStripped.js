@@ -310,7 +310,9 @@
 	//
 	// loader eval
 	//
-	var eval_ =
+	var eval_ =  1  ?
+		// noop eval if there are csp restrictions
+		function(){} :
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
 		new Function('return eval(arguments[0]);');
 
@@ -3411,8 +3413,9 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 	// is migrated. Absent specific advice otherwise, set extend-dojo to truthy.
 	 1 || has.add("extend-dojo", 1);
 
-
-	(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
+	if(! 1 ){
+		(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
+	}
 	/*=====
 	dojo.eval = function(scriptText){
 		// summary:
@@ -8176,7 +8179,13 @@ define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
 	//		dojo/_base/declare
 
 	var mix = lang.mixin, op = Object.prototype, opts = op.toString,
-		xtor = new Function, counter = 0, cname = "constructor";
+		xtor, counter = 0, cname = "constructor";
+
+	if(! 1 ){
+		xtor = new Function;
+	} else {
+		xtor = function(){};
+	}
 
 	function err(msg, cls){ throw new Error("declare" + (cls ? " " + cls : "") + ": " + msg); }
 
