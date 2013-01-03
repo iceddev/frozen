@@ -24,31 +24,42 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     halfWidth: 1,
     halfHeight: 1,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
-      ctx.fillRect(
-        (this.x-this.halfWidth) * scale,
-        (this.y-this.halfHeight) * scale,
-        (this.halfWidth*2) * scale,
-        (this.halfHeight*2) * scale
-      );
-      ctx.restore();
-      this.inherited(arguments);
-    }
+
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(
+          (this.x-this.halfWidth) * scale,
+          (this.y-this.halfHeight) * scale,
+          (this.halfWidth*2) * scale,
+          (this.halfHeight*2) * scale
+        );
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
+
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.halfHeight = this.halfHeight * scale;
+        this.halfWidth = this.halfWidth * scale;
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });

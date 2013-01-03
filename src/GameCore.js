@@ -16,8 +16,17 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang',
+  'dojo/dom',
+  './InputManager',
+  './ResourceManager',
+  './shims/RAF'
+], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+
+  'use strict';
 
  /**
  * The GameCore class provides the base to build games on.
@@ -39,7 +48,7 @@ myGame.run();
 
  */
 
-  return declare(null, {
+  return dcl(Mixer, {
     statics: {
       FONT_SIZE: 24
     },
@@ -55,9 +64,6 @@ myGame.run();
     loadingBackground: '#FFF',
     gameAreaId: null,
     canvasPercentage: 0,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     /**
       * Signals the game loop that it's time to quit
       * @name GameCore#stop
@@ -136,7 +142,7 @@ myGame.run();
           canvas: this.canvas
         });
         }
-        
+
       }
 
       this.inputManager.resize();

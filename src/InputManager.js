@@ -21,10 +21,20 @@ limitations under the License.
  * @name InputManager
  * @class InputManager
  */
-define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
-  function(GameAction, MouseAction, declare, on, domGeom, lang){
+define([
+  './GameAction',
+  './MouseAction',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/on',
+  'dojo/dom-geometry',
+  'dojo/_base/lang',
+  'dojo/domReady!'
+], function(GameAction, MouseAction, dcl, Mixer, on, domGeom, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     keyActions: [],
     mouseAction: null,
     touchAction: null,
@@ -34,9 +44,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleKeys: true,
     gameArea: null,
     canvasPercentage: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      
+    constructor: function(){
       if(this.handleKeys){
         on(document, 'keydown', lang.hitch(this, "keyDown"));
         //on(document, 'keypress', lang.hitch(this, "keyPressed"));
@@ -59,7 +67,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       if(!this.mouseAction){
         this.mouseAction = new MouseAction();
       }
-      
+
       if(!this.touchAction){
         this.touchAction = new MouseAction();
       }

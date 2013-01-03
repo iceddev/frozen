@@ -2,8 +2,21 @@
   "name": "frozen",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt-dojo": "~0.1.0",
-    "grunt-jsdoc-plugin" : "*",
-    "jsdoc" : "git://github.com/jsdoc3/jsdoc.git"
-  }
+    "grunt-dojo": "~0.1.1",
+    "grunt-jsdoc-plugin": "~0.1.2",
+    "volo": "~0.2.6"
+  },
+  "volo": {
+    "baseUrl": "deps",
+    "dependencies": {
+      "dojo": "github:dojo/dojo/1.8.3",
+      "util": "github:dojo/util/1.8.3",
+      "dcl": "github:uhop/dcl/1.0.2",
+      "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js"
+    }
+  },
+  "scripts": {
+    "install": "volo add"
+  },
+  "dojoBuild": "frozen.profile.js"
 }

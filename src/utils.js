@@ -8,6 +8,9 @@ define([
   './utils/scalePoints',
   './utils/translatePoints'
 ], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+
+  'use strict';
+
  /**
  * Math utility libraries
  * @name utils

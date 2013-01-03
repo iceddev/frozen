@@ -1,13 +1,22 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'dojo/_base/declare', 'frozen/Animation', 'frozen/box2d/Box', 'frozen/box2d/RectangleEntity', 'frozen/box2d/PolygonEntity', 'frozen/box2d/CircleEntity', 'frozen/utils'],
- function(GameCore, ResourceManager, keys, declare, Animation, Box, Rectangle, Polygon, Circle, utils){
+require([
+  'frozen/GameCore',
+  'frozen/ResourceManager',
+  'dojo/keys',
+  'frozen/Animation',
+  'frozen/box2d/Box',
+  'frozen/box2d/RectangleEntity',
+  'frozen/box2d/PolygonEntity',
+  'frozen/box2d/CircleEntity',
+  'frozen/utils'
+], function(GameCore, ResourceManager, keys, Animation, Box, Rectangle, Polygon, Circle, utils){
 
   //dimensions same as canvas.
   var gameH = 480;
   var gameW = 770;
-  
+
   var speed = 8;
-  
+
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
   var nyanImg = rm.loadImage('images/nyan.png');
@@ -25,7 +34,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'dojo/_base/d
   var bluePortalSheet = rm.loadImage('images/portal_blue_sheet_small.png');
   var bluePortalAnim = animFactory.createFromTile(12, 100, bluePortalSheet, 120, 80, 0);
   var bluePortal = {x: 600, y: 100, collided: true};
-  
+
   var box;
   var world = {};
 
@@ -38,7 +47,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'dojo/_base/d
   //shapes in the box2 world, locations are their centers
   var nyan, pyramid, ground, ceiling, leftWall, rightWall;
 
- 
+
   // create our box2d instance
   box = new Box({intervalRate:60, adaptive:false, width:gameW, height:gameH, scale:SCALE, gravityY:9.8, resolveCollisions: true});
 
@@ -159,7 +168,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'dojo/_base/d
       }
     },
     update: function(millis){
-      
+
       box.update();//have box2d do an interation
       box.updateExternalState(world); //have update local objects with box2d state
 

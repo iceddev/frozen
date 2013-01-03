@@ -1,4 +1,11 @@
 var profile = (function(){
+
+  'use strict';
+
+  var miniExcludes = {
+    'frozen/package': 1
+  };
+
   return {
     basePath: "./",
     releaseDir: "libs",
@@ -10,9 +17,8 @@ var profile = (function(){
     dojoBootText: "(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();",
 
     packages: [
-      { name: 'dojo', location: '../../dojo/dojo-release-1.8.3-src/dojo' },
-      { name: 'dijit', location: '../../dojo/dojo-release-1.8.3-src/dijit' },
-      { name: 'dojox', location: '../../dojo/dojo-release-1.8.3-src/dojox' },
+      { name: 'dojo', location: 'deps/dojo' },
+      { name: 'dcl', location: 'deps/dcl', main: 'dcl' },
       { name: 'frozen', location: './src', main: 'GameCore' }
     ],
 
@@ -58,6 +64,7 @@ var profile = (function(){
       "dom": 1,
       "host-browser": 1,
       "extend-dojo": 1,
+      "dom-addeventlistener": 1,
       "csp-restrictions": 1
     },
 
@@ -86,10 +93,20 @@ var profile = (function(){
           'frozen/shims/RAF',
           'frozen/Sprite',
           'frozen/utils',
-          'dojo/keys'
+          'dojo/keys',
+          'dojo/_base/declare' // Legacy - TODO: remove in next version bump
         ],
         customBase: true,
         boot: true
+      }
+    },
+
+    resourceTags: {
+      miniExclude: function(filename, mid){
+        return mid in miniExcludes;
+      },
+      amd: function(filename, mid) {
+        return (/\.js$/).test(filename);
       }
     }
   };

@@ -1,19 +1,26 @@
 define([
-  'dojo/_base/array',
   'dojo/_base/lang'
-], function(array, lang){
-  
+], function(lang){
+
+  'use strict';
+
   var scalePoints = function(points, scale){
     if(lang.isArray(points)){
-      array.forEach(points, function(point){
-        scalePoints(point, scale);
+      var newPoints = [];
+      points.forEach(function(point){
+        newPoints.push(scalePoints(point, scale));
       });
+      points = newPoints;
     }else{
-      points.x = points.x * scale;
-      points.y = points.y * scale;
+      if (typeof scale === 'object'){
+        points = {x: points.x * scale.x, y: points.y * scale.y};
+      }else{
+        points = {x: points.x * scale, y: points.y * scale};
+      }
     }
     return points;
   };
 
   return scalePoints;
+
 });

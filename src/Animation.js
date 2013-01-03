@@ -16,7 +16,14 @@ limitations under the License.
 
 **/
 
-define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFrame, declare, lang){
+define([
+  './AnimFrame',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang'
+], function(AnimFrame, dcl, Mixer, lang){
+
+  'use strict';
 
  /**
  * Represents a series of frames that can be rendered as an animation.
@@ -24,7 +31,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
  * @class Animation
  */
 
-  var Animation = declare(null, {
+  var Animation = dcl(Mixer, {
     currFrameIndex: 0,
     animTime: 0,
     totalDuration: 0,
@@ -32,8 +39,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     width: 64,
     image: null,
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.start();
     },
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){

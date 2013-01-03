@@ -24,16 +24,17 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  'dcl',
+  'dcl/bases/Mixer',
+  './Entity',
+  '../utils' // TODO: specific util, not whole module
+], function(dcl, Mixer, Entity, utils){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     polys: [],
-    points: null,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
+
     /**
       * Draws each polygon in the entity
       * @name MultiPolygonEntity#draw
@@ -42,28 +43,37 @@ define([
       * @param {Number} scale the scale to draw the entity at
       *
       */
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      for(var j = 0; j < this.polys.length; j++){
-        ctx.beginPath();
-        ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        for (var i = 1; i < this.polys[j].length; i++) {
-           ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+        for(var j = 0; j < this.polys.length; j++){
+          ctx.beginPath();
+          ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          for (var i = 1; i < this.polys[j].length; i++) {
+             ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+          }
+          ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
         }
-        ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
 
-      ctx.restore();
-      this.inherited(arguments);
-    }
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
+
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.polys = utils.scalePoints(this.polys, scale);
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });

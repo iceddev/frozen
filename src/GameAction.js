@@ -22,9 +22,14 @@ limitations under the License.
  * @class GameAction
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     name: null,
     behavior: 0,
     amount:  0,
@@ -46,8 +51,7 @@ define(['dojo/_base/declare'], function(declare){
       STATE_MOVED: 3
     },
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.reset();
     },
 

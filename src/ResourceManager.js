@@ -21,25 +21,37 @@ limitations under the License.
  * @name ResourceManager
  * @class ResourceManager
  */
-define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './shims/AudioContext'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  function normalizePath(baseDir, path){
+    var joinedPath = path;
+    if(baseDir){
+      joinedPath = [baseDir, path].join('/');
+    }
+    return joinedPath.replace(/\/{2,}/g, '/');
+  }
+
+  var audioContext = null;
+  if(window.AudioContext){
+    audioContext = new window.AudioContext();
+  }else{
+    console.log('WebAudio not supported');
+  }
+
+  return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
-    soundsDir: null,
-    audioContext: null,
-    resourceList: [],
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      if(window.AudioContext){
-        this.audioContext = new window.AudioContext();
-      }else{
-        console.log('WebAudio not supported');
-      }
-      
-    },
+    soundDir: null,
+    audioContext: audioContext,
+    resourceList: {},
 
     /**
       * Loads an image, and tracks if it has finished loading
@@ -49,11 +61,11 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadImage: function(filename){
+      filename = normalizePath(this.imageDir, filename);
+
       //if we already have the image, just return it
-      for(var i = 0; i < this.resourceList.length; i++){
-        if(this.resourceList[i].name === filename){
-          return this.resourceList[i].img;
-        }
+      if(this.resourceList[filename]){
+        return this.resourceList[filename].img;
       }
 
       this.allLoaded = false;
@@ -65,15 +77,12 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
         complete: false
       };
 
-      if(this.imageDir){
-        filename = this.imageDir + filename;
-      }
       img.onload = function(){
         imgWrapper.complete = true;
       };
       img.src = filename;
-      
-      this.resourceList.push(imgWrapper);
+
+      this.resourceList[filename] = imgWrapper;
       return img;
     },
 
@@ -85,20 +94,20 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       *
     */
     loadSound: function(filename){
-
-      if(this.soundsDir){
-        filename = this.soundsDir + filename;
-      }
+      filename = normalizePath(this.soundDir, filename);
 
       var soundObj = {
-          name: filename,
-          buffer: null,
-          complete: false
+        name: filename,
+        buffer: null,
+        complete: false
       };
 
       if(this.audioContext){
-        
-        this.resourceList.push(soundObj);
+        if(this.resourceList[filename]){
+          return this.resourceList[filename];
+        }
+
+        this.resourceList[filename] = soundObj;
 
         //if the browser AudioContext, it's new enough for XMLHttpRequest
         var request = new XMLHttpRequest();
@@ -173,9 +182,9 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
       if(this.allLoaded){
         return true;
       }else{
-        for(var i = 0; i < this.resourceList.length; i++){
-
-          if(!this.resourceList[i].complete){
+        for(var filename in this.resourceList){
+          var resource = this.resourceList[filename];
+          if(!resource.complete){
             return false;
           }
         }
@@ -191,15 +200,18 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
     */
     getPercentComplete: function(){
       var numComplete = 0.0;
-      for(var i = 0; i < this.resourceList.length; i++){
-        if(this.resourceList[i].complete){
+      var length = 0;
+      for(var filename in this.resourceList){
+        var resource = this.resourceList[filename];
+        length++;
+        if(resource.complete){
           numComplete = numComplete + 1.0;
         }
       }
-      if(this.resourceList.length === 0){
+      if(length === 0){
         return 0;
       }else{
-        return Math.round((numComplete / this.resourceList.length) * 100.0);
+        return Math.round((numComplete / length) * 100.0);
       }
     }
   });

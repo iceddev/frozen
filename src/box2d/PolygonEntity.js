@@ -24,35 +24,45 @@ limitations under the License.
 */
 
 define([
-  'dojo/_base/declare',
-  './Entity'
-], function(declare, Entity){
+  'dcl',
+  'dcl/bases/Mixer',
+  './Entity',
+  '../utils' // TODO: specific util, not whole module
+], function(dcl, Mixer, Entity, utils){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     points: [],
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      ctx.beginPath();
-      ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      for (var i = 1; i < this.points.length; i++) {
-         ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
-      }
-      ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        for (var i = 1; i < this.points.length; i++) {
+           ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
+        }
+        ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.restore();
-      this.inherited(arguments);
-    }
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
+
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.points = utils.scalePoints(this.points, scale);
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });
