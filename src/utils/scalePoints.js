@@ -1,7 +1,9 @@
 define([
   'dojo/_base/lang'
 ], function(lang){
-  
+
+  'use strict';
+
   var scalePoints = function(points, scale){
     if(lang.isArray(points)){
       var newPoints = [];
@@ -20,4 +22,5 @@ define([
   };
 
   return scalePoints;
+
 });

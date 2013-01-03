@@ -310,7 +310,9 @@
 	//
 	// loader eval
 	//
-	var eval_ =
+	var eval_ =  1  ?
+		// noop eval if there are csp restrictions
+		function(){} :
 		// use the function constructor so our eval is scoped close to (but not in) in the global space with minimal pollution
 		new Function('return eval(arguments[0]);');
 
@@ -586,7 +588,7 @@
 				forEach(mapProgs, function(item){
 					item[1] = computeMapProg(item[1], []);
 					if(item[0]=="*"){
-						mapProgs.star = item[1];
+						mapProgs.star = item;
 					}
 				});
 
@@ -1281,8 +1283,8 @@
 	}
 
 	if( 1 ){
-		if(has("dojo-loader-eval-hint-url")===undefined){
-			has.add("dojo-loader-eval-hint-url", 1);
+		if( 0 ===undefined){
+			 0 && has.add("dojo-loader-eval-hint-url", 1);
 		}
 
 		var fixupUrl= function(url){
@@ -1342,7 +1344,7 @@
 						if(text===cached){
 							cached.call(null);
 						}else{
-							req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
+							req.eval(text,  0  ? module.url : module.mid);
 						}
 					}catch(e){
 						signal(error, makeError("evalModuleThrew", module));
@@ -1351,7 +1353,7 @@
 					if(text===cached){
 						cached.call(null);
 					}else{
-						req.eval(text, has("dojo-loader-eval-hint-url") ? module.url : module.mid);
+						req.eval(text,  0  ? module.url : module.mid);
 					}
 				}
 				injectingCachedModule = 0;
@@ -1920,6 +1922,11 @@
 					 name:"dojox"
 				},
 				{
+					 location:"../dcl",
+					 main:"dcl",
+					 name:"dcl"
+				},
+				{
 					 location:"../frozen",
 					 main:"GameCore",
 					 name:"frozen"
@@ -1956,9 +1963,12 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
+
+  'use strict';
 
   // box2d globals
 
@@ -1974,7 +1984,7 @@ define([
     , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
-  return declare(null, {
+  return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
     width: 640,
@@ -1990,7 +2000,6 @@ define([
     contactListener: null,
     collisions: null,
     constructor: function(args){
-      declare.safeMixin(this, args);
       if(args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
@@ -2109,7 +2118,7 @@ define([
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
       var body = this.world.CreateBody(bodyDef);
-      
+
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
@@ -2142,7 +2151,7 @@ define([
         fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
         body.CreateFixture(fixDef);
       }
-         
+
 
       this.bodiesMap[entity.id] = body;
     },
@@ -2302,8 +2311,8 @@ define([
     removeBody: function(id) {
       if(this.bodiesMap[id]){
         if(this.fixturesMap[id]){
-          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);  
-        }        
+          this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
+        }
         this.world.DestroyBody(this.bodiesMap[id]);
         //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
@@ -2372,1720 +2381,327 @@ define([
 
 });
 },
-'dojo/_base/declare':function(){
-define(["./kernel", "../has", "./lang"], function(dojo, has, lang){
-	// module:
-	//		dojo/_base/declare
+'dcl/dcl':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["./mini"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("./mini"));
+	}else{
+		dcl = factory(dcl);
+	}
+})(function(dcl){
+	"use strict";
 
-	var mix = lang.mixin, op = Object.prototype, opts = op.toString,
-		xtor = new Function, counter = 0, cname = "constructor";
+	function nop(){}
 
-	function err(msg, cls){ throw new Error("declare" + (cls ? " " + cls : "") + ": " + msg); }
-
-	// C3 Method Resolution Order (see http://www.python.org/download/releases/2.3/mro/)
-	function c3mro(bases, className){
-		var result = [], roots = [{cls: 0, refs: []}], nameMap = {}, clsCount = 1,
-			l = bases.length, i = 0, j, lin, base, top, proto, rec, name, refs;
-
-		// build a list of bases naming them if needed
-		for(; i < l; ++i){
-			base = bases[i];
-			if(!base){
-				err("mixin #" + i + " is unknown. Did you use dojo.require to pull it in?", className);
-			}else if(opts.call(base) != "[object Function]"){
-				err("mixin #" + i + " is not a callable constructor.", className);
-			}
-			lin = base._meta ? base._meta.bases : [base];
-			top = 0;
-			// add bases to the name map
-			for(j = lin.length - 1; j >= 0; --j){
-				proto = lin[j].prototype;
-				if(!proto.hasOwnProperty("declaredClass")){
-					proto.declaredClass = "uniqName_" + (counter++);
-				}
-				name = proto.declaredClass;
-				if(!nameMap.hasOwnProperty(name)){
-					nameMap[name] = {count: 0, refs: [], cls: lin[j]};
-					++clsCount;
-				}
-				rec = nameMap[name];
-				if(top && top !== rec){
-					rec.refs.push(top);
-					++top.count;
-				}
-				top = rec;
-			}
-			++top.count;
-			roots[0].refs.push(top);
+	var Advice = dcl(dcl.Super, {
+		//declaredClass: "dcl.Advice",
+		constructor: function(){
+			this.b = this.f.before;
+			this.a = this.f.after;
+			this.f = this.f.around;
 		}
+	});
+	function advise(f){ return new Advice(f); }
 
-		// remove classes without external references recursively
-		while(roots.length){
-			top = roots.pop();
-			result.push(top.cls);
-			--clsCount;
-			// optimization: follow a single-linked chain
-			while(refs = top.refs, refs.length == 1){
-				top = refs[0];
-				if(!top || --top.count){
-					// branch or end of chain => do not end to roots
-					top = 0;
-					break;
+	function makeAOPStub(b, a, f){
+		var sb = b || nop,
+			sa = a || nop,
+			sf = f || nop,
+			x = function(){
+				var r;
+				// running the before chain
+				sb.apply(this, arguments);
+				// running the around chain
+				try{
+					r = sf.apply(this, arguments);
+				}catch(e){
+					r = e;
 				}
-				result.push(top.cls);
-				--clsCount;
-			}
-			if(top){
-				// branch
-				for(i = 0, l = refs.length; i < l; ++i){
-					top = refs[i];
-					if(!--top.count){
-						roots.push(top);
-					}
+				// running the after chain
+				sa.call(this, arguments, r);
+				if(r instanceof Error){
+					throw r;
 				}
-			}
-		}
-		if(clsCount){
-			err("can't build consistent linearization", className);
-		}
-
-		// calculate the superclass offset
-		base = bases[0];
-		result[0] = base ?
-			base._meta && base === result[result.length - base._meta.bases.length] ?
-				base._meta.bases.length : 1 : 0;
-
-		return result;
+				return r;
+			};
+		x.advices = {b: b, a: a, f: f};
+		return x;
 	}
 
-	function inherited(args, a, f){
-		var name, chains, bases, caller, meta, base, proto, opf, pos,
-			cache = this._inherited = this._inherited || {};
-
-		// crack arguments
-		if(typeof args == "string"){
-			name = args;
-			args = a;
-			a = f;
-		}
-		f = 0;
-
-		caller = args.callee;
-		name = name || caller.nom;
-		if(!name){
-			err("can't deduce a name to call inherited()", this.declaredClass);
-		}
-
-		meta = this.constructor._meta;
-		bases = meta.bases;
-
-		pos = cache.p;
-		if(name != cname){
-			// method
-			if(cache.c !== caller){
-				// cache bust
-				pos = 0;
-				base = bases[0];
-				meta = base._meta;
-				if(meta.hidden[name] !== caller){
-					// error detection
-					chains = meta.chains;
-					if(chains && typeof chains[name] == "string"){
-						err("calling chained method with inherited: " + name, this.declaredClass);
-					}
-					// find caller
-					do{
-						meta = base._meta;
-						proto = base.prototype;
-						if(meta && (proto[name] === caller && proto.hasOwnProperty(name) || meta.hidden[name] === caller)){
-							break;
-						}
-					}while(base = bases[++pos]); // intentional assignment
-					pos = base ? pos : -1;
+	function chain(id){
+		return function(ctor, name){
+			var m = ctor._m, c;
+			if(m){
+				c = (+m.w[name] || 0);
+				if(c && c != id){
+					dcl._e("set chaining", name, ctor, id, c);
 				}
+				m.w[name] = id;
 			}
-			// find next
-			base = bases[++pos];
-			if(base){
-				proto = base.prototype;
-				if(base._meta && proto.hasOwnProperty(name)){
-					f = proto[name];
-				}else{
-					opf = op[name];
-					do{
-						proto = base.prototype;
-						f = proto[name];
-						if(f && (base._meta ? proto.hasOwnProperty(name) : f !== opf)){
-							break;
-						}
-					}while(base = bases[++pos]); // intentional assignment
-				}
-			}
-			f = base && f || op[name];
-		}else{
-			// constructor
-			if(cache.c !== caller){
-				// cache bust
-				pos = 0;
-				meta = bases[0]._meta;
-				if(meta && meta.ctor !== caller){
-					// error detection
-					chains = meta.chains;
-					if(!chains || chains.constructor !== "manual"){
-						err("calling chained constructor with inherited", this.declaredClass);
-					}
-					// find caller
-					while(base = bases[++pos]){ // intentional assignment
-						meta = base._meta;
-						if(meta && meta.ctor === caller){
-							break;
-						}
-					}
-					pos = base ? pos : -1;
-				}
-			}
-			// find next
-			while(base = bases[++pos]){	// intentional assignment
-				meta = base._meta;
-				f = meta ? meta.ctor : base;
-				if(f){
-					break;
-				}
-			}
-			f = base && f;
-		}
-
-		// cache the found super method
-		cache.c = f;
-		cache.p = pos;
-
-		// now we have the result
-		if(f){
-			return a === true ? f : f.apply(this, a || args);
-		}
-		// intentionally no return if a super method was not found
+		};
 	}
 
-	function getInherited(name, args){
-		if(typeof name == "string"){
-			return this.__inherited(name, args, true);
-		}
-		return this.__inherited(name, true);
-	}
-
-	function inherited__debug(args, a1, a2){
-		var f = this.getInherited(args, a1);
-		if(f){ return f.apply(this, a2 || a1 || args); }
-		// intentionally no return if a super method was not found
-	}
-
-	var inheritedImpl = dojo.config.isDebug ? inherited__debug : inherited;
-
-	// emulation of "instanceof"
-	function isInstanceOf(cls){
-		var bases = this.constructor._meta.bases;
-		for(var i = 0, l = bases.length; i < l; ++i){
-			if(bases[i] === cls){
+	dcl.mix(dcl, {
+		// public API
+		Advice: Advice,
+		advise: advise,
+		// expose helper methods
+		before: function(f){ return new Advice({before: f}); },
+		after: function(f){ return new Advice({after: f}); },
+		around: dcl.superCall,
+		// chains
+		chainBefore: chain(1),
+		chainAfter:  chain(2),
+		isInstanceOf: function(o, ctor){
+			if(o instanceof ctor){
 				return true;
 			}
-		}
-		return this instanceof cls;
-	}
-
-	function mixOwn(target, source){
-		// add props adding metadata for incoming functions skipping a constructor
-		for(var name in source){
-			if(name != cname && source.hasOwnProperty(name)){
-				target[name] = source[name];
-			}
-		}
-		if(has("bug-for-in-skips-shadowed")){
-			for(var extraNames= lang._extraNames, i= extraNames.length; i;){
-				name = extraNames[--i];
-				if(name != cname && source.hasOwnProperty(name)){
-					  target[name] = source[name];
-				}
-			}
-		}
-	}
-
-	// implementation of safe mixin function
-	function safeMixin(target, source){
-		// summary:
-		//		Mix in properties skipping a constructor and decorating functions
-		//		like it is done by declare().
-		// target: Object
-		//		Target object to accept new properties.
-		// source: Object
-		//		Source object for new properties.
-		// description:
-		//		This function is used to mix in properties like lang.mixin does,
-		//		but it skips a constructor property and decorates functions like
-		//		declare() does.
-		//
-		//		It is meant to be used with classes and objects produced with
-		//		declare. Functions mixed in with dojo.safeMixin can use
-		//		this.inherited() like normal methods.
-		//
-		//		This function is used to implement extend() method of a constructor
-		//		produced with declare().
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		m1: function(){
-		//	|			console.log("A.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			console.log("A.m2");
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		m1: function(){
-		//	|			this.inherited(arguments);
-		//	|			console.log("B.m1");
-		//	|		}
-		//	|	});
-		//	|	B.extend({
-		//	|		m2: function(){
-		//	|			this.inherited(arguments);
-		//	|			console.log("B.m2");
-		//	|		}
-		//	|	});
-		//	|	var x = new B();
-		//	|	dojo.safeMixin(x, {
-		//	|		m1: function(){
-		//	|			this.inherited(arguments);
-		//	|			console.log("X.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			this.inherited(arguments);
-		//	|			console.log("X.m2");
-		//	|		}
-		//	|	});
-		//	|	x.m2();
-		//	|	// prints:
-		//	|	// A.m1
-		//	|	// B.m1
-		//	|	// X.m1
-
-		var name, t;
-		// add props adding metadata for incoming functions skipping a constructor
-		for(name in source){
-			t = source[name];
-			if((t !== op[name] || !(name in op)) && name != cname){
-				if(opts.call(t) == "[object Function]"){
-					// non-trivial function method => attach its name
-					t.nom = name;
-				}
-				target[name] = t;
-			}
-		}
-		if(has("bug-for-in-skips-shadowed")){
-			for(var extraNames= lang._extraNames, i= extraNames.length; i;){
-				name = extraNames[--i];
-				t = source[name];
-				if((t !== op[name] || !(name in op)) && name != cname){
-					if(opts.call(t) == "[object Function]"){
-						// non-trivial function method => attach its name
-						  t.nom = name;
+			var t = o.constructor._m, i;
+			if(t){
+				for(t = t.b, i = t.length - 1; i >= 0; --i){
+					if(t[i] === ctor){
+						return true;
 					}
-					target[name] = t;
 				}
 			}
+			return false;
+		},
+		// protected API starts with _ (don't use it!)
+		_sb: /*stub*/ function(id, bases, name, chains){
+			var f = chains[name] = dcl._ec(bases, name, "f"),
+				b = dcl._ec(bases, name, "b").reverse(),
+				a = dcl._ec(bases, name, "a");
+			f = id ? dcl._st(f, id == 1 ? function(f){ return dcl._sc(f.reverse()); } : dcl._sc, name) : dcl._ss(f, name);
+			return !b.length && !a.length ? f || function(){} : makeAOPStub(dcl._sc(b), dcl._sc(a), f);
 		}
-		return target;
+	});
+
+	return dcl;
+});
+
+},
+'dcl/mini':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define([], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory();
+	}else{
+		dcl = factory();
 	}
+})(function(){
+	"use strict";
 
-	function extend(source){
-		declare.safeMixin(this.prototype, source);
-		return this;
-	}
+	var counter = 0, cname = "constructor", pname = "prototype",
+		F = function(){}, empty = {}, mix, extractChain,
+		stubSuper, stubChain, stubChainSuper, post;
 
-	function createSubclass(mixins){
-		return declare([this].concat(mixins));
-	}
+	function dcl(superClass, props){
+		var bases = [0], proto, base, ctor, m, o, r, b, i, j = 0, n;
 
-	// chained constructor compatible with the legacy declare()
-	function chainedConstructor(bases, ctorSpecial){
-		return function(){
-			var a = arguments, args = a, a0 = a[0], f, i, m,
-				l = bases.length, preArgs;
-
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
-
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) call two types of the preamble
-			if(ctorSpecial && (a0 && a0.preamble || this.preamble)){
-				// full blown ritual
-				preArgs = new Array(bases.length);
-				// prepare parameters
-				preArgs[0] = a;
-				for(i = 0;;){
-					// process the preamble of the 1st argument
-					a0 = a[0];
-					if(a0){
-						f = a0.preamble;
-						if(f){
-							a = f.apply(this, a) || a;
+		if(superClass){
+			if(superClass instanceof Array){
+				// mixins: C3 MRO
+				m = {}; b = superClass.slice(0).reverse();
+				for(i = b.length - 1; i >= 0; --i){
+					base = b[i];
+					// pre-process a base
+					// 1) add a unique id
+					base._u = base._u || counter++;
+					// 2) build a connection map and the base list
+					if((proto = base._m)){   // intentional assignment
+						for(r = proto.b, j = r.length - 1; j > 0; --j){
+							n = r[j]._u;
+							m[n] = (m[n] || 0) + 1;
+						}
+						b[i] = r.slice(0);
+					}else{
+						b[i] = [base];
+					}
+				}
+				// build output
+				o = {};
+				c: while(b.length){
+					for(i = 0; i < b.length; ++i){
+						r = b[i];
+						base = r[0];
+						n = base._u;
+						if(!m[n]){
+							if(!o[n]){
+								bases.push(base);
+								o[n] = 1;
+							}
+							r.shift();
+							if(r.length){
+								--m[r[0]._u];
+							}else{
+								b.splice(i, 1);
+							}
+							continue c;
 						}
 					}
-					// process the preamble of this class
-					f = bases[i].prototype;
-					f = f.hasOwnProperty("preamble") && f.preamble;
-					if(f){
-						a = f.apply(this, a) || a;
-					}
-					// one peculiarity of the preamble:
-					// it is called if it is not needed,
-					// e.g., there is no constructor to call
-					// let's watch for the last constructor
-					// (see ticket #9795)
-					if(++i == l){
-						break;
-					}
-					preArgs[i] = a;
+					// error
+					dcl._e("cycle", props, b);
+				}
+				// calculate a base class
+				superClass = superClass[0];
+				j = bases.length - ((m = superClass._m) && superClass === bases[bases.length - (j = m.b.length)] ? j : 1) - 1; // intentional assignments
+			}else{
+				// 1) add a unique id
+				superClass._u = superClass._u || counter++;
+				// 2) single inheritance
+				bases = bases.concat((m = superClass._m) ? m.b : superClass);   // intentional assignment
+			}
+		}
+		// create a base class
+		proto = superClass ? dcl.delegate(superClass[pname]) : {};
+		// the next line assumes that constructor is actually named "constructor", should be changed if desired
+		r = superClass && (m = superClass._m) ? dcl.delegate(m.w) : {constructor: 2};   // intentional assignment
+
+		// create prototype: mix in mixins and props
+		for(; j > 0; --j){
+			base = bases[j];
+			m = base._m;
+			mix(proto, m && m.h || base[pname]);
+			if(m){
+				for(n in (b = m.w)){    // intentional assignment
+					r[n] = (+r[n] || 0) | b[n];
 				}
 			}
-			// 2) call all non-trivial constructors using prepared arguments
-			for(i = l - 1; i >= 0; --i){
-				f = bases[i];
-				m = f._meta;
-				f = m ? m.ctor : f;
-				if(f){
-					f.apply(this, preArgs ? preArgs[i] : a);
-				}
+		}
+		for(n in props){
+			if(isSuper(m = props[n])){  // intentional assignment
+				r[n] = +r[n] || 0;
+			}else{
+				proto[n] = m;
 			}
-			// 3) continue the original ritual: call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, args);
-			}
-		};
+		}
+
+		// create stubs with fake constructor
+		o = {b: bases, h: props, w: r, c: {}};
+		bases[0] = {_m: o, prototype: proto};
+		buildStubs(o, proto);
+		ctor = proto[cname];
+
+		// put in place all decorations and return a constructor
+		ctor._m  = o;
+		ctor[pname] = proto;
+		//proto.constructor = ctor; // uncomment if constructor is not named "constructor"
+		bases[0] = ctor;
+
+		return dcl._p(ctor);    // fully prepared constructor
 	}
 
+	// decorators
 
-	// chained constructor compatible with the legacy declare()
-	function singleConstructor(ctor, ctorSpecial){
-		return function(){
-			var a = arguments, t = a, a0 = a[0], f;
+	function Super(f){ this.f = f; }
+	function isSuper(f){ return f instanceof Super; }
 
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
+	// utilities
 
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) call two types of the preamble
-			if(ctorSpecial){
-				// full blown ritual
-				if(a0){
-					// process the preamble of the 1st argument
-					f = a0.preamble;
-					if(f){
-						t = f.apply(this, t) || t;
-					}
-				}
-				f = this.preamble;
-				if(f){
-					// process the preamble of this class
-					f.apply(this, t);
-					// one peculiarity of the preamble:
-					// it is called even if it is not needed,
-					// e.g., there is no constructor to call
-					// let's watch for the last constructor
-					// (see ticket #9795)
-				}
-			}
-			// 2) call a constructor
-			if(ctor){
-				ctor.apply(this, a);
-			}
-			// 3) continue the original ritual: call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, a);
-			}
-		};
-	}
-
-	// plain vanilla constructor (can use inherited() to call its base constructor)
-	function simpleConstructor(bases){
-		return function(){
-			var a = arguments, i = 0, f, m;
-
-			if(!(this instanceof a.callee)){
-				// not called via new, so force it
-				return applyNew(a);
-			}
-
-			//this._inherited = {};
-			// perform the shaman's rituals of the original declare()
-			// 1) do not call the preamble
-			// 2) call the top constructor (it can use this.inherited())
-			for(; f = bases[i]; ++i){ // intentional assignment
-				m = f._meta;
-				f = m ? m.ctor : f;
-				if(f){
-					f.apply(this, a);
-					break;
+	(mix = function(a, b){
+		for(var n in b){
+			a[n] = b[n];
+		}
+	})(dcl, {
+		// piblic API
+		mix: mix,
+		delegate: function(o){
+			F[pname] = o;
+			var t = new F;
+			F[pname] = null;
+			return t;
+		},
+		Super: Super,
+		superCall: function(f){ return new Super(f); },
+		// protected API starts with _ (don't use it!)
+		_p: function(ctor){ return ctor; },   // identity, used to hang on advices
+		_e: function(m){ throw Error("dcl: " + m); },  // error function, augmented by debug.js
+		_f: function(f, a, n){ var t = f.f(a); t.ctr = f.ctr; return t; },  // supercall instantiation, augmented by debug.js
+		// the "buildStubs()" helpers, can be overwritten
+		_ec: extractChain = function(bases, name, advice){
+			var i = bases.length - 1, r = [], b, f, around = advice == "f";
+			for(; b = bases[i]; --i){
+				// next line contains 5 intentional assignments
+				if((f = b._m) ? (f = f.h).hasOwnProperty(name) && (isSuper(f = f[name]) ? (around ? f.f : (f = f[advice])) : around) : around && (f = b[pname][name]) && f !== empty[name]){
+					f.ctr = b;
+					r.push(f);
 				}
 			}
-			// 3) call the postscript
-			f = this.postscript;
-			if(f){
-				f.apply(this, a);
-			}
-		};
-	}
-
-	function chain(name, bases, reversed){
-		return function(){
-			var b, m, f, i = 0, step = 1;
-			if(reversed){
-				i = bases.length - 1;
-				step = -1;
-			}
-			for(; b = bases[i]; i += step){ // intentional assignment
-				m = b._meta;
-				f = (m ? m.hidden : b.prototype)[name];
-				if(f){
+			return r;
+		},
+		_sc: stubChain = function(chain){ // this is "after" chain
+			var l = chain.length, f;
+			return !l ? 0 : l == 1 ?
+				(f = chain[0], function(){
 					f.apply(this, arguments);
-				}
-			}
-		};
-	}
-
-	// forceNew(ctor)
-	// return a new object that inherits from ctor.prototype but
-	// without actually running ctor on the object.
-	function forceNew(ctor){
-		// create object with correct prototype using a do-nothing
-		// constructor
-		xtor.prototype = ctor.prototype;
-		var t = new xtor;
-		xtor.prototype = null;	// clean up
-		return t;
-	}
-
-	// applyNew(args)
-	// just like 'new ctor()' except that the constructor and its arguments come
-	// from args, which must be an array or an arguments object
-	function applyNew(args){
-		// create an object with ctor's prototype but without
-		// calling ctor on it.
-		var ctor = args.callee, t = forceNew(ctor);
-		// execute the real constructor on the new object
-		ctor.apply(t, args);
-		return t;
-	}
-
-	function declare(className, superclass, props){
-		// summary:
-		//		Create a feature-rich constructor from compact notation.
-		// className: String?
-		//		The optional name of the constructor (loosely, a "class")
-		//		stored in the "declaredClass" property in the created prototype.
-		//		It will be used as a global name for a created constructor.
-		// superclass: Function|Function[]
-		//		May be null, a Function, or an Array of Functions. This argument
-		//		specifies a list of bases (the left-most one is the most deepest
-		//		base).
-		// props: Object
-		//		An object whose properties are copied to the created prototype.
-		//		Add an instance-initialization function by making it a property
-		//		named "constructor".
-		// returns: dojo/_base/declare.__DeclareCreatedObject
-		//		New constructor function.
-		// description:
-		//		Create a constructor using a compact notation for inheritance and
-		//		prototype extension.
-		//
-		//		Mixin ancestors provide a type of multiple inheritance.
-		//		Prototypes of mixin ancestors are copied to the new class:
-		//		changes to mixin prototypes will not affect classes to which
-		//		they have been mixed in.
-		//
-		//		Ancestors can be compound classes created by this version of
-		//		declare(). In complex cases all base classes are going to be
-		//		linearized according to C3 MRO algorithm
-		//		(see http://www.python.org/download/releases/2.3/mro/ for more
-		//		details).
-		//
-		//		"className" is cached in "declaredClass" property of the new class,
-		//		if it was supplied. The immediate super class will be cached in
-		//		"superclass" property of the new class.
-		//
-		//		Methods in "props" will be copied and modified: "nom" property
-		//		(the declared name of the method) will be added to all copied
-		//		functions to help identify them for the internal machinery. Be
-		//		very careful, while reusing methods: if you use the same
-		//		function under different names, it can produce errors in some
-		//		cases.
-		//
-		//		It is possible to use constructors created "manually" (without
-		//		declare()) as bases. They will be called as usual during the
-		//		creation of an instance, their methods will be chained, and even
-		//		called by "this.inherited()".
-		//
-		//		Special property "-chains-" governs how to chain methods. It is
-		//		a dictionary, which uses method names as keys, and hint strings
-		//		as values. If a hint string is "after", this method will be
-		//		called after methods of its base classes. If a hint string is
-		//		"before", this method will be called before methods of its base
-		//		classes.
-		//
-		//		If "constructor" is not mentioned in "-chains-" property, it will
-		//		be chained using the legacy mode: using "after" chaining,
-		//		calling preamble() method before each constructor, if available,
-		//		and calling postscript() after all constructors were executed.
-		//		If the hint is "after", it is chained as a regular method, but
-		//		postscript() will be called after the chain of constructors.
-		//		"constructor" cannot be chained "before", but it allows
-		//		a special hint string: "manual", which means that constructors
-		//		are not going to be chained in any way, and programmer will call
-		//		them manually using this.inherited(). In the latter case
-		//		postscript() will be called after the construction.
-		//
-		//		All chaining hints are "inherited" from base classes and
-		//		potentially can be overridden. Be very careful when overriding
-		//		hints! Make sure that all chained methods can work in a proposed
-		//		manner of chaining.
-		//
-		//		Once a method was chained, it is impossible to unchain it. The
-		//		only exception is "constructor". You don't need to define a
-		//		method in order to supply a chaining hint.
-		//
-		//		If a method is chained, it cannot use this.inherited() because
-		//		all other methods in the hierarchy will be called automatically.
-		//
-		//		Usually constructors and initializers of any kind are chained
-		//		using "after" and destructors of any kind are chained as
-		//		"before". Note that chaining assumes that chained methods do not
-		//		return any value: any returned value will be discarded.
-		//
-		// example:
-		//	|	declare("my.classes.bar", my.classes.foo, {
-		//	|		// properties to be added to the class prototype
-		//	|		someValue: 2,
-		//	|		// initialization function
-		//	|		constructor: function(){
-		//	|			this.myComplicatedObject = new ReallyComplicatedObject();
-		//	|		},
-		//	|		// other functions
-		//	|		someMethod: function(){
-		//	|			doStuff();
-		//	|		}
-		//	|	});
-		//
-		// example:
-		//	|	var MyBase = declare(null, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyClass1 = declare(MyBase, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyClass2 = declare(MyBase, {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//	|	var MyDiamond = declare([MyClass1, MyClass2], {
-		//	|		// constructor, properties, and methods go here
-		//	|		// ...
-		//	|	});
-		//
-		// example:
-		//	|	var F = function(){ console.log("raw constructor"); };
-		//	|	F.prototype.method = function(){
-		//	|		console.log("raw method");
-		//	|	};
-		//	|	var A = declare(F, {
-		//	|		constructor: function(){
-		//	|			console.log("A.constructor");
-		//	|		},
-		//	|		method: function(){
-		//	|			console.log("before calling F.method...");
-		//	|			this.inherited(arguments);
-		//	|			console.log("...back in A");
-		//	|		}
-		//	|	});
-		//	|	new A().method();
-		//	|	// will print:
-		//	|	// raw constructor
-		//	|	// A.constructor
-		//	|	// before calling F.method...
-		//	|	// raw method
-		//	|	// ...back in A
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			destroy: "before"
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		constructor: function(){
-		//	|			console.log("B.constructor");
-		//	|		},
-		//	|		destroy: function(){
-		//	|			console.log("B.destroy");
-		//	|		}
-		//	|	});
-		//	|	var C = declare(B, {
-		//	|		constructor: function(){
-		//	|			console.log("C.constructor");
-		//	|		},
-		//	|		destroy: function(){
-		//	|			console.log("C.destroy");
-		//	|		}
-		//	|	});
-		//	|	new C().destroy();
-		//	|	// prints:
-		//	|	// B.constructor
-		//	|	// C.constructor
-		//	|	// C.destroy
-		//	|	// B.destroy
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			constructor: "manual"
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		constructor: function(){
-		//	|			// ...
-		//	|			// call the base constructor with new parameters
-		//	|			this.inherited(arguments, [1, 2, 3]);
-		//	|			// ...
-		//	|		}
-		//	|	});
-		//
-		// example:
-		//	|	var A = declare(null, {
-		//	|		"-chains-": {
-		//	|			m1: "before"
-		//	|		},
-		//	|		m1: function(){
-		//	|			console.log("A.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			console.log("A.m2");
-		//	|		}
-		//	|	});
-		//	|	var B = declare(A, {
-		//	|		"-chains-": {
-		//	|			m2: "after"
-		//	|		},
-		//	|		m1: function(){
-		//	|			console.log("B.m1");
-		//	|		},
-		//	|		m2: function(){
-		//	|			console.log("B.m2");
-		//	|		}
-		//	|	});
-		//	|	var x = new B();
-		//	|	x.m1();
-		//	|	// prints:
-		//	|	// B.m1
-		//	|	// A.m1
-		//	|	x.m2();
-		//	|	// prints:
-		//	|	// A.m2
-		//	|	// B.m2
-
-		// crack parameters
-		if(typeof className != "string"){
-			props = superclass;
-			superclass = className;
-			className = "";
-		}
-		props = props || {};
-
-		var proto, i, t, ctor, name, bases, chains, mixins = 1, parents = superclass;
-
-		// build a prototype
-		if(opts.call(superclass) == "[object Array]"){
-			// C3 MRO
-			bases = c3mro(superclass, className);
-			t = bases[0];
-			mixins = bases.length - t;
-			superclass = bases[mixins];
-		}else{
-			bases = [0];
-			if(superclass){
-				if(opts.call(superclass) == "[object Function]"){
-					t = superclass._meta;
-					bases = bases.concat(t ? t.bases : superclass);
-				}else{
-					err("base class is not a callable constructor.", className);
-				}
-			}else if(superclass !== null){
-				err("unknown base class. Did you use dojo.require to pull it in?", className);
-			}
-		}
-		if(superclass){
-			for(i = mixins - 1;; --i){
-				proto = forceNew(superclass);
-				if(!i){
-					// stop if nothing to add (the last base)
-					break;
-				}
-				// mix in properties
-				t = bases[i];
-				(t._meta ? mixOwn : mix)(proto, t.prototype);
-				// chain in new constructor
-				ctor = new Function;
-				ctor.superclass = superclass;
-				ctor.prototype = proto;
-				superclass = proto.constructor = ctor;
-			}
-		}else{
-			proto = {};
-		}
-		// add all properties
-		declare.safeMixin(proto, props);
-		// add constructor
-		t = props.constructor;
-		if(t !== op.constructor){
-			t.nom = cname;
-			proto.constructor = t;
-		}
-
-		// collect chains and flags
-		for(i = mixins - 1; i; --i){ // intentional assignment
-			t = bases[i]._meta;
-			if(t && t.chains){
-				chains = mix(chains || {}, t.chains);
-			}
-		}
-		if(proto["-chains-"]){
-			chains = mix(chains || {}, proto["-chains-"]);
-		}
-
-		// build ctor
-		t = !chains || !chains.hasOwnProperty(cname);
-		bases[0] = ctor = (chains && chains.constructor === "manual") ? simpleConstructor(bases) :
-			(bases.length == 1 ? singleConstructor(props.constructor, t) : chainedConstructor(bases, t));
-
-		// add meta information to the constructor
-		ctor._meta  = {bases: bases, hidden: props, chains: chains,
-			parents: parents, ctor: props.constructor};
-		ctor.superclass = superclass && superclass.prototype;
-		ctor.extend = extend;
-		ctor.createSubclass = createSubclass;
-		ctor.prototype = proto;
-		proto.constructor = ctor;
-
-		// add "standard" methods to the prototype
-		proto.getInherited = getInherited;
-		proto.isInstanceOf = isInstanceOf;
-		proto.inherited    = inheritedImpl;
-		proto.__inherited  = inherited;
-
-		// add name if specified
-		if(className){
-			proto.declaredClass = className;
-			lang.setObject(className, ctor);
-		}
-
-		// build chains and add them to the prototype
-		if(chains){
-			for(name in chains){
-				if(proto[name] && typeof chains[name] == "string" && name != cname){
-					t = proto[name] = chain(name, bases, chains[name] === "after");
-					t.nom = name;
-				}
-			}
-		}
-		// chained methods do not return values
-		// no need to chain "invisible" functions
-
-		return ctor;	// Function
-	}
-
-	/*=====
-	declare.__DeclareCreatedObject = {
-		// summary:
-		//		dojo/_base/declare() returns a constructor `C`.   `new C()` returns an Object with the following
-		//		methods, in addition to the methods and properties specified via the arguments passed to declare().
-
-		inherited: function(name, args, newArgs){
-			// summary:
-			//		Calls a super method.
-			// name: String?
-			//		The optional method name. Should be the same as the caller's
-			//		name. Usually "name" is specified in complex dynamic cases, when
-			//		the calling method was dynamically added, undecorated by
-			//		declare(), and it cannot be determined.
-			// args: Arguments
-			//		The caller supply this argument, which should be the original
-			//		"arguments".
-			// newArgs: Object?
-			//		If "true", the found function will be returned without
-			//		executing it.
-			//		If Array, it will be used to call a super method. Otherwise
-			//		"args" will be used.
-			// returns:
-			//		Whatever is returned by a super method, or a super method itself,
-			//		if "true" was specified as newArgs.
-			// description:
-			//		This method is used inside method of classes produced with
-			//		declare() to call a super method (next in the chain). It is
-			//		used for manually controlled chaining. Consider using the regular
-			//		chaining, because it is faster. Use "this.inherited()" only in
-			//		complex cases.
-			//
-			//		This method cannot me called from automatically chained
-			//		constructors including the case of a special (legacy)
-			//		constructor chaining. It cannot be called from chained methods.
-			//
-			//		If "this.inherited()" cannot find the next-in-chain method, it
-			//		does nothing and returns "undefined". The last method in chain
-			//		can be a default method implemented in Object, which will be
-			//		called last.
-			//
-			//		If "name" is specified, it is assumed that the method that
-			//		received "args" is the parent method for this call. It is looked
-			//		up in the chain list and if it is found the next-in-chain method
-			//		is called. If it is not found, the first-in-chain method is
-			//		called.
-			//
-			//		If "name" is not specified, it will be derived from the calling
-			//		method (using a methoid property "nom").
-			//
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method1: function(a, b, c){
-			//	|			this.inherited(arguments);
-			//	|		},
-			//	|		method2: function(a, b){
-			//	|			return this.inherited(arguments, [a + b]);
-			//	|		}
-			//	|	});
-			//	|	// next method is not in the chain list because it is added
-			//	|	// manually after the class was created.
-			//	|	B.prototype.method3 = function(){
-			//	|		console.log("This is a dynamically-added method.");
-			//	|		this.inherited("method3", arguments);
-			//	|	};
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method: function(a, b){
-			//	|			var super = this.inherited(arguments, true);
-			//	|			// ...
-			//	|			if(!super){
-			//	|				console.log("there is no super method");
-			//	|				return 0;
-			//	|			}
-			//	|			return super.apply(this, arguments);
-			//	|		}
-			//	|	});
-			return	{};	// Object
-		},
-
-		getInherited: function(name, args){
-			// summary:
-			//		Returns a super method.
-			// name: String?
-			//		The optional method name. Should be the same as the caller's
-			//		name. Usually "name" is specified in complex dynamic cases, when
-			//		the calling method was dynamically added, undecorated by
-			//		declare(), and it cannot be determined.
-			// args: Arguments
-			//		The caller supply this argument, which should be the original
-			//		"arguments".
-			// returns:
-			//		Returns a super method (Function) or "undefined".
-			// description:
-			//		This method is a convenience method for "this.inherited()".
-			//		It uses the same algorithm but instead of executing a super
-			//		method, it returns it, or "undefined" if not found.
-			//
-			// example:
-			//	|	var B = declare(A, {
-			//	|		method: function(a, b){
-			//	|			var super = this.getInherited(arguments);
-			//	|			// ...
-			//	|			if(!super){
-			//	|				console.log("there is no super method");
-			//	|				return 0;
-			//	|			}
-			//	|			return super.apply(this, arguments);
-			//	|		}
-			//	|	});
-			return	{};	// Object
-		},
-
-		isInstanceOf: function(cls){
-			// summary:
-			//		Checks the inheritance chain to see if it is inherited from this
-			//		class.
-			// cls: Function
-			//		Class constructor.
-			// returns:
-			//		"true", if this object is inherited from this class, "false"
-			//		otherwise.
-			// description:
-			//		This method is used with instances of classes produced with
-			//		declare() to determine of they support a certain interface or
-			//		not. It models "instanceof" operator.
-			//
-			// example:
-			//	|	var A = declare(null, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var B = declare(null, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var C = declare([A, B], {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|	var D = declare(A, {
-			//	|		// constructor, properties, and methods go here
-			//	|		// ...
-			//	|	});
-			//	|
-			//	|	var a = new A(), b = new B(), c = new C(), d = new D();
-			//	|
-			//	|	console.log(a.isInstanceOf(A)); // true
-			//	|	console.log(b.isInstanceOf(A)); // false
-			//	|	console.log(c.isInstanceOf(A)); // true
-			//	|	console.log(d.isInstanceOf(A)); // true
-			//	|
-			//	|	console.log(a.isInstanceOf(B)); // false
-			//	|	console.log(b.isInstanceOf(B)); // true
-			//	|	console.log(c.isInstanceOf(B)); // true
-			//	|	console.log(d.isInstanceOf(B)); // false
-			//	|
-			//	|	console.log(a.isInstanceOf(C)); // false
-			//	|	console.log(b.isInstanceOf(C)); // false
-			//	|	console.log(c.isInstanceOf(C)); // true
-			//	|	console.log(d.isInstanceOf(C)); // false
-			//	|
-			//	|	console.log(a.isInstanceOf(D)); // false
-			//	|	console.log(b.isInstanceOf(D)); // false
-			//	|	console.log(c.isInstanceOf(D)); // false
-			//	|	console.log(d.isInstanceOf(D)); // true
-			return	{};	// Object
-		},
-
-		extend: function(source){
-			// summary:
-			//		Adds all properties and methods of source to constructor's
-			//		prototype, making them available to all instances created with
-			//		constructor. This method is specific to constructors created with
-			//		declare().
-			// source: Object
-			//		Source object which properties are going to be copied to the
-			//		constructor's prototype.
-			// description:
-			//		Adds source properties to the constructor's prototype. It can
-			//		override existing properties.
-			//
-			//		This method is similar to dojo.extend function, but it is specific
-			//		to constructors produced by declare(). It is implemented
-			//		using dojo.safeMixin, and it skips a constructor property,
-			//		and properly decorates copied functions.
-			//
-			// example:
-			//	|	var A = declare(null, {
-			//	|		m1: function(){},
-			//	|		s1: "Popokatepetl"
-			//	|	});
-			//	|	A.extend({
-			//	|		m1: function(){},
-			//	|		m2: function(){},
-			//	|		f1: true,
-			//	|		d1: 42
-			//	|	});
-		}
-	};
-	=====*/
-
-	// For back-compat, remove for 2.0
-	dojo.safeMixin = declare.safeMixin = safeMixin;
-	dojo.declare = declare;
-
-	return declare;
-});
-
-},
-'dojo/_base/kernel':function(){
-define(["../has", "./config", "require", "module"], function(has, config, require, module){
-	// module:
-	//		dojo/_base/kernel
-
-	// This module is the foundational module of the dojo boot sequence; it defines the dojo object.
-
-	var
-		// loop variables for this module
-		i, p,
-
-		// create dojo, dijit, and dojox
-		// FIXME: in 2.0 remove dijit, dojox being created by dojo
-		dijit = {},
-		dojox = {},
-		dojo = {
-			// summary:
-			//		This module is the foundational module of the dojo boot sequence; it defines the dojo object.
-
-			// notice dojo takes ownership of the value of the config module
-			config:config,
-			global:this,
-			dijit:dijit,
-			dojox:dojox
-		};
-
-
-	// Configure the scope map. For a 100% AMD application, the scope map is not needed other than to provide
-	// a _scopeName property for the dojo, dijit, and dojox root object so those packages can create
-	// unique names in the global space.
-	//
-	// Built, legacy modules use the scope map to allow those modules to be expressed as if dojo, dijit, and dojox,
-	// where global when in fact they are either global under different names or not global at all. In v1.6-, the
-	// config variable "scopeMap" was used to map names as used within a module to global names. This has been
-	// subsumed by the AMD map configuration variable which can relocate packages to different names. For backcompat,
-	// only the "*" mapping is supported. See http://livedocs.dojotoolkit.org/developer/design/loader#legacy-cross-domain-mode for details.
-	//
-	// The following computations contort the packageMap for this dojo instance into a scopeMap.
-	var scopeMap =
-			// a map from a name used in a legacy module to the (global variable name, object addressed by that name)
-			// always map dojo, dijit, and dojox
-			{
-				dojo:["dojo", dojo],
-				dijit:["dijit", dijit],
-				dojox:["dojox", dojox]
-			},
-
-		packageMap =
-			// the package map for this dojo instance; note, a foreign loader or no pacakgeMap results in the above default config
-			(require.map && require.map[module.id.match(/[^\/]+/)[0]]),
-
-		item;
-
-
-	// process all mapped top-level names for this instance of dojo
-	for(p in packageMap){
-		if(scopeMap[p]){
-			// mapped dojo, dijit, or dojox
-			scopeMap[p][0] = packageMap[p];
-		}else{
-			// some other top-level name
-			scopeMap[p] = [packageMap[p], {}];
-		}
-	}
-
-	// publish those names to _scopeName and, optionally, the global namespace
-	for(p in scopeMap){
-		item = scopeMap[p];
-		item[1]._scopeName = item[0];
-		if(!config.noGlobals){
-			this[item[0]] = item[1];
-		}
-	}
-	dojo.scopeMap = scopeMap;
-
-	/*===== dojo.__docParserConfigureScopeMap(scopeMap); =====*/
-
-	// FIXME: dojo.baseUrl and dojo.config.baseUrl should be deprecated
-	dojo.baseUrl = dojo.config.baseUrl = require.baseUrl;
-	dojo.isAsync = ! 1  || require.async;
-	dojo.locale = config.locale;
-
-	var rev = "$Rev: 29801 $".match(/\d+/);
-	dojo.version = {
-		// summary:
-		//		Version number of the Dojo Toolkit
-		// description:
-		//		Hash about the version, including
-		//
-		//		- major: Integer: Major version. If total version is "1.2.0beta1", will be 1
-		//		- minor: Integer: Minor version. If total version is "1.2.0beta1", will be 2
-		//		- patch: Integer: Patch version. If total version is "1.2.0beta1", will be 0
-		//		- flag: String: Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
-		//		- revision: Number: The SVN rev from which dojo was pulled
-
-		major: 1, minor: 8, patch: 1, flag: "",
-		revision: rev ? +rev[0] : NaN,
-		toString: function(){
-			var v = dojo.version;
-			return v.major + "." + v.minor + "." + v.patch + v.flag + " (" + v.revision + ")";	// String
-		}
-	};
-
-	// If  1  is truthy, then as a dojo module is defined it should push it's definitions
-	// into the dojo object, and conversely. In 2.0, it will likely be unusual to augment another object
-	// as a result of defining a module. This has feature gives a way to force 2.0 behavior as the code
-	// is migrated. Absent specific advice otherwise, set extend-dojo to truthy.
-	 1 || has.add("extend-dojo", 1);
-
-
-	(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
-	/*=====
-	dojo.eval = function(scriptText){
-		// summary:
-		//		A legacy method created for use exclusively by internal Dojo methods. Do not use this method
-		//		directly unless you understand its possibly-different implications on the platforms your are targeting.
-		// description:
-		//		Makes an attempt to evaluate scriptText in the global scope. The function works correctly for browsers
-		//		that support indirect eval.
-		//
-		//		As usual, IE does not. On IE, the only way to implement global eval is to
-		//		use execScript. Unfortunately, execScript does not return a value and breaks some current usages of dojo.eval.
-		//		This implementation uses the technique of executing eval in the scope of a function that is a single scope
-		//		frame below the global scope; thereby coming close to the global scope. Note carefully that
-		//
-		//		dojo.eval("var pi = 3.14;");
-		//
-		//		will define global pi in non-IE environments, but define pi only in a temporary local scope for IE. If you want
-		//		to define a global variable using dojo.eval, write something like
-		//
-		//		dojo.eval("window.pi = 3.14;")
-		// scriptText:
-		//		The text to evaluation.
-		// returns:
-		//		The result of the evaluation. Often `undefined`
-	};
-	=====*/
-
-
-	if( 0 ){
-		dojo.exit = function(exitcode){
-			quit(exitcode);
-		};
-	}else{
-		dojo.exit = function(){
-		};
-	}
-
-	 1 || has.add("dojo-guarantee-console",
-		// ensure that console.log, console.warn, etc. are defined
-		1
-	);
-	if( 1 ){
-		typeof console != "undefined" || (console = {});
-		//	Be careful to leave 'log' always at the end
-		var cn = [
-			"assert", "count", "debug", "dir", "dirxml", "error", "group",
-			"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
-			"trace", "warn", "log"
-		];
-		var tn;
-		i = 0;
-		while((tn = cn[i++])){
-			if(!console[tn]){
-				(function(){
-					var tcn = tn + "";
-					console[tcn] = ('log' in console) ? function(){
-						var a = Array.apply({}, arguments);
-						a.unshift(tcn + ":");
-						console["log"](a.join(" "));
-					} : function(){};
-					console[tcn]._fake = true;
-				})();
-			}
-		}
-	}
-
-	 0 && has.add("dojo-debug-messages",
-		// include dojo.deprecated/dojo.experimental implementations
-		!!config.isDebug
-	);
-	dojo.deprecated = dojo.experimental =  function(){};
-	if( 0 ){
-		dojo.deprecated = function(/*String*/ behaviour, /*String?*/ extra, /*String?*/ removal){
-			// summary:
-			//		Log a debug message to indicate that a behavior has been
-			//		deprecated.
-			// behaviour: String
-			//		The API or behavior being deprecated. Usually in the form
-			//		of "myApp.someFunction()".
-			// extra: String?
-			//		Text to append to the message. Often provides advice on a
-			//		new function or facility to achieve the same goal during
-			//		the deprecation period.
-			// removal: String?
-			//		Text to indicate when in the future the behavior will be
-			//		removed. Usually a version number.
-			// example:
-			//	| dojo.deprecated("myApp.getTemp()", "use myApp.getLocaleTemp() instead", "1.0");
-
-			var message = "DEPRECATED: " + behaviour;
-			if(extra){ message += " " + extra; }
-			if(removal){ message += " -- will be removed in version: " + removal; }
-			console.warn(message);
-		};
-
-		dojo.experimental = function(/* String */ moduleName, /* String? */ extra){
-			// summary:
-			//		Marks code as experimental.
-			// description:
-			//		This can be used to mark a function, file, or module as
-			//		experimental.	 Experimental code is not ready to be used, and the
-			//		APIs are subject to change without notice.	Experimental code may be
-			//		completed deleted without going through the normal deprecation
-			//		process.
-			// moduleName: String
-			//		The name of a module, or the name of a module file or a specific
-			//		function
-			// extra: String?
-			//		some additional message for the user
-			// example:
-			//	| dojo.experimental("dojo.data.Result");
-			// example:
-			//	| dojo.experimental("dojo.weather.toKelvin()", "PENDING approval from NOAA");
-
-			var message = "EXPERIMENTAL: " + moduleName + " -- APIs subject to change without notice.";
-			if(extra){ message += " " + extra; }
-			console.warn(message);
-		};
-	}
-
-	 0 && has.add("dojo-modulePaths",
-		// consume dojo.modulePaths processing
-		1
-	);
-	if( 0 ){
-		// notice that modulePaths won't be applied to any require's before the dojo/_base/kernel factory is run;
-		// this is the v1.6- behavior.
-		if(config.modulePaths){
-			dojo.deprecated("dojo.modulePaths", "use paths configuration");
-			var paths = {};
-			for(p in config.modulePaths){
-				paths[p.replace(/\./g, "/")] = config.modulePaths[p];
-			}
-			require({paths:paths});
-		}
-	}
-
-	 0 && has.add("dojo-moduleUrl",
-		// include dojo.moduleUrl
-		1
-	);
-	if( 0 ){
-		dojo.moduleUrl = function(/*String*/module, /*String?*/url){
-			// summary:
-			//		Returns a URL relative to a module.
-			// example:
-			//	|	var pngPath = dojo.moduleUrl("acme","images/small.png");
-			//	|	console.dir(pngPath); // list the object properties
-			//	|	// create an image and set it's source to pngPath's value:
-			//	|	var img = document.createElement("img");
-			//	|	img.src = pngPath;
-			//	|	// add our image to the document
-			//	|	dojo.body().appendChild(img);
-			// example:
-			//		you may de-reference as far as you like down the package
-			//		hierarchy.  This is sometimes handy to avoid lenghty relative
-			//		urls or for building portable sub-packages. In this example,
-			//		the `acme.widget` and `acme.util` directories may be located
-			//		under different roots (see `dojo.registerModulePath`) but the
-			//		the modules which reference them can be unaware of their
-			//		relative locations on the filesystem:
-			//	|	// somewhere in a configuration block
-			//	|	dojo.registerModulePath("acme.widget", "../../acme/widget");
-			//	|	dojo.registerModulePath("acme.util", "../../util");
-			//	|
-			//	|	// ...
-			//	|
-			//	|	// code in a module using acme resources
-			//	|	var tmpltPath = dojo.moduleUrl("acme.widget","templates/template.html");
-			//	|	var dataPath = dojo.moduleUrl("acme.util","resources/data.json");
-
-			dojo.deprecated("dojo.moduleUrl()", "use require.toUrl", "2.0");
-
-			// require.toUrl requires a filetype; therefore, just append the suffix "/*.*" to guarantee a filetype, then
-			// remove the suffix from the result. This way clients can request a url w/out a filetype. This should be
-			// rare, but it maintains backcompat for the v1.x line (note: dojo.moduleUrl will be removed in v2.0).
-			// Notice * is an illegal filename so it won't conflict with any real path map that may exist the paths config.
-			var result = null;
-			if(module){
-				result = require.toUrl(module.replace(/\./g, "/") + (url ? ("/" + url) : "") + "/*.*").replace(/\/\*\.\*/, "") + (url ? "" : "/");
-			}
-			return result;
-		};
-	}
-
-	dojo._hasResource = {}; // for backward compatibility with layers built with 1.6 tooling
-
-	return dojo;
-});
-
-},
-'dojo/has':function(){
-define(["require", "module"], function(require, module){
-	// module:
-	//		dojo/has
-	// summary:
-	//		Defines the has.js API and several feature tests used by dojo.
-	// description:
-	//		This module defines the has API as described by the project has.js with the following additional features:
-	//
-	//		- the has test cache is exposed at has.cache.
-	//		- the method has.add includes a forth parameter that controls whether or not existing tests are replaced
-	//		- the loader's has cache may be optionally copied into this module's has cahce.
-	//
-	//		This module adopted from https://github.com/phiggins42/has.js; thanks has.js team!
-
-	// try to pull the has implementation from the loader; both the dojo loader and bdLoad provide one
-	// if using a foreign loader, then the has cache may be initialized via the config object for this module
-	// WARNING: if a foreign loader defines require.has to be something other than the has.js API, then this implementation fail
-	var has = require.has || function(){};
-	if(! 1 ){
-		var
-			isBrowser =
-				// the most fundamental decision: are we in the browser?
-				typeof window != "undefined" &&
-				typeof location != "undefined" &&
-				typeof document != "undefined" &&
-				window.location == location && window.document == document,
-
-			// has API variables
-			global = this,
-			doc = isBrowser && document,
-			element = doc && doc.createElement("DiV"),
-			cache = (module.config && module.config()) || {};
-
-		has = function(name){
-			// summary:
-			//		Return the current value of the named feature.
-			//
-			// name: String|Integer
-			//		The name (if a string) or identifier (if an integer) of the feature to test.
-			//
-			// description:
-			//		Returns the value of the feature named by name. The feature must have been
-			//		previously added to the cache by has.add.
-
-			return typeof cache[name] == "function" ? (cache[name] = cache[name](global, doc, element)) : cache[name]; // Boolean
-		};
-
-		has.cache = cache;
-
-		has.add = function(name, test, now, force){
-			// summary:
-			//	 	Register a new feature test for some named feature.
-			// name: String|Integer
-			//	 	The name (if a string) or identifier (if an integer) of the feature to test.
-			// test: Function
-			//		 A test function to register. If a function, queued for testing until actually
-			//		 needed. The test function should return a boolean indicating
-			//	 	the presence of a feature or bug.
-			// now: Boolean?
-			//		 Optional. Omit if `test` is not a function. Provides a way to immediately
-			//		 run the test and cache the result.
-			// force: Boolean?
-			//	 	Optional. If the test already exists and force is truthy, then the existing
-			//	 	test will be replaced; otherwise, add does not replace an existing test (that
-			//	 	is, by default, the first test advice wins).
-			// example:
-			//		A redundant test, testFn with immediate execution:
-			//	|	has.add("javascript", function(){ return true; }, true);
-			//
-			// example:
-			//		Again with the redundantness. You can do this in your tests, but we should
-			//		not be doing this in any internal has.js tests
-			//	|	has.add("javascript", true);
-			//
-			// example:
-			//		Three things are passed to the testFunction. `global`, `document`, and a generic element
-			//		from which to work your test should the need arise.
-			//	|	has.add("bug-byid", function(g, d, el){
-			//	|		// g	== global, typically window, yadda yadda
-			//	|		// d	== document object
-			//	|		// el == the generic element. a `has` element.
-			//	|		return false; // fake test, byid-when-form-has-name-matching-an-id is slightly longer
-			//	|	});
-
-			(typeof cache[name]=="undefined" || force) && (cache[name]= test);
-			return now && has(name);
-		};
-
-		// since we're operating under a loader that doesn't provide a has API, we must explicitly initialize
-		// has as it would have otherwise been initialized by the dojo loader; use has.add to the builder
-		// can optimize these away iff desired
-		 1 || has.add("host-browser", isBrowser);
-		 1 || has.add("dom", isBrowser);
-		 1 || has.add("dojo-dom-ready-api", 1);
-		 0 && has.add("dojo-sniff", 1);
-	}
-
-	if( 1 ){
-		// Common application level tests
-		has.add("dom-addeventlistener", !!document.addEventListener);
-		has.add("touch", "ontouchstart" in document);
-		// I don't know if any of these tests are really correct, just a rough guess
-		has.add("device-width", screen.availWidth || innerWidth);
-
-		// Tests for DOMNode.attributes[] behavior:
-		//	 - dom-attributes-explicit - attributes[] only lists explicitly user specified attributes
-		//	 - dom-attributes-specified-flag (IE8) - need to check attr.specified flag to skip attributes user didn't specify
-		//	 - Otherwise, in IE6-7. attributes[] will list hundreds of values, so need to do outerHTML to get attrs instead.
-		var form = document.createElement("form");
-		has.add("dom-attributes-explicit", form.attributes.length == 0); // W3C
-		has.add("dom-attributes-specified-flag", form.attributes.length > 0 && form.attributes.length < 40);	// IE8
-	}
-
-	has.clearElement = function(element){
-		// summary:
-		//	 Deletes the contents of the element passed to test functions.
-		element.innerHTML= "";
-		return element;
-	};
-
-	has.normalize = function(id, toAbsMid){
-		// summary:
-		//	 Resolves id into a module id based on possibly-nested tenary expression that branches on has feature test value(s).
-		//
-		// toAbsMid: Function
-		//	 Resolves a relative module id into an absolute module id
-		var
-			tokens = id.match(/[\?:]|[^:\?]*/g), i = 0,
-			get = function(skip){
-				var term = tokens[i++];
-				if(term == ":"){
-					// empty string module name, resolves to 0
-					return 0;
-				}else{
-					// postfixed with a ? means it is a feature to branch on, the term is the name of the feature
-					if(tokens[i++] == "?"){
-						if(!skip && has(term)){
-							// matched the feature, get the first value from the options
-							return get();
-						}else{
-							// did not match, get the second value, passing over the first
-							get(true);
-							return get(skip);
-						}
+				}) :
+				function(){
+					for(var i = 0; i < l; ++i){
+						chain[i].apply(this, arguments);
 					}
-					// a module
-					return term || 0;
+				};
+		},
+		_ss: stubSuper = function(chain, name){
+			var i = 0, f, p = empty[name];
+			for(; f = chain[i]; ++i){
+				if(isSuper(f)){
+					p = chain[i] = dcl._f(f, p, name);
+				}else{
+					p = f;
 				}
-			};
-		id = get();
-		return id && toAbsMid(id);
-	};
-
-	has.load = function(id, parentRequire, loaded){
-		// summary:
-		//		Conditional loading of AMD modules based on a has feature test value.
-		// id: String
-		//		Gives the resolved module id to load.
-		// parentRequire: Function
-		//		The loader require function with respect to the module that contained the plugin resource in it's
-		//		dependency list.
-		// loaded: Function
-		//	 Callback to loader that consumes result of plugin demand.
-
-		if(id){
-			parentRequire([id], loaded);
-		}else{
-			loaded();
+			}
+			return name != cname ? p : function(){ p.apply(this, arguments); };
+		},
+		_st: stubChainSuper = function(chain, stub, name){
+			var i = 0, f, t, pi = 0;
+			for(; f = chain[i]; ++i){
+				if(isSuper(f)){
+					t = i - pi;
+					t = chain[i] = dcl._f(f, !t ? 0 : t == 1 ? chain[pi] : stub(chain.slice(pi, i)), name);
+					pi = i;
+				}
+			}
+			t = i - pi;
+			return !t ? 0 : t == 1 && name != cname ? chain[pi] : stub(pi ? chain.slice(pi) : chain);
+		},
+		_sb: /*stub*/ function(id, bases, name, chains){
+			var f = chains[name] = extractChain(bases, name, "f");
+			return (id ? stubChainSuper(f, stubChain, name) : stubSuper(f, name)) || function(){};
 		}
-	};
+	});
 
-	return has;
+	function buildStubs(meta, proto){
+		var weaver = meta.w, bases = meta.b, chains = meta.c;
+		for(var name in weaver){
+			proto[name] = dcl._sb(weaver[name], bases, name, chains);
+		}
+	}
+
+	return dcl;
 });
 
 },
-'dojo/_base/config':function(){
-define(["../has", "require"], function(has, require){
-	// module:
-	//		dojo/_base/config
-
-/*=====
-return {
-	// summary:
-	//		This module defines the user configuration during bootstrap.
-	// description:
-	//		By defining user configuration as a module value, an entire configuration can be specified in a build,
-	//		thereby eliminating the need for sniffing and or explicitly setting in the global variable dojoConfig.
-	//		Also, when multiple instances of dojo exist in a single application, each will necessarily be located
-	//		at an unique absolute module identifier as given by the package configuration. Implementing configuration
-	//		as a module allows for specifying unique, per-instance configurations.
-	// example:
-	//		Create a second instance of dojo with a different, instance-unique configuration (assume the loader and
-	//		dojo.js are already loaded).
-	//		|	// specify a configuration that creates a new instance of dojo at the absolute module identifier "myDojo"
-	//		|	require({
-	//		|		packages:[{
-	//		|			name:"myDojo",
-	//		|			location:".", //assume baseUrl points to dojo.js
-	//		|		}]
-	//		|	});
-	//		|
-	//		|	// specify a configuration for the myDojo instance
-	//		|	define("myDojo/config", {
-	//		|		// normal configuration variables go here, e.g.,
-	//		|		locale:"fr-ca"
-	//		|	});
-	//		|
-	//		|	// load and use the new instance of dojo
-	//		|	require(["myDojo"], function(dojo){
-	//		|		// dojo is the new instance of dojo
-	//		|		// use as required
-	//		|	});
-
-	// isDebug: Boolean
-	//		Defaults to `false`. If set to `true`, ensures that Dojo provides
-	//		extended debugging feedback via Firebug. If Firebug is not available
-	//		on your platform, setting `isDebug` to `true` will force Dojo to
-	//		pull in (and display) the version of Firebug Lite which is
-	//		integrated into the Dojo distribution, thereby always providing a
-	//		debugging/logging console when `isDebug` is enabled. Note that
-	//		Firebug's `console.*` methods are ALWAYS defined by Dojo. If
-	//		`isDebug` is false and you are on a platform without Firebug, these
-	//		methods will be defined as no-ops.
-	isDebug: false,
-
-	// locale: String
-	//		The locale to assume for loading localized resources in this page,
-	//		specified according to [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt).
-	//		Must be specified entirely in lowercase, e.g. `en-us` and `zh-cn`.
-	//		See the documentation for `dojo.i18n` and `dojo.requireLocalization`
-	//		for details on loading localized resources. If no locale is specified,
-	//		Dojo assumes the locale of the user agent, according to `navigator.userLanguage`
-	//		or `navigator.language` properties.
-	locale: undefined,
-
-	// extraLocale: Array
-	//		No default value. Specifies additional locales whose
-	//		resources should also be loaded alongside the default locale when
-	//		calls to `dojo.requireLocalization()` are processed.
-	extraLocale: undefined,
-
-	// baseUrl: String
-	//		The directory in which `dojo.js` is located. Under normal
-	//		conditions, Dojo auto-detects the correct location from which it
-	//		was loaded. You may need to manually configure `baseUrl` in cases
-	//		where you have renamed `dojo.js` or in which `<base>` tags confuse
-	//		some browsers (e.g. IE 6). The variable `dojo.baseUrl` is assigned
-	//		either the value of `djConfig.baseUrl` if one is provided or the
-	//		auto-detected root if not. Other modules are located relative to
-	//		this path. The path should end in a slash.
-	baseUrl: undefined,
-
-	// modulePaths: [deprecated] Object
-	//		A map of module names to paths relative to `dojo.baseUrl`. The
-	//		key/value pairs correspond directly to the arguments which
-	//		`dojo.registerModulePath` accepts. Specifying
-	//		`djConfig.modulePaths = { "foo": "../../bar" }` is the equivalent
-	//		of calling `dojo.registerModulePath("foo", "../../bar");`. Multiple
-	//		modules may be configured via `djConfig.modulePaths`.
-	modulePaths: {},
-
-	// addOnLoad: Function|Array
-	//		Adds a callback via dojo/ready. Useful when Dojo is added after
-	//		the page loads and djConfig.afterOnLoad is true. Supports the same
-	//		arguments as dojo/ready. When using a function reference, use
-	//		`djConfig.addOnLoad = function(){};`. For object with function name use
-	//		`djConfig.addOnLoad = [myObject, "functionName"];` and for object with
-	//		function reference use
-	//		`djConfig.addOnLoad = [myObject, function(){}];`
-	addOnLoad: null,
-
-	// parseOnLoad: Boolean
-	//		Run the parser after the page is loaded
-	parseOnLoad: false,
-
-	// require: String[]
-	//		An array of module names to be loaded immediately after dojo.js has been included
-	//		in a page.
-	require: [],
-
-	// defaultDuration: Number
-	//		Default duration, in milliseconds, for wipe and fade animations within dijits.
-	//		Assigned to dijit.defaultDuration.
-	defaultDuration: 200,
-
-	// dojoBlankHtmlUrl: String
-	//		Used by some modules to configure an empty iframe. Used by dojo/io/iframe and
-	//		dojo/back, and dijit/popup support in IE where an iframe is needed to make sure native
-	//		controls do not bleed through the popups. Normally this configuration variable
-	//		does not need to be set, except when using cross-domain/CDN Dojo builds.
-	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl`
-	//		to the path on your domain your copy of blank.html.
-	dojoBlankHtmlUrl: undefined,
-
-	// ioPublish: Boolean?
-	//		Set this to true to enable publishing of topics for the different phases of
-	//		IO operations. Publishing is done via dojo/topic.publish(). See dojo/main.__IoPublish for a list
-	//		of topics that are published.
-	ioPublish: false,
-
-	// useCustomLogger: Anything?
-	//		If set to a value that evaluates to true such as a string or array and
-	//		isDebug is true and Firebug is not available or running, then it bypasses
-	//		the creation of Firebug Lite allowing you to define your own console object.
-	useCustomLogger: undefined,
-
-	// transparentColor: Array
-	//		Array containing the r, g, b components used as transparent color in dojo.Color;
-	//		if undefined, [255,255,255] (white) will be used.
-	transparentColor: undefined,
-	
-	// deps: Function|Array
-	//		Defines dependencies to be used before the loader has been loaded.
-	//		When provided, they cause the loader to execute require(deps, callback) 
-	//		once it has finished loading. Should be used with callback.
-	deps: undefined,
-	
-	// callback: Function|Array
-	//		Defines a callback to be used when dependencies are defined before 
-	//		the loader has been loaded. When provided, they cause the loader to 
-	//		execute require(deps, callback) once it has finished loading. 
-	//		Should be used with deps.
-	callback: undefined,
-	
-	// deferredInstrumentation: Boolean
-	//		Whether deferred instrumentation should be loaded or included
-	//		in builds.
-	deferredInstrumentation: true,
-
-	// useDeferredInstrumentation: Boolean|String
-	//		Whether the deferred instrumentation should be used.
-	//
-	//		* `"report-rejections"`: report each rejection as it occurs.
-	//		* `true` or `1` or `"report-unhandled-rejections"`: wait 1 second
-	//			in an attempt to detect unhandled rejections.
-	useDeferredInstrumentation: "report-unhandled-rejections"
-};
-=====*/
-
-	var result = {};
-	if( 1 ){
-		// must be the dojo loader; take a shallow copy of require.rawConfig
-		var src = require.rawConfig, p;
-		for(p in src){
-			result[p] = src[p];
-		}
+'dcl/bases/Mixer':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["../mini"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("../mini"));
 	}else{
-		var adviseHas = function(featureSet, prefix, booting){
-			for(p in featureSet){
-				p!="has" && has.add(prefix + p, featureSet[p], 0, booting);
-			}
-		};
-		result =  1  ?
-			// must be a built version of the dojo loader; all config stuffed in require.rawConfig
-			require.rawConfig :
-			// a foreign loader
-			this.dojoConfig || this.djConfig || {};
-		adviseHas(result, "config", 1);
-		adviseHas(result.has, "", 1);
+		dclBasesMixer = factory(dcl);
 	}
-	return result;
+})(function(dcl){
+	"use strict";
+	return dcl(null, {
+		declaredClass: "dcl/bases/Mixer",
+		constructor: function(x){
+			dcl.mix(this, x);
+		}
+	});
 });
-
 
 },
 'dojo/_base/lang':function(){
@@ -4696,6 +3312,675 @@ define(["./kernel", "../has", "../sniff"], function(dojo, has){
 
 
 },
+'dojo/_base/kernel':function(){
+define(["../has", "./config", "require", "module"], function(has, config, require, module){
+	// module:
+	//		dojo/_base/kernel
+
+	// This module is the foundational module of the dojo boot sequence; it defines the dojo object.
+
+	var
+		// loop variables for this module
+		i, p,
+
+		// create dojo, dijit, and dojox
+		// FIXME: in 2.0 remove dijit, dojox being created by dojo
+		dijit = {},
+		dojox = {},
+		dojo = {
+			// summary:
+			//		This module is the foundational module of the dojo boot sequence; it defines the dojo object.
+
+			// notice dojo takes ownership of the value of the config module
+			config:config,
+			global:this,
+			dijit:dijit,
+			dojox:dojox
+		};
+
+
+	// Configure the scope map. For a 100% AMD application, the scope map is not needed other than to provide
+	// a _scopeName property for the dojo, dijit, and dojox root object so those packages can create
+	// unique names in the global space.
+	//
+	// Built, legacy modules use the scope map to allow those modules to be expressed as if dojo, dijit, and dojox,
+	// where global when in fact they are either global under different names or not global at all. In v1.6-, the
+	// config variable "scopeMap" was used to map names as used within a module to global names. This has been
+	// subsumed by the AMD map configuration variable which can relocate packages to different names. For backcompat,
+	// only the "*" mapping is supported. See http://livedocs.dojotoolkit.org/developer/design/loader#legacy-cross-domain-mode for details.
+	//
+	// The following computations contort the packageMap for this dojo instance into a scopeMap.
+	var scopeMap =
+			// a map from a name used in a legacy module to the (global variable name, object addressed by that name)
+			// always map dojo, dijit, and dojox
+			{
+				dojo:["dojo", dojo],
+				dijit:["dijit", dijit],
+				dojox:["dojox", dojox]
+			},
+
+		packageMap =
+			// the package map for this dojo instance; note, a foreign loader or no pacakgeMap results in the above default config
+			(require.map && require.map[module.id.match(/[^\/]+/)[0]]),
+
+		item;
+
+
+	// process all mapped top-level names for this instance of dojo
+	for(p in packageMap){
+		if(scopeMap[p]){
+			// mapped dojo, dijit, or dojox
+			scopeMap[p][0] = packageMap[p];
+		}else{
+			// some other top-level name
+			scopeMap[p] = [packageMap[p], {}];
+		}
+	}
+
+	// publish those names to _scopeName and, optionally, the global namespace
+	for(p in scopeMap){
+		item = scopeMap[p];
+		item[1]._scopeName = item[0];
+		if(!config.noGlobals){
+			this[item[0]] = item[1];
+		}
+	}
+	dojo.scopeMap = scopeMap;
+
+	/*===== dojo.__docParserConfigureScopeMap(scopeMap); =====*/
+
+	// FIXME: dojo.baseUrl and dojo.config.baseUrl should be deprecated
+	dojo.baseUrl = dojo.config.baseUrl = require.baseUrl;
+	dojo.isAsync = ! 1  || require.async;
+	dojo.locale = config.locale;
+
+	var rev = "$Rev: 30226 $".match(/\d+/);
+	dojo.version = {
+		// summary:
+		//		Version number of the Dojo Toolkit
+		// description:
+		//		Hash about the version, including
+		//
+		//		- major: Integer: Major version. If total version is "1.2.0beta1", will be 1
+		//		- minor: Integer: Minor version. If total version is "1.2.0beta1", will be 2
+		//		- patch: Integer: Patch version. If total version is "1.2.0beta1", will be 0
+		//		- flag: String: Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
+		//		- revision: Number: The SVN rev from which dojo was pulled
+
+		major: 1, minor: 8, patch: 3, flag: "",
+		revision: rev ? +rev[0] : NaN,
+		toString: function(){
+			var v = dojo.version;
+			return v.major + "." + v.minor + "." + v.patch + v.flag + " (" + v.revision + ")";	// String
+		}
+	};
+
+	// If  1  is truthy, then as a dojo module is defined it should push it's definitions
+	// into the dojo object, and conversely. In 2.0, it will likely be unusual to augment another object
+	// as a result of defining a module. This has feature gives a way to force 2.0 behavior as the code
+	// is migrated. Absent specific advice otherwise, set extend-dojo to truthy.
+	 1 || has.add("extend-dojo", 1);
+
+	if(! 1 ){
+		(Function("d", "d.eval = function(){return d.global.eval ? d.global.eval(arguments[0]) : eval(arguments[0]);}"))(dojo);
+	}
+	/*=====
+	dojo.eval = function(scriptText){
+		// summary:
+		//		A legacy method created for use exclusively by internal Dojo methods. Do not use this method
+		//		directly unless you understand its possibly-different implications on the platforms your are targeting.
+		// description:
+		//		Makes an attempt to evaluate scriptText in the global scope. The function works correctly for browsers
+		//		that support indirect eval.
+		//
+		//		As usual, IE does not. On IE, the only way to implement global eval is to
+		//		use execScript. Unfortunately, execScript does not return a value and breaks some current usages of dojo.eval.
+		//		This implementation uses the technique of executing eval in the scope of a function that is a single scope
+		//		frame below the global scope; thereby coming close to the global scope. Note carefully that
+		//
+		//		dojo.eval("var pi = 3.14;");
+		//
+		//		will define global pi in non-IE environments, but define pi only in a temporary local scope for IE. If you want
+		//		to define a global variable using dojo.eval, write something like
+		//
+		//		dojo.eval("window.pi = 3.14;")
+		// scriptText:
+		//		The text to evaluation.
+		// returns:
+		//		The result of the evaluation. Often `undefined`
+	};
+	=====*/
+
+
+	if( 0 ){
+		dojo.exit = function(exitcode){
+			quit(exitcode);
+		};
+	}else{
+		dojo.exit = function(){
+		};
+	}
+
+	 0 && has.add("dojo-guarantee-console",
+		// ensure that console.log, console.warn, etc. are defined
+		1
+	);
+	if( 0 ){
+		typeof console != "undefined" || (console = {});
+		//	Be careful to leave 'log' always at the end
+		var cn = [
+			"assert", "count", "debug", "dir", "dirxml", "error", "group",
+			"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
+			"trace", "warn", "log"
+		];
+		var tn;
+		i = 0;
+		while((tn = cn[i++])){
+			if(!console[tn]){
+				(function(){
+					var tcn = tn + "";
+					console[tcn] = ('log' in console) ? function(){
+						var a = Array.apply({}, arguments);
+						a.unshift(tcn + ":");
+						console["log"](a.join(" "));
+					} : function(){};
+					console[tcn]._fake = true;
+				})();
+			}
+		}
+	}
+
+	 0 && has.add("dojo-debug-messages",
+		// include dojo.deprecated/dojo.experimental implementations
+		!!config.isDebug
+	);
+	dojo.deprecated = dojo.experimental =  function(){};
+	if( 0 ){
+		dojo.deprecated = function(/*String*/ behaviour, /*String?*/ extra, /*String?*/ removal){
+			// summary:
+			//		Log a debug message to indicate that a behavior has been
+			//		deprecated.
+			// behaviour: String
+			//		The API or behavior being deprecated. Usually in the form
+			//		of "myApp.someFunction()".
+			// extra: String?
+			//		Text to append to the message. Often provides advice on a
+			//		new function or facility to achieve the same goal during
+			//		the deprecation period.
+			// removal: String?
+			//		Text to indicate when in the future the behavior will be
+			//		removed. Usually a version number.
+			// example:
+			//	| dojo.deprecated("myApp.getTemp()", "use myApp.getLocaleTemp() instead", "1.0");
+
+			var message = "DEPRECATED: " + behaviour;
+			if(extra){ message += " " + extra; }
+			if(removal){ message += " -- will be removed in version: " + removal; }
+			console.warn(message);
+		};
+
+		dojo.experimental = function(/* String */ moduleName, /* String? */ extra){
+			// summary:
+			//		Marks code as experimental.
+			// description:
+			//		This can be used to mark a function, file, or module as
+			//		experimental.	 Experimental code is not ready to be used, and the
+			//		APIs are subject to change without notice.	Experimental code may be
+			//		completed deleted without going through the normal deprecation
+			//		process.
+			// moduleName: String
+			//		The name of a module, or the name of a module file or a specific
+			//		function
+			// extra: String?
+			//		some additional message for the user
+			// example:
+			//	| dojo.experimental("dojo.data.Result");
+			// example:
+			//	| dojo.experimental("dojo.weather.toKelvin()", "PENDING approval from NOAA");
+
+			var message = "EXPERIMENTAL: " + moduleName + " -- APIs subject to change without notice.";
+			if(extra){ message += " " + extra; }
+			console.warn(message);
+		};
+	}
+
+	 0 && has.add("dojo-modulePaths",
+		// consume dojo.modulePaths processing
+		1
+	);
+	if( 0 ){
+		// notice that modulePaths won't be applied to any require's before the dojo/_base/kernel factory is run;
+		// this is the v1.6- behavior.
+		if(config.modulePaths){
+			dojo.deprecated("dojo.modulePaths", "use paths configuration");
+			var paths = {};
+			for(p in config.modulePaths){
+				paths[p.replace(/\./g, "/")] = config.modulePaths[p];
+			}
+			require({paths:paths});
+		}
+	}
+
+	 0 && has.add("dojo-moduleUrl",
+		// include dojo.moduleUrl
+		1
+	);
+	if( 0 ){
+		dojo.moduleUrl = function(/*String*/module, /*String?*/url){
+			// summary:
+			//		Returns a URL relative to a module.
+			// example:
+			//	|	var pngPath = dojo.moduleUrl("acme","images/small.png");
+			//	|	console.dir(pngPath); // list the object properties
+			//	|	// create an image and set it's source to pngPath's value:
+			//	|	var img = document.createElement("img");
+			//	|	img.src = pngPath;
+			//	|	// add our image to the document
+			//	|	dojo.body().appendChild(img);
+			// example:
+			//		you may de-reference as far as you like down the package
+			//		hierarchy.  This is sometimes handy to avoid lenghty relative
+			//		urls or for building portable sub-packages. In this example,
+			//		the `acme.widget` and `acme.util` directories may be located
+			//		under different roots (see `dojo.registerModulePath`) but the
+			//		the modules which reference them can be unaware of their
+			//		relative locations on the filesystem:
+			//	|	// somewhere in a configuration block
+			//	|	dojo.registerModulePath("acme.widget", "../../acme/widget");
+			//	|	dojo.registerModulePath("acme.util", "../../util");
+			//	|
+			//	|	// ...
+			//	|
+			//	|	// code in a module using acme resources
+			//	|	var tmpltPath = dojo.moduleUrl("acme.widget","templates/template.html");
+			//	|	var dataPath = dojo.moduleUrl("acme.util","resources/data.json");
+
+			dojo.deprecated("dojo.moduleUrl()", "use require.toUrl", "2.0");
+
+			// require.toUrl requires a filetype; therefore, just append the suffix "/*.*" to guarantee a filetype, then
+			// remove the suffix from the result. This way clients can request a url w/out a filetype. This should be
+			// rare, but it maintains backcompat for the v1.x line (note: dojo.moduleUrl will be removed in v2.0).
+			// Notice * is an illegal filename so it won't conflict with any real path map that may exist the paths config.
+			var result = null;
+			if(module){
+				result = require.toUrl(module.replace(/\./g, "/") + (url ? ("/" + url) : "") + "/*.*").replace(/\/\*\.\*/, "") + (url ? "" : "/");
+			}
+			return result;
+		};
+	}
+
+	dojo._hasResource = {}; // for backward compatibility with layers built with 1.6 tooling
+
+	return dojo;
+});
+
+},
+'dojo/has':function(){
+define(["require", "module"], function(require, module){
+	// module:
+	//		dojo/has
+	// summary:
+	//		Defines the has.js API and several feature tests used by dojo.
+	// description:
+	//		This module defines the has API as described by the project has.js with the following additional features:
+	//
+	//		- the has test cache is exposed at has.cache.
+	//		- the method has.add includes a forth parameter that controls whether or not existing tests are replaced
+	//		- the loader's has cache may be optionally copied into this module's has cahce.
+	//
+	//		This module adopted from https://github.com/phiggins42/has.js; thanks has.js team!
+
+	// try to pull the has implementation from the loader; both the dojo loader and bdLoad provide one
+	// if using a foreign loader, then the has cache may be initialized via the config object for this module
+	// WARNING: if a foreign loader defines require.has to be something other than the has.js API, then this implementation fail
+	var has = require.has || function(){};
+	if(! 1 ){
+		var
+			isBrowser =
+				// the most fundamental decision: are we in the browser?
+				typeof window != "undefined" &&
+				typeof location != "undefined" &&
+				typeof document != "undefined" &&
+				window.location == location && window.document == document,
+
+			// has API variables
+			global = this,
+			doc = isBrowser && document,
+			element = doc && doc.createElement("DiV"),
+			cache = (module.config && module.config()) || {};
+
+		has = function(name){
+			// summary:
+			//		Return the current value of the named feature.
+			//
+			// name: String|Integer
+			//		The name (if a string) or identifier (if an integer) of the feature to test.
+			//
+			// description:
+			//		Returns the value of the feature named by name. The feature must have been
+			//		previously added to the cache by has.add.
+
+			return typeof cache[name] == "function" ? (cache[name] = cache[name](global, doc, element)) : cache[name]; // Boolean
+		};
+
+		has.cache = cache;
+
+		has.add = function(name, test, now, force){
+			// summary:
+			//	 	Register a new feature test for some named feature.
+			// name: String|Integer
+			//	 	The name (if a string) or identifier (if an integer) of the feature to test.
+			// test: Function
+			//		 A test function to register. If a function, queued for testing until actually
+			//		 needed. The test function should return a boolean indicating
+			//	 	the presence of a feature or bug.
+			// now: Boolean?
+			//		 Optional. Omit if `test` is not a function. Provides a way to immediately
+			//		 run the test and cache the result.
+			// force: Boolean?
+			//	 	Optional. If the test already exists and force is truthy, then the existing
+			//	 	test will be replaced; otherwise, add does not replace an existing test (that
+			//	 	is, by default, the first test advice wins).
+			// example:
+			//		A redundant test, testFn with immediate execution:
+			//	|	has.add("javascript", function(){ return true; }, true);
+			//
+			// example:
+			//		Again with the redundantness. You can do this in your tests, but we should
+			//		not be doing this in any internal has.js tests
+			//	|	has.add("javascript", true);
+			//
+			// example:
+			//		Three things are passed to the testFunction. `global`, `document`, and a generic element
+			//		from which to work your test should the need arise.
+			//	|	has.add("bug-byid", function(g, d, el){
+			//	|		// g	== global, typically window, yadda yadda
+			//	|		// d	== document object
+			//	|		// el == the generic element. a `has` element.
+			//	|		return false; // fake test, byid-when-form-has-name-matching-an-id is slightly longer
+			//	|	});
+
+			(typeof cache[name]=="undefined" || force) && (cache[name]= test);
+			return now && has(name);
+		};
+
+		// since we're operating under a loader that doesn't provide a has API, we must explicitly initialize
+		// has as it would have otherwise been initialized by the dojo loader; use has.add to the builder
+		// can optimize these away iff desired
+		 1 || has.add("host-browser", isBrowser);
+		 1 || has.add("dom", isBrowser);
+		 1 || has.add("dojo-dom-ready-api", 1);
+		 0 && has.add("dojo-sniff", 1);
+	}
+
+	if( 1 ){
+		// Common application level tests
+		has.add("dom-addeventlistener", !!document.addEventListener);
+		has.add("touch", "ontouchstart" in document);
+		// I don't know if any of these tests are really correct, just a rough guess
+		has.add("device-width", screen.availWidth || innerWidth);
+
+		// Tests for DOMNode.attributes[] behavior:
+		//	 - dom-attributes-explicit - attributes[] only lists explicitly user specified attributes
+		//	 - dom-attributes-specified-flag (IE8) - need to check attr.specified flag to skip attributes user didn't specify
+		//	 - Otherwise, in IE6-7. attributes[] will list hundreds of values, so need to do outerHTML to get attrs instead.
+		var form = document.createElement("form");
+		has.add("dom-attributes-explicit", form.attributes.length == 0); // W3C
+		has.add("dom-attributes-specified-flag", form.attributes.length > 0 && form.attributes.length < 40);	// IE8
+	}
+
+	has.clearElement = function(element){
+		// summary:
+		//	 Deletes the contents of the element passed to test functions.
+		element.innerHTML= "";
+		return element;
+	};
+
+	has.normalize = function(id, toAbsMid){
+		// summary:
+		//	 Resolves id into a module id based on possibly-nested tenary expression that branches on has feature test value(s).
+		//
+		// toAbsMid: Function
+		//	 Resolves a relative module id into an absolute module id
+		var
+			tokens = id.match(/[\?:]|[^:\?]*/g), i = 0,
+			get = function(skip){
+				var term = tokens[i++];
+				if(term == ":"){
+					// empty string module name, resolves to 0
+					return 0;
+				}else{
+					// postfixed with a ? means it is a feature to branch on, the term is the name of the feature
+					if(tokens[i++] == "?"){
+						if(!skip && has(term)){
+							// matched the feature, get the first value from the options
+							return get();
+						}else{
+							// did not match, get the second value, passing over the first
+							get(true);
+							return get(skip);
+						}
+					}
+					// a module
+					return term || 0;
+				}
+			};
+		id = get();
+		return id && toAbsMid(id);
+	};
+
+	has.load = function(id, parentRequire, loaded){
+		// summary:
+		//		Conditional loading of AMD modules based on a has feature test value.
+		// id: String
+		//		Gives the resolved module id to load.
+		// parentRequire: Function
+		//		The loader require function with respect to the module that contained the plugin resource in it's
+		//		dependency list.
+		// loaded: Function
+		//	 Callback to loader that consumes result of plugin demand.
+
+		if(id){
+			parentRequire([id], loaded);
+		}else{
+			loaded();
+		}
+	};
+
+	return has;
+});
+
+},
+'dojo/_base/config':function(){
+define(["../has", "require"], function(has, require){
+	// module:
+	//		dojo/_base/config
+
+/*=====
+return {
+	// summary:
+	//		This module defines the user configuration during bootstrap.
+	// description:
+	//		By defining user configuration as a module value, an entire configuration can be specified in a build,
+	//		thereby eliminating the need for sniffing and or explicitly setting in the global variable dojoConfig.
+	//		Also, when multiple instances of dojo exist in a single application, each will necessarily be located
+	//		at an unique absolute module identifier as given by the package configuration. Implementing configuration
+	//		as a module allows for specifying unique, per-instance configurations.
+	// example:
+	//		Create a second instance of dojo with a different, instance-unique configuration (assume the loader and
+	//		dojo.js are already loaded).
+	//		|	// specify a configuration that creates a new instance of dojo at the absolute module identifier "myDojo"
+	//		|	require({
+	//		|		packages:[{
+	//		|			name:"myDojo",
+	//		|			location:".", //assume baseUrl points to dojo.js
+	//		|		}]
+	//		|	});
+	//		|
+	//		|	// specify a configuration for the myDojo instance
+	//		|	define("myDojo/config", {
+	//		|		// normal configuration variables go here, e.g.,
+	//		|		locale:"fr-ca"
+	//		|	});
+	//		|
+	//		|	// load and use the new instance of dojo
+	//		|	require(["myDojo"], function(dojo){
+	//		|		// dojo is the new instance of dojo
+	//		|		// use as required
+	//		|	});
+
+	// isDebug: Boolean
+	//		Defaults to `false`. If set to `true`, ensures that Dojo provides
+	//		extended debugging feedback via Firebug. If Firebug is not available
+	//		on your platform, setting `isDebug` to `true` will force Dojo to
+	//		pull in (and display) the version of Firebug Lite which is
+	//		integrated into the Dojo distribution, thereby always providing a
+	//		debugging/logging console when `isDebug` is enabled. Note that
+	//		Firebug's `console.*` methods are ALWAYS defined by Dojo. If
+	//		`isDebug` is false and you are on a platform without Firebug, these
+	//		methods will be defined as no-ops.
+	isDebug: false,
+
+	// locale: String
+	//		The locale to assume for loading localized resources in this page,
+	//		specified according to [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt).
+	//		Must be specified entirely in lowercase, e.g. `en-us` and `zh-cn`.
+	//		See the documentation for `dojo.i18n` and `dojo.requireLocalization`
+	//		for details on loading localized resources. If no locale is specified,
+	//		Dojo assumes the locale of the user agent, according to `navigator.userLanguage`
+	//		or `navigator.language` properties.
+	locale: undefined,
+
+	// extraLocale: Array
+	//		No default value. Specifies additional locales whose
+	//		resources should also be loaded alongside the default locale when
+	//		calls to `dojo.requireLocalization()` are processed.
+	extraLocale: undefined,
+
+	// baseUrl: String
+	//		The directory in which `dojo.js` is located. Under normal
+	//		conditions, Dojo auto-detects the correct location from which it
+	//		was loaded. You may need to manually configure `baseUrl` in cases
+	//		where you have renamed `dojo.js` or in which `<base>` tags confuse
+	//		some browsers (e.g. IE 6). The variable `dojo.baseUrl` is assigned
+	//		either the value of `djConfig.baseUrl` if one is provided or the
+	//		auto-detected root if not. Other modules are located relative to
+	//		this path. The path should end in a slash.
+	baseUrl: undefined,
+
+	// modulePaths: [deprecated] Object
+	//		A map of module names to paths relative to `dojo.baseUrl`. The
+	//		key/value pairs correspond directly to the arguments which
+	//		`dojo.registerModulePath` accepts. Specifying
+	//		`djConfig.modulePaths = { "foo": "../../bar" }` is the equivalent
+	//		of calling `dojo.registerModulePath("foo", "../../bar");`. Multiple
+	//		modules may be configured via `djConfig.modulePaths`.
+	modulePaths: {},
+
+	// addOnLoad: Function|Array
+	//		Adds a callback via dojo/ready. Useful when Dojo is added after
+	//		the page loads and djConfig.afterOnLoad is true. Supports the same
+	//		arguments as dojo/ready. When using a function reference, use
+	//		`djConfig.addOnLoad = function(){};`. For object with function name use
+	//		`djConfig.addOnLoad = [myObject, "functionName"];` and for object with
+	//		function reference use
+	//		`djConfig.addOnLoad = [myObject, function(){}];`
+	addOnLoad: null,
+
+	// parseOnLoad: Boolean
+	//		Run the parser after the page is loaded
+	parseOnLoad: false,
+
+	// require: String[]
+	//		An array of module names to be loaded immediately after dojo.js has been included
+	//		in a page.
+	require: [],
+
+	// defaultDuration: Number
+	//		Default duration, in milliseconds, for wipe and fade animations within dijits.
+	//		Assigned to dijit.defaultDuration.
+	defaultDuration: 200,
+
+	// dojoBlankHtmlUrl: String
+	//		Used by some modules to configure an empty iframe. Used by dojo/io/iframe and
+	//		dojo/back, and dijit/popup support in IE where an iframe is needed to make sure native
+	//		controls do not bleed through the popups. Normally this configuration variable
+	//		does not need to be set, except when using cross-domain/CDN Dojo builds.
+	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl`
+	//		to the path on your domain your copy of blank.html.
+	dojoBlankHtmlUrl: undefined,
+
+	// ioPublish: Boolean?
+	//		Set this to true to enable publishing of topics for the different phases of
+	//		IO operations. Publishing is done via dojo/topic.publish(). See dojo/main.__IoPublish for a list
+	//		of topics that are published.
+	ioPublish: false,
+
+	// useCustomLogger: Anything?
+	//		If set to a value that evaluates to true such as a string or array and
+	//		isDebug is true and Firebug is not available or running, then it bypasses
+	//		the creation of Firebug Lite allowing you to define your own console object.
+	useCustomLogger: undefined,
+
+	// transparentColor: Array
+	//		Array containing the r, g, b components used as transparent color in dojo.Color;
+	//		if undefined, [255,255,255] (white) will be used.
+	transparentColor: undefined,
+	
+	// deps: Function|Array
+	//		Defines dependencies to be used before the loader has been loaded.
+	//		When provided, they cause the loader to execute require(deps, callback) 
+	//		once it has finished loading. Should be used with callback.
+	deps: undefined,
+	
+	// callback: Function|Array
+	//		Defines a callback to be used when dependencies are defined before 
+	//		the loader has been loaded. When provided, they cause the loader to 
+	//		execute require(deps, callback) once it has finished loading. 
+	//		Should be used with deps.
+	callback: undefined,
+	
+	// deferredInstrumentation: Boolean
+	//		Whether deferred instrumentation should be loaded or included
+	//		in builds.
+	deferredInstrumentation: true,
+
+	// useDeferredInstrumentation: Boolean|String
+	//		Whether the deferred instrumentation should be used.
+	//
+	//		* `"report-rejections"`: report each rejection as it occurs.
+	//		* `true` or `1` or `"report-unhandled-rejections"`: wait 1 second
+	//			in an attempt to detect unhandled rejections.
+	useDeferredInstrumentation: "report-unhandled-rejections"
+};
+=====*/
+
+	var result = {};
+	if( 1 ){
+		// must be the dojo loader; take a shallow copy of require.rawConfig
+		var src = require.rawConfig, p;
+		for(p in src){
+			result[p] = src[p];
+		}
+	}else{
+		var adviseHas = function(featureSet, prefix, booting){
+			for(p in featureSet){
+				p!="has" && has.add(prefix + p, featureSet[p], 0, booting);
+			}
+		};
+		result =  1  ?
+			// must be a built version of the dojo loader; all config stuffed in require.rawConfig
+			require.rawConfig :
+			// a foreign loader
+			this.dojoConfig || this.djConfig || {};
+		adviseHas(result, "config", 1);
+		adviseHas(result.has, "", 1);
+	}
+	return result;
+});
+
+
+},
 'dojo/sniff':function(){
 define("dojo/sniff", ["./has"], function(has){
 	// module:
@@ -4796,41 +4081,45 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     radius: 1,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
 
     /**
       * Draws the CircelEntity at a given scale
       * @name CircleEntity#draw
       * @function
     */
-    draw: function(ctx, scale){
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.fill();
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
 
-      ctx.strokeStyle = '#000000';
-      ctx.beginPath();
-      ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.stroke();
+        ctx.strokeStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.stroke();
 
-      this.inherited(arguments);
-    },
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
 
-    scaleShape: function(scale){
-      this.radius = this.radius * scale;
-      this.inherited(arguments);
-    }
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.radius = this.radius * scale;
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });
@@ -4861,11 +4150,14 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang'
-], function(declare, lang){
+], function(dcl, Mixer, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     id: 0,
     x: 0,
     y: 0,
@@ -4881,9 +4173,6 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     hidden: false,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     update: function(state){
       lang.mixin(this, state);
     },
@@ -4921,7 +4210,7 @@ define([
       this.x = this.x * scale;
       this.y = this.y * scale;
     }
-    
+
   });
 
 });
@@ -4953,41 +4242,45 @@ limitations under the License.
 */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity',
-  '../utils'
-], function(declare, Entity, utils){
+  '../utils' // TODO: specific util, not whole module
+], function(dcl, Mixer, Entity, utils){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     points: [],
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      ctx.beginPath();
-      ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      for (var i = 1; i < this.points.length; i++) {
-         ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
-      }
-      ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        for (var i = 1; i < this.points.length; i++) {
+           ctx.lineTo((this.points[i].x + this.x) * scale, (this.points[i].y + this.y) * scale);
+        }
+        ctx.lineTo((this.x + this.points[0].x) * scale, (this.y + this.points[0].y) * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.restore();
-      this.inherited(arguments);
-    },
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
 
-    scaleShape: function(scale){
-      this.points = utils.scalePoints(this.points, scale);
-      this.inherited(arguments);
-    }
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.points = utils.scalePoints(this.points, scale);
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });
@@ -5003,6 +4296,9 @@ define([
   './utils/scalePoints',
   './utils/translatePoints'
 ], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+
+  'use strict';
+
  /**
  * Math utility libraries
  * @name utils
@@ -5090,98 +4386,128 @@ define([
 },
 'frozen/utils/degreesToRadians':function(){
 define(function(){
+
+  'use strict';
+
   var radConst = Math.PI / 180.0;
+
   return function(degrees){
-      return degrees * radConst;
-    };
+    return degrees * radConst;
+  };
+
 });
 },
 'frozen/utils/radiansToDegrees':function(){
 define(function(){
+
+  'use strict';
+
   var degConst = 180.0 / Math.PI;
+
   return function(radians){
-      return radians * degConst;
-    };
+    return radians * degConst;
+  };
+
 });
 },
 'frozen/utils/pointInPolygon':function(){
 define(function(){
+
+  'use strict';
+
+  // TODO: rewrite this
   return function(pt, polygon){
-      var poly = polygon.points || polygon;
-      for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
-        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
-      }
-      return c;
-    };
+    var poly = polygon.points || polygon;
+    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i){
+      ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y)) && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) && (c = !c);
+    }
+    return c;
+  };
 });
 },
 'frozen/utils/distance':function(){
 define(function(){
+
+  'use strict';
+
   return function(p1, p2){
-      return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
-    };
+    return Math.sqrt( ((p2.x - p1.x) * (p2.x - p1.x)) + ((p2.y - p1.y) * (p2.y - p1.y)) );
+  };
+
 });
 },
 'frozen/utils/degreesFromCenter':function(){
-define(['./radiansToDegrees','./radiansFromCenter'
+define([
+  './radiansToDegrees',
+  './radiansFromCenter'
 ], function(radiansToDegrees, radiansFromCenter){
+
+  'use strict';
+
   return function(center, pt){
-      return radiansToDegrees(radiansFromCenter(center, pt));
-    };
+    return radiansToDegrees(radiansFromCenter(center, pt));
+  };
+
 });
 },
 'frozen/utils/radiansFromCenter':function(){
 define(function(){
+
+  'use strict';
+
   var origin = {x: 0.0, y: 0.0};
   return function(center, pt){
 
-      //if null or zero is passed in for center, we'll use the origin
-      center = center || origin;
+    //if null or zero is passed in for center, we'll use the origin
+    center = center || origin;
 
-      //same point
-      if((center.x === pt.x) && (center.y === pt.y)){
+    //same point
+    if((center.x === pt.x) && (center.y === pt.y)){
+      return 0;
+    }else if(center.x === pt.x){
+      if(center.y > pt.y){
         return 0;
-      }else if(center.x === pt.x){
-        if(center.y > pt.y){
-          return 0;
-        }else{
-          return Math.PI;
-        }
-      }else if(center.y === pt.y){
-        if(center.x > pt.x){
-          return 1.5 * Math.PI;
-        }else{
-          return Math.PI / 2;
-        }
-      }else if((center.x < pt.x) && (center.y > pt.y)){
-        //quadrant 1
-        //console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
-        return Math.atan((pt.x - center.x)/(center.y - pt.y));
+      }else{
+        return Math.PI;
       }
-      else if((center.x < pt.x) && (center.y < pt.y)){
-        //quadrant 2
-        //console.log('quad2',center.x,center.y,pt.x,pt.y);
-        return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+    }else if(center.y === pt.y){
+      if(center.x > pt.x){
+        return 1.5 * Math.PI;
+      }else{
+        return Math.PI / 2;
       }
-      else if((center.x > pt.x) && (center.y < pt.y)){
-        //quadrant 3
-        //console.log('quad3',center.x,center.y,pt.x,pt.y);
-        return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
-      }
-      else{
-        //quadrant 4
-        //console.log('quad4',center.x,center.y,pt.x,pt.y);
-        return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
-      }
+    }else if((center.x < pt.x) && (center.y > pt.y)){
+      //quadrant 1
+      //console.log('quad1',center.x,center.y,pt.x,pt.y,'o',pt.x - center.x,'a',pt.y - center.y);
+      return Math.atan((pt.x - center.x)/(center.y - pt.y));
+    }
+    else if((center.x < pt.x) && (center.y < pt.y)){
+      //quadrant 2
+      //console.log('quad2',center.x,center.y,pt.x,pt.y);
+      return Math.PI / 2 + Math.atan((pt.y - center.y)/(pt.x - center.x));
+    }
+    else if((center.x > pt.x) && (center.y < pt.y)){
+      //quadrant 3
+      //console.log('quad3',center.x,center.y,pt.x,pt.y);
+      return Math.PI + Math.atan((center.x - pt.x)/(pt.y - center.y));
+    }
+    else{
+      //quadrant 4
+      //console.log('quad4',center.x,center.y,pt.x,pt.y);
+      return 1.5 * Math.PI + Math.atan((center.y - pt.y)/(center.x - pt.x));
+    }
 
-    };
+  };
+
 });
 },
 'frozen/utils/scalePoints':function(){
 define([
   'dojo/_base/lang'
 ], function(lang){
-  
+
+  'use strict';
+
   var scalePoints = function(points, scale){
     if(lang.isArray(points)){
       var newPoints = [];
@@ -5200,13 +4526,16 @@ define([
   };
 
   return scalePoints;
+
 });
 },
 'frozen/utils/translatePoints':function(){
 define([
   'dojo/_base/lang'
 ], function(lang){
-  
+
+  'use strict';
+
   var translatePoints = function(points, translation){
     if(lang.isArray(points)){
       var newPoints = [];
@@ -5224,12 +4553,13 @@ define([
       if(translation.hasOwnProperty('y')){
         points.y+= translation.y;
       }
-      
+
     }
     return points;
   };
 
   return translatePoints;
+
 });
 },
 'frozen/box2d/MultiPolygonEntity':function(){
@@ -5259,16 +4589,17 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity',
-  '../utils'
-], function(declare, Entity, utils){
+  '../utils' // TODO: specific util, not whole module
+], function(dcl, Mixer, Entity, utils){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     polys: [],
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
+
     /**
       * Draws each polygon in the entity
       * @name MultiPolygonEntity#draw
@@ -5277,33 +4608,37 @@ define([
       * @param {Number} scale the scale to draw the entity at
       *
       */
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
 
-      for(var j = 0; j < this.polys.length; j++){
-        ctx.beginPath();
-        ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        for (var i = 1; i < this.polys[j].length; i++) {
-           ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+        for(var j = 0; j < this.polys.length; j++){
+          ctx.beginPath();
+          ctx.moveTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          for (var i = 1; i < this.polys[j].length; i++) {
+             ctx.lineTo((this.polys[j][i].x + this.x) * scale, (this.polys[j][i].y + this.y) * scale);
+          }
+          ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
         }
-        ctx.lineTo((this.x + this.polys[j][0].x) * scale, (this.y + this.polys[j][0].y) * scale);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
 
-      ctx.restore();
-      this.inherited(arguments);
-    },
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
 
-    scaleShape: function(scale){
-      this.polys = utils.scalePoints(this.polys, scale);
-      this.inherited(arguments);
-    }
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.polys = utils.scalePoints(this.polys, scale);
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });
@@ -5335,37 +4670,42 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   './Entity'
-], function(declare, Entity){
+], function(dcl, Mixer, Entity){
 
-  return declare([Entity], {
+  'use strict';
+
+  return dcl([Mixer, Entity], {
     halfWidth: 1,
     halfHeight: 1,
-    constructor: function(/* Object */args){
-      declare.safeMixin(this, args);
-    },
-    draw: function(ctx, scale){
-      ctx.save();
-      ctx.translate(this.x * scale, this.y * scale);
-      ctx.rotate(this.angle);
-      ctx.translate(-(this.x) * scale, -(this.y) * scale);
-      ctx.fillStyle = this.color;
-      ctx.fillRect(
-        (this.x-this.halfWidth) * scale,
-        (this.y-this.halfHeight) * scale,
-        (this.halfWidth*2) * scale,
-        (this.halfHeight*2) * scale
-      );
-      ctx.restore();
-      this.inherited(arguments);
-    },
 
-    scaleShape: function(scale){
-      this.halfHeight = this.halfHeight * scale;
-      this.halfWidth = this.halfWidth * scale;
-      this.inherited(arguments);
-    }
+    draw: dcl.superCall(function(sup){
+      return function(ctx, scale){
+        ctx.save();
+        ctx.translate(this.x * scale, this.y * scale);
+        ctx.rotate(this.angle);
+        ctx.translate(-(this.x) * scale, -(this.y) * scale);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(
+          (this.x-this.halfWidth) * scale,
+          (this.y-this.halfHeight) * scale,
+          (this.halfWidth*2) * scale,
+          (this.halfHeight*2) * scale
+        );
+        ctx.restore();
+        sup.apply(this, [ctx, scale]);
+      };
+    }),
+
+    scaleShape: dcl.superCall(function(sup){
+      return function(scale){
+        this.halfHeight = this.halfHeight * scale;
+        this.halfWidth = this.halfWidth * scale;
+        sup.apply(this, [scale]);
+      };
+    })
   });
 
 });
@@ -5399,13 +4739,16 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang',
   '../Sprite',
   '../Animation'
-], function(declare, lang, Sprite, Animation){
+], function(dcl, Mixer, lang, Sprite, Animation){
 
-  return declare([Sprite], {
+  'use strict';
+
+  return dcl([Mixer, Sprite], {
     statics: {
       EAST: 0,
       NORTH: 1,
@@ -5424,10 +4767,9 @@ define([
     dyingAnims: [],
     idleAnims: [],
     direction: 0,
-    constructor: function(args){
+    constructor: function(){
       this.state = this.statics.STATE_IDLE;
       this.direction = this.statics.EAST;
-      declare.safeMixin(this, args);
     },
     update: function(elapsedTime){
       this.x += this.dx * elapsedTime;
@@ -5521,9 +4863,14 @@ limitations under the License.
  * @class Sprite
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  var Sprite = declare(null, {
+  'use strict';
+
+  var Sprite = dcl(Mixer, {
     // position (pixels)
     x: 0.0,
     y: 0.0,
@@ -5532,10 +4879,6 @@ define(['dojo/_base/declare'], function(declare){
     dy: 0.0,
     name: null,
     collisionRadius: 40,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
 
     /**
       * Updates this Sprite's Animation and its position based on the velocity.
@@ -5720,7 +5063,14 @@ limitations under the License.
 
 **/
 
-define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFrame, declare, lang){
+define([
+  './AnimFrame',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang'
+], function(AnimFrame, dcl, Mixer, lang){
+
+  'use strict';
 
  /**
  * Represents a series of frames that can be rendered as an animation.
@@ -5728,7 +5078,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
  * @class Animation
  */
 
-  var Animation = declare(null, {
+  var Animation = dcl(Mixer, {
     currFrameIndex: 0,
     animTime: 0,
     totalDuration: 0,
@@ -5736,8 +5086,7 @@ define(['./AnimFrame', 'dojo/_base/declare', 'dojo/_base/lang'], function(AnimFr
     width: 64,
     image: null,
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.start();
     },
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
@@ -5905,16 +5254,18 @@ limitations under the License.
  * @class AnimationFrame
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     endTime: 0,
     imgSlotX: 0,
     imgSlotY: 0,
-    image: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    }
+    image: null
   });
 
 });
@@ -5944,9 +5295,14 @@ limitations under the License.
  * @class GameAction
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     name: null,
     behavior: 0,
     amount:  0,
@@ -5968,8 +5324,7 @@ define(['dojo/_base/declare'], function(declare){
       STATE_MOVED: 3
     },
 
-    constructor: function(args){
-      declare.safeMixin(this, args);
+    constructor: function(){
       this.reset();
     },
 
@@ -6101,17 +5456,18 @@ limitations under the License.
  * @class MouseAction
  * @extends {GameAction}
  */
-define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './GameAction'
+], function(dcl, Mixer, GameAction){
 
-  return declare([GameAction], {
+  'use strict';
+
+  return dcl([Mixer, GameAction], {
     startPosition: null,
     endPosition: null,
-    position: null,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      this.reset();
-    }
+    position: null
   });
 
 });
@@ -6135,8 +5491,17 @@ limitations under the License.
 
 **/
 
-/*********************** mwe.GameCore ********************************************/
-define(['dojo/_base/declare', 'dojo/_base/lang', 'dojo/dom', './InputManager', './ResourceManager', './shims/RAF'], function(declare, lang, dom, InputManager, ResourceManager){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang',
+  'dojo/dom',
+  './InputManager',
+  './ResourceManager',
+  './shims/RAF'
+], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+
+  'use strict';
 
  /**
  * The GameCore class provides the base to build games on.
@@ -6158,7 +5523,7 @@ myGame.run();
 
  */
 
-  return declare(null, {
+  return dcl(Mixer, {
     statics: {
       FONT_SIZE: 24
     },
@@ -6174,9 +5539,6 @@ myGame.run();
     loadingBackground: '#FFF',
     gameAreaId: null,
     canvasPercentage: 0,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    },
     /**
       * Signals the game loop that it's time to quit
       * @name GameCore#stop
@@ -6255,7 +5617,7 @@ myGame.run();
           canvas: this.canvas
         });
         }
-        
+
       }
 
       this.inputManager.resize();
@@ -6396,8 +5758,8 @@ myGame.run();
 
 },
 'dojo/dom':function(){
-define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
-		function(has, lang, win){
+define("dojo/dom", ["./sniff", "./_base/window"],
+		function(has, win){
 	// module:
 	//		dojo/dom
 
@@ -6510,9 +5872,34 @@ define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
 	};
 
 
-			// TODO: do we need this function in the base?
+	// TODO: do we need setSelectable in the base?
 
-	dom.setSelectable = function(/*DOMNode|String*/ node, /*Boolean*/ selectable){
+	// Add feature test for user-select CSS property
+	// (currently known to work in all but IE < 10 and Opera)
+	has.add("css-user-select", function(global, doc, element){
+		// Avoid exception when dom.js is loaded in non-browser environments
+		if(!element){ return false; }
+		
+		var style = element.style;
+		var prefixes = ["Khtml", "O", "ms", "Moz", "Webkit"],
+			i = prefixes.length,
+			name = "userSelect",
+			prefix;
+
+		// Iterate prefixes from most to least likely
+		do{
+			if(typeof style[name] !== "undefined"){
+				// Supported; return property name
+				return name;
+			}
+		}while(i-- && (name = prefixes[i] + "UserSelect"));
+
+		// Not supported if we didn't return before now
+		return false;
+	});
+
+	/*=====
+	dom.setSelectable = function(node, selectable){
 		// summary:
 		//		Enable or disable selection on a node
 		// node: DOMNode|String
@@ -6526,20 +5913,32 @@ define("dojo/dom", ["./sniff", "./_base/lang", "./_base/window"],
 		// example:
 		//		Make the node id="bar" selectable
 		//	|	dojo.setSelectable("bar", true);
+	};
+	=====*/
 
+	var cssUserSelect = has("css-user-select");
+	dom.setSelectable = cssUserSelect ? function(node, selectable){
+		// css-user-select returns a (possibly vendor-prefixed) CSS property name
+		dom.byId(node).style[cssUserSelect] = selectable ? "" : "none";
+	} : function(node, selectable){
 		node = dom.byId(node);
-		if(has("mozilla")){
-			node.style.MozUserSelect = selectable ? "" : "none";
-		}else if(has("khtml") || has("webkit")){
-			node.style.KhtmlUserSelect = selectable ? "auto" : "none";
-		}else if(has("ie")){
-			var v = (node.unselectable = selectable ? "" : "on"),
-				cs = node.getElementsByTagName("*"), i = 0, l = cs.length;
-			for(; i < l; ++i){
-				cs.item(i).unselectable = v;
+
+		// (IE < 10 / Opera) Fall back to setting/removing the
+		// unselectable attribute on the element and all its children
+		var nodes = node.getElementsByTagName("*"),
+			i = nodes.length;
+
+		if(selectable){
+			node.removeAttribute("unselectable");
+			while(i--){
+				nodes[i].removeAttribute("unselectable");
+			}
+		}else{
+			node.setAttribute("unselectable", "on");
+			while(i--){
+				nodes[i].setAttribute("unselectable", "on");
 			}
 		}
-		//FIXME: else?  Opera?
 	};
 
 	return dom;
@@ -6707,10 +6106,20 @@ limitations under the License.
  * @name InputManager
  * @class InputManager
  */
-define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/dom-geometry', 'dojo/_base/lang', 'dojo/domReady!'],
-  function(GameAction, MouseAction, declare, on, domGeom, lang){
+define([
+  './GameAction',
+  './MouseAction',
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/on',
+  'dojo/dom-geometry',
+  'dojo/_base/lang',
+  'dojo/domReady!'
+], function(GameAction, MouseAction, dcl, Mixer, on, domGeom, lang){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     keyActions: [],
     mouseAction: null,
     touchAction: null,
@@ -6720,9 +6129,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
     handleKeys: true,
     gameArea: null,
     canvasPercentage: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      
+    constructor: function(){
       if(this.handleKeys){
         on(document, 'keydown', lang.hitch(this, "keyDown"));
         //on(document, 'keypress', lang.hitch(this, "keyPressed"));
@@ -6745,7 +6152,7 @@ define(['./GameAction', './MouseAction', 'dojo/_base/declare', 'dojo/on', 'dojo/
       if(!this.mouseAction){
         this.mouseAction = new MouseAction();
       }
-      
+
       if(!this.touchAction){
         this.touchAction = new MouseAction();
       }
@@ -7194,9 +6601,6 @@ define(["./has!dom-addeventlistener?:./aspect", "./_base/kernel", "./has"], func
 			focusin: "focus",
 			focusout: "blur"
 		};
-		if(has("opera")){
-			captures.keydown = "keypress"; // this one needs to be transformed because Opera doesn't support repeating keys on keydown (and keypress works because it incorrectly fires on all keydown events)
-		}
 
 		// emiter that works with native event handling
 		on.emit = function(target, type, event){
@@ -7946,8 +7350,8 @@ define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"]
 			ret = node.getBoundingClientRect();
 		ret = {x: ret.left, y: ret.top, w: ret.right - ret.left, h: ret.bottom - ret.top};
 
-		if(has("ie")){
-			// On IE there's a 2px offset that we need to adjust for, see dojo.getIeDocumentElementOffset()
+		if(has("ie") < 9){
+			// On IE<9 there's a 2px offset that we need to adjust for, see dojo.getIeDocumentElementOffset()
 			var offset = geom.getIeDocumentElementOffset(node.ownerDocument);
 
 			// fixes the position in IE, quirks mode
@@ -8164,7 +7568,7 @@ define(["./sniff", "./dom"], function(has, dom){
 	};
 
 	var _getOpacity =
-		has("ie") < 9 || (has("ie") && has("quirks")) ? function(node){
+		has("ie") < 9 || (has("ie") < 10 && has("quirks")) ? function(node){
 			try{
 				return af(node).Opacity / 100; // Number
 			}catch(e){
@@ -8176,7 +7580,7 @@ define(["./sniff", "./dom"], function(has, dom){
 		};
 
 	var _setOpacity =
-		has("ie") < 9 || (has("ie") && has("quirks")) ? function(/*DomNode*/ node, /*Number*/ opacity){
+		has("ie") < 9 || (has("ie") < 10 && has("quirks")) ? function(/*DomNode*/ node, /*Number*/ opacity){
 			var ov = opacity * 100, opaque = opacity == 1;
 			node.style.zoom = opaque ? "" : 1;
 
@@ -8455,7 +7859,13 @@ limitations under the License.
  * @name ResourceManager
  * @class ResourceManager
  */
-define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './shims/AudioContext'
+], function(dcl, Mixer){
+
+  'use strict';
 
   function normalizePath(baseDir, path){
     var joinedPath = path;
@@ -8465,23 +7875,21 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
     return joinedPath.replace(/\/{2,}/g, '/');
   }
 
-  return declare(null, {
+  var audioContext = null;
+  if(window.AudioContext){
+    audioContext = new window.AudioContext();
+  }else{
+    console.log('WebAudio not supported');
+  }
+
+  return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundDir: null,
-    audioContext: null,
+    audioContext: audioContext,
     resourceList: {},
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      if(window.AudioContext){
-        this.audioContext = new window.AudioContext();
-      }else{
-        console.log('WebAudio not supported');
-      }
-
-    },
 
     /**
       * Loads an image, and tracks if it has finished loading
@@ -8650,41 +8058,46 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
 
 },
 'frozen/shims/AudioContext':function(){
-define(
-  function(){
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
+define(function(){
 
-    for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
-      window.AudioContext = window[vendors[x]+'AudioContext'];
-    }
+  'use strict';
+
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
+    window.AudioContext = window[vendors[x]+'AudioContext'];
+  }
+
 });
 },
 'frozen/shims/RAF':function(){
-define(
-  function(){
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
+define(function(){
 
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
- 
-    if (!window.requestAnimationFrame){
-      window.requestAnimationFrame = function(callback, element) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-      };
-    }
+  'use strict';
 
-    if (!window.cancelAnimationFrame){
-      window.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-      };
-    }
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame){
+    window.requestAnimationFrame = function(callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+  }
+
+  if (!window.cancelAnimationFrame){
+    window.cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+  }
 
 });
 },

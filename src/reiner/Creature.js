@@ -26,13 +26,16 @@ limitations under the License.
  */
 
 define([
-  'dojo/_base/declare',
+  'dcl',
+  'dcl/bases/Mixer',
   'dojo/_base/lang',
   '../Sprite',
   '../Animation'
-], function(declare, lang, Sprite, Animation){
+], function(dcl, Mixer, lang, Sprite, Animation){
 
-  return declare([Sprite], {
+  'use strict';
+
+  return dcl([Mixer, Sprite], {
     statics: {
       EAST: 0,
       NORTH: 1,
@@ -51,10 +54,9 @@ define([
     dyingAnims: [],
     idleAnims: [],
     direction: 0,
-    constructor: function(args){
+    constructor: function(){
       this.state = this.statics.STATE_IDLE;
       this.direction = this.statics.EAST;
-      declare.safeMixin(this, args);
     },
     update: function(elapsedTime){
       this.x += this.dx * elapsedTime;

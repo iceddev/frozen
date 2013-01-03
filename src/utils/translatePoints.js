@@ -1,7 +1,9 @@
 define([
   'dojo/_base/lang'
 ], function(lang){
-  
+
+  'use strict';
+
   var translatePoints = function(points, translation){
     if(lang.isArray(points)){
       var newPoints = [];
@@ -19,10 +21,11 @@ define([
       if(translation.hasOwnProperty('y')){
         points.y+= translation.y;
       }
-      
+
     }
     return points;
   };
 
   return translatePoints;
+
 });

@@ -21,7 +21,13 @@ limitations under the License.
  * @name ResourceManager
  * @class ResourceManager
  */
-define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './shims/AudioContext'
+], function(dcl, Mixer){
+
+  'use strict';
 
   function normalizePath(baseDir, path){
     var joinedPath = path;
@@ -31,23 +37,21 @@ define(['dojo/_base/declare', './shims/AudioContext'], function(declare){
     return joinedPath.replace(/\/{2,}/g, '/');
   }
 
-  return declare(null, {
+  var audioContext = null;
+  if(window.AudioContext){
+    audioContext = new window.AudioContext();
+  }else{
+    console.log('WebAudio not supported');
+  }
+
+  return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundDir: null,
-    audioContext: null,
+    audioContext: audioContext,
     resourceList: {},
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      if(window.AudioContext){
-        this.audioContext = new window.AudioContext();
-      }else{
-        console.log('WebAudio not supported');
-      }
-
-    },
 
     /**
       * Loads an image, and tracks if it has finished loading

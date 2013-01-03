@@ -22,17 +22,18 @@ limitations under the License.
  * @class MouseAction
  * @extends {GameAction}
  */
-define(['dojo/_base/declare', './GameAction'], function(declare, GameAction){
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './GameAction'
+], function(dcl, Mixer, GameAction){
 
-  return declare([GameAction], {
+  'use strict';
+
+  return dcl([Mixer, GameAction], {
     startPosition: null,
     endPosition: null,
-    position: null,
-
-    constructor: function(args){
-      declare.safeMixin(this, args);
-      this.reset();
-    }
+    position: null
   });
 
 });

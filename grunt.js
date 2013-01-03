@@ -1,6 +1,8 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  'use strict';
+
   // Project configuration.
   grunt.initConfig({
     lint: {
@@ -16,7 +18,7 @@ module.exports = function(grunt) {
     },
     dojo: {
       frozen: {
-        dojo: '../../dojo/dojo-release-1.8.1-src/dojo/dojo.js',
+        dojo: '../../dojo/dojo-release-1.8.3-src/dojo/dojo.js',
         profile: 'frozen.profile.js',
         cwd: './'
       }
@@ -41,7 +43,8 @@ module.exports = function(grunt) {
         eqnull: true,
         browser: true,
         laxcomma: true,
-        expr: true
+        expr: true,
+        strict: true
       },
       globals: {
         define: true,

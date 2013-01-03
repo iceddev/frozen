@@ -22,16 +22,18 @@ limitations under the License.
  * @class AnimationFrame
  */
 
-define(['dojo/_base/declare'], function(declare){
+define([
+  'dcl',
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
-  return declare(null, {
+  'use strict';
+
+  return dcl(Mixer, {
     endTime: 0,
     imgSlotX: 0,
     imgSlotY: 0,
-    image: null,
-    constructor: function(args){
-      declare.safeMixin(this, args);
-    }
+    image: null
   });
 
 });
