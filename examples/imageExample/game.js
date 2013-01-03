@@ -6,10 +6,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
   var speed = 2.5;
 
   //setup a ResourceManager to use in the game
-  var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
-  var nyan = rm.loadImage('images/nyan.png');
-  
+  var rm = new ResourceManager({
+    imageDir: 'images'
+  });
+  var backImg = rm.loadImage('background.png');
+  var nyan = rm.loadImage('nyan.png');
+
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
