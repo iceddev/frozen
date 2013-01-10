@@ -173,15 +173,15 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys', 'frozen/box2d
     },
     handleInput: function(im){
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 180, speed);
+        box.applyImpulseDegrees(nyan.id, 270, speed);
       }
 
       if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 0, speed);
+        box.applyImpulseDegrees(nyan.id, 90, speed);
       }
 
       if(im.keyActions[keys.UP_ARROW].isPressed()){
-        box.applyImpulse(nyan.id, 270, speed);
+        box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
       //.play sounds with the space bar !
