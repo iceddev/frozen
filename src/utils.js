@@ -1,4 +1,5 @@
 define([
+  './utils/averagePoints',
   './utils/degreesToRadians',
   './utils/radiansToDegrees',
   './utils/pointInPolygon',
@@ -7,7 +8,7 @@ define([
   './utils/radiansFromCenter',
   './utils/scalePoints',
   './utils/translatePoints'
-], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+], function(averagePoints, degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
 
   'use strict';
 
@@ -16,6 +17,16 @@ define([
  * @name utils
  */
   return {
+
+    /**
+      * Gets the average point value in an array of points.
+      * @name utils#averagePoints
+      * @function
+      * @param {Array} points
+      *
+    */
+    averagePoints: averagePoints,
+
     /**
       * Convert degrees to raidans
       * @name utils#degreesToRadians

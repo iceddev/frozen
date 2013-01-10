@@ -42,7 +42,14 @@ define([
         ctx.rotate(this.angle);
         ctx.translate(-(this.x) * scale, -(this.y) * scale);
         ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.strokeColor;
         ctx.fillRect(
+          (this.x-this.halfWidth) * scale,
+          (this.y-this.halfHeight) * scale,
+          (this.halfWidth*2) * scale,
+          (this.halfHeight*2) * scale
+        );
+        ctx.strokeRect(
           (this.x-this.halfWidth) * scale,
           (this.y-this.halfHeight) * scale,
           (this.halfWidth*2) * scale,

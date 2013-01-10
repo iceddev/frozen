@@ -2290,6 +2290,20 @@ define([
     },
 
     /**
+      * Sets the world's gravity
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setGravity
+      * @function
+      * @param {Object} vector An object with x and y values in meters per second squared.
+    */
+    setGravity : function(vector) {
+      this.world.SetGravity(new B2Vec2(vector.x, vector.y));
+    },
+
+
+    /**
       * Remove a body from the box2d world
       *
       * This must be done outside of the update() iteration!
@@ -2308,6 +2322,23 @@ define([
         delete this.bodiesMap[id];
       }
     },
+
+    /**
+      * Wake up a body in the box2d world so that box2d will continue to run calculations on it.
+      * 
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#wakeUpBody
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+    */
+    wakeUpBody: function(id) {
+      if(this.bodiesMap[id]){
+        this.bodiesMap[id].SetAwake(true);
+      }
+    },
+
     addContactListener: function(callbacks) {
       var listener = new Box2D.Dynamics.b2ContactListener();
       if (callbacks.beginContact) {
@@ -3605,7 +3636,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define(["require", "module"], function(require, module){
+define("dojo/has", ["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -4088,17 +4119,25 @@ define([
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.strokeColor;
         ctx.beginPath();
         ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
-
-        ctx.strokeStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-        ctx.closePath();
         ctx.stroke();
 
+        if(!this.staticBody){
+          ctx.save();
+          ctx.translate(this.x * scale, this.y * scale);
+          ctx.rotate(this.angle);
+          ctx.translate(-(this.x) * scale, -(this.y) * scale);
+          ctx.beginPath();
+          ctx.moveTo(this.x * scale, this.y * scale);
+          ctx.lineTo(this.x * scale, (this.y * scale) - (this.radius * scale));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
+        }
         sup.apply(this, [ctx, scale]);
       };
     }),
@@ -4151,7 +4190,7 @@ define([
     x: 0,
     y: 0,
     angle: 0,
-    center: 0,
+    center: null,
     restitution: 0.3,
     density: 1.0,
     friction: 0.9,
@@ -4161,6 +4200,7 @@ define([
     angularDamping: 0,
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
+    strokeColor: '#000',
     hidden: false,
     update: function(state){
       lang.mixin(this, state);
@@ -4182,11 +4222,13 @@ define([
       ctx.fill();
 
       //yellow circle in entity's geometric center
-      ctx.fillStyle = 'yellow';
-      ctx.beginPath();
-      ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.fill();
+      if(this.center){
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
+      }
     },
 
     /**
@@ -4276,6 +4318,7 @@ define([
 },
 'frozen/utils':function(){
 define([
+  './utils/averagePoints',
   './utils/degreesToRadians',
   './utils/radiansToDegrees',
   './utils/pointInPolygon',
@@ -4284,7 +4327,7 @@ define([
   './utils/radiansFromCenter',
   './utils/scalePoints',
   './utils/translatePoints'
-], function(degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+], function(averagePoints, degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
 
   'use strict';
 
@@ -4293,6 +4336,16 @@ define([
  * @name utils
  */
   return {
+
+    /**
+      * Gets the average point value in an array of points.
+      * @name utils#averagePoints
+      * @function
+      * @param {Array} points
+      *
+    */
+    averagePoints: averagePoints,
+
     /**
       * Convert degrees to raidans
       * @name utils#degreesToRadians
@@ -4371,6 +4424,27 @@ define([
     */
     translatePoints: translatePoints
   };
+});
+},
+'frozen/utils/averagePoints':function(){
+define([],
+ function(){
+
+  'use strict';
+
+  var averagePoints = function(points){
+    var retVal = {x: 0, y: 0};
+    points.forEach(function(point){
+      retVal.x+= point.x;
+      retVal.y+= point.y;
+    });
+    retVal.x = retVal.x / points.length;
+    retVal.y = retVal.y / points.length;
+    return retVal;
+  };
+
+  return averagePoints;
+
 });
 },
 'frozen/utils/degreesToRadians':function(){
@@ -4677,7 +4751,14 @@ define([
         ctx.rotate(this.angle);
         ctx.translate(-(this.x) * scale, -(this.y) * scale);
         ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.strokeColor;
         ctx.fillRect(
+          (this.x-this.halfWidth) * scale,
+          (this.y-this.halfHeight) * scale,
+          (this.halfWidth*2) * scale,
+          (this.halfHeight*2) * scale
+        );
+        ctx.strokeRect(
           (this.x-this.halfWidth) * scale,
           (this.y-this.halfHeight) * scale,
           (this.halfWidth*2) * scale,
@@ -5747,7 +5828,7 @@ myGame.run();
 
 },
 'dojo/dom':function(){
-define("dojo/dom", ["./sniff", "./_base/window"],
+define(["./sniff", "./_base/window"],
 		function(has, win){
 	// module:
 	//		dojo/dom
@@ -6291,7 +6372,7 @@ define([
 
 },
 'dojo/on':function(){
-define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define("dojo/on", ["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6808,7 +6889,7 @@ define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 },
 'dojo/dom-geometry':function(){
-define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
+define(["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -8091,7 +8172,7 @@ define(function(){
 });
 },
 'dojo/keys':function(){
-define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
+define(["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys

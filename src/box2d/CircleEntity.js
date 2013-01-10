@@ -42,17 +42,25 @@ define([
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.strokeColor;
         ctx.beginPath();
         ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
-
-        ctx.strokeStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
-        ctx.closePath();
         ctx.stroke();
 
+        if(!this.staticBody){
+          ctx.save();
+          ctx.translate(this.x * scale, this.y * scale);
+          ctx.rotate(this.angle);
+          ctx.translate(-(this.x) * scale, -(this.y) * scale);
+          ctx.beginPath();
+          ctx.moveTo(this.x * scale, this.y * scale);
+          ctx.lineTo(this.x * scale, (this.y * scale) - (this.radius * scale));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
+        }
         sup.apply(this, [ctx, scale]);
       };
     }),

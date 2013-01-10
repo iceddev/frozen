@@ -360,6 +360,20 @@ define([
     },
 
     /**
+      * Sets the world's gravity
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#setGravity
+      * @function
+      * @param {Object} vector An object with x and y values in meters per second squared.
+    */
+    setGravity : function(vector) {
+      this.world.SetGravity(new B2Vec2(vector.x, vector.y));
+    },
+
+
+    /**
       * Remove a body from the box2d world
       *
       * This must be done outside of the update() iteration!
@@ -378,6 +392,23 @@ define([
         delete this.bodiesMap[id];
       }
     },
+
+    /**
+      * Wake up a body in the box2d world so that box2d will continue to run calculations on it.
+      * 
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#wakeUpBody
+      * @function
+      * @param {Number} bodyId The id of the Entity/Body
+    */
+    wakeUpBody: function(id) {
+      if(this.bodiesMap[id]){
+        this.bodiesMap[id].SetAwake(true);
+      }
+    },
+
     addContactListener: function(callbacks) {
       var listener = new Box2D.Dynamics.b2ContactListener();
       if (callbacks.beginContact) {
