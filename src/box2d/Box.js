@@ -47,9 +47,6 @@ define([
   return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
-    width: 640,
-    height: 480,
-    scale: 30,
     bodiesMap: [],
     fixturesMap: [],
     world: null,
@@ -60,7 +57,7 @@ define([
     contactListener: null,
     collisions: null,
     constructor: function(args){
-      if(args.intervalRate){
+      if(args && args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
 
@@ -395,7 +392,7 @@ define([
 
     /**
       * Wake up a body in the box2d world so that box2d will continue to run calculations on it.
-      * 
+      *
       *
       * This must be done outside of the update() iteration!
       *
