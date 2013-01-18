@@ -27,10 +27,11 @@ define([
   'dcl',
   'dcl/bases/Mixer',
   'dojo/on',
+  'dojo/dom-style',
   'dojo/dom-geometry',
   'dojo/_base/lang',
   'dojo/domReady!'
-], function(GameAction, MouseAction, dcl, Mixer, on, domGeom, lang){
+], function(GameAction, MouseAction, dcl, Mixer, on, domStyle, domGeom, lang){
 
   'use strict';
 
@@ -47,21 +48,19 @@ define([
     constructor: function(){
       if(this.handleKeys){
         on(document, 'keydown', lang.hitch(this, "keyDown"));
-        //on(document, 'keypress', lang.hitch(this, "keyPressed"));
         on(document, 'keyup', lang.hitch(this, "keyReleased"));
       }
 
       if(this.handleMouse){
         on(this.canvas, 'mousedown', lang.hitch(this, "mouseDown"));
+        on(document, 'mousemove', lang.hitch(this, "mouseMove"));
         on(document, 'mouseup', lang.hitch(this, "mouseUp"));
-        on(this.canvas, 'mousemove', lang.hitch(this, "mouseMove"));
       }
 
       if(this.handleTouch){
-        on(document, 'touchend', lang.hitch(this, "touchEnd"));
-        //on(document, 'touchcancel', lang.hitch(this, "touchEnd"));
         on(this.canvas, 'touchstart', lang.hitch(this, "touchStart"));
-        on(this.canvas, 'touchmove', lang.hitch(this, "touchMove"));
+        on(document, 'touchmove', lang.hitch(this, "touchMove"));
+        on(document, 'touchend', lang.hitch(this, "touchEnd"));
       }
 
       if(!this.mouseAction){
@@ -73,12 +72,8 @@ define([
       }
 
       if(this.gameArea && this.canvasPercentage){
-        //on(window, 'touchmove', lang.hitch(this, "resize"));
-        //on(window, 'orientationchange', lang.hitch(this, "resize"));
-        window.addEventListener('resize', lang.hitch(this, "resize"), false);
-        window.addEventListener('orientationchange', lang.hitch(this, "resize"), false);
-        //window.addEventListener('resize', this.resize, false);
-        //window.addEventListener('orientationchange', this.resize, false);
+        on(window, 'resize', lang.hitch(this, "resize"));
+        on(window, 'orientationchange', lang.hitch(this, "resize"));
       }
     },
 
@@ -190,25 +185,41 @@ define([
 
     resize: function(){
       if(this.gameArea && this.canvasPercentage && this.canvas){
-        var widthToHeight = this.canvas.width / this.canvas.height;
-        var newWidth = window.innerWidth;
-        var newHeight = window.innerHeight;
+        var canvasWidth = this.canvas.width;
+        var canvasHeight = this.canvas.height;
+
+        var bodyMargins = domGeom.getMarginExtents(document.body);
+
+        var newWidth = window.innerWidth - bodyMargins.w;
+        var newHeight = window.innerHeight - bodyMargins.h;
+
+        var widthToHeight = canvasWidth / canvasHeight;
         var newWidthToHeight = newWidth / newHeight;
 
+        var newWidthStyle = '';
+        var newHeightStyle = '';
         if (newWidthToHeight > widthToHeight) {
-            newWidth = newHeight * widthToHeight;
-            this.gameArea.style.height = Math.round(newHeight) + 'px';
-            this.gameArea.style.width = newWidth + 'px';
-            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+          newWidth = newHeight * widthToHeight;
+          newWidthStyle = newWidth + 'px';
         } else {
-            newHeight = Math.round(newWidth / widthToHeight);
-            this.gameArea.style.width = newWidth + 'px';
-            this.gameArea.style.height = newHeight + 'px';
-            this.zoomRatio = newWidth / this.canvas.width * this.canvasPercentage;
+          newHeightStyle = Math.round(newWidth / widthToHeight) + 'px';
         }
 
-        this.canvas.style.width = Math.floor(this.canvasPercentage * 100) + '%';
-        this.canvas.style.height = Math.floor(this.canvasPercentage * 100) + '%';
+        this.zoomRatio = newWidth / canvasWidth * this.canvasPercentage;
+
+        domStyle.set(this.gameArea, {
+          width: newWidthStyle,
+          height: newHeightStyle
+        });
+
+        var canvasPercentageStyle = Math.floor(this.canvasPercentage * 100) + '%';
+        domStyle.set(this.canvas, {
+          width: canvasPercentageStyle,
+          height: canvasPercentageStyle,
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        });
       }
     }
   });
