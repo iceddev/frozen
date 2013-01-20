@@ -65,7 +65,17 @@ var profile = (function(){
       "host-browser": 1,
       "extend-dojo": 1,
       "dom-addeventlistener": 1,
-      "csp-restrictions": 1
+      "csp-restrictions": 1,
+      // We Shouldn't need to work around this bug for IE>8 according to:
+      // https://javascriptweblog.wordpress.com/2011/01/04/exploring-javascript-for-in-loops/
+      "bug-for-in-skips-shadowed": 0,
+      // We are only supporting IE>8
+      "ie": 9,
+      // We don't support quirks mode
+      "quirks": 0,
+      // Only support devices that run at least jscript 9
+      // https://en.wikipedia.org/wiki/JScript
+      "jscript": 9
     },
 
     layers: {
@@ -93,8 +103,7 @@ var profile = (function(){
           'frozen/shims/RAF',
           'frozen/Sprite',
           'frozen/utils',
-          'dojo/keys',
-          'dojo/_base/declare' // Legacy - TODO: remove in next version bump
+          'dojo/keys'
         ],
         customBase: true,
         boot: true
