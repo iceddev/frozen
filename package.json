@@ -2,6 +2,7 @@
   "name": "frozen",
   "version": "0.1.0",
   "devDependencies": {
+    "grunt": "~0.3.17",
     "grunt-dojo": "~0.1.1",
     "grunt-jsdoc-plugin": "~0.1.2",
     "volo": "~0.2.6"
