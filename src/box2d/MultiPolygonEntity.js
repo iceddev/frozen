@@ -50,6 +50,7 @@ define([
         ctx.rotate(this.angle);
         ctx.translate(-(this.x) * scale, -(this.y) * scale);
         ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.strokeColor;
 
         for(var j = 0; j < this.polys.length; j++){
           ctx.beginPath();

@@ -60,7 +60,7 @@ define([
     */
     draw: function(ctx, scale){
       //black circle in entity's location
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = this.strokeColor;
       ctx.beginPath();
       ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
       ctx.closePath();
