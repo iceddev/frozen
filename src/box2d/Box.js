@@ -31,7 +31,6 @@ define([
   'use strict';
 
   // box2d globals
-
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2BodyDef = Box2D.Dynamics.b2BodyDef;
   var B2Body = Box2D.Dynamics.b2Body;
@@ -43,7 +42,6 @@ define([
   var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
   var B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
   var B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
-
   var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
   var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
