@@ -444,7 +444,7 @@ define([
       * @function
       * @param {Number} body1Id The id of the first Entity/Body
       * @param {Number} body2Id The id of the second Entity/Body
-      * @param {Object} jointAttributes Any box2d jointAttributes you wish to mixin to the joint.
+      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
       * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
     */
     addRevoluteJoint : function(body1Id, body2Id, jointAttributes, body1point) {
@@ -474,7 +474,7 @@ define([
       * @function
       * @param {Number} body1Id The id of the first Entity/Body
       * @param {Number} body2Id The id of the second Entity/Body
-      * @param {Object} jointAttributes Any box2d jointAttributes you wish to mixin to the joint.
+      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
       * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
       * @param {Object} [body2point] An object with the x and y position of the location to create the joint on the second body. The default is the second body's center of mass.
     */
