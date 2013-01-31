@@ -67,7 +67,18 @@ define([
         this.halfWidth = this.halfWidth * scale;
         sup.apply(this, [scale]);
       };
-    })
+    }),
+
+    /**
+      * Checks if a given point is contained within this Rectangle.
+      *
+      * @name RectangleEntity#pointInShape
+      * @function
+      * @param {Object} point An object with x and y values.
+    */
+    pointInShape: function(point){
+      return ((point.x >= (this.x - this.halfWidth)) && (point.x <= (this.x + this.halfWidth)) && (point.y >= (this.y - this.halfHeight)) && (point.y <= (this.y + this.halfHeight)));
+    }
   });
 
 });

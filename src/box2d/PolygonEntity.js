@@ -27,8 +27,10 @@ define([
   'dcl',
   'dcl/bases/Mixer',
   './Entity',
-  '../utils' // TODO: specific util, not whole module
-], function(dcl, Mixer, Entity, utils){
+  '../utils/scalePoints',
+  '../utils/pointInPolygon',
+  '../utils/translatePoints'
+], function(dcl, Mixer, Entity, scalePoints, pointInPolygon, translatePoints){
 
   'use strict';
 
@@ -61,10 +63,21 @@ define([
 
     scaleShape: dcl.superCall(function(sup){
       return function(scale){
-        this.points = utils.scalePoints(this.points, scale);
+        this.points = scalePoints(this.points, scale);
         sup.apply(this, [scale]);
       };
-    })
+    }),
+
+    /**
+      * Checks if a given point is contained within this Polygon.
+      *
+      * @name PolygonEntity#pointInShape
+      * @function
+      * @param {Object} point An object with x and y values.
+    */
+    pointInShape: function(point){
+      return pointInPolygon(point, translatePoints(this.points, this));
+    }
   });
 
 });

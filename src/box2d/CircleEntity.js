@@ -26,8 +26,9 @@ limitations under the License.
 define([
   'dcl',
   'dcl/bases/Mixer',
-  './Entity'
-], function(dcl, Mixer, Entity){
+  './Entity',
+  '../utils/distance'
+], function(dcl, Mixer, Entity, distance){
 
   'use strict';
 
@@ -71,7 +72,18 @@ define([
         this.radius = this.radius * scale;
         sup.apply(this, [scale]);
       };
-    })
+    }),
+
+    /**
+      * Checks if a given point is contained within this Circle.
+      *
+      * @name CircelEntity#pointInShape
+      * @function
+      * @param {Object} point An object with x and y values.
+    */
+    pointInShape: function(point){
+      return (distance(point, this) <= this.radius);
+    }
   });
 
 });
