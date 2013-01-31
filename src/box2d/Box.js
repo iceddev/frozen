@@ -57,6 +57,8 @@ define([
     resolveCollisions: false,
     contactListener: null,
     collisions: null,
+    scale: 30, // 30 pixels ~ 1 meter in box2d
+
     constructor: function(args){
       if(args && args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
@@ -149,12 +151,17 @@ define([
     },
 
     /**
-      * Add an Entity to the box2d world which will internally be converted to a box2d body and fixture
+      * Add an Entity to the box2d world which will internally be converted to a box2d body and fixture (auto scaled with Box's scale property if the entity hasn't been scaled yet)
       * @name Box#addBody
       * @function
       * @param {Entity} entity Any Entity object
     */
     addBody: function(entity) {
+      if(!entity.alreadyScaled){
+        entity.scaleShape(1 / this.scale);
+        entity.scale = this.scale;
+      }
+
       var bodyDef = new B2BodyDef();
       var fixDef = new B2FixtureDef();
       var i,j,points,vec,vecs;

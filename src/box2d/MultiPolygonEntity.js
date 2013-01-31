@@ -45,6 +45,7 @@ define([
       */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
+        scale = scale || this.scale || 1;
         ctx.save();
         ctx.translate(this.x * scale, this.y * scale);
         ctx.rotate(this.angle);
