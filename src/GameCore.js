@@ -29,24 +29,23 @@ define([
   'use strict';
 
  /**
- * The GameCore class provides the base to build games on.
- * @name GameCore
- * @class GameCore
- * @example
-var myGame = new GameCore({
-  canvasId: 'myCanvas',
-  update: function(millis){
-    // do updating of game state
-  },
-  draw: function(context){
-    // do drawing of the game
-  }
-});
-
-//start the game
-myGame.run();
-
- */
+  * The GameCore class provides the base to build games on.
+  * @name GameCore
+  * @class GameCore
+  * @example
+  * var myGame = new GameCore({
+  *   canvasId: 'myCanvas',
+  *   update: function(millis){
+  *     // do updating of game state
+  *   },
+  *   draw: function(context){
+  *     // do drawing of the game
+  *   }
+  * });
+  *
+  * //start the game
+  * myGame.run();
+  */
 
   return dcl(Mixer, {
     statics: {
@@ -64,21 +63,43 @@ myGame.run();
     loadingBackground: '#FFF',
     gameAreaId: null,
     canvasPercentage: 0,
+
     /**
-      * Signals the game loop that it's time to quit
-      * @name GameCore#stop
-      * @function
-      *
-    */
-    stop: function() {
-        this.isRunning = false;
+     * Sets the height on your GameCore instance and on your canvas reference
+     * @name GameCore#setHeight
+     * @function
+     * @param {Number} newHeight The new height desired
+     */
+    setHeight: function(newHeight){
+      this.height = newHeight;
+      this.canvas.height = newHeight;
     },
+
     /**
-      * Launches the game.
-      * @name GameCore#run
-      * @function
-      *
-    */
+     * Sets the width on your GameCore instance and on your canvas reference
+     * @name GameCore#setWidth
+     * @function
+     * @param {Number} newWidth The new width desired
+     */
+    setWidth: function(newWidth){
+      this.width = newWidth;
+      this.canvas.width = newWidth;
+    },
+
+    /**
+     * Signals the game loop that it's time to quit
+     * @name GameCore#stop
+     * @function
+     */
+    stop: function() {
+      this.isRunning = false;
+    },
+
+    /**
+     * Launches the game.
+     * @name GameCore#run
+     * @function
+     */
     run: function() {
       if(!this.isRunning){
         this.init();
@@ -87,20 +108,20 @@ myGame.run();
         this.launchLoop();
       }
     },
+
     /**
-      * Can be overidden in GameCore subclasses to load images and sounds
-      * @name GameCore#loadResources
-      * @function
-      * @param {ResourceManager} resourceManager
-      *
-    */
+     * Can be overidden in GameCore subclasses to load images and sounds
+     * @name GameCore#loadResources
+     * @function
+     * @param {ResourceManager} resourceManager
+     */
     loadResources: function(resourceManager){},
+
     /**
-      * Sets the screen mode and initiates and objects.
-      * @name GameCore#init
-      * @function
-      *
-    */
+     * Sets the screen mode and initiates and objects.
+     * @name GameCore#init
+     * @function
+     */
     init: function() {
       if(!this.canvas){
         this.canvas = dom.byId(this.canvasId);
@@ -116,21 +137,12 @@ myGame.run();
         alert('Sorry, your browser does not support a ' + this.contextType + ' drawing surface on canvas.  I recommend any browser but Internet Explorer');
         return;
       }
-      //try using game object's dimensions, or set dimensions to canvas if none are specified
-      if(this.height){
-        this.canvas.height = this.height;
-      } else {
-        this.height = this.canvas.height;
-      }
-      if(this.width){
-        this.canvas.width = this.width;
-      } else {
-        this.width = this.canvas.width;
-      }
 
+      this.setHeight(this.height || this.canvas.height);
+      this.setWidth(this.width || this.canvas.width);
 
       if(!this.inputManager){
-        //hande resizing if gameArea and canvasPercentage are specified
+        //handle resizing if gameArea and canvasPercentage are specified
         if(this.gameAreaId && this.canvasPercentage){
           this.inputManager = new InputManager({
             canvas: this.canvas,
@@ -139,10 +151,9 @@ myGame.run();
           });
         }else{
           this.inputManager = new InputManager({
-          canvas: this.canvas
-        });
+            canvas: this.canvas
+          });
         }
-
       }
 
       this.inputManager.resize();
@@ -153,32 +164,30 @@ myGame.run();
       this.loadResources(this.resourceManager);
 
       this.isRunning = true;
-
-
     },
+
     /**
-      * Can be overidden in the subclasses to map user input to actions
-      * @name GameCore#initInput
-      * @function
-      * @param {InputManager} inputManager
-      *
-    */
+     * Can be overidden in the subclasses to map user input to actions
+     * @name GameCore#initInput
+     * @function
+     * @param {InputManager} inputManager
+     */
     initInput: function(inputManager) {},
+
     /**
-      * Can be overidden in the subclasses to deal with user input before updating the game state
-      * @name GameCore#handleInput
-      * @function
-      * @param {InputManager} inputManager
-      * @param {Number} elapsedTime elapsed time in milliseconds
-      *
-    */
+     * Can be overidden in the subclasses to deal with user input before updating the game state
+     * @name GameCore#handleInput
+     * @function
+     * @param {InputManager} inputManager
+     * @param {Number} elapsedTime elapsed time in milliseconds
+     */
     handleInput: function(inputManager,elapsedTime) {},
+
     /**
-      * Runs through the game loop until stop() is called.
-      * @name GameCore#gameLoop
-      * @function
-      *
-    */
+     * Runs through the game loop until stop() is called.
+     * @name GameCore#gameLoop
+     * @function
+     */
     gameLoop: function() {
       this.currTime = new Date().getTime();
       this.elapsedTime = Math.min(this.currTime - this.prevTime, this.maxStep);
@@ -200,12 +209,12 @@ myGame.run();
         this.context.restore();
       }
     },
+
     /**
-      * Launches the game loop.
-      * @name GameCore#launchLoop
-      * @function
-      *
-    */
+     * Launches the game loop.
+     * @name GameCore#launchLoop
+     * @function
+     */
     launchLoop: function(){
       this.elapsedTime = 0;
       var startTime = Date.now();
@@ -216,65 +225,66 @@ myGame.run();
       this.loopRunner = lang.hitch(this, this.loopRunner);
       window.requestAnimationFrame(this.loopRunner);
     },
+
     loopRunner: function(){
       this.gameLoop();
       window.requestAnimationFrame(this.loopRunner);
     },
+
     /**
-      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
-      * @name GameCore#update
-      * @function
-      * @param {Number} elapsedTime elapsed time in milliseconds
-      *
-    */
+     * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
+     * @name GameCore#update
+     * @function
+     * @param {Number} elapsedTime elapsed time in milliseconds
+     */
     update: function(elapsedTime) {},
+
     /**
-      * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
-      * @name GameCore#updateLoadingScreen
-      * @function
-      * @param {Number} elapsedTime elapsed time in milliseconds
-      *
-    */
+     * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
+     * @name GameCore#updateLoadingScreen
+     * @function
+     * @param {Number} elapsedTime elapsed time in milliseconds
+     */
     updateLoadingScreen: function(elapsedTime) {},
+
     /**
-      * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
-      * @name GameCore#draw
-      * @function
-      * @param {Context} context An HTML5 canvas drawing context.
-      *
-    */
+     * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+     * @name GameCore#draw
+     * @function
+     * @param {Context} context An HTML5 canvas drawing context.
+     */
     draw: function(context){
       if(this.contextType === '2d'){
         context.font = "14px sans-serif";
         context.fillText("This game does not have its own draw function!", 10, 50);
       }
     },
+
     /**
-      * Draws the progress of the resource manger to the screen while loading.
-      * Subclasses or instances may override for custom loading animations.
-      * @name GameCore#drawLoadingScreen
-      * @function
-      * @param {Context} context An HTML5 canvas drawing context.
-      *
-    */
+     * Draws the progress of the resource manger to the screen while loading.
+     * Subclasses or instances may override for custom loading animations.
+     * @name GameCore#drawLoadingScreen
+     * @function
+     * @param {Context} context An HTML5 canvas drawing context.
+     */
     drawLoadingScreen: function(context){
       if(this.resourceManager && (this.contextType === '2d')){
-        context.fillStyle   = this.loadingBackground;
+        context.fillStyle = this.loadingBackground;
         context.fillRect(0,0, this.width,this.height);
 
-        context.fillStyle   = this.loadingForeground;
+        context.fillStyle = this.loadingForeground;
         context.strokeStyle = this.loadingForeground;
 
-        var textPxSize =  Math.floor(this.height/12);
+        var textPxSize = Math.floor(this.height/12);
 
         context.font = "bold " + textPxSize + "px sans-serif";
 
         context.fillText("Loading... " + this.resourceManager.getPercentComplete() + "%", this.width * 0.1, this.height * 0.55);
 
-        context.strokeRect(this.width * 0.1, this.height * 0.7,this.width * 0.8, this.height * 0.1);
-        context.fillRect(this.width * 0.1, this.height * 0.7,(this.width * 0.8) * this.resourceManager.getPercentComplete()/100, this.height * 0.1);
+        context.strokeRect(this.width * 0.1, this.height * 0.7, this.width * 0.8, this.height * 0.1);
+        context.fillRect(this.width * 0.1, this.height * 0.7, (this.width * 0.8) * this.resourceManager.getPercentComplete()/100, this.height * 0.1);
 
-        context.lineWidth   = 4;
+        context.lineWidth = 4;
       }
     }
   });
