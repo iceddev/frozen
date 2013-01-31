@@ -41,6 +41,7 @@ define([
     */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
+        scale = scale || this.scale || 1;
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.strokeColor;
         ctx.beginPath();

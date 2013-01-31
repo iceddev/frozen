@@ -34,6 +34,7 @@ define([
     id: 0,
     x: 0,
     y: 0,
+    scale: null,
     angle: 0,
     center: null,
     restitution: 0.3,
@@ -47,6 +48,7 @@ define([
     color: 'rgba(128,128,128,0.5)',
     strokeColor: '#000',
     hidden: false,
+
     update: function(state){
       lang.mixin(this, state);
     },
@@ -59,14 +61,15 @@ define([
       * @param {Number} scale the scale to draw the entity at
     */
     draw: function(ctx, scale){
-      //black circle in entity's location
+      scale = scale || this.scale || 1;
+      // black circle in entity's location
       ctx.fillStyle = this.strokeColor;
       ctx.beginPath();
       ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
       ctx.closePath();
       ctx.fill();
 
-      //yellow circle in entity's geometric center
+      // yellow circle in entity's geometric center
       if(this.center){
         ctx.fillStyle = 'yellow';
         ctx.beginPath();
@@ -85,6 +88,7 @@ define([
     scaleShape: function(scale){
       this.x = this.x * scale;
       this.y = this.y * scale;
+      this.alreadyScaled = true;
     }
 
   });
