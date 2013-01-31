@@ -44,6 +44,9 @@ define([
     , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
+  var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
+  var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
+
   return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
@@ -433,7 +436,7 @@ define([
     },
 
     /**
-      * Add a revolute joint between two bodies at the center of the first body.
+      * Add a revolute joint between two bodies.
       *
       * This must be done outside of the update() iteration!
       *
@@ -442,17 +445,94 @@ define([
       * @param {Number} body1Id The id of the first Entity/Body
       * @param {Number} body2Id The id of the second Entity/Body
       * @param {Object} jointAttributes Any box2d jointAttributes you wish to mixin to the joint.
+      * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
     */
-    addRevoluteJoint : function(body1Id, body2Id, jointAttributes) {
+    addRevoluteJoint : function(body1Id, body2Id, jointAttributes, body1point) {
       var body1 = this.bodiesMap[body1Id];
       var body2 = this.bodiesMap[body2Id];
-      var joint = new B2RevoluteJointDef();
-      joint.Initialize(body1, body2, body1.GetWorldCenter());
-      if (jointAttributes) {
-        lang.mixin(joint, jointAttributes);
+      if(body1 && body2){
+        var joint = new B2RevoluteJointDef();
+        if(body1point){
+          joint.Initialize(body1, body2, new B2Vec2(body1point.x, body1point.y));
+        }else{
+          joint.Initialize(body1, body2, body1.GetWorldCenter());
+        }
+        if (jointAttributes) {
+          lang.mixin(joint, jointAttributes);
+        }
+        this.world.CreateJoint(joint);
       }
-      this.world.CreateJoint(joint);
+
     },
+
+    /**
+      * Add a distance joint between two bodies.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#addDistanceJoint
+      * @function
+      * @param {Number} body1Id The id of the first Entity/Body
+      * @param {Number} body2Id The id of the second Entity/Body
+      * @param {Object} jointAttributes Any box2d jointAttributes you wish to mixin to the joint.
+      * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
+      * @param {Object} [body2point] An object with the x and y position of the location to create the joint on the second body. The default is the second body's center of mass.
+    */
+    addDistanceJoint : function(body1Id, body2Id, jointAttributes, body1point, body2point) {
+      var body1 = this.bodiesMap[body1Id];
+      var body2 = this.bodiesMap[body2Id];
+      if(body1 && body2){
+        if(body1point){
+          body1point = new B2Vec2(body1point.x, body1point.y);
+        }
+        if(body2point){
+          body2point = new B2Vec2(body2point.x, body2point.y);
+        }
+        var vec1 = body1point || body1.GetWorldCenter();
+        var vec2 = body2point || body2.GetWorldCenter();
+        var joint = new B2DistanceJointDef();
+        joint.Initialize(body1, body2, vec1, vec2);
+
+        if (jointAttributes) {
+          lang.mixin(joint, jointAttributes);
+        }
+        this.world.CreateJoint(joint);
+      }
+    },
+
+
+    /**
+      * Add a prismatic joint between two bodies.
+      *
+      * This must be done outside of the update() iteration!
+      *
+      * @name Box#addPrismaticJoint
+      * @function
+      * @param {Number} body1Id The id of the first Entity/Body
+      * @param {Number} body2Id The id of the second Entity/Body
+      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
+      * @param {Object} [axisScale] An object with the x and y percentages of the axis to bind against.
+    */
+    addPrismaticJoint : function(body1Id, body2Id, jointAttributes, axisScale) {
+      var body1 = this.bodiesMap[body1Id];
+      var body2 = this.bodiesMap[body2Id];
+      if(body1 && body2){
+        var joint = new B2PrismaticJointDef();
+        var axis;
+        if(axisScale){
+          axis = new B2Vec2(axisScale.x, axisScale.y);
+        }else{
+          axis = new B2Vec2(1, 0);
+        }
+        joint.Initialize(body1, body2, body1.GetWorldCenter(), axis);
+
+        if (jointAttributes) {
+          lang.mixin(joint, jointAttributes);
+        }
+        this.world.CreateJoint(joint);
+      }
+    },
+
     beginContact: function(idA, idB){
 
     },
