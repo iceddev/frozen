@@ -32,17 +32,17 @@ define([
 
   // box2d globals
 
-  var B2Vec2 = Box2D.Common.Math.b2Vec2
-    , B2BodyDef = Box2D.Dynamics.b2BodyDef
-    , B2Body = Box2D.Dynamics.b2Body
-    , B2FixtureDef = Box2D.Dynamics.b2FixtureDef
-    , B2Fixture = Box2D.Dynamics.b2Fixture
-    , B2World = Box2D.Dynamics.b2World
-    , B2MassData = Box2D.Collision.Shapes.b2MassData
-    , B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-    , B2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    , B2DebugDraw = Box2D.Dynamics.b2DebugDraw
-    , B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
+  var B2Vec2 = Box2D.Common.Math.b2Vec2;
+  var B2BodyDef = Box2D.Dynamics.b2BodyDef;
+  var B2Body = Box2D.Dynamics.b2Body;
+  var B2FixtureDef = Box2D.Dynamics.b2FixtureDef;
+  var B2Fixture = Box2D.Dynamics.b2Fixture;
+  var B2World = Box2D.Dynamics.b2World;
+  var B2MassData = Box2D.Collision.Shapes.b2MassData;
+  var B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+  var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+  var B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+  var B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
   var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
   var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
@@ -54,7 +54,7 @@ define([
     fixturesMap: [],
     world: null,
     gravityX: 0,
-    gravityY: 10,
+    gravityY: 9.8,
     allowSleep: true,
     resolveCollisions: false,
     contactListener: null,
@@ -143,7 +143,6 @@ define([
     },
 
     setBodies: function(bodyEntities) {
-      console.log('bodies',bodyEntities);
       for(var id in bodyEntities) {
         var entity = bodyEntities[id];
         this.addBody(entity);
