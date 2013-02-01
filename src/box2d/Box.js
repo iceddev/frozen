@@ -151,6 +151,18 @@ define([
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
 
+
+      //these three props are for custom collision filtering
+      if(entity.hasOwnProperty('maskBits')){
+        fixDef.filter.maskBits = entity.maskBits;
+      }
+      if(entity.hasOwnProperty('categoryBits')){
+        fixDef.filter.categoryBits = entity.categoryBits;
+      }
+      if(entity.hasOwnProperty('groupIndex')){
+        fixDef.filter.groupIndex = entity.groupIndex;
+      }
+
       if(entity.staticBody){
         bodyDef.type =  B2Body.b2_staticBody;
       } else {
