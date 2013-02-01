@@ -7,8 +7,9 @@ define([
   './utils/degreesFromCenter',
   './utils/radiansFromCenter',
   './utils/scalePoints',
-  './utils/translatePoints'
-], function(averagePoints, degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints){
+  './utils/translatePoints',
+  './utils/insideCanvas'
+], function(averagePoints, degreesToRadians, radiansToDegrees, pointInPolygon, distance, degreesFromCenter, radiansFromCenter, scalePoints, translatePoints, insideCanvas){
 
   'use strict';
 
@@ -103,6 +104,16 @@ define([
       * @param {Object} offset Object with an x and y value
       *
     */
-    translatePoints: translatePoints
+    translatePoints: translatePoints,
+
+    /**
+     * Check whether a point is inside a canvas
+     * @name utils#insideCanvas
+     * @function
+     * @param {Object} point A point to test
+     * @param {Object} canvas Object with height and width properties
+     * @return {Boolean} True if inside canvas else false
+     */
+    insideCanvas: insideCanvas
   };
 });
