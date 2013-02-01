@@ -30,6 +30,10 @@ define([
     color: 'rgba(128,128,128,0.5)',
     strokeColor: '#000',
     hidden: false,
+    /* Used for collision filtering */
+    maskBits: null,
+    categoryBits: null,
+    groupIndex: null,
 
     update: function(state){
       lang.mixin(this, state);
