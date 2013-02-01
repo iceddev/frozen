@@ -1,22 +1,4 @@
 /**
-
- Copyright 2011 Luis Montes
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-**/
-
-/**
  * This Entity represents a Rectangle
  * @name RectangleEntity
  * @class RectangleEntity
@@ -37,6 +19,7 @@ define([
 
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
+        scale = scale || this.scale || 1;
         ctx.save();
         ctx.translate(this.x * scale, this.y * scale);
         ctx.rotate(this.angle);
@@ -66,7 +49,18 @@ define([
         this.halfWidth = this.halfWidth * scale;
         sup.apply(this, [scale]);
       };
-    })
+    }),
+
+    /**
+      * Checks if a given point is contained within this Rectangle.
+      *
+      * @name RectangleEntity#pointInShape
+      * @function
+      * @param {Object} point An object with x and y values.
+    */
+    pointInShape: function(point){
+      return ((point.x >= (this.x - this.halfWidth)) && (point.x <= (this.x + this.halfWidth)) && (point.y >= (this.y - this.halfHeight)) && (point.y <= (this.y + this.halfHeight)));
+    }
   });
 
 });

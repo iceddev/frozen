@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: MouseAction.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,38 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: MouseAction.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * A GameAction that handles Mouse events
+ * @name MouseAction
+ * @class MouseAction
+ * @extends {GameAction}
+ */
 
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  './GameAction'
+], function(dcl, Mixer, GameAction){
 
-    <h3> </h3>
+  'use strict';
 
+  return dcl([Mixer, GameAction], {
+    startPosition: null,
+    endPosition: null,
+    position: null
+  });
 
-
-
-
-
-
-
-
-    
-
-
-
-
-
+});</code></pre>
+        </article>
+    </section>
 
 
 

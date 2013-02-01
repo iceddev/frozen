@@ -9,7 +9,7 @@
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
 
@@ -61,32 +61,34 @@
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 3</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 1
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -128,7 +130,7 @@
     
     
     <div class="description">
-        Add an Entity to the box2d world which will internally be converted to a box2d body and fixture
+        Add an Entity to the box2d world which will internally be converted to a box2d body and fixture (auto scaled with Box's scale property if the entity hasn't been scaled yet)
     </div>
     
 
@@ -190,32 +192,34 @@
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 154</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 135
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -231,7 +235,7 @@
         
             
 <dt>
-    <h4 class="name" id="addRevoluteJoint"><span class="type-signature"></span>addRevoluteJoint<span class="signature">(body1Id, body2Id, jointAttributes)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addDistanceJoint"><span class="type-signature"></span>addDistanceJoint<span class="signature">(body1Id, body2Id, <span class="optional">jointAttributes</span>, <span class="optional">body1point</span>, <span class="optional">body2point</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -239,7 +243,7 @@
     
     
     <div class="description">
-        Add a revolute joint between two bodies at the center of the first body.
+        Add a distance joint between two bodies.
 
 This must be done outside of the update() iteration!
     </div>
@@ -262,6 +266,8 @@ This must be done outside of the update() iteration!
 		
 		<th>Type</th>
 		
+		
+		<th>Argument</th>
 		
 		
 		
@@ -288,6 +294,12 @@ This must be done outside of the update() iteration!
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
             
             
             
@@ -310,6 +322,12 @@ This must be done outside of the update() iteration!
             
             </td>
             
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
             
             
             
@@ -334,10 +352,80 @@ This must be done outside of the update() iteration!
             </td>
             
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
             
             
             
             <td class="description last">Any box2d jointAttributes you wish to mixin to the joint.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>body1point</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>body2point</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">An object with the x and y position of the location to create the joint on the second body. The default is the second body's center of mass.</td>
         </tr>
 	
 	
@@ -349,32 +437,462 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 407</li></ul></dd>
-	
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 454
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addPrismaticJoint"><span class="type-signature"></span>addPrismaticJoint<span class="signature">(body1Id, body2Id, <span class="optional">jointAttributes</span>, <span class="optional">axisScale</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Add a prismatic joint between two bodies.
+
+This must be done outside of the update() iteration!
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>body1Id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The id of the first Entity/Body</td>
+        </tr>
 	
 	
 	
+        <tr>
+            
+                <td class="name"><code>body2Id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The id of the second Entity/Body</td>
+        </tr>
 	
+	
+	
+        <tr>
+            
+                <td class="name"><code>jointAttributes</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Any box2d jointAttributes you wish to mixin to the joint.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>axisScale</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">An object with the x and y percentages of the axis to bind against.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 490
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addRevoluteJoint"><span class="type-signature"></span>addRevoluteJoint<span class="signature">(body1Id, body2Id, <span class="optional">jointAttributes</span>, <span class="optional">body1point</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Add a revolute joint between two bodies.
+
+This must be done outside of the update() iteration!
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>body1Id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The id of the first Entity/Body</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>body2Id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The id of the second Entity/Body</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>jointAttributes</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Any box2d jointAttributes you wish to mixin to the joint.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>body1point</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 424
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -508,32 +1026,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 326</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 312
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -667,32 +1187,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 286</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 272
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -826,32 +1348,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 306</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 292
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -985,32 +1509,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 266</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 252
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1122,32 +1648,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 346</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 332
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1185,32 +1713,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 99</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 81
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1298,32 +1828,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 362</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 362
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1434,32 +1966,149 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 235</li></ul></dd>
-	
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 221
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setGravity"><span class="type-signature"></span>setGravity<span class="signature">(vector)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the world's gravity
+
+This must be done outside of the update() iteration!
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
 	
 	
+        <tr>
+            
+                <td class="name"><code>vector</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">An object with x and y values in meters per second squared.</td>
+        </tr>
 	
 	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 348
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1593,32 +2242,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 250</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 236
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1752,32 +2403,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 219</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 205
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1815,32 +2468,34 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 74</li></ul></dd>
-	
     
     
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 56
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1929,32 +2584,150 @@ This must be done outside of the update() iteration!
 <dl class="details">
     
         
-	
-	
-	
+    
+    
+    
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Box.js, line 127</li></ul></dd>
-	
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 109
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="wakeUpBody"><span class="type-signature"></span>wakeUpBody<span class="signature">(bodyId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Wake up a body in the box2d world so that box2d will continue to run calculations on it.
+
+
+This must be done outside of the update() iteration!
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
 	
 	
+        <tr>
+            
+                <td class="name"><code>bodyId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The id of the Entity/Body</td>
+        </tr>
 	
 	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="f23f872e07.html">box2d/Box.js</a>, line 382
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
 </dl>
 
     
@@ -1989,7 +2762,7 @@ This must be done outside of the update() iteration!
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Wed Jan 02 2013 22:25:10 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jan 31 2013 01:13:21 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>
