@@ -434,6 +434,21 @@ define([
     },
 
     /**
+      * Remove a joint from the world.
+      *
+      * This must be done outside of the update() iteration, and BEFORE any bodies connected to the joint are removed!
+      *
+      * @name Box#destroyJoint
+      * @function
+      * @param {Object} joint The joint to be destroyed.
+    */
+    destroyJoint : function(joint) {
+      if(joint){
+        this.world.DestroyJoint(joint);
+      }
+    },
+
+    /**
       * Add a revolute joint between two bodies.
       *
       * This must be done outside of the update() iteration!
@@ -458,7 +473,7 @@ define([
         if (jointAttributes) {
           lang.mixin(joint, jointAttributes);
         }
-        this.world.CreateJoint(joint);
+        return this.world.CreateJoint(joint);
       }
 
     },
@@ -494,7 +509,7 @@ define([
         if (jointAttributes) {
           lang.mixin(joint, jointAttributes);
         }
-        this.world.CreateJoint(joint);
+        return this.world.CreateJoint(joint);
       }
     },
 
@@ -527,7 +542,7 @@ define([
         if (jointAttributes) {
           lang.mixin(joint, jointAttributes);
         }
-        this.world.CreateJoint(joint);
+        return this.world.CreateJoint(joint);
       }
     },
 
