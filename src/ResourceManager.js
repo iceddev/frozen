@@ -34,6 +34,7 @@ define([
     imageDir: null,
     soundDir: null,
     audioContext: audioContext,
+    html5AudioFallback: true,
     resourceList: {},
 
     /**
@@ -85,10 +86,12 @@ define([
         complete: false
       };
 
+      if(this.resourceList[filename]){
+        return this.resourceList[filename];
+      }
+
       if(this.audioContext){
-        if(this.resourceList[filename]){
-          return this.resourceList[filename];
-        }
+
 
         this.resourceList[filename] = soundObj;
 
@@ -113,6 +116,11 @@ define([
         };
         request.send();
 
+      }else if(this.html5AudioFallback && window.Audio){
+        soundObj.audio = new Audio();
+        soundObj.audio.preload = "auto";
+        soundObj.audio.src = filename;
+        soundObj.complete = true; //don't really have a reliable way to determine otherwise
       }
 
       return soundObj;
@@ -152,6 +160,10 @@ define([
           }catch(se){
             console.info('error playing sound',se);
           }
+        }
+      }else if(this.html5AudioFallback && window.Audio){
+        if(sound && sound.audio){
+          sound.audio.play();
         }
       }
     },
