@@ -91,8 +91,6 @@ define([
       }
 
       if(this.audioContext){
-
-
         this.resourceList[filename] = soundObj;
 
         //if the browser AudioContext, it's new enough for XMLHttpRequest
@@ -117,6 +115,7 @@ define([
         request.send();
 
       }else if(this.html5AudioFallback && window.Audio){
+        this.resourceList[filename] = soundObj;
         soundObj.audio = new Audio();
         soundObj.audio.preload = "auto";
         soundObj.audio.src = filename;
