@@ -5,10 +5,12 @@
  */
 
 define([
+  './sounds/Sound!',
   'dcl',
   'dcl/bases/Mixer',
-  './shims/AudioContext'
-], function(dcl, Mixer){
+  'dojo/_base/lang',
+  'dojo/on'
+], function(Sound, dcl, Mixer, lang, on){
 
   'use strict';
 
@@ -20,102 +22,108 @@ define([
     return joinedPath.replace(/\/{2,}/g, '/');
   }
 
-  var audioContext = null;
-  if(window.AudioContext){
-    audioContext = new window.AudioContext();
-  }else{
-    console.log('WebAudio not supported');
-  }
-
   return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundDir: null,
-    audioContext: audioContext,
     resourceList: {},
 
     /**
-      * Loads an image, and tracks if it has finished loading
+      * Loads an image (or a collection of images), and tracks if it has finished loading
       * @name ResourceManager#loadImage
       * @function
-      * @param {String} filename Filename of the image relative the Game's HTML page.
+      * @param {String|Array|Object} files Filename of the image relative the Game's HTML page.
+      * @returns {Image|Array|Object} Return type based on argument: Image if String, Array of Images if Array, or Object of key-Image pairs if Object
       *
     */
-    loadImage: function(filename){
-      filename = normalizePath(this.imageDir, filename);
-
-      //if we already have the image, just return it
-      if(this.resourceList[filename]){
-        return this.resourceList[filename].img;
+    loadImage: function(files){
+      var singleFile = false;
+      // Normalize arguments
+      if(!Array.isArray(files)){
+        if(typeof files === 'string'){
+          singleFile = true;
+          files = [files];
+        } else if(typeof files !== 'object'){
+          return;
+        }
       }
 
-      this.allLoaded = false;
+      for(var key in files){
+        if(!files.hasOwnProperty(key)){
+          continue;
+        }
+        var filename = normalizePath(this.imageDir, files[key]);
 
-      var img = new Image();
-      var imgWrapper = {
-        name: filename,
-        img: img,
-        complete: false
-      };
+        //if we already have the image, just return it
+        if(this.resourceList[filename]){
+          files[key] = this.resourceList[filename].img;
+          continue;
+        }
 
-      img.onload = function(){
-        imgWrapper.complete = true;
-      };
-      img.src = filename;
+        this.allLoaded = false;
 
-      this.resourceList[filename] = imgWrapper;
-      return img;
+        var img = new Image();
+        var imgWrapper = {
+          name: filename,
+          img: img,
+          complete: false
+        };
+
+        var imageComplete = lang.partial(function(imgWrapper, evt){
+          imgWrapper.complete = true;
+        }, imgWrapper);
+        on(img, 'load', imageComplete);
+        img.src = filename;
+
+        this.resourceList[filename] = imgWrapper;
+        files[key] = img;
+      }
+
+      return singleFile ? files[0] : files;
     },
 
     /**
-      * Loads an sound file, and tracks if it has finished loading
+      * Loads a sound file (or a collection of sound files), and tracks if it has finished loading
       * @name ResourceManager#loadSound
       * @function
-      * @param {String} filename Filename of the sound relative the Game's HTML page.
+      * @param {String|Array|Object} filename Filename of the sound relative the Game's HTML page.
+      * @returns {Sound Object|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
       *
     */
-    loadSound: function(filename){
-      filename = normalizePath(this.soundDir, filename);
-
-      var soundObj = {
-        name: filename,
-        buffer: null,
-        complete: false
-      };
-
-      if(this.audioContext){
-        if(this.resourceList[filename]){
-          return this.resourceList[filename];
+    loadSound: function(files){
+      var singleFile = false;
+      // Normalize arguments
+      if(!Array.isArray(files)){
+        if(typeof files === 'string'){
+          singleFile = true;
+          files = [files];
+        } else if(typeof files !== 'object'){
+          return;
         }
-
-        this.resourceList[filename] = soundObj;
-
-        //if the browser AudioContext, it's new enough for XMLHttpRequest
-        var request = new XMLHttpRequest();
-        request.open('GET', filename, true);
-        request.responseType = 'arraybuffer';
-
-        //TODO fix scope in onload callback
-        var audioContext = this.audioContext;
-        // Decode asynchronously
-        request.onload = function() {
-          audioContext.decodeAudioData(request.response,
-            function(buffer) {
-              soundObj.buffer = buffer;
-              soundObj.complete = true;
-            },
-            function(er){
-              console.info('error loading sound',er);
-            }
-          );
-        };
-        request.send();
-
       }
 
-      return soundObj;
+      for(var key in files){
+        if(!files.hasOwnProperty(key)){
+          continue;
+        }
+        var filename = normalizePath(this.soundDir, files[key]);
+
+        //if we already have the sound, just return it
+        if(this.resourceList[filename]){
+          files[key] = this.resourceList[filename];
+          continue;
+        }
+
+        this.allLoaded = false;
+
+        var sound = new Sound(filename);
+        this.resourceList[filename] = sound;
+
+        files[key] = sound;
+      }
+      return singleFile ? files[0] : files;
     },
 
     /**
@@ -129,29 +137,12 @@ define([
       *
     */
     playSound: function(sound, loop, noteOn, gain){
-      noteOn = noteOn || 0;
-      if(this.audioContext && sound){
-        var buffer = sound.buffer || sound;
-        if(buffer){
-          try{
-            var source = this.audioContext.createBufferSource(); // creates a sound source
-            source.buffer = buffer;                  // tell the source which sound to play
-            if(loop){
-              source.loop = true;
-            }
-            if(gain){
-              var gainNode = this.audioContext.createGainNode();
-              gainNode.gain.value = gain;
-              source.connect(gainNode);
-              gainNode.connect(this.audioContext.destination);
-            }else{
-              source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
-            }
-            source.noteOn(noteOn);                       // play the source now
-            return source;
-          }catch(se){
-            console.info('error playing sound',se);
-          }
+      if(sound){
+        if(loop){
+          sound.loop(gain);
+        } else {
+          noteOn = noteOn || 0;
+          sound.play(gain, noteOn);
         }
       }
     },
