@@ -29,6 +29,7 @@ define([
     staticBody: false,
     color: 'rgba(128,128,128,0.5)',
     strokeColor: '#000',
+    lineWidth: 1,
     hidden: false,
     /* Used for collision filtering */
     maskBits: null,
@@ -48,6 +49,8 @@ define([
     */
     draw: function(ctx, scale){
       scale = scale || this.scale || 1;
+      var ogLineWidth = ctx.lineWidth;
+      ctx.lineWidth = this.lineWidth;
       // black circle in entity's location
       ctx.fillStyle = this.strokeColor;
       ctx.beginPath();
@@ -63,6 +66,8 @@ define([
         ctx.closePath();
         ctx.fill();
       }
+
+      ctx.lineWidth = ogLineWidth;
     },
 
     /**
