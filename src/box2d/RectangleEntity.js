@@ -20,6 +20,8 @@ define([
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
+        var ogLineWidth = ctx.lineWidth;
+        ctx.lineWidth = this.lineWidth;
         ctx.save();
         ctx.translate(this.x * scale, this.y * scale);
         ctx.rotate(this.angle);
@@ -39,6 +41,7 @@ define([
           (this.halfHeight*2) * scale
         );
         ctx.restore();
+        ctx.lineWidth = ogLineWidth;
         sup.apply(this, [ctx, scale]);
       };
     }),

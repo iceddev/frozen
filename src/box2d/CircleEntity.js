@@ -25,6 +25,8 @@ define([
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
+        var ogLineWidth = ctx.lineWidth;
+        ctx.lineWidth = this.lineWidth;
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.strokeColor;
         ctx.beginPath();
@@ -45,6 +47,7 @@ define([
           ctx.stroke();
           ctx.restore();
         }
+        ctx.lineWidth = ogLineWidth;
         sup.apply(this, [ctx, scale]);
       };
     }),
