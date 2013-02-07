@@ -5,12 +5,12 @@
  */
 
 define([
+  './sounds/Sound!',
   'dcl',
   'dcl/bases/Mixer',
   'dojo/_base/lang',
-  'dojo/on',
-  './shims/AudioContext'
-], function(dcl, Mixer, lang, on){
+  'dojo/on'
+], function(Sound, dcl, Mixer, lang, on){
 
   'use strict';
 
@@ -22,20 +22,12 @@ define([
     return joinedPath.replace(/\/{2,}/g, '/');
   }
 
-  var audioContext = null;
-  if(window.AudioContext){
-    audioContext = new window.AudioContext();
-  }else{
-    console.log('WebAudio not supported');
-  }
-
   return dcl(Mixer, {
     imageCount: 0,
     loadedImages: 0,
     allLoaded: false,
     imageDir: null,
     soundDir: null,
-    audioContext: audioContext,
     resourceList: {},
 
     /**
@@ -118,46 +110,18 @@ define([
         }
         var filename = normalizePath(this.soundDir, files[key]);
 
-        var soundObj = {
-          name: filename,
-          buffer: null,
-          complete: false
-        };
-
-        if(this.audioContext){
-
-          //if we already have the image, just return it
-          if(this.resourceList[filename]){
-            files[key] = this.resourceList[filename];
-            continue;
-          }
-
-          this.allLoaded = false;
-
-          this.resourceList[filename] = soundObj;
-
-          var decodeAudioData = lang.partial(function(soundObj, audioContext, evt){
-            // Decode asynchronously
-            audioContext.decodeAudioData(this.response,
-              function(buffer){
-                soundObj.buffer = buffer;
-                soundObj.complete = true;
-              },
-              function(er){
-                console.info('error loading sound',er);
-              }
-            );
-          }, soundObj, this.audioContext);
-
-          //if the browser AudioContext, it's new enough for XMLHttpRequest
-          var request = new XMLHttpRequest();
-          request.open('GET', filename, true);
-          request.responseType = 'arraybuffer';
-
-          on(request, 'load', decodeAudioData);
-          request.send();
+        //if we already have the sound, just return it
+        if(this.resourceList[filename]){
+          files[key] = this.resourceList[filename];
+          continue;
         }
-        files[key] = soundObj;
+
+        this.allLoaded = false;
+
+        var sound = new Sound(filename);
+        this.resourceList[filename] = sound;
+
+        files[key] = sound;
       }
       return singleFile ? files[0] : files;
     },
@@ -173,29 +137,12 @@ define([
       *
     */
     playSound: function(sound, loop, noteOn, gain){
-      noteOn = noteOn || 0;
-      if(this.audioContext && sound){
-        var buffer = sound.buffer || sound;
-        if(buffer){
-          try{
-            var source = this.audioContext.createBufferSource(); // creates a sound source
-            source.buffer = buffer;                  // tell the source which sound to play
-            if(loop){
-              source.loop = true;
-            }
-            if(gain){
-              var gainNode = this.audioContext.createGainNode();
-              gainNode.gain.value = gain;
-              source.connect(gainNode);
-              gainNode.connect(this.audioContext.destination);
-            }else{
-              source.connect(this.audioContext.destination);       // connect the source to the context's destination (the speakers)
-            }
-            source.noteOn(noteOn);                       // play the source now
-            return source;
-          }catch(se){
-            console.info('error playing sound',se);
-          }
+      if(sound){
+        if(loop){
+          sound.loop(gain);
+        } else {
+          noteOn = noteOn || 0;
+          sound.play(gain, noteOn);
         }
       }
     },
