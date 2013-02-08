@@ -461,7 +461,7 @@ define([
 
     */
     addJoint : function(joint) {
-      if(joint && joint.id){
+      if(joint && joint.id && !this.jointsMap[joint.id]){
         var b2Joint = joint.createB2Joint(this);
         if(b2Joint){
           this.jointsMap[joint.id] = b2Joint;
