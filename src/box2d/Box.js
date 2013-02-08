@@ -23,16 +23,14 @@ define([
   var B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
   var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
   var B2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-  var B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
-  var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
-  var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
   return dcl(Mixer, {
     intervalRate: 60,
     adaptive: false,
-    bodiesMap: [],
-    fixturesMap: [],
-    world: null,
+    bodiesMap: null,
+    fixturesMap: null,
+    jointsMap : null,
+    b2World: null,
     gravityX: 0,
     gravityY: 9.8,
     allowSleep: true,
@@ -45,8 +43,11 @@ define([
       if(args && args.intervalRate){
         this.intervalRate = parseInt(args.intervalRate, 10);
       }
+      this.bodiesMap = {};
+      this.fixturesMap = {};
+      this.jointsMap = {};
 
-      this.world = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
+      this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
 
       if(this.resolveCollisions){
         this.addContactListener(this.contactListener || this);
@@ -67,12 +68,12 @@ define([
 
       var start = Date.now();
       if(millis){
-        this.world.Step(millis / 1000 /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
-        this.world.ClearForces();
+        this.b2World.Step(millis / 1000 /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.b2World.ClearForces();
       }else{
         var stepRate = (this.adaptive) ? (start - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
-        this.world.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
-        this.world.ClearForces();
+        this.b2World.Step(stepRate /* frame-rate */, 10 /* velocity iterations */, 10 /*position iterations*/);
+        this.b2World.ClearForces();
       }
 
       return (Date.now() - start);
@@ -85,7 +86,7 @@ define([
     */
     getState: function() {
       var state = {};
-      for (var b = this.world.GetBodyList(); b; b = b.m_next) {
+      for (var b = this.b2World.GetBodyList(); b; b = b.m_next) {
         if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() !== null) {
           state[b.GetUserData()] = {
             x: b.GetPosition().x,
@@ -175,7 +176,7 @@ define([
       bodyDef.angle = entity.angle;
       bodyDef.linearDamping = entity.linearDamping;
       bodyDef.angularDamping = entity.angularDamping;
-      var body = this.world.CreateBody(bodyDef);
+      var body = this.b2World.CreateBody(bodyDef);
 
 
       if (entity.radius) { //circle
@@ -367,7 +368,7 @@ define([
       * @param {Object} vector An object with x and y values in meters per second squared.
     */
     setGravity : function(vector) {
-      this.world.SetGravity(new B2Vec2(vector.x, vector.y));
+      this.b2World.SetGravity(new B2Vec2(vector.x, vector.y));
     },
 
 
@@ -385,7 +386,7 @@ define([
         if(this.fixturesMap[id]){
           this.bodiesMap[id].DestroyFixture(this.fixturesMap[id]);
         }
-        this.world.DestroyBody(this.bodiesMap[id]);
+        this.b2World.DestroyBody(this.bodiesMap[id]);
         //delete this.fixturesMap[id];
         delete this.bodiesMap[id];
       }
@@ -430,7 +431,7 @@ define([
                                impulse.normalImpulses[0]);
         };
       }
-      this.world.SetContactListener(listener);
+      this.b2World.SetContactListener(listener);
     },
 
     /**
@@ -440,110 +441,32 @@ define([
       *
       * @name Box#destroyJoint
       * @function
-      * @param {Object} joint The joint to be destroyed.
+      * @param {Number} jointId The id of joint to be destroyed.
     */
-    destroyJoint : function(joint) {
-      if(joint){
-        this.world.DestroyJoint(joint);
+    destroyJoint : function(jointId) {
+      if(this.jointsMap[jointId]){
+        this.b2World.DestroyJoint(this.jointsMap[jointId]);
       }
     },
 
     /**
-      * Add a revolute joint between two bodies.
+      * Add a joint to the box2d world.
       *
       * This must be done outside of the update() iteration!
       *
-      * @name Box#addRevoluteJoint
+      * @name Box#addJoint
       * @function
-      * @param {Number} body1Id The id of the first Entity/Body
-      * @param {Number} body2Id The id of the second Entity/Body
-      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
-      * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
+      * @param {Joint} A joint definition.
+
     */
-    addRevoluteJoint : function(body1Id, body2Id, jointAttributes, body1point) {
-      var body1 = this.bodiesMap[body1Id];
-      var body2 = this.bodiesMap[body2Id];
-      if(body1 && body2){
-        var joint = new B2RevoluteJointDef();
-        if(body1point){
-          joint.Initialize(body1, body2, new B2Vec2(body1point.x, body1point.y));
-        }else{
-          joint.Initialize(body1, body2, body1.GetWorldCenter());
+    addJoint : function(joint) {
+      if(joint && joint.id){
+        var b2Joint = joint.createB2Joint(this);
+        if(b2Joint){
+          this.jointsMap[joint.id] = b2Joint;
         }
-        if (jointAttributes) {
-          lang.mixin(joint, jointAttributes);
-        }
-        return this.world.CreateJoint(joint);
       }
 
-    },
-
-    /**
-      * Add a distance joint between two bodies.
-      *
-      * This must be done outside of the update() iteration!
-      *
-      * @name Box#addDistanceJoint
-      * @function
-      * @param {Number} body1Id The id of the first Entity/Body
-      * @param {Number} body2Id The id of the second Entity/Body
-      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
-      * @param {Object} [body1point] An object with the x and y position of the location to create the joint on the first body. The default is the first body's center of mass.
-      * @param {Object} [body2point] An object with the x and y position of the location to create the joint on the second body. The default is the second body's center of mass.
-    */
-    addDistanceJoint : function(body1Id, body2Id, jointAttributes, body1point, body2point) {
-      var body1 = this.bodiesMap[body1Id];
-      var body2 = this.bodiesMap[body2Id];
-      if(body1 && body2){
-        if(body1point){
-          body1point = new B2Vec2(body1point.x, body1point.y);
-        }
-        if(body2point){
-          body2point = new B2Vec2(body2point.x, body2point.y);
-        }
-        var vec1 = body1point || body1.GetWorldCenter();
-        var vec2 = body2point || body2.GetWorldCenter();
-        var joint = new B2DistanceJointDef();
-        joint.Initialize(body1, body2, vec1, vec2);
-
-        if (jointAttributes) {
-          lang.mixin(joint, jointAttributes);
-        }
-        return this.world.CreateJoint(joint);
-      }
-    },
-
-
-    /**
-      * Add a prismatic joint between two bodies.
-      *
-      * This must be done outside of the update() iteration!
-      *
-      * @name Box#addPrismaticJoint
-      * @function
-      * @param {Number} body1Id The id of the first Entity/Body
-      * @param {Number} body2Id The id of the second Entity/Body
-      * @param {Object} [jointAttributes] Any box2d jointAttributes you wish to mixin to the joint.
-      * @param {Object} [axisScale] An object with the x and y percentages of the axis to bind against.
-    */
-    addPrismaticJoint : function(body1Id, body2Id, jointAttributes, axisScale) {
-      var body1 = this.bodiesMap[body1Id];
-      var body2 = this.bodiesMap[body2Id];
-      if(body1 && body2){
-        var joint = new B2PrismaticJointDef();
-        var axis;
-        if(axisScale){
-          axis = new B2Vec2(axisScale.x, axisScale.y);
-        }else{
-          axis = new B2Vec2(1, 0);
-        }
-        joint.Initialize(body1, body2, body1.GetWorldCenter(), axis);
-
-        if (jointAttributes) {
-          lang.mixin(joint, jointAttributes);
-        }
-        return this.world.CreateJoint(joint);
-      }
     },
 
     beginContact: function(idA, idB){
