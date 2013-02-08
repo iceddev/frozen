@@ -93,9 +93,12 @@ var profile = (function(){
           'frozen/shims/RAF',
           'frozen/Sprite',
           'frozen/utils',
+          'frozen/utils/parseString',
           'frozen/sounds/Sound',
           'frozen/sounds/WebAudio',
           'frozen/sounds/HTML5Audio',
+          'frozen/plugins/loadImage',
+          'frozen/plugins/loadSound',
           'dojo/keys',
           'dojo/_base/declare' // Legacy - TODO: remove in next version bump
         ],

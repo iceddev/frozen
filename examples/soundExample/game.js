@@ -1,21 +1,20 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
+require([
+  'frozen/GameCore',
+  'frozen/ResourceManager',
+  'dojo/keys',
+  'frozen/plugins/loadImage!images/background.png',
+  'frozen/plugins/loadImage!images/nyan.png',
+  'frozen/plugins/loadSound!sounds/yipee.wav'
+], function(GameCore, ResourceManager, keys, backImg, nyan, yipee){
 
   var x = 100;
   var y = 100;
   var speed = 2.5;
 
-  var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
-  var nyan = rm.loadImage('images/nyan.png');
-  var yipee = rm.loadSound('sounds/yipee.wav');
-
-  console.log(keys);
-
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
-    resourceManager: rm,
     initInput: function(im){ //im = this.inputManager
       //tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);
@@ -48,7 +47,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
 
       //.play sounds with the space bar !
       if(im.keyActions[keys.SPACE].getAmount()){
-        rm.playSound(yipee);
+        yipee.play();
       }
 
       // move to the mouse's location
