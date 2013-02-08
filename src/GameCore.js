@@ -184,6 +184,7 @@ define([
         this.handleInput(this.inputManager,this.elapsedTime);
         if(!this.paused){
           // update
+          this.preUpdate(this.elapsedTime);
           this.update(this.elapsedTime);
         }
         // draw the screen
@@ -213,6 +214,15 @@ define([
       this.gameLoop();
       window.requestAnimationFrame(this.loopRunner);
     },
+
+    /**
+     * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
+     * @name GameCore#preUpdate
+     * @function
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+
+    preUpdate: function(elapsedTime) {},
 
     /**
      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
