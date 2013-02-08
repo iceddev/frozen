@@ -45,7 +45,7 @@ define([
       * @param {Box} the box in which to create the joint.
     */
     createB2Joint: function(box){
-      if(box && box.bodiesMap && box.b2World){
+      if(box && box.bodiesMap && box.b2World && box.jointsMap && !box.jointsMap[this.id]){
         var body1 = box.bodiesMap[this.bodyId1];
         var body2 = box.bodiesMap[this.bodyId2];
         if(body1 && body2){

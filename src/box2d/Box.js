@@ -446,6 +446,7 @@ define([
     destroyJoint : function(jointId) {
       if(this.jointsMap[jointId]){
         this.b2World.DestroyJoint(this.jointsMap[jointId]);
+        delete this.jointsMap[jointId];
       }
     },
 
