@@ -49,7 +49,11 @@ define([
       audio.volume = volume || 1;
       audio.loop = loop;
       audio.preload = 'auto';
-      audio.src = this.name;
+      if(audio.mozLoadFrom){
+        audio.mozLoadFrom(this.audio);
+      } else {
+        audio.src = this.name;
+      }
       return audio;
     }
   });
