@@ -99,8 +99,7 @@ var profile = (function(){
           'frozen/sounds/HTML5Audio',
           'frozen/plugins/loadImage',
           'frozen/plugins/loadSound',
-          'dojo/keys',
-          'dojo/_base/declare' // Legacy - TODO: remove in next version bump
+          'dojo/keys'
         ],
         customBase: true,
         boot: true
