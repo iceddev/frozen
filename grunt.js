@@ -39,7 +39,6 @@ module.exports = function(grunt) {
         noarg: true,
         undef: true,
         boss: true,
-        expr: true, // Point in poly
         es5: true,
         strict: true,
         trailing: true,
