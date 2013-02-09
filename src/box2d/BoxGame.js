@@ -5,6 +5,8 @@ define([
   'dcl/bases/Mixer'
 ], function(GameCore, Box, dcl, Mixer){
 
+  'use strict';
+
   return dcl([GameCore, Mixer], {
     box: null,
     boxUpdating: true,
