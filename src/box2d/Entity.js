@@ -27,8 +27,8 @@ define([
     angularVelocity: 0,
     angularDamping: 0,
     staticBody: false,
-    color: 'rgba(128,128,128,0.5)',
-    strokeColor: '#000',
+    fillStyle: 'rgba(128,128,128,0.5)',
+    strokeStyle: '#000',
     lineWidth: 1,
     hidden: false,
     /* Used for collision filtering */
@@ -52,7 +52,7 @@ define([
       var ogLineWidth = ctx.lineWidth;
       ctx.lineWidth = this.lineWidth;
       // black circle in entity's location
-      ctx.fillStyle = this.strokeColor;
+      ctx.fillStyle = this.strokeStyle;
       ctx.beginPath();
       ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
       ctx.closePath();

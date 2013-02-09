@@ -36,8 +36,8 @@ define([
         ctx.translate(this.x * scale, this.y * scale);
         ctx.rotate(this.angle);
         ctx.translate(-(this.x) * scale, -(this.y) * scale);
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.strokeColor;
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
 
         for(var j = 0; j < this.polys.length; j++){
           ctx.beginPath();

@@ -27,8 +27,8 @@ define([
         scale = scale || this.scale || 1;
         var ogLineWidth = ctx.lineWidth;
         ctx.lineWidth = this.lineWidth;
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.strokeColor;
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
         ctx.beginPath();
         ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, true);
         ctx.closePath();

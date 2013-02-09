@@ -26,8 +26,8 @@ define([
         ctx.translate(this.x * scale, this.y * scale);
         ctx.rotate(this.angle);
         ctx.translate(-(this.x) * scale, -(this.y) * scale);
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.strokeColor;
+        ctx.fillStyle = this.fillStyle;
+        ctx.strokeStyle = this.strokeStyle;
         ctx.fillRect(
           (this.x-this.halfWidth) * scale,
           (this.y-this.halfHeight) * scale,
