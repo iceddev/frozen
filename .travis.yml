@@ -4,4 +4,7 @@ node_js:
   - 0.8
 notifications:
   email:
-    - info@iceddev.com
+    recipients:
+      - info@iceddev.com
+    on_success: always
+    on_failure: always
