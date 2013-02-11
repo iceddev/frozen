@@ -2,6 +2,9 @@ node_modules/
 libs/
 deps/
 
+# Don't commit SpecRunner that grunt-jasmine-runner generates in base of project
+_SpecRunner.html
+
 # During Development of new version, ignore dist/
 # TODO: remove & build before release
 dist/

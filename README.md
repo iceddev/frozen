@@ -1,6 +1,8 @@
 Frozen is an open source HTML5 game engine.
 ===========================================
 
+[![build status](https://secure.travis-ci.org/iceddev/frozen.png)](http://travis-ci.org/iceddev/frozen)
+
 ## Examples
 
 Examples can be found at https://github.com/iceddev/frozen/tree/js2.0/examples

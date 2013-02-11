@@ -6,27 +6,38 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     lint: {
-      files: ['grunt.js', 'src/**/*.js', 'test/**/*.js']
-    },
-    test: {
-      files: ['test/**/*.js']
+      files: ['grunt.js', 'src/**/*.js', 'specs/**/*.js']
     },
     watch: {
       files: '<config:lint.files>',
-      tasks: 'lint test'
+      tasks: 'lint jasmine'
     },
     dojo: {
       frozen: {
         dojo: 'deps/dojo/dojo.js',
         profile: 'frozen.profile.js',
         'package': './',
+        dojoConfig: 'dojoConfig.js',
         cwd: './'
       }
     },
-    jsdoc : {
-      dist : {
+    jsdoc: {
+      dist: {
         src: ['src/**/*.js'],
         dest: 'doc'
+      }
+    },
+    jasmine: {
+      src: 'src/**/*.js',
+      specs: 'specs/**/*Spec.js',
+      amd: true,
+      helpers: [
+        'dojoConfig.js',
+        'deps/dojo/dojo.js'
+      ],
+      timeout: 10000,
+      phatomjs: {
+        'ignore-ssl-errors': true
       }
     },
     jshint: {
@@ -50,7 +61,10 @@ module.exports = function(grunt) {
       globals: {
         define: true,
         require: true,
-        Box2D: true
+        Box2D: true,
+        expect: true,
+        describe: true,
+        it: true
       }
     }
   });
@@ -58,6 +72,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-dojo');
 
   grunt.loadNpmTasks('grunt-jsdoc-plugin');
+
+  grunt.loadNpmTasks('grunt-jasmine-runner');
 
   // Default task.
   grunt.registerTask('default', 'lint test');
