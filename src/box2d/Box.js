@@ -462,6 +462,12 @@ define([
     */
     addJoint : function(joint) {
       if(joint && joint.id && !this.jointsMap[joint.id]){
+
+        if(!joint.alreadyScaled && joint.scaleJointLocation){
+          joint.scaleJointLocation(1 / this.scale);
+          joint.scale = this.scale;
+        }
+
         var b2Joint = joint.createB2Joint(this);
         if(b2Joint){
           this.jointsMap[joint.id] = b2Joint;
