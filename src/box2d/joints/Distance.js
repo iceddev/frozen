@@ -9,8 +9,9 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'dojo/_base/lang'
-], function(dcl, Mixer, lang){
+  'dojo/_base/lang',
+  './Joint'
+], function(dcl, Mixer, lang, Joint){
 
   'use strict';
 
@@ -18,7 +19,7 @@ define([
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
 
-  return dcl(Mixer, {
+  return dcl([Mixer, Joint], {
     bodyPoint2: null,
 
     /**
@@ -33,8 +34,8 @@ define([
           this.bodyPoint2.x = this.bodyPoint2.x * scale;
           this.bodyPoint2.y = this.bodyPoint2.y * scale;
           this.alreadyScaled = true;
-          sup.apply(this, [scale]);
         }
+        sup.apply(this, [scale]);
       };
     }),
 

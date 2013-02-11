@@ -9,8 +9,9 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'dojo/_base/lang'
-], function(dcl, Mixer, lang){
+  'dojo/_base/lang',
+  './Joint'
+], function(dcl, Mixer, lang, Joint){
 
   'use strict';
 
@@ -18,7 +19,7 @@ define([
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
-  return dcl(Mixer, {
+  return dcl([Mixer, Joint], {
     axisScale: null,
 
     /**
