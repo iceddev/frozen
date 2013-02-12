@@ -1,4 +1,4 @@
-define(function(lang){
+define(function(){
 
   'use strict';
 
