@@ -2,10 +2,11 @@
   "name": "frozen",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt-dojo": "0.1.2",
+    "grunt-dojo": "~0.1.2",
     "grunt-jsdoc-plugin": "0.1.4",
     "volo": "0.2.7",
-    "grunt": "0.3.17"
+    "grunt": "0.3.17",
+    "grunt-jasmine-runner": "~0.6.0"
   },
   "volo": {
     "baseUrl": "deps",
@@ -17,7 +18,8 @@
     }
   },
   "scripts": {
-    "install": "volo add"
+    "install": "volo add",
+    "test": "grunt jasmine"
   },
   "dojoBuild": "frozen.profile.js"
 }
