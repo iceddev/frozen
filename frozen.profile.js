@@ -16,12 +16,6 @@ var profile = (function(){
 
     dojoBootText: "(function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();",
 
-    packages: [
-      { name: 'dojo', location: 'deps/dojo' },
-      { name: 'dcl', location: 'deps/dcl', main: 'dcl' },
-      { name: 'frozen', location: './src', main: 'GameCore' }
-    ],
-
     defaultConfig: {
       hasCache:{
         "dojo-built": 1,
