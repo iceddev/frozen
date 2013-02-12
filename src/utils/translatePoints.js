@@ -1,30 +1,32 @@
-define([
-  'dojo/_base/lang'
-], function(lang){
+/*jshint eqnull:true */
+define(function(){
 
   'use strict';
 
-  var translatePoints = function(points, translation){
-    if(lang.isArray(points)){
+  function translatePoints(points, translation){
+    if(Array.isArray(points)){
       var newPoints = [];
+      // TODO: move this to a faster forEach, possibly lo-dash's
       points.forEach(function(point){
         newPoints.push(translatePoints(point, translation));
       });
       points = newPoints;
-    }else{
-      points = {x: points.x, y: points.y};
+    } else {
+      points = {
+        x: points.x,
+        y: points.y
+      };
 
-      if(translation.hasOwnProperty('x')){
-        points.x+= translation.x;
+      if(translation.x != null){
+        points.x += translation.x;
       }
 
-      if(translation.hasOwnProperty('y')){
-        points.y+= translation.y;
+      if(translation.y != null){
+        points.y += translation.y;
       }
-
     }
     return points;
-  };
+  }
 
   return translatePoints;
 
