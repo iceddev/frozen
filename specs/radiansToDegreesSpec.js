@@ -5,7 +5,7 @@ define([
   'use strict';
 
 
-  describe('Degrees To Radians', function(){
+  describe('Radians To Degrees', function(){
     it('should return the value of 180 degrees', function(){
       var angle = radiansToDegrees(Math.PI);
       expect(angle).toEqual(180);
