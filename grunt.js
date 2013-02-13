@@ -64,7 +64,13 @@ module.exports = function(grunt) {
         Box2D: true,
         expect: true,
         describe: true,
-        it: true
+        it: true,
+        beforeEach: true,
+        afterEach: true,
+        spyOn: true,
+        runs: true,
+        waitsFor: true,
+        jasmine: true
       }
     }
   });

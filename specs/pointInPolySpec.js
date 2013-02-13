@@ -4,9 +4,10 @@ define([
 
   'use strict';
 
-  var points = [{"x":167,"y":181},{"x":168,"y":180},{"x":255,"y":124},{"x":298,"y":173},{"x":245,"y":262},{"x":150,"y":242}];
-
   describe('Point In Polygon', function(){
+
+    var points = [{"x":167,"y":181},{"x":168,"y":180},{"x":255,"y":124},{"x":298,"y":173},{"x":245,"y":262},{"x":150,"y":242}];
+
     it('returns true when given point is within set of points forming a polygon', function(){
       var point = {x:203, y:216};
       var inPoly = pointInPoly(point, points);
