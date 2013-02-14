@@ -14,6 +14,7 @@ define([
 
   'use strict';
 
+  // TODO: move this to its own module for unit testing?
   function normalizePath(baseDir, path){
     var joinedPath = path;
     if(baseDir){
