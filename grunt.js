@@ -70,7 +70,9 @@ module.exports = function(grunt) {
         spyOn: true,
         runs: true,
         waitsFor: true,
-        jasmine: true
+        jasmine: true,
+        xdescribe: true,
+        xit: true
       }
     }
   });
