@@ -19,7 +19,7 @@ define([
     });
 
     it('check for exception if missing an argument', function(){
-      expect(function(){insideCanvas(inPoint);}).toThrow('\'undefined\' is not an object (evaluating \'canvas.width\')');
+      expect(function(){insideCanvas(inPoint);}).toThrow();
     });
 
     it('check if for invalid types passed in', function(){

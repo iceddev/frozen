@@ -25,7 +25,7 @@ define([
 
     it('should throw parse error if passed a string that starts and ends with {} and cannot be converted to parseable JSON', function(){
       var string = '{someFilename.jpg}';
-      expect(function(){ parseString(string); }).toThrow('Unable to parse JSON string');
+      expect(function(){ parseString(string); }).toThrow();
     });
 
     it('should not add quotes around any URI, such as http:// or git://', function(){

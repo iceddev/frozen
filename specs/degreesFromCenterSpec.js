@@ -45,7 +45,7 @@ define([
 
 
     it('check the angle in degrees from a null point', function(){
-      expect(function(){degreesFromCenter(origin, null);}).toThrow('\'null\' is not an object (evaluating \'pt.x\')');
+      expect(function(){degreesFromCenter(origin, null);}).toThrow();
     });
 
 

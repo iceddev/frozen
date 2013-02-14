@@ -16,7 +16,7 @@ define([
     });
 
     it('should throw an exception if point is null', function(){
-      expect(function(){averagePoints(null);}).toThrow('\'null\' is not an object (evaluating \'points.forEach\')');
+      expect(function(){averagePoints(null);}).toThrow();
     });
 
     it('should return NaN for x and y on an empty array', function(){

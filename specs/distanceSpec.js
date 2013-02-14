@@ -20,7 +20,7 @@ define([
     });
 
     it('should throw an exception with a missing arugments', function(){
-      expect(function(){distance(pt1);}).toThrow('\'undefined\' is not an object (evaluating \'p2.x\')');
+      expect(function(){distance(pt1);}).toThrow();
     });
 
     it('should return NaN on invalid arument types', function(){

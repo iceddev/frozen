@@ -33,7 +33,7 @@ define([
     });
 
     it('check for error when no arguments passed in', function(){
-      expect(function(){translatePoints();}).toThrow('\'undefined\' is not an object (evaluating \'points.x\')');
+      expect(function(){translatePoints();}).toThrow();
     });
 
     it('check a new object is returned from function', function(){

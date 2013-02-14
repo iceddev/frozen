@@ -35,7 +35,7 @@ define([
     });
 
     it('check for error when no arguments passed in', function(){
-      expect(function(){scalePoints();}).toThrow('\'undefined\' is not an object (evaluating \'points.x\')');
+      expect(function(){scalePoints();}).toThrow();
     });
 
     it('check a new object is returned from function', function(){

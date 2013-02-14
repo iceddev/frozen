@@ -45,7 +45,7 @@ define([
 
 
     it('check the angle in radians from a null point', function(){
-      expect(function(){radiansFromCenter(origin, null);}).toThrow('\'null\' is not an object (evaluating \'pt.x\')');
+      expect(function(){radiansFromCenter(origin, null);}).toThrow();
     });
 
 
