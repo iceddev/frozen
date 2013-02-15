@@ -2,6 +2,19 @@
  * The GameCore class provides the base to build games on.
  * @name GameCore
  * @class GameCore
+ * @property {Object} statics A map of static constants for internal use
+ * @property {Boolean} isRunning Whether or not the game should be running its loop
+ * @property {String} canvasId The id of the canvas element to use render the game on
+ * @property {Number} maxStep Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
+ * @property {String} contextType The type of context to request from the canvas.  2d or 3d
+ * @property {Number} height The height of the Game and canvas
+ * @property {Number} width The width of the Game and canvas
+ * @property {ResourceManager} resourceManager The ResourceManager to be used for game
+ * @property {InputManager} inputManager The InputManager to be used for game
+ * @property {String} loadingForeground The style to be used for the foreground while game resources are loading
+ * @property {String} loadingBackground The style to be used for the background while game resources are loading
+ * @property {String} gameAreaId The id of a DOM element that contains the game's canvas
+ * @property {Number} canvasPercentage The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
  * @example
  * var myGame = new GameCore({
  *   canvasId: 'myCanvas',
@@ -36,7 +49,7 @@ define([
     },
     isRunning: false,
     canvasId: null,
-    maxStep: 40, //max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
+    maxStep: 40,
     contextType: '2d',
     height: 0,
     width: 0,

@@ -2,6 +2,12 @@
  * Represents a series of frames that can be rendered as an animation.
  * @name Animation
  * @class Animation
+ * @property {Number}  currFrameIndex The index of the current frame being used to render this Animation
+ * @property {Number}  animTime The current number of milliseconds that this animation has been running
+ * @property {Number}  totalDuration The total number of milliseconds for a complete cycle
+ * @property {Number}  height The height in pixels
+ * @property {Number}  width The width in pixels
+ * @property {Image}  image The image to render
  */
 
 define([

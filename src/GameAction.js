@@ -2,6 +2,11 @@
  * The GameAction handles DOM events for use in games.
  * @name GameAction
  * @class GameAction
+ * @property {String}  name A name to reference the GameAction with
+ * @property {Number}  behavior whether or not to detect only the intial press of the game action
+ * @property {Number}  amount How many times the GameAction has been pressed
+ * @property {Number}  state The current state of the GameAction
+ * @property {Object}  statics A map of static constants for internal use
  */
 
 define([

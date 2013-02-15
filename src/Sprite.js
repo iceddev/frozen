@@ -2,6 +2,12 @@
  * The Sprite class represents a simple animated character for a game
  * @name Sprite
  * @class Sprite
+ * @property {Number} x The x position of the sprite in pixels
+ * @property {Number} y The y position of the sprite in pixels
+ * @property {Number} dx The x component of the velocity in pixels per second
+ * @property {Number} dy The y component of the velocity in pixels per second
+ * @property {String} dx The name of this Sprite
+ * @property {Number} collisionRadius The radius of this sprite in pixels for simple collision detection
  */
 
 define([

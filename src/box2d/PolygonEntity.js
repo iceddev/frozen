@@ -3,6 +3,7 @@
  * @name PolygonEntity
  * @class PolygonEntity
  * @extends Entity
+ * @property {Array} points An array of objects that have x and y values.
 */
 
 define([

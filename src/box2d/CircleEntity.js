@@ -3,6 +3,7 @@
  * @name CircleEntity
  * @class CircleEntity
  * @extends Entity
+ * @property {Number} radius The radius of this circle.
  */
 
 define([

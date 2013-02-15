@@ -9,7 +9,7 @@
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
 
@@ -61,34 +61,198 @@
 <dl class="details">
     
         
-    
-    
-    
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
 
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>imageCount</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The number of images requested</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>loadedImages</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The number of images loaded</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>allLoaded</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Whether all the resources have been loaded</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>imageDir</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The directory to load images from</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>soundDir</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The directory to load sounds from</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>resourceList</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">A map of all the resources by their URLs</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 1</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 1
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -144,34 +308,32 @@
 <dl class="details">
     
         
-    
-    
-    
+	
+	
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 177</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 179
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -187,7 +349,7 @@
         
             
 <dt>
-    <h4 class="name" id="loadImage"><span class="type-signature"></span>loadImage<span class="signature">(filename)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadImage"><span class="type-signature"></span>loadImage<span class="signature">(files)</span><span class="type-signature"> &rarr; {Image|Array|Object}</span></h4>
     
     
 </dt>
@@ -195,7 +357,7 @@
     
     
     <div class="description">
-        Loads an image, and tracks if it has finished loading
+        Loads an image (or a collection of images), and tracks if it has finished loading
     </div>
     
 
@@ -229,13 +391,19 @@
 	
         <tr>
             
-                <td class="name"><code>filename</code></td>
+                <td class="name"><code>files</code></td>
             
             
             <td class="type">
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
 
 
             
@@ -257,34 +425,32 @@
 <dl class="details">
     
         
-    
-    
-    
+	
+	
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 40</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 39
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -293,6 +459,34 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Return type based on argument: Image if String, Array of Images if Array, or Object of key-Image pairs if Object
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Image</span>
+|
+
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -300,7 +494,7 @@
         
             
 <dt>
-    <h4 class="name" id="loadSound"><span class="type-signature"></span>loadSound<span class="signature">(filename)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadSound"><span class="type-signature"></span>loadSound<span class="signature">(filename)</span><span class="type-signature"> &rarr; {Sound Object|Array|Object}</span></h4>
     
     
 </dt>
@@ -308,7 +502,7 @@
     
     
     <div class="description">
-        Loads an sound file, and tracks if it has finished loading
+        Loads a sound file (or a collection of sound files), and tracks if it has finished loading
     </div>
     
 
@@ -349,6 +543,12 @@
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
 
 
             
@@ -370,34 +570,32 @@
 <dl class="details">
     
         
-    
-    
-    
+	
+	
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 94</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 72
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -406,6 +604,34 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Sound Object</span>
+|
+
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -584,34 +810,32 @@
 <dl class="details">
     
         
-    
-    
-    
+	
+	
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 136</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 121
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -649,34 +873,32 @@
 <dl class="details">
     
         
-    
-    
-    
+	
+	
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 157</li></ul></dd>
+	
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ResourceManager.js.html">ResourceManager.js</a>, line 159
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
 </dl>
 
     
@@ -705,13 +927,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jan 31 2013 01:13:22 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Fri Feb 15 2013 14:38:45 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

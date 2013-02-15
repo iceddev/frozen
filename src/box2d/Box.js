@@ -2,6 +2,18 @@
  * This wraps the box2d world that contains bodies, shapes, and performs the physics calculations.
  * @name Box
  * @class Box
+ * @property {Number} intervalRate The number of cycles per second expected in update calcuations
+ * @property {Boolean} adaptive Whether or not to try to compensate calculations based on performance
+ * @property {Object} bodiesMap A map of the bodies in the box2d world referenced by their given userData
+ * @property {Object} fixturesMap A map of the fixtures in the box2d world referenced by their given userData
+ * @property {Object} jointsMap A map of the joints in the box2d world referenced by their given userData
+ * @property {Object} b2World The instance of the Box2D.Dynamics.b2World world class that the bodies, fixtures, and joints are used in.
+ * @property {Number} gravityX The x component of the b2World's gravity in meters/second squared
+ * @property {Number} gravityY The y component of the b2World's gravity in meters/second squared
+ * @property {Boolean} allowSleep Allow box2d to skip physics calculations on bodies at rest for performance
+ * @property {Boolean} resolveCollisions Whether to add a listener to collision events. Default behavior adds collision data to entities on update cycle
+ * @property {Object} contactListener A contact listener for callbacks on collision events. Default is this box itself.
+ * @property {Number} scale The number of pixels that represnt one meter in the box2d world.
  */
 
 define([

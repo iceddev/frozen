@@ -2,6 +2,15 @@
  * The InputManager handles DOM events for use in games.
  * @name InputManager
  * @class InputManager
+ * @property {Array} keyActions An array of keyActions being listened for
+ * @property {MouseAction} mouseAction The MouseAction to keep track of the mouse's state
+ * @property {MouseAction} touchAction The MouseAction to keep track of touch events
+ * @property {Canvas} canvas The HTML5 canvas on which to listen for events
+ * @property {Boolean} handleMouse Whether or not to listen for mouse events
+ * @property {Boolean} handleTouch Whether or not to listen for touch events
+ * @property {Boolean} handleKeys Whether or not to listen for keyboard events
+ * @property {Object} gameArea The DOM element that contains the game's canvas
+ * @property {Number} canvasPercentage he percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
  */
 
 define([

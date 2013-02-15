@@ -2,6 +2,12 @@
  * The ResourceManager handles DOM events for use in games.
  * @name ResourceManager
  * @class ResourceManager
+ * @property {Number} imageCount The number of images requested
+ * @property {Number} loadedImages The number of images loaded
+ * @property {Boolean} allLoaded Whether all the resources have been loaded
+ * @property {String} imageDir The directory to load images from
+ * @property {String} soundDir The directory to load sounds from
+ * @property {Object} resourceList A map of all the resources by their URLs
  */
 
 define([

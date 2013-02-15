@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: GameCore</title>
+    <title>JSDoc: Class: BoxGame</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: GameCore</h1>
+    <h1 class="page-title">Class: BoxGame</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    GameCore
+    BoxGame
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="GameCore"><span class="type-signature"></span>new GameCore<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BoxGame"><span class="type-signature"></span>new BoxGame<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        The GameCore class provides the base to build games on.
+        This is a convenience object that allows for quickly creating a box2d based game.
     </div>
     
 
@@ -87,13 +87,13 @@
 	
         <tr>
             
-                <td class="name"><code>statics</code></td>
+                <td class="name"><code>box</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type"><a href="Box.html">Box</a></span>
 
 
             
@@ -103,14 +103,14 @@
             
             
             
-            <td class="description last">A map of static constants for internal use</td>
+            <td class="description last">The instance of Box used for this game.</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>isRunning</code></td>
+                <td class="name"><code>boxUpdating</code></td>
             
             
             <td class="type">
@@ -126,20 +126,20 @@
             
             
             
-            <td class="description last">Whether or not the game should be running its loop</td>
+            <td class="description last">Whether the box should perform calculations during its update cycle</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>canvasId</code></td>
+                <td class="name"><code>entities</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">Object</span>
 
 
             
@@ -149,237 +149,7 @@
             
             
             
-            <td class="description last">The id of the canvas element to use render the game on</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>maxStep</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>contextType</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The type of context to request from the canvas.  2d or 3d</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>height</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The height of the Game and canvas</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>width</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The width of the Game and canvas</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>resourceManager</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="ResourceManager.html">ResourceManager</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The ResourceManager to be used for game</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>inputManager</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="InputManager.html">InputManager</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The InputManager to be used for game</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>loadingForeground</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The style to be used for the foreground while game resources are loading</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>loadingBackground</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The style to be used for the background while game resources are loading</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>gameAreaId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The id of a DOM element that contains the game's canvas</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>canvasPercentage</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element</td>
+            <td class="description last">A map of Entity objects that have are added to the Box</td>
         </tr>
 	
 	
@@ -406,7 +176,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 1</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>BoxGame.js, line 1</li></ul></dd>
 	
     
     
@@ -424,27 +194,17 @@
     
     
     
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>var myGame = new GameCore({
-  canvasId: 'myCanvas',
-  update: function(millis){
-    // do updating of game state
-  },
-  draw: function(context){
-    // do drawing of the game
-  }
-});
-
-//start the game
-myGame.run();</code></pre>
-
-    
 </dd>
 
     
     </div>
     
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="GameCore.html">GameCore</a></li>
+        </ul>
     
     
     
@@ -537,6 +297,11 @@ myGame.run();</code></pre>
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#draw">GameCore#draw</a>
+	</li></dd>
 	
 	
 	
@@ -650,6 +415,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#drawLoadingScreen">GameCore#drawLoadingScreen</a>
+	</li></dd>
+	
 	
 	
 	
@@ -712,6 +482,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#gameLoop">GameCore#gameLoop</a>
+	</li></dd>
 	
 	
 	
@@ -847,6 +622,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#handleInput">GameCore#handleInput</a>
+	</li></dd>
+	
 	
 	
 	
@@ -909,6 +689,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#init">GameCore#init</a>
+	</li></dd>
 	
 	
 	
@@ -1021,6 +806,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#initInput">GameCore#initInput</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1083,6 +873,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#launchLoop">GameCore#launchLoop</a>
+	</li></dd>
 	
 	
 	
@@ -1195,6 +990,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#loadResources">GameCore#loadResources</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1306,6 +1106,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#preUpdate">GameCore#preUpdate</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1368,6 +1173,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#run">GameCore#run</a>
+	</li></dd>
 	
 	
 	
@@ -1480,6 +1290,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#setHeight">GameCore#setHeight</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1591,6 +1406,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#setWidth">GameCore#setWidth</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1653,6 +1473,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#stop">GameCore#stop</a>
+	</li></dd>
 	
 	
 	
@@ -1765,6 +1590,11 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#update">GameCore#update</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1875,6 +1705,11 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#updateLoadingScreen">GameCore#updateLoadingScreen</a>
+	</li></dd>
 	
 	
 	

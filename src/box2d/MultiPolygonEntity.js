@@ -3,6 +3,7 @@
  * @name MultiPolygonEntity
  * @class MultiPolygonEntity
  * @extends Entity
+ * @property {Array} polys An array of polygons
  */
 
 define([

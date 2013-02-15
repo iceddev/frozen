@@ -3,6 +3,8 @@
  * @name RectangleEntity
  * @class RectangleEntity
  * @extends Entity
+ * @property {Number} halfWidth Half of the Rectangle's total width
+ * @property {Number} halfHeight Half of the Rectangle's total width
  */
 
 define([
