@@ -4,6 +4,7 @@
  * @name Prismatic
  * @class Prismatic
  * @extends Joint
+ * @property {Object} axisScale an object with x and y numeric components representing the line in which the entities can move relative to each other
  */
 
 define([

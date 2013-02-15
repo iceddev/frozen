@@ -2,6 +2,10 @@
  * This represents a joint between two bodies.
  * @name Joint
  * @class Joint
+ * @property {String} bodyId1 The id of the first entity that will be attached to this joint
+ * @property {String} bodyId2 The id of the second entity that will be attached to this joint
+ * @property {Object} bodyPoint1 A point on the first entity where be attached to the second body. If no point is specified, the first body will be attached at its center point.
+ * @property {Object} jointAttributes an object with any other properties that should be mixed into the box2d joint definition.
  */
 
 define([

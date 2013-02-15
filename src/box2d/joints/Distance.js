@@ -4,6 +4,7 @@
  * @name Distance
  * @class Distance
  * @extends Joint
+ * @property {Object} bodyPoint2 A point on the second entity where the joint will be attached. If no point is specified, the second body will be attached at its center point.
  */
 
 define([
