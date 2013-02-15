@@ -7,9 +7,8 @@
 define([
   './AnimFrame',
   'dcl',
-  'dcl/bases/Mixer',
-  'dojo/_base/lang'
-], function(AnimFrame, dcl, Mixer, lang){
+  'dcl/bases/Mixer'
+], function(AnimFrame, dcl, Mixer){
 
   'use strict';
 
@@ -36,7 +35,7 @@ define([
         width: w
       });
 
-      var isFTArray = lang.isArray(frameTimes);
+      var isFTArray = Array.isArray(frameTimes);
 
       var currentFrameTime = 1;
       if(!ySlot){
