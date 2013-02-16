@@ -60,7 +60,7 @@ define([
 
       it('should be call start', function(){
         anim.constructor();
-        expect(anim.start).wasCalled();
+        expect(anim.start).toHaveBeenCalled();
       });
 
     });
@@ -81,8 +81,8 @@ define([
       });
 
       it('should pass all arguments to createFromSheet', function(){
-        expect(anim.createFromSheet).wasCalled();
-        expect(anim.createFromSheet).wasCalledWith(frameCount, frameTimes, img, width, height, ySlot);
+        expect(anim.createFromSheet).toHaveBeenCalled();
+        expect(anim.createFromSheet).toHaveBeenCalledWith(frameCount, frameTimes, img, width, height, ySlot);
       });
 
       it('should not return the Animation it was called from', function(){
@@ -339,8 +339,8 @@ define([
 
         anim.draw(context, 2, 2);
 
-        expect(context.drawImage).wasCalled();
-        expect(context.drawImage).wasCalledWith(
+        expect(context.drawImage).toHaveBeenCalled();
+        expect(context.drawImage).toHaveBeenCalledWith(
           anim.image,
           currentFrame.imgSlotX * anim.width, currentFrame.imgSlotY * anim.height,
           anim.width, anim.height,

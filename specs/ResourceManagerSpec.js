@@ -239,25 +239,25 @@ define([
       it('should call play on the sound passed in', function(){
         rm.playSound(sound);
 
-        expect(sound.play).wasCalled();
+        expect(sound.play).toHaveBeenCalled();
       });
 
       it('should call loop on the sound passed in if true is passed as 2nd param', function(){
         rm.playSound(sound, true);
 
-        expect(sound.loop).wasCalled();
+        expect(sound.loop).toHaveBeenCalled();
       });
 
       it('should call play with noteOn and gain passed in', function(){
         rm.playSound(sound, null, 500, 0.5);
 
-        expect(sound.play).wasCalledWith(0.5, 500);
+        expect(sound.play).toHaveBeenCalledWith(0.5, 500);
       });
 
       it('should not call loop with noteOn, but call it with gain passed in', function(){
         rm.playSound(sound, true, 500, 0.5);
 
-        expect(sound.loop).wasCalledWith(0.5);
+        expect(sound.loop).toHaveBeenCalledWith(0.5);
         expect(sound.loop).wasNotCalledWith(500);
       });
 

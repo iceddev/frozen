@@ -60,7 +60,7 @@ define([
       it('should call reset when called', function(){
         gameAction.constructor();
 
-        expect(gameAction.reset).wasCalled();
+        expect(gameAction.reset).toHaveBeenCalled();
       });
 
     });
@@ -111,11 +111,11 @@ define([
       });
 
       it('should call press when called', function(){
-        expect(gameAction.press).wasCalled();
+        expect(gameAction.press).toHaveBeenCalled();
       });
 
       it('should call release when called', function(){
-        expect(gameAction.release).wasCalled();
+        expect(gameAction.release).toHaveBeenCalled();
       });
 
     });
@@ -141,15 +141,15 @@ define([
       it('should not call pressAmt when behavior is not set to value of DETECT_INITAL_PRESS_ONLY', function(){
         gameAction.press();
 
-        expect(gameAction.pressAmt).not.wasCalled();
+        expect(gameAction.pressAmt).not.toHaveBeenCalled();
       });
 
       it('should call pressAmt with 1 as parameter when behavior is set to the value of DETECT_INITAL_PRESS_ONLY', function(){
         gameAction.behavior = gameAction.statics.DETECT_INITAL_PRESS_ONLY;
         gameAction.press();
 
-        expect(gameAction.pressAmt).wasCalled();
-        expect(gameAction.pressAmt).wasCalledWith(1);
+        expect(gameAction.pressAmt).toHaveBeenCalled();
+        expect(gameAction.pressAmt).toHaveBeenCalledWith(1);
       });
 
     });
