@@ -1,11 +1,8 @@
 /**
  * Represents a a single frame in an animation.
  * @name AnimationFrame
- * @class AnimationFrame
- * @property {Number}  endTime The ending time in milliseconds of this frame relative to its Animation
- * @property {Number}  imgSlotX The horizontal position of the group of frames contained in a single image
- * @property {Number}  imgSlotY The vertical position of the group of frames contained in a single image
- * @property {Image}  image The image to render
+ * @constructor AnimationFrame
+ * @param {Object} mixin Object containing properties to mixin
  */
 
 define([
@@ -16,9 +13,33 @@ define([
   'use strict';
 
   return dcl(Mixer, {
+    /**
+     * The ending time in milliseconds of this frame relative to its Animation
+     * @type {Number}
+     * @memberOf AnimationFrame#
+     * @default
+     */
     endTime: 0,
+    /**
+     * The horizontal position of the group of frames contained in a single image
+     * @type {Number}
+     * @memberOf AnimationFrame#
+     * @default
+     */
     imgSlotX: 0,
+    /**
+     * The vertical position of the group of frames contained in a single image
+     * @type {Number}
+     * @memberOf AnimationFrame#
+     * @default
+     */
     imgSlotY: 0,
+    /**
+     * The image to render
+     * @type {Image}
+     * @memberOf AnimationFrame#
+     * @default
+     */
     image: null
   });
 
