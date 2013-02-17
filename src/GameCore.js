@@ -1,20 +1,7 @@
 /**
  * The GameCore class provides the base to build games on.
  * @name GameCore
- * @class GameCore
- * @property {Object} statics A map of static constants for internal use
- * @property {Boolean} isRunning Whether or not the game should be running its loop
- * @property {String} canvasId The id of the canvas element to use render the game on
- * @property {Number} maxStep Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
- * @property {String} contextType The type of context to request from the canvas.  2d or 3d
- * @property {Number} height The height of the Game and canvas
- * @property {Number} width The width of the Game and canvas
- * @property {ResourceManager} resourceManager The ResourceManager to be used for game
- * @property {InputManager} inputManager The InputManager to be used for game
- * @property {String} loadingForeground The style to be used for the foreground while game resources are loading
- * @property {String} loadingBackground The style to be used for the background while game resources are loading
- * @property {String} gameAreaId The id of a DOM element that contains the game's canvas
- * @property {Number} canvasPercentage The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+ * @constructor GameCore
  * @example
  * var myGame = new GameCore({
  *   canvasId: 'myCanvas',
@@ -42,28 +29,105 @@ define([
 
   'use strict';
 
-
   return dcl(Mixer, {
+    /**
+     * A map of static constants for internal use
+     * @type {Object}
+     * @memberOf GameCore#
+     * @property {Number} FONT_SIZE Default font size used in default draw functions
+     */
     statics: {
       FONT_SIZE: 24
     },
+    /**
+     * Whether or not the game should be running its loop
+     * @type {Boolean}
+     * @memberOf GameCore#
+     * @default
+     */
     isRunning: false,
+    /**
+     * The id of the canvas element to use render the game on
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
     canvasId: null,
+    /**
+     * Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
     maxStep: 40,
+    /**
+     * The type of context to request from the canvas.  2d or 3d
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
     contextType: '2d',
+    /**
+     * The height of the Game and canvas
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
     height: 0,
+    /**
+     * The width of the Game and canvas
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
     width: 0,
+    /**
+     * The ResourceManager to be used for game
+     * @type {ResourceManager}
+     * @memberOf GameCore#
+     * @default
+     */
     resourceManager: null,
+    /**
+     * The InputManager to be used for game
+     * @type {InputManager}
+     * @memberOf GameCore#
+     * @default
+     */
     inputManager: null,
+    /**
+     * The style to be used for the foreground while game resources are loading
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
     loadingForeground: '#00F',
+    /**
+     * The style to be used for the background while game resources are loading
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
     loadingBackground: '#FFF',
+    /**
+     * The ID of a DOM element that contains the game's canvas
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
     gameAreaId: null,
+    /**
+     * The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
     canvasPercentage: 0,
 
     /**
      * Sets the height on your GameCore instance and on your canvas reference
-     * @name GameCore#setHeight
      * @function
+     * @memberOf GameCore#
      * @param {Number} newHeight The new height desired
      */
     setHeight: function(newHeight){
@@ -73,8 +137,8 @@ define([
 
     /**
      * Sets the width on your GameCore instance and on your canvas reference
-     * @name GameCore#setWidth
      * @function
+     * @memberOf GameCore#
      * @param {Number} newWidth The new width desired
      */
     setWidth: function(newWidth){
@@ -84,8 +148,8 @@ define([
 
     /**
      * Signals the game loop that it's time to quit
-     * @name GameCore#stop
      * @function
+     * @memberOf GameCore#
      */
     stop: function() {
       this.isRunning = false;
@@ -93,8 +157,8 @@ define([
 
     /**
      * Launches the game.
-     * @name GameCore#run
      * @function
+     * @memberOf GameCore#
      */
     run: function() {
       if(!this.isRunning){
@@ -107,16 +171,16 @@ define([
 
     /**
      * Can be overidden in GameCore subclasses to load images and sounds
-     * @name GameCore#loadResources
      * @function
+     * @memberOf GameCore#
      * @param {ResourceManager} resourceManager
      */
     loadResources: function(resourceManager){},
 
     /**
      * Sets the screen mode and initiates and objects.
-     * @name GameCore#init
      * @function
+     * @memberOf GameCore#
      */
     init: function() {
       if(!this.canvas){
@@ -164,25 +228,25 @@ define([
 
     /**
      * Can be overidden in the subclasses to map user input to actions
-     * @name GameCore#initInput
      * @function
+     * @memberOf GameCore#
      * @param {InputManager} inputManager
      */
     initInput: function(inputManager) {},
 
     /**
      * Can be overidden in the subclasses to deal with user input before updating the game state
-     * @name GameCore#handleInput
      * @function
+     * @memberOf GameCore#
      * @param {InputManager} inputManager
-     * @param {Number} elapsedTime elapsed time in milliseconds
+     * @param {Number} elapsedTime Elapsed time in milliseconds
      */
     handleInput: function(inputManager,elapsedTime) {},
 
     /**
      * Runs through the game loop until stop() is called.
-     * @name GameCore#gameLoop
      * @function
+     * @memberOf GameCore#
      */
     gameLoop: function() {
       this.currTime = new Date().getTime();
@@ -209,8 +273,8 @@ define([
 
     /**
      * Launches the game loop.
-     * @name GameCore#launchLoop
      * @function
+     * @memberOf GameCore#
      */
     launchLoop: function(){
       this.elapsedTime = 0;
@@ -230,33 +294,32 @@ define([
 
     /**
      * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
-     * @name GameCore#preUpdate
      * @function
+     * @memberOf GameCore#
      * @param {Number} elapsedTime Elapsed time in milliseconds
      */
-
     preUpdate: function(elapsedTime) {},
 
     /**
      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
-     * @name GameCore#update
      * @function
-     * @param {Number} elapsedTime elapsed time in milliseconds
+     * @memberOf GameCore#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
      */
     update: function(elapsedTime) {},
 
     /**
      * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
-     * @name GameCore#updateLoadingScreen
      * @function
-     * @param {Number} elapsedTime elapsed time in milliseconds
+     * @memberOf GameCore#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
      */
     updateLoadingScreen: function(elapsedTime) {},
 
     /**
      * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
-     * @name GameCore#draw
      * @function
+     * @memberOf GameCore#
      * @param {Context} context An HTML5 canvas drawing context.
      */
     draw: function(context){
@@ -269,8 +332,8 @@ define([
     /**
      * Draws the progress of the resource manger to the screen while loading.
      * Subclasses or instances may override for custom loading animations.
-     * @name GameCore#drawLoadingScreen
      * @function
+     * @memberOf GameCore#
      * @param {Context} context An HTML5 canvas drawing context.
      */
     drawLoadingScreen: function(context){

@@ -1,13 +1,7 @@
 /**
- * The ResourceManager handles DOM events for use in games.
+ * The ResourceManager handles loading images and sounds for use in games.
  * @name ResourceManager
- * @class ResourceManager
- * @property {Number} imageCount The number of images requested
- * @property {Number} loadedImages The number of images loaded
- * @property {Boolean} allLoaded Whether all the resources have been loaded
- * @property {String} imageDir The directory to load images from
- * @property {String} soundDir The directory to load sounds from
- * @property {Object} resourceList A map of all the resources by their URLs
+ * @constructor ResourceManager
  */
 
 define([
@@ -30,21 +24,58 @@ define([
   }
 
   return dcl(Mixer, {
+    /**
+     * The number of images requested
+     * @type {Number}
+     * @memberOf ResourceManager#
+     * @default
+     * @deprecated This property is no longer used internally and will be removed in the future
+     */
     imageCount: 0,
+    /**
+     * The number of images loaded
+     * @type {Number}
+     * @memberOf ResourceManager#
+     * @default
+     * @deprecated This property is no longer used internally and will be removed in the future
+     */
     loadedImages: 0,
+    /**
+     * Whether all the resources have been loaded
+     * @type {Boolean}
+     * @memberOf ResourceManager#
+     * @default
+     */
     allLoaded: false,
+    /**
+     * The base directory to load images from
+     * @type {String}
+     * @memberOf ResourceManager#
+     * @default
+     */
     imageDir: null,
+    /**
+     * The base directory to load sounds from
+     * @type {String}
+     * @memberOf ResourceManager#
+     * @default
+     */
     soundDir: null,
+    /**
+     * A map of all the resources by their URLs
+     * @type {Object}
+     * @memberOf ResourceManager#
+     * @default
+     */
     resourceList: {},
 
     /**
-      * Loads an image (or a collection of images), and tracks if it has finished loading
-      * @name ResourceManager#loadImage
-      * @function
-      * @param {String|Array|Object} files Filename of the image relative the Game's HTML page.
-      * @returns {Image|Array|Object} Return type based on argument: Image if String, Array of Images if Array, or Object of key-Image pairs if Object
-      *
-    */
+     * Loads an image (or a collection of images), and tracks if it has finished loading
+     * @function
+     * @memberOf ResourceManager#
+     * @param {String|Array|Object} files Filename of the image relative the Game's HTML page.
+     * @returns {Image|Array|Object} Return type based on argument: Image if String, Array of Images if Array, or Object of key-Image pairs if Object
+     */
     loadImage: function(files){
       var singleFile = false;
       // Normalize arguments
@@ -92,13 +123,12 @@ define([
     },
 
     /**
-      * Loads a sound file (or a collection of sound files), and tracks if it has finished loading
-      * @name ResourceManager#loadSound
-      * @function
-      * @param {String|Array|Object} filename Filename of the sound relative the Game's HTML page.
-      * @returns {Sound Object|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
-      *
-    */
+     * Loads a sound file (or a collection of sound files), and tracks if it has finished loading
+     * @function
+     * @memberOf ResourceManager#
+     * @param {String|Array|Object} filename Filename of the sound relative the Game's HTML page.
+     * @returns {Sound Object|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
+     */
     loadSound: function(files){
       var singleFile = false;
       // Normalize arguments
@@ -134,15 +164,15 @@ define([
     },
 
     /**
-      * Plays a sound that was loaded from loadSound()
-      * @name ResourceManager#playSound
-      * @function
-      * @param {Object} sound A sound object that was returned from loadSound()
-      * @param {Boolean=} loop whether or not to loop the sound (default: false)
-      * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
-      * @param {Number=} gain The volume of the playback from 0 to 1.0
-      *
-    */
+     * Plays a sound that was loaded from loadSound()
+     * @function
+     * @memberOf ResourceManager#
+     * @param {Object} sound A sound object that was returned from loadSound()
+     * @param {Boolean=} loop whether or not to loop the sound (default: false)
+     * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
+     * @param {Number=} gain The volume of the playback from 0 to 1.0
+     * @deprecated This method is no longer needed because sounds have play() on them directly and it will be removed in the future
+     */
     playSound: function(sound, loop, noteOn, gain){
       if(sound){
         if(loop){
@@ -155,10 +185,10 @@ define([
     },
 
     /**
-      * Checks whether the resources have finished loading
-      * @name ResourceManager#resourcesReady
-      * @function
-    */
+     * Checks whether the resources have finished loading
+     * @function
+     * @memberOf ResourceManager#
+     */
     resourcesReady: function(){
       if(this.allLoaded){
         return true;
@@ -175,10 +205,11 @@ define([
     },
 
     /**
-      * Gets the percentage of resources loaded.
-      * @name ResourceManager#getPercentComplete
-      * @function
-    */
+     * Gets the percent of resources loaded.
+     * @function
+     * @memberOf ResourceManager#
+     * @return {Number} The percent of resources loaded
+     */
     getPercentComplete: function(){
       var numComplete = 0.0;
       var length = 0;

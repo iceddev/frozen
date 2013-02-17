@@ -65,6 +65,13 @@ define([
       this.reset();
     },
 
+    /**
+     * Returns the name of the GameAction
+     * @function
+     * @memberOf GameAction#
+     * @return {String} The name of the GameAction
+     * @deprecated This method is deprecated because name is accessible on the instance and will be removed in the future
+     */
     getName: function() {
       return this.name;
     },
@@ -127,6 +134,7 @@ define([
      * Returns whether the key was pressed or not since last checked.
      * @function
      * @memberOf GameAction#
+     * @return {Boolean} True if the key is pressed, else false
      */
     isPressed: function() {
       if(this.state === this.statics.STATE_PRESSED){
@@ -144,6 +152,7 @@ define([
      *
      * @function
      * @memberOf GameAction#
+     * @return {Number} Number of times the key was pressed or distance mouse was moved
      */
     getAmount: function() {
       var retVal = this.amount;
