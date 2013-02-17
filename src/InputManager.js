@@ -1,16 +1,7 @@
 /**
  * The InputManager handles DOM events for use in games.
  * @name InputManager
- * @class InputManager
- * @property {Array} keyActions An array of keyActions being listened for
- * @property {MouseAction} mouseAction The MouseAction to keep track of the mouse's state
- * @property {MouseAction} touchAction The MouseAction to keep track of touch events
- * @property {Canvas} canvas The HTML5 canvas on which to listen for events
- * @property {Boolean} handleMouse Whether or not to listen for mouse events
- * @property {Boolean} handleTouch Whether or not to listen for touch events
- * @property {Boolean} handleKeys Whether or not to listen for keyboard events
- * @property {Object} gameArea The DOM element that contains the game's canvas
- * @property {Number} canvasPercentage he percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+ * @constructor InputManager
  */
 
 define([
@@ -30,15 +21,70 @@ define([
   'use strict';
 
   return dcl(Mixer, {
+    /**
+     * An array of keyActions being listened for
+     * @type {Array}
+     * @memberOf InputManager#
+     * @default
+     */
     keyActions: [],
+    /**
+     * The MouseAction to keep track of the mouse's state
+     * @type {MouseAction}
+     * @memberOf InputManager#
+     * @default
+     */
     mouseAction: null,
+    /**
+     * The MouseAction to keep track of touch events
+     * @type {MouseAction}
+     * @memberOf InputManager#
+     * @default
+     */
     touchAction: null,
+    /**
+     * The HTML5 canvas on which to listen for events
+     * @type {Canvas}
+     * @memberOf InputManager#
+     * @default
+     */
     canvas: null,
+    /**
+     * Whether or not to listen for mouse events
+     * @type {Boolean}
+     * @memberOf InputManager#
+     * @default
+     */
     handleMouse: true,
+    /**
+     * Whether or not to listen for touch events
+     * @type {Boolean}
+     * @memberOf InputManager#
+     * @default
+     */
     handleTouch: true,
+    /**
+     * Whether or not to listen for keyboard events
+     * @type {Boolean}
+     * @memberOf InputManager#
+     * @default
+     */
     handleKeys: true,
+    /**
+     * The DOM element that contains the game's canvas
+     * @type {Element}
+     * @memberOf InputManager#
+     * @default
+     */
     gameArea: null,
+    /**
+     * The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+     * @type {Number}
+     * @memberOf InputManager#
+     * @default
+     */
     canvasPercentage: null,
+
     constructor: function(){
       if(this.handleKeys){
         on(document, 'keydown', lang.hitch(this, "keyDown"));
@@ -72,14 +118,13 @@ define([
     },
 
     /**
-      * Maps a GameAction to a specific key. The key codes are defined in dojo.keys.
-      * If the key already has a GameAction mapped to it, the new GameAction overwrites it.
-      * @name InputManager#mapToKey
-      * @function
-      * @param {GameAction} gameAction the GameAction to map
-      * @param {Object} keyCode dojo.keys key code, or character
-      *
-    */
+     * Maps a GameAction to a specific key. The key codes are defined in dojo.keys.
+     * If the key already has a GameAction mapped to it, the new GameAction overwrites it.
+     * @function
+     * @memberOf InputManager#
+     * @param {GameAction} gameAction the GameAction to map
+     * @param {Object} keyCode dojo.keys key code, or character
+     */
     mapToKey: function(gameAction, keyCode) {
       if(!this.keyActions){
         this.keyActions = [];
@@ -88,13 +133,13 @@ define([
     },
 
     /**
-      * Adds a GameAction to a key
-      * @name InputManager#addKeyAction
-      * @function
-      * @param {Object} keyCode dojo.keys key code, or character
-      * @param {Boolean=} initialPressOnly do only one fire of the action per keypress
-      *
-    */
+     * Adds a GameAction to a key
+     * @function
+     * @memberOf InputManager#
+     * @param {Object} keyCode Key character or dojo/keys key code
+     * @param {Boolean=} initialPressOnly Do only one fire of the action per keypress
+     * @return {GameAction} GameAction that is mapped to keyCode
+     */
     addKeyAction: function(keyCode, initialPressOnly){
       // TODO: Remove dependency on GameAction
       var ga = new GameAction();
@@ -105,16 +150,46 @@ define([
 
       return ga;
     },
+
+    /**
+     * Sets the mouseAction to the gameAction
+     * @function
+     * @memberOf InputManager#
+     * @param {GameAction} gameAction The GameAction to assign
+     * @deprecated This method is deprecated because mouseAction is available on an instance and it will be removed in the future
+     */
     setMouseAction: function(gameAction){
       this.mouseAction = gameAction;
     },
+
+    /**
+     * Sets the touchAction to the gameAction
+     * @function
+     * @memberOf InputManager#
+     * @param {GameAction} gameAction The GameAction to assign
+     * @deprecated This method is deprecated because touchAction is available on an instance and it will be removed in the future
+     */
     setTouchAction: function(gameAction){
       this.touchAction = gameAction;
     },
+
+    /**
+     * Called upon mouseup event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     mouseUp: function(e) {
       this.mouseAction.release();
       this.mouseAction.endPosition = this.getMouseLoc(e);
     },
+
+    /**
+     * Called upon mousedown event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     mouseDown: function(e){
       var currentPoint = this.getMouseLoc(e);
       this.mouseAction.endPosition = null;
@@ -127,9 +202,23 @@ define([
         this.mouseAction.startPosition = null;
       }
     },
+
+    /**
+     * Called upon mousemove event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     mouseMove: function(e){
       this.mouseAction.position = this.getMouseLoc(e);
     },
+
+    /**
+     * Called upon touchstart event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     touchStart: function(e){
       var currentPoint = this.getMouseLoc(e.changedTouches[0]);
       this.touchAction.endPosition = null;
@@ -142,16 +231,38 @@ define([
         this.touchAction.startPosition = null;
       }
     },
+
+    /**
+     * Called upon touchend event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     touchEnd: function(e){
       this.touchAction.release();
       this.touchAction.endPosition = this.getMouseLoc(e.changedTouches[0]);
     },
+
+    /**
+     * Called upon touchmove event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     touchMove: function(e){
       this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
       if(this.touchAction.startPosition){
         e.preventDefault();
       }
     },
+
+    /**
+     * Retrieves the GameAction associated with the keyCode on the event object
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @return {GameAction|null} The GameAction associated with the keyCode else null
+     */
     getKeyAction: function(e) {
       if (this.keyActions.length) {
         return this.keyActions[e.keyCode] || this.keyActions[String.fromCharCode(e.keyCode)];
@@ -159,18 +270,39 @@ define([
         return null;
       }
     },
+
+    /**
+     * Called upon keypress event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     keyPressed: function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction && !gameAction.isPressed()) {
         gameAction.press();
       }
     },
+
+    /**
+     * Called upon keydown event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     keyDown: function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction && !gameAction.isPressed()) {
         gameAction.press();
       }
     },
+
+    /**
+     * Called upon keyup event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
     keyReleased : function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction) {
@@ -178,6 +310,13 @@ define([
       }
     },
 
+    /**
+     * Used to get a normalized point out of an Event object
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} evt Event object
+     * @return {Point} Normalized point
+     */
     getMouseLoc: function(evt){
       var coordsM = domGeom.position(this.canvas);
       if(this.zoomRatio){
@@ -193,6 +332,11 @@ define([
       }
     },
 
+    /**
+     * Used to resize the canvas
+     * @function
+     * @memberOf InputManager#
+     */
     resize: function(){
       if(this.gameArea && this.canvasPercentage && this.canvas){
         var canvasWidth = this.canvas.width;
