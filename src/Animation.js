@@ -1,13 +1,7 @@
 /**
  * Represents a series of frames that can be rendered as an animation.
  * @name Animation
- * @class Animation
- * @property {Number}  currFrameIndex The index of the current frame being used to render this Animation
- * @property {Number}  animTime The current number of milliseconds that this animation has been running
- * @property {Number}  totalDuration The total number of milliseconds for a complete cycle
- * @property {Number}  height The height in pixels
- * @property {Number}  width The width in pixels
- * @property {Image}  image The image to render
+ * @constructor Animation
  */
 
 define([
@@ -18,22 +12,83 @@ define([
 
   'use strict';
 
-
   var Animation = dcl(Mixer, {
+    /**
+     * The index of the current frame being used to render this Animation
+     * @type {Number}
+     * @memberOf Animation#
+     * @default
+     */
     currFrameIndex: 0,
+    /**
+     * The current number of milliseconds that this animation has been running
+     * @type {Number}
+     * @memberOf Animation#
+     * @default
+     */
     animTime: 0,
+    /**
+     * The total number of milliseconds for a complete cycle
+     * @type {Number}
+     * @memberOf Animation#
+     * @default
+     */
     totalDuration: 0,
+    /**
+     * The height in pixels
+     * @type {Number}
+     * @memberOf Animation#
+     * @default
+     */
     height: 64,
+    /**
+     * The width in pixels
+     * @type {Number}
+     * @memberOf Animation#
+     * @default
+     */
     width: 64,
+    /**
+     * The image to render
+     * @type {Image}
+     * @memberOf Animation#
+     * @default
+     */
     image: null,
 
     constructor: function(){
       this.start();
     },
+
+    /**
+     * Used to create an animation from a sheet of tiles
+     * @function
+     * @memberOf Animation#
+     * @param  {Number} frameCount Number of frames in the animation
+     * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
+     * @param  {Image} img Image sheet to create animation from
+     * @param  {Number} h Height of each tile in pixels
+     * @param  {Number} w Width of each tile in pixels
+     * @param  {Number} ySlot Slot on Y axis to start creating tiles
+     * @return {Animation} Animation generated using parameters
+     * @deprecated This method has been renamed createFromSheet and will be removed in the future
+     */
     createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
-      //Deprecated method, use createFromSheet()
       return this.createFromSheet(frameCount, frameTimes, img, w, h, ySlot);
     },
+
+    /**
+     * Used to create an animation from a sheet of tiles
+     * @function
+     * @memberOf Animation#
+     * @param  {Number} frameCount Number of frames in the animation
+     * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
+     * @param  {Image} img Image sheet to create animation from
+     * @param  {Number} w Width of each tile in pixels
+     * @param  {Number} h Height of each tile in pixels
+     * @param  {Number} ySlot Slot on Y axis to start creating tiles
+     * @return {Animation} Animation generated using parameters
+     */
     createFromSheet: function(frameCount, frameTimes, img, w, h, ySlot){
       var anim = new Animation({
         image: img,
@@ -59,13 +114,12 @@ define([
     },
 
     /**
-      * Creates a duplicate of this animation. The list of frames
-      * are shared between the two Animations, but each Animation
-      * can be animated independently.
-      * @name Animation#clone
-      * @function
-      *
-    */
+     * Creates a duplicate of this animation. The list of frames
+     * are shared between the two Animations, but each Animation
+     * can be animated independently.
+     * @function
+     * @memberOf Animation#
+     */
     clone: function(){
       return new Animation({
         image: this.image,
@@ -75,14 +129,13 @@ define([
     },
 
     /**
-      * Adds an image to the animation with the specified duration (time to display the image).
-      * @name Animation#addFrame
-      * @function
-      * @param {Number} duration
-      * @param {Number} imageSlotX
-      * @param {Number} imageSlotY
-      *
-    */
+     * Adds an image to the animation with the specified duration (time to display the image).
+     * @function
+     * @memberOf Animation#
+     * @param {Number} duration Duration of the frame
+     * @param {Number} imageSlotX Slot on the X axis for the frame
+     * @param {Number} imageSlotY Slot on the Y axis for the frame
+     */
     addFrame: function(duration, imageSlotX, imageSlotY){
       if(!this.frames){
         this.frames = [];
@@ -97,24 +150,21 @@ define([
     },
 
     /**
-      * Starts this animation over from the beginning.
-      * @name Animation#start
-      * @function
-      *
-    */
+     * Starts this animation over from the beginning.
+     * @function
+     * @memberOf Animation#
+     */
     start: function(){
       this.animTime = 0;
       this.currFrameIndex = 0;
     },
 
-
     /**
-      * Updates this animation's current image (frame), if neccesary.
-      * @name Animation#update
-      * @function
-      * @param {Number} elapsedTime Elapsed time in milliseconds
-      *
-    */
+     * Updates this animation's current image (frame), if neccesary.
+     * @function
+     * @memberOf Animation#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
     update: function(elapsedTime){
       if (this.frames.length > 1) {
         this.animTime += elapsedTime;
@@ -129,20 +179,36 @@ define([
         }
       }
     },
+
+    /**
+     * Retrieves the image used to create the animation
+     * @function
+     * @memberOf Animation#
+     * @return {Image} The image used to create the animation
+     * @deprecated This method is deprecated because the image is available on the instance and will be removed in the future
+     */
     getImage: function(){
       return this.image;
     },
+
+    /**
+     * Retrieves the frame at the given index
+     * @function
+     * @memberOf Animation#
+     * @param  {Number} i Index to retrieve frame at
+     * @return {AnimationFrame} The animation frame at the given index
+     * @deprecated This method is deprecated because the frames are available on the instance and will be removed in the future
+     */
     getFrame: function(i){
       return this.frames[i];
     },
 
-
     /**
-      * Gets this Animation's current animation frame. Returns null if this animation has no frames.
-      * @name Animation#getCurrentFrame
-      * @function
-      *
-    */
+     * Gets this Animation's current animation frame. Returns null if this animation has no frames.
+     * @function
+     * @memberOf Animation#
+     * @return {AnimationFrame|null} The animation frame at the current frame index or null if no frames are available
+     */
     getCurrentFrame: function(){
       if (this.frames.length === 0) {
         return null;
@@ -152,14 +218,13 @@ define([
     },
 
     /**
-      * Draws the current frame into a 2d context.
-      * @name Animation#draw
-      * @function
-      * @param {2dContext} context The HTML5 drawing canvas
-      * @param {Number} x The x coordinate in the graphics context
-      * @param {Number} y The y coordinate in the graphics context
-      *
-    */
+     * Draws the current frame into a 2d context.
+     * @function
+     * @memberOf Animation#
+     * @param {2dContext} context The HTML5 drawing canvas
+     * @param {Number} x The x coordinate in the graphics context
+     * @param {Number} y The y coordinate in the graphics context
+     */
     draw: function(context, x, y){
       var cf = this.getCurrentFrame();
       context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);
