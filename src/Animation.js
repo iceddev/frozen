@@ -58,12 +58,14 @@ define([
     /**
      * The offset of the of pixels in the x slot from the source image
      * @type {Number}
+     * @memberOf Animation#
      * @default
      */
     offsetX: 0,
     /**
      * The offset of the of pixels in the y slot from the source image
      * @type {Number}
+     * @memberOf Animation#
      * @default
      */
     offsetY: 0,

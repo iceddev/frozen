@@ -54,30 +54,35 @@ define([
     * The current state of the creature. Will be a value from the static constants.
     * @type {Number}
     * @memberOf Creature#
+    * @default
     */
     state: 0,
     /**
     * An array of Animation objects (one for each direction) to display the creature in a walking state
     * @type {Array}
     * @memberOf Creature#
+    * @default
     */
     walkingAnims: [],
     /**
     * An array of Animation objects (one for each direction) to display the creature in a dying state
     * @type {Array}
     * @memberOf Creature#
+    * @default
     */
     dyingAnims: [],
     /**
     * An array of Animation objects (one for each direction) to display the creature in an idle state
     * @type {Array}
     * @memberOf Creature#
+    * @default
     */
     idleAnims: [],
     /**
     * The current direction that the creature is pointed. Will be a value from the static constansts.
     * @type {Number}
     * @memberOf Creature#
+    * @default
     */
     direction: 0,
     constructor: function(){
