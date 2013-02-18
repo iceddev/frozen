@@ -33,7 +33,8 @@ module.exports = function(grunt) {
       amd: true,
       helpers: [
         'dojoConfig.js',
-        'deps/dojo/dojo.js'
+        'deps/dojo/dojo.js',
+        'deps/Box2d.min.js'
       ],
       timeout: 10000,
       phatomjs: {
