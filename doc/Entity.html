@@ -61,494 +61,6 @@
 <dl class="details">
     
         
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The id in which to reference this object. Also the userData property for box2d bodies.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>x</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The x component of the entity's location</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The y component of the entity's location</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>scale</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The scale in pixels per meter in which to represent this Entity in the box2d world</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>angle</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The current angle that this entity is rotated at</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>center</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The x and y locations of what box2d considers the enity's center of mass</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>restitution</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The percentage of force in which the entity will bounce back from another based on its force pre-collision</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>density</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The two-dimensional density of the entity.  Mass / area.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>friction</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The amount of friction on th surface of this entity</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>linearDamping</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The amount of linear velocity the entity should lose over time</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>linearVelocity</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The velocity in meters/second given to this entity by box2d calculations</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>angularVelocity</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The angular velocity in radians/second given to this entity by box2d calculations</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>angularDamping</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The of amount of angular velocity an entity should lose over time</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>staticBody</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">If true, the entity does change its position and angle as the result of box2d calculations</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>fillStyle</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The fillStyle to use for the entity's default renderer</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>strokeStyle</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The strokeStyle to use for the entity's default renderer</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>hidden</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">(deprecated) whether to render this object</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>maskBits</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The 16 bit integer used in determining which other types of entities this body will collide with.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>categoryBits</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The 16 bit integer used in describing the type that this enitity is for collisions.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>groupIndex</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The 16 bit integer used in overiding maskBits and categoryBits for collision detection.</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
 	
 	
 	
@@ -600,6 +112,1125 @@
     
     
     
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="angle"><span class="type-signature"></span>angle<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current angle that this entity is rotated at
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 50</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="angularDamping"><span class="type-signature"></span>angularDamping<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The of amount of angular velocity an entity should lose over time
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 106</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="angularVelocity"><span class="type-signature"></span>angularVelocity<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The angular velocity in radians/second given to this entity by box2d calculations
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 99</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="categoryBits"><span class="type-signature"></span>categoryBits<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The 16 bit integer used in describing the type that this enitity is for collisions.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 157</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="center"><span class="type-signature"></span>center<span class="type-signature"> :Point</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The x and y locations of what box2d considers the enity's center of mass
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 57</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="density"><span class="type-signature"></span>density<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The two-dimensional density of the entity.  Mass / area.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>1.0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 71</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fillStyle"><span class="type-signature"></span>fillStyle<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The fillStyle to use for the entity's default renderer
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>"rgba(128,128,128,0.5)"</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 120</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="friction"><span class="type-signature"></span>friction<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The amount of friction on th surface of this entity
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0.9</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 78</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="groupIndex"><span class="type-signature"></span>groupIndex<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The 16 bit integer used in overiding maskBits and categoryBits for collision detection.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 164</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="hidden"><span class="type-signature"></span>hidden<span class="type-signature"> :Boolean</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Whether to render this object
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This property is no longer used and will be removed in the future</li><ul></dd>
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 142</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="id"><span class="type-signature"></span>id<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The id in which to reference this object. Also the userData property for box2d bodies.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 22</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="linearDamping"><span class="type-signature"></span>linearDamping<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The amount of linear velocity the entity should lose over time
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 85</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="linearVelocity"><span class="type-signature"></span>linearVelocity<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The velocity in meters/second given to this entity by box2d calculations
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 92</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="lineWidth"><span class="type-signature"></span>lineWidth<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The line width to use for the entity's default renderer
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>1</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 134</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="maskBits"><span class="type-signature"></span>maskBits<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The 16 bit integer used in determining which other types of entities this body will collide with.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 150</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="restitution"><span class="type-signature"></span>restitution<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The percentage of force in which the entity will bounce back from another based on its force pre-collision
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0.3</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 64</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The scale in pixels per meter in which to represent this Entity in the box2d world
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 43</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="staticBody"><span class="type-signature"></span>staticBody<span class="type-signature"> :Boolean</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        If true, the entity does change its position and angle as the result of box2d calculations
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 113</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="strokeStyle"><span class="type-signature"></span>strokeStyle<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The strokeStyle to use for the entity's default renderer
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>"#000"</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 127</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="x"><span class="type-signature"></span>x<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The x component of the entity's location
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 29</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="y"><span class="type-signature"></span>y<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The y component of the entity's location
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 36</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
     
     
     
@@ -666,7 +1297,7 @@
             
             
             
-            <td class="description last">the HTML5 2d drawing context</td>
+            <td class="description last">The HTML5 2d drawing context</td>
         </tr>
 	
 	
@@ -689,7 +1320,7 @@
             
             
             
-            <td class="description last">the scale to draw the entity at</td>
+            <td class="description last">The scale to draw the entity at</td>
         </tr>
 	
 	
@@ -719,118 +1350,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 63</li></ul></dd>
-	
-    
-    
-	
-	
-	
-	
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="scaleJointLocation"><span class="type-signature"></span>scaleJointLocation<span class="signature">(scale)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Scales the position that on the first body that the joint is connected at.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>scale</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the scale to multiply the dimentions by</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 24</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 183</li></ul></dd>
 	
     
     
@@ -911,7 +1431,7 @@
             
             
             
-            <td class="description last">the scale to multiply the dimentions by</td>
+            <td class="description last">The scale to multiply the dimentions by</td>
         </tr>
 	
 	
@@ -941,7 +1461,118 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 93</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 212</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(state)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Update this entity with the state passed in
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">State to merge with this object</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Entity.js, line 172</li></ul></dd>
 	
     
     
@@ -977,13 +1608,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="dd99465fac.html">plugins/loadImage</a></li><li><a href="59a2e48273.html">plugins/loadSound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Fri Feb 15 2013 15:00:23 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 05:49:30 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

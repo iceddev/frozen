@@ -120,6 +120,242 @@ This allow for rotation of one body around a point of another.
     
     
     
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="bodyId1"><span class="type-signature"></span>bodyId1<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The id of the first entity that will be attached to this joint
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Joint.html#bodyId1">Joint#bodyId1</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 21</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="bodyId2"><span class="type-signature"></span>bodyId2<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The id of the second entity that will be attached to this joint
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Joint.html#bodyId2">Joint#bodyId2</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 28</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="bodyPoint1"><span class="type-signature"></span>bodyPoint1<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A point on the first entity where be attached to the second body. If no point is specified, the first body will be attached at its center point.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Joint.html#bodyPoint1">Joint#bodyPoint1</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 35</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="jointAttributes"><span class="type-signature"></span>jointAttributes<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        An object with any other properties that should be mixed into the box2d joint definition.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Joint.html#jointAttributes">Joint#jointAttributes</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 42</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
     
     
         <h3 class="subsection-title">Methods</h3>
@@ -127,7 +363,7 @@ This allow for rotation of one body around a point of another.
         <dl>
             
 <dt>
-    <h4 class="name" id="createB2Joint"><span class="type-signature"></span>createB2Joint<span class="signature">(the)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createB2Joint"><span class="type-signature"></span>createB2Joint<span class="signature">(the)</span><span class="type-signature"> &rarr; {b2Joint}</span></h4>
     
     
 </dt>
@@ -215,7 +451,145 @@ This allow for rotation of one body around a point of another.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Revolute.js, line 24</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>Revolute.js, line 31</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Joint created by box2d
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">b2Joint</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scaleJointLocation"><span class="type-signature"></span>scaleJointLocation<span class="signature">(scale)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Scales the position that on the first body that the joint is connected at.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>scale</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the scale to multiply the dimentions by</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Joint.html#scaleJointLocation">Joint#scaleJointLocation</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 50</li></ul></dd>
 	
     
     
@@ -251,13 +625,13 @@ This allow for rotation of one body around a point of another.
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="dd99465fac.html">plugins/loadImage</a></li><li><a href="59a2e48273.html">plugins/loadSound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Fri Feb 15 2013 15:00:24 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 05:49:31 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

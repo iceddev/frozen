@@ -61,103 +61,6 @@
 <dl class="details">
     
         
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>box</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Box.html">Box</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The instance of Box used for this game.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>boxUpdating</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Whether the box should perform calculations during its update cycle</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>entities</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">A map of Entity objects that have are added to the Box</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
 	
 	
 	
@@ -215,6 +118,971 @@
     
     
     
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="box"><span class="type-signature"></span>box<span class="type-signature"> :<a href="Box.html">Box</a></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The instance of Box used for this game.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>BoxGame.js, line 24</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="boxUpdating"><span class="type-signature"></span>boxUpdating<span class="type-signature"> :Boolean</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Whether the box should perform calculations during its update cycle
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>true</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>BoxGame.js, line 31</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="canvasId"><span class="type-signature"></span>canvasId<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The id of the canvas element to use render the game on
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#canvasId">GameCore#canvasId</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 55</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="canvasPercentage"><span class="type-signature"></span>canvasPercentage<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#canvasPercentage">GameCore#canvasPercentage</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 125</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="contextType"><span class="type-signature"></span>contextType<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The type of context to request from the canvas.  2d or 3d
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#contextType">GameCore#contextType</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>"2d"</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 69</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="entities"><span class="type-signature"></span>entities<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A map of Entity objects that have are added to the Box
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>BoxGame.js, line 38</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="gameAreaId"><span class="type-signature"></span>gameAreaId<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ID of a DOM element that contains the game's canvas
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#gameAreaId">GameCore#gameAreaId</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 118</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="height"><span class="type-signature"></span>height<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The height of the Game and canvas
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#height">GameCore#height</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 76</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputManager"><span class="type-signature"></span>inputManager<span class="type-signature"> :<a href="InputManager.html">InputManager</a></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The InputManager to be used for game
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#inputManager">GameCore#inputManager</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 97</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="isRunning"><span class="type-signature"></span>isRunning<span class="type-signature"> :Boolean</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Whether or not the game should be running its loop
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#isRunning">GameCore#isRunning</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 48</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadingBackground"><span class="type-signature"></span>loadingBackground<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The style to be used for the background while game resources are loading
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#loadingBackground">GameCore#loadingBackground</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>"#FFF"</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 111</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadingForeground"><span class="type-signature"></span>loadingForeground<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The style to be used for the foreground while game resources are loading
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#loadingForeground">GameCore#loadingForeground</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>"#00F"</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 104</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="maxStep"><span class="type-signature"></span>maxStep<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#maxStep">GameCore#maxStep</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>40</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 62</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="resourceManager"><span class="type-signature"></span>resourceManager<span class="type-signature"> :<a href="ResourceManager.html">ResourceManager</a></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ResourceManager to be used for game
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#resourceManager">GameCore#resourceManager</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 90</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="statics"><span class="type-signature"></span>statics<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A map of static constants for internal use
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>FONT_SIZE</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Default font size used in default draw functions</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#statics">GameCore#statics</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 39</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="width"><span class="type-signature"></span>width<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The width of the Game and canvas
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="GameCore.html#width">GameCore#width</a>
+	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 83</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
     
     
     
@@ -316,7 +1184,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 256</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 325</li></ul></dd>
 	
     
     
@@ -433,7 +1301,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 269</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 339</li></ul></dd>
 	
     
     
@@ -501,7 +1369,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 182</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 251</li></ul></dd>
 	
     
     
@@ -605,7 +1473,7 @@ Subclasses or instances may override for custom loading animations.
             
             
             
-            <td class="description last">elapsed time in milliseconds</td>
+            <td class="description last">Elapsed time in milliseconds</td>
         </tr>
 	
 	
@@ -640,7 +1508,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 173</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 244</li></ul></dd>
 	
     
     
@@ -708,7 +1576,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 116</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 185</li></ul></dd>
 	
     
     
@@ -824,7 +1692,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 165</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 235</li></ul></dd>
 	
     
     
@@ -892,7 +1760,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 210</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 279</li></ul></dd>
 	
     
     
@@ -1008,7 +1876,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 108</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 178</li></ul></dd>
 	
     
     
@@ -1031,7 +1899,7 @@ Subclasses or instances may override for custom loading animations.
         
             
 <dt>
-    <h4 class="name" id="preUpdate"><span class="type-signature"></span>preUpdate<span class="signature">(elapsedTime)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="preUpdate"><span class="type-signature"></span>preUpdate<span class="signature">(millis)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1039,7 +1907,7 @@ Subclasses or instances may override for custom loading animations.
     
     
     <div class="description">
-        Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
+        Updates the Box before update() is called
     </div>
     
 
@@ -1073,7 +1941,7 @@ Subclasses or instances may override for custom loading animations.
 	
         <tr>
             
-                <td class="name"><code>elapsedTime</code></td>
+                <td class="name"><code>millis</code></td>
             
             
             <td class="type">
@@ -1089,7 +1957,7 @@ Subclasses or instances may override for custom loading animations.
             
             
             
-            <td class="description last">Elapsed time in milliseconds</td>
+            <td class="description last">The milliseconds that have passed since last iteration of gameLoop</td>
         </tr>
 	
 	
@@ -1106,11 +1974,6 @@ Subclasses or instances may override for custom loading animations.
 	
 
 	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="GameCore.html#preUpdate">GameCore#preUpdate</a>
-	</li></dd>
-	
 	
 	
 	
@@ -1124,7 +1987,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 231</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>BoxGame.js, line 56</li></ul></dd>
 	
     
     
@@ -1192,7 +2055,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 94</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 163</li></ul></dd>
 	
     
     
@@ -1308,7 +2171,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 63</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 133</li></ul></dd>
 	
     
     
@@ -1424,7 +2287,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 74</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 144</li></ul></dd>
 	
     
     
@@ -1492,7 +2355,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 85</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 154</li></ul></dd>
 	
     
     
@@ -1573,7 +2436,7 @@ Subclasses or instances may override for custom loading animations.
             
             
             
-            <td class="description last">elapsed time in milliseconds</td>
+            <td class="description last">Elapsed time in milliseconds</td>
         </tr>
 	
 	
@@ -1608,7 +2471,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 240</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 309</li></ul></dd>
 	
     
     
@@ -1689,7 +2552,7 @@ Subclasses or instances may override for custom loading animations.
             
             
             
-            <td class="description last">elapsed time in milliseconds</td>
+            <td class="description last">Elapsed time in milliseconds</td>
         </tr>
 	
 	
@@ -1724,7 +2587,7 @@ Subclasses or instances may override for custom loading animations.
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 248</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>GameCore.js, line 317</li></ul></dd>
 	
     
     
@@ -1760,13 +2623,13 @@ Subclasses or instances may override for custom loading animations.
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="dd99465fac.html">plugins/loadImage</a></li><li><a href="59a2e48273.html">plugins/loadSound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Fri Feb 15 2013 15:00:23 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 05:49:30 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

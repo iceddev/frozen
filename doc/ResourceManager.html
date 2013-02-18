@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        The ResourceManager handles DOM events for use in games.
+        The ResourceManager handles loading images and sounds for use in games.
     </div>
     
 
@@ -59,172 +59,6 @@
     
     
 <dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>imageCount</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The number of images requested</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>loadedImages</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The number of images loaded</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>allLoaded</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Whether all the resources have been loaded</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>imageDir</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The directory to load images from</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>soundDir</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The directory to load sounds from</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>resourceList</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">A map of all the resources by their URLs</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
     
         
 	
@@ -279,6 +113,329 @@
     
     
     
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="allLoaded"><span class="type-signature"></span>allLoaded<span class="type-signature"> :Boolean</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Whether all the resources have been loaded
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 49</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="imageCount"><span class="type-signature"></span>imageCount<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The number of images requested
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This property is no longer used internally and will be removed in the future</li><ul></dd>
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 34</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="imageDir"><span class="type-signature"></span>imageDir<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The base directory to load images from
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 56</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadedImages"><span class="type-signature"></span>loadedImages<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The number of images loaded
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This property is no longer used internally and will be removed in the future</li><ul></dd>
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>0</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 42</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="resourceList"><span class="type-signature"></span>resourceList<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A map of all the resources by their URLs
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 70</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="soundDir"><span class="type-signature"></span>soundDir<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The base directory to load sounds from
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-default">Default Value:</dt>
+	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 63</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
     
     
         <h3 class="subsection-title">Methods</h3>
@@ -286,7 +443,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="getPercentComplete"><span class="type-signature"></span>getPercentComplete<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getPercentComplete"><span class="type-signature"></span>getPercentComplete<span class="signature">()</span><span class="type-signature"> &rarr; {Number}</span></h4>
     
     
 </dt>
@@ -294,7 +451,7 @@
     
     
     <div class="description">
-        Gets the percentage of resources loaded.
+        Gets the percent of resources loaded.
     </div>
     
 
@@ -326,7 +483,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 177</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 213</li></ul></dd>
 	
     
     
@@ -342,6 +499,28 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The percent of resources loaded
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -443,7 +622,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 40</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 79</li></ul></dd>
 	
     
     
@@ -588,7 +767,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 94</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 132</li></ul></dd>
 	
     
     
@@ -817,6 +996,8 @@
 	
 	
 	
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is no longer needed because sounds have play() on them directly and it will be removed in the future</li><ul></dd>
+    
 	
 	
 	
@@ -828,7 +1009,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 136</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 176</li></ul></dd>
 	
     
     
@@ -891,7 +1072,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 157</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>ResourceManager.js, line 192</li></ul></dd>
 	
     
     
@@ -927,13 +1108,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Global</h3><ul><li><a href="global.html#utils">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="dd99465fac.html">plugins/loadImage</a></li><li><a href="59a2e48273.html">plugins/loadSound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="CircleEntity.html">CircleEntity</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygonEntity.html">MultiPolygonEntity</a></li><li><a href="PolygonEntity.html">PolygonEntity</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="RectangleEntity.html">RectangleEntity</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sprite.html">Sprite</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Fri Feb 15 2013 15:00:24 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 05:49:31 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>
