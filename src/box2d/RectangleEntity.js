@@ -1,10 +1,8 @@
 /**
  * This Entity represents a Rectangle
  * @name RectangleEntity
- * @class RectangleEntity
+ * @constructor RectangleEntity
  * @extends Entity
- * @property {Number} halfWidth Half of the Rectangle's total width
- * @property {Number} halfHeight Half of the Rectangle's total width
  */
 
 define([
@@ -16,9 +14,28 @@ define([
   'use strict';
 
   return dcl([Mixer, Entity], {
+    /**
+     * Half of the Rectangle's total width
+     * @type {Number}
+     * @memberOf RectangleEntity#
+     * @default
+     */
     halfWidth: 1,
+    /**
+     * Half of the Rectangle's total width
+     * @type {Number}
+     * @memberOf RectangleEntity#
+     * @default
+     */
     halfHeight: 1,
 
+    /**
+     * Draws the RectangleEntity at a given scale
+     * @function
+     * @memberOf RectangleEntity#
+     * @param {Context} ctx The drawing context
+     * @param {Number} scale The scale at which to draw
+     */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
@@ -48,6 +65,12 @@ define([
       };
     }),
 
+    /**
+     * Scale this shape
+     * @function
+     * @memberOf RectangleEntity#
+     * @param {Number} scale The amount the shape should scale
+     */
     scaleShape: dcl.superCall(function(sup){
       return function(scale){
         this.halfHeight = this.halfHeight * scale;
@@ -57,12 +80,11 @@ define([
     }),
 
     /**
-      * Checks if a given point is contained within this Rectangle.
-      *
-      * @name RectangleEntity#pointInShape
-      * @function
-      * @param {Object} point An object with x and y values.
-    */
+     * Checks if a given point is contained within this Rectangle.
+     * @function
+     * @memberOf RectangleEntity#
+     * @param {Object} point An object with x and y values.
+     */
     pointInShape: function(point){
       return ((point.x >= (this.x - this.halfWidth)) && (point.x <= (this.x + this.halfWidth)) && (point.y >= (this.y - this.halfHeight)) && (point.y <= (this.y + this.halfHeight)));
     }

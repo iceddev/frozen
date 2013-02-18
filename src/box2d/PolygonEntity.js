@@ -1,10 +1,9 @@
 /**
  * This Entity represents a polygon which is build from an array of points.
  * @name PolygonEntity
- * @class PolygonEntity
+ * @constructor PolygonEntity
  * @extends Entity
- * @property {Array} points An array of objects that have x and y values.
-*/
+ */
 
 define([
   'dcl',
@@ -18,7 +17,21 @@ define([
   'use strict';
 
   return dcl([Mixer, Entity], {
+    /**
+     * An array of objects that have x and y values.
+     * @type {Array}
+     * @memberOf PolygonEntity#
+     * @default
+     */
     points: [],
+
+    /**
+     * Draws the PolygonEntity at a given scale
+     * @function
+     * @memberOf PolygonEntity#
+     * @param {Context} ctx The drawing context
+     * @param {Number} scale The scale at which to draw
+     */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
@@ -47,6 +60,12 @@ define([
       };
     }),
 
+    /**
+     * Scale this shape
+     * @function
+     * @memberOf PolygonEntity#
+     * @param {Number} scale The amount the shape should scale
+     */
     scaleShape: dcl.superCall(function(sup){
       return function(scale){
         this.points = scalePoints(this.points, scale);
@@ -55,12 +74,11 @@ define([
     }),
 
     /**
-      * Checks if a given point is contained within this Polygon.
-      *
-      * @name PolygonEntity#pointInShape
-      * @function
-      * @param {Object} point An object with x and y values.
-    */
+     * Checks if a given point is contained within this Polygon.
+     * @function
+     * @memberOf PolygonEntity#
+     * @param {Object} point An object with x and y values.
+     */
     pointInShape: function(point){
       return pointInPolygon(point, translatePoints(this.points, this));
     }

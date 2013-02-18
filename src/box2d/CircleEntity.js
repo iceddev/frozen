@@ -1,9 +1,8 @@
 /**
- * This represents a Circly body and shape in a Box2d world
+ * This represents a Circle body and shape in a Box2d world
  * @name CircleEntity
- * @class CircleEntity
+ * @constructor CircleEntity
  * @extends Entity
- * @property {Number} radius The radius of this circle.
  */
 
 define([
@@ -16,13 +15,21 @@ define([
   'use strict';
 
   return dcl([Mixer, Entity], {
+    /**
+     * The radius of this circle.
+     * @type {Number}
+     * @memberOf CircleEntity#
+     * @default
+     */
     radius: 1,
 
     /**
-      * Draws the CircelEntity at a given scale
-      * @name CircleEntity#draw
-      * @function
-    */
+     * Draws the CircleEntity at a given scale
+     * @function
+     * @memberOf CircleEntity#
+     * @param {Context} ctx The drawing context
+     * @param {Number} scale The scale at which to draw
+     */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
@@ -53,6 +60,12 @@ define([
       };
     }),
 
+    /**
+     * Scale this shape
+     * @function
+     * @memberOf CircleEntity#
+     * @param {Number} scale The amount the shape should scale
+     */
     scaleShape: dcl.superCall(function(sup){
       return function(scale){
         this.radius = this.radius * scale;
@@ -61,12 +74,11 @@ define([
     }),
 
     /**
-      * Checks if a given point is contained within this Circle.
-      *
-      * @name CircelEntity#pointInShape
-      * @function
-      * @param {Object} point An object with x and y values.
-    */
+     * Checks if a given point is contained within this Circle.
+     * @function
+     * @memberOf CircleEntity#
+     * @param {Object} point An object with x and y values.
+     */
     pointInShape: function(point){
       return (distance(point, this) <= this.radius);
     }

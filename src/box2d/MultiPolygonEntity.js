@@ -1,9 +1,8 @@
 /**
  * This Entity is for building complex and possibly concave shapes
  * @name MultiPolygonEntity
- * @class MultiPolygonEntity
+ * @constructor MultiPolygonEntity
  * @extends Entity
- * @property {Array} polys An array of polygons
  */
 
 define([
@@ -18,16 +17,21 @@ define([
   'use strict';
 
   return dcl([Mixer, Entity], {
+    /**
+     * An array of polygons
+     * @type {Array}
+     * @memberOf MultiPolygonEntity#
+     * @default
+     */
     polys: [],
 
     /**
-      * Draws each polygon in the entity
-      * @name MultiPolygonEntity#draw
-      * @function
-      * @param {2dContext} ctx the HTML5 2d drawing context
-      * @param {Number} scale the scale to draw the entity at
-      *
-      */
+     * Draws each polygon in the entity
+     * @function
+     * @memberOf MultiPolygonEntity#
+     * @param {2dContext} ctx the HTML5 2d drawing context
+     * @param {Number} scale the scale to draw the entity at
+     */
     draw: dcl.superCall(function(sup){
       return function(ctx, scale){
         scale = scale || this.scale || 1;
@@ -58,6 +62,12 @@ define([
       };
     }),
 
+    /**
+     * Scale this shape
+     * @function
+     * @memberOf MultiPolygonEntity#
+     * @param {Number} scale The amount the shape should scale
+     */
     scaleShape: dcl.superCall(function(sup){
       return function(scale){
         this.polys = scalePoints(this.polys, scale);
@@ -66,12 +76,11 @@ define([
     }),
 
     /**
-      * Checks if a given point is contained within this MultiPolygon.
-      *
-      * @name MultiPolygonEntity#pointInShape
-      * @function
-      * @param {Object} point An object with x and y values.
-    */
+     * Checks if a given point is contained within this MultiPolygon.
+     * @function
+     * @memberOf MultiPolygonEntity#
+     * @param {Object} point An object with x and y values.
+     */
     pointInShape: function(point){
       for(var j = 0; j < this.polys.length; j++){
         if(pointInPolygon(point, translatePoints(this.polys[j], this))){
