@@ -464,9 +464,19 @@ define([
       beforeEach(function(){
         im.canvas = document.createElement('canvas');
 
+        im.canvas.style.position = 'absolute';
+        im.canvas.style.top = '0';
+        im.canvas.style.left = '0';
+
+        document.body.appendChild(im.canvas);
+
         im.getMouseLoc.andCallThrough();
 
         mouseLoc = im.getMouseLoc(mockEvent);
+      });
+
+      afterEach(function(){
+        document.body.removeChild(im.canvas);
       });
 
       it('should return the position of the event over the canvas', function(){
