@@ -23,8 +23,9 @@ module.exports = function(grunt) {
     },
     jsdoc: {
       dist: {
-        src: ['src/**/*.js'],
-        dest: 'doc'
+        src: ['src/**/*.js', 'README.md'],
+        dest: 'doc',
+        config: 'jsdoc_config.json'
       }
     },
     jasmine: {
@@ -32,9 +33,9 @@ module.exports = function(grunt) {
       specs: 'specs/**/*Spec.js',
       amd: true,
       helpers: [
+        'deps/Box2d.min.js',
         'dojoConfig.js',
-        'deps/dojo/dojo.js',
-        'deps/Box2d.min.js'
+        'deps/dojo/dojo.js'
       ],
       timeout: 10000,
       phatomjs: {
