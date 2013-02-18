@@ -70,11 +70,16 @@ var profile = (function(){
       "dist/frozen": {
         include: [
           'frozen/box2d/Box',
+          'frozen/box2d/BoxGame',
           'frozen/box2d/CircleEntity',
           'frozen/box2d/Entity',
           'frozen/box2d/PolygonEntity',
           'frozen/box2d/MultiPolygonEntity',
           'frozen/box2d/RectangleEntity',
+          'frozen/box2d/joints/Joint',
+          'frozen/box2d/joints/Revolute',
+          'frozen/box2d/joints/Distance',
+          'frozen/box2d/joints/Prismatic',
           'frozen/reiner/Creature',
           'frozen/AnimFrame',
           'frozen/Animation',
