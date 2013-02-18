@@ -7,17 +7,48 @@ Frozen is an open source HTML5 game engine.
 
 Examples can be found at https://github.com/iceddev/frozen/tree/master/examples
 
-## Building
+## Browser Support
 
-Warning: don't run `npm install` unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D
+We have tested in:
 
-If you want to build from source, run:
+* Chrome 24 & 26-dev
+* Firefox 18
+* IE10 (limitated sound support)
+* Chrome for Android 18 & 24 (no sound support)
+* Firefox for Android 18-19 & 20a2
+* PhantomJS 1.8.1
 
-1. `npm install` to get all the NPM dependencies and start the `volo add`
-2. `grunt dojo` to start the dojo build
-3. Optionally, `grunt jsdoc` will generate docs
+__Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
 
-More documentation coming.  Promise :)
+## Development
+
+__Warning: don't run `npm install` unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D__
+
+### Dependencies
+
+All development tasks depend on having dependencies installed.
+
+Use `npm install` to get all the NPM dependencies and start the `volo add`
+
+### Building the dist/frozen layer
+
+`grunt dojo` to start the dojo build
+
+### Generating the docs
+
+`grunt jsdoc` will generate docs
+
+### Running the tests
+
+`grunt jasmine` to run tests in PhantomJS or `grunt jasmine-server` to run tests in the browser
+
+### Linting the source
+
+`grunt lint` to lint the source
+
+### Linting and running tests when files change
+
+`grunt watch` to watch the source and specs and run lint and jasmine when a file changes
 
 ## License
 
