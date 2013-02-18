@@ -80,6 +80,7 @@ define([
      * @function
      * @memberOf MultiPolygonEntity#
      * @param {Object} point An object with x and y values.
+     * @return {Boolean} True if point is in shape else false
      */
     pointInShape: function(point){
       for(var j = 0; j < this.polys.length; j++){

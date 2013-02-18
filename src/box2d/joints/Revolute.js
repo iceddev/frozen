@@ -2,7 +2,7 @@
  * This represents a revolute joint between two bodies.
  * This allow for rotation of one body around a point of another.
  * @name Revolute
- * @class Revolute
+ * @constructor Revolute
  * @extends Joint
  */
 
@@ -22,11 +22,12 @@ define([
   return dcl([Mixer, Joint], {
 
     /**
-      * Creates and adds this joint in the Box2d world.
-      * @name Revolute#createB2Joint
-      * @function
-      * @param {Box} the box in which to create the joint.
-    */
+     * Creates and adds this joint in the Box2d world.
+     * @function
+     * @memberOf Revolute#
+     * @param {Box} the box in which to create the joint.
+     * @return {b2Joint} Joint created by box2d
+     */
     createB2Joint: function(box){
       if(box && box.bodiesMap && box.b2World && box.jointsMap && !box.jointsMap[this.id]){
         var body1 = box.bodiesMap[this.bodyId1];

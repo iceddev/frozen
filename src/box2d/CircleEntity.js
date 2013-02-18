@@ -78,6 +78,7 @@ define([
      * @function
      * @memberOf CircleEntity#
      * @param {Object} point An object with x and y values.
+     * @return {Boolean} True if point is in shape else false
      */
     pointInShape: function(point){
       return (distance(point, this) <= this.radius);
