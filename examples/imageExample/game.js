@@ -1,21 +1,19 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
+require([
+  'frozen/GameCore',
+  'dojo/keys',
+  // You can use plugins to load your resources
+  'frozen/plugins/loadImage!images/background.png',
+  'frozen/plugins/loadImage!images/nyan.png'
+], function(GameCore, keys, backImg, nyan){
 
   var x = 100;
   var y = 100;
   var speed = 2.5;
 
-  //setup a ResourceManager to use in the game
-  var rm = new ResourceManager({
-    imageDir: 'images'
-  });
-  var backImg = rm.loadImage('background.png');
-  var nyan = rm.loadImage('nyan.png');
-
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
-    resourceManager: rm,
     initInput: function(im){ //im = this.inputManager
       //tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);

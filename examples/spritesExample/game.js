@@ -1,23 +1,24 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'dojo/keys'], function(GameCore, ResourceManager, Sprite, Animation, keys){
+require([
+  'frozen/GameCore',
+  'frozen/Sprite',
+  'frozen/Animation',
+  'dojo/keys',
+  'frozen/plugins/loadImage!images/background.png',
+  'frozen/plugins/loadImage!images/walking.png'
+], function(GameCore, Sprite, Animation, keys, backImg, spriteImg){
 
   var speed = 0.5;
-
-  //setup a ResourceManager to use in the game
-  var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
-  var spriteImg = rm.loadImage('images/walking.png');
 
   //new sprite object maintian position, and velocities
   var sprite = new Sprite({x:100,y:100, w:96, h: 96, dx:0, dy: 0});
 
   //set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
   sprite.anim = new Animation().createFromTile(8,100,spriteImg,96,96);
-  
+
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
-    resourceManager: rm,
     initInput: function(im){ //im = this.inputManager
       //tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);

@@ -1,12 +1,11 @@
 //load the AMD modules we need
 require([
   'frozen/GameCore',
-  'frozen/ResourceManager',
   'dojo/keys',
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadSound!sounds/yipee.wav'
-], function(GameCore, ResourceManager, keys, backImg, nyan, yipee){
+], function(GameCore, keys, backImg, nyan, yipee){
 
   var x = 100;
   var y = 100;
