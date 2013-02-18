@@ -32,6 +32,14 @@ define([
       expect(anim.width).toBe(64);
     });
 
+    it('should default to offsetX of 0', function(){
+      expect(anim.offsetX).toBe(0);
+    });
+
+    it('should default to offsetY of 0', function(){
+      expect(anim.offsetY).toBe(0);
+    });
+
     it('should not have an image by default', function(){
       expect(anim.image).toBeNull();
     });

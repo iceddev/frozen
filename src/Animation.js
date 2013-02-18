@@ -55,6 +55,18 @@ define([
      * @default
      */
     image: null,
+    /**
+     * The offset of the of pixels in the x slot from the source image
+     * @type {Number}
+     * @default
+     */
+    offsetX: 0,
+    /**
+     * The offset of the of pixels in the y slot from the source image
+     * @type {Number}
+     * @default
+     */
+    offsetY: 0,
 
     constructor: function(){
       this.start();
@@ -227,7 +239,7 @@ define([
      */
     draw: function(context, x, y){
       var cf = this.getCurrentFrame();
-      context.drawImage(this.image, cf.imgSlotX * this.width, cf.imgSlotY * this.height, this.width, this.height, x, y, this.width, this.height);
+      context.drawImage(this.image, cf.imgSlotX * this.width + this.offsetX, cf.imgSlotY * this.height + this.offsetY, this.width, this.height, x, y, this.width, this.height);
     }
   });
 
