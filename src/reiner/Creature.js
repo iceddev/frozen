@@ -1,10 +1,13 @@
-/*
+/**
  * This type of sprite is based off of the excellent images from Reiner's tilesets: http://www.reinerstilesets.de/
- *
+ * <br>
  * creatures have walking, idle, and dying animations in 8 isometric directions
  * The animations directions are in E,N,NE,NW,S,SE,SW,W (alphabetical) order simply because that's
- * how i stitched them together using ImageMagick.
+ * how they were stitched together using ImageMagick.
  *
+ * @name Creature
+ * @constructor Creature
+ * @extends Sprite
  */
 
 define([
@@ -18,6 +21,22 @@ define([
   'use strict';
 
   return dcl([Mixer, Sprite], {
+    /**
+    * A map of static constants for internal use
+    * @type {Object}
+    * @memberOf Creature#
+    * @property {Number} EAST a direction the creature can face
+    * @property {Number} NORTH a direction the creature can face
+    * @property {Number} NORTHEAST a direction the creature can face
+    * @property {Number} NORTHWEST a direction the creature can face
+    * @property {Number} SOUTH a direction the creature can face
+    * @property {Number} SOUTHEAST a direction the creature can face
+    * @property {Number} SOUTHWEST a direction the creature can face
+    * @property {Number} WEST a direction the creature can face
+    * @property {Number} STATE_WALKING a state the creature can be in
+    * @property {Number} STATE_DYING a state the creature can be in
+    * @property {Number} STATE_IDLE a state the creature can be in
+    */
     statics: {
       EAST: 0,
       NORTH: 1,
@@ -31,15 +50,46 @@ define([
       STATE_DYING: 1,
       STATE_IDLE: 2
     },
+    /**
+    * The current state of the creature. Will be a value from the static constants.
+    * @type {Number}
+    * @memberOf Creature#
+    */
     state: 0,
+    /**
+    * An array of Animation objects (one for each direction) to display the creature in a walking state
+    * @type {Array}
+    * @memberOf Creature#
+    */
     walkingAnims: [],
+    /**
+    * An array of Animation objects (one for each direction) to display the creature in a dying state
+    * @type {Array}
+    * @memberOf Creature#
+    */
     dyingAnims: [],
+    /**
+    * An array of Animation objects (one for each direction) to display the creature in an idle state
+    * @type {Array}
+    * @memberOf Creature#
+    */
     idleAnims: [],
+    /**
+    * The current direction that the creature is pointed. Will be a value from the static constansts.
+    * @type {Number}
+    * @memberOf Creature#
+    */
     direction: 0,
     constructor: function(){
       this.state = this.statics.STATE_IDLE;
       this.direction = this.statics.EAST;
     },
+    /**
+     * Updates this creature's current image (frame), and changes which animation it should be using if neccesary.
+     * @function
+     * @memberOf Creature#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
     update: function(elapsedTime){
       this.x += this.dx * elapsedTime;
       this.y += this.dy * elapsedTime;
@@ -79,6 +129,18 @@ define([
       }
       this.anim.update(elapsedTime);
     },
+    /**
+     * Used to create animations from a sheet of tiles
+     * @function
+     * @memberOf Creature#
+     * @param  {Number} frameCount Number of frames in the animation
+     * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
+     * @param  {Image} img Image sheet to create animation from
+     * @param  {Number} w Width of each tile in pixels
+     * @param  {Number} h Height of each tile in pixels
+     * @param  {Number} ySlot Slot on Y axis to start creating tiles
+     * @return {Array} Array of Animations generated using parameters
+     */
     createAnimations: function(frameCount, frameTimes, img, h, w, ySlot){
       var anims = [];
       var isFTArray = lang.isArray(frameTimes);

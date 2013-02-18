@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Sprite</title>
+    <title>JSDoc: Class: Creature</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Sprite</h1>
+    <h1 class="page-title">Class: Creature</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    Sprite
+    Creature
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Sprite"><span class="type-signature"></span>new Sprite<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Creature"><span class="type-signature"></span>new Creature<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,11 @@
     
     
     <div class="description">
-        The Sprite class represents a simple animated character for a game
+        This type of sprite is based off of the excellent images from Reiner's tilesets: http://www.reinerstilesets.de/
+<br>
+creatures have walking, idle, and dying animations in 8 isometric directions
+The animations directions are in E,N,NE,NW,S,SE,SW,W (alphabetical) order simply because that's
+how they were stitched together using ImageMagick.
     </div>
     
 
@@ -79,7 +83,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Sprite.js, line 1</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 1</li></ul></dd>
 	
     
     
@@ -102,6 +106,12 @@
     
     </div>
     
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="Sprite.html">Sprite</a></li>
+        </ul>
     
     
     
@@ -138,6 +148,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#collisionRadius">Sprite#collisionRadius</a>
+	</li></dd>
+	
 	
 	
 	
@@ -155,6 +170,56 @@
 	
 	<dt class="tag-source">Source:</dt>
 	<dd class="tag-source"><ul class="dummy"><li>Sprite.js, line 56</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="direction"><span class="type-signature"></span>direction<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current direction that the creature is pointed. Will be a value from the static constansts.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 82</li></ul></dd>
 	
     
     
@@ -190,6 +255,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#dx">Sprite#dx</a>
+	</li></dd>
 	
 	
 	
@@ -244,6 +314,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#dy">Sprite#dy</a>
+	</li></dd>
+	
 	
 	
 	
@@ -261,6 +336,106 @@
 	
 	<dt class="tag-source">Source:</dt>
 	<dd class="tag-source"><ul class="dummy"><li>Sprite.js, line 42</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="dyingAnims"><span class="type-signature"></span>dyingAnims<span class="type-signature"> :Array</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        An array of Animation objects (one for each direction) to display the creature in a dying state
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 70</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="idleAnims"><span class="type-signature"></span>idleAnims<span class="type-signature"> :Array</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        An array of Animation objects (one for each direction) to display the creature in an idle state
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 76</li></ul></dd>
 	
     
     
@@ -297,6 +472,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#name">Sprite#name</a>
+	</li></dd>
+	
 	
 	
 	
@@ -314,6 +494,437 @@
 	
 	<dt class="tag-source">Source:</dt>
 	<dd class="tag-source"><ul class="dummy"><li>Sprite.js, line 49</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="state"><span class="type-signature"></span>state<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current state of the creature. Will be a value from the static constants.
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 58</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="statics"><span class="type-signature"></span>statics<span class="type-signature"> :Object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        A map of static constants for internal use
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>EAST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>NORTH</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>NORTHEAST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>NORTHWEST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>SOUTH</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>SOUTHEAST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>SOUTHWEST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>WEST</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a direction the creature can face</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>STATE_WALKING</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a state the creature can be in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>STATE_DYING</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a state the creature can be in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>STATE_IDLE</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">a state the creature can be in</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 40</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="walkingAnims"><span class="type-signature"></span>walkingAnims<span class="type-signature"> :Array</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        An array of Animation objects (one for each direction) to display the creature in a walking state
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 64</li></ul></dd>
 	
     
     
@@ -349,6 +960,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#x">Sprite#x</a>
+	</li></dd>
 	
 	
 	
@@ -402,6 +1018,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#y">Sprite#y</a>
+	</li></dd>
 	
 	
 	
@@ -469,6 +1090,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#clone">Sprite#clone</a>
+	</li></dd>
+	
 	
 	
 	
@@ -514,6 +1140,257 @@
 	<dd>
 		
 <span class="param-type"><a href="Sprite.html">Sprite</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="createAnimations"><span class="type-signature"></span>createAnimations<span class="signature">(frameCount, frameTimes, img, w, h, ySlot)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Used to create animations from a sheet of tiles
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>frameCount</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Number of frames in the animation</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>frameTimes</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Value or array of values corresponding to amount of time per frame</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>img</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Image</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Image sheet to create animation from</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>w</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Width of each tile in pixels</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>h</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Height of each tile in pixels</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>ySlot</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Slot on Y axis to start creating tiles</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 144</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Array of Animations generated using parameters
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array</span>
 
 
 	</dd>
@@ -601,6 +1478,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#draw">Sprite#draw</a>
+	</li></dd>
 	
 	
 	
@@ -713,6 +1595,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#drawCurrentFrame">Sprite#drawCurrentFrame</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because it was replaced by draw() and it will be removed in the future</li><ul></dd>
@@ -777,6 +1664,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getCurrentFrame">Sprite#getCurrentFrame</a>
+	</li></dd>
 	
 	
 	
@@ -862,6 +1754,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getHeight">Sprite#getHeight</a>
+	</li></dd>
 	
 	
 	
@@ -950,6 +1847,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getMaxSpeed">Sprite#getMaxSpeed</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the maxSpeed property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -1036,6 +1938,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getVelocityX">Sprite#getVelocityX</a>
+	</li></dd>
 	
 	
 	
@@ -1124,6 +2031,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getVelocityY">Sprite#getVelocityY</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the dy property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -1210,6 +2122,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getWidth">Sprite#getWidth</a>
+	</li></dd>
 	
 	
 	
@@ -1298,6 +2215,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getX">Sprite#getX</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the x property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -1384,6 +2306,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#getY">Sprite#getY</a>
+	</li></dd>
 	
 	
 	
@@ -1520,6 +2447,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#limitSpeed">Sprite#limitSpeed</a>
+	</li></dd>
+	
 	
 	
 	
@@ -1653,6 +2585,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#setVelocityX">Sprite#setVelocityX</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the dx property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -1765,6 +2702,11 @@
 	
 	
 
+	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#setVelocityY">Sprite#setVelocityY</a>
+	</li></dd>
 	
 	
 	
@@ -1879,6 +2821,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#setX">Sprite#setX</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the x property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -1992,6 +2939,11 @@
 	
 
 	
+	<dt class="inherited-from">Inherited From:</dt>
+	<dd class="inherited-from"><ul class="dummy"><li>
+		<a href="Sprite.html#setY">Sprite#setY</a>
+	</li></dd>
+	
 	
 	
         <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This method is deprecated because the y property is available on Sprite and it will be removed in the future</li><ul></dd>
@@ -2038,7 +2990,7 @@
     
     
     <div class="description">
-        Updates this Sprite's Animation and its position based on the velocity.
+        Updates this creature's current image (frame), and changes which animation it should be using if neccesary.
     </div>
     
 
@@ -2088,7 +3040,7 @@
             
             
             
-            <td class="description last">The elapsed time in milliseconds since the previous update</td>
+            <td class="description last">Elapsed time in milliseconds</td>
         </tr>
 	
 	
@@ -2118,7 +3070,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Sprite.js, line 64</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>Creature.js, line 93</li></ul></dd>
 	
     
     
@@ -2160,7 +3112,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 06:29:52 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 06:29:51 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>
