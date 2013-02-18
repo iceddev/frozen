@@ -7,10 +7,9 @@ require([
   'frozen/box2d/CircleEntity',
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
-  'frozen/plugins/loadImage!images/yarn.png',
-  'frozen/plugins/loadSound!sounds/yipee.wav'
+  'frozen/plugins/loadImage!images/yarn.png'
   ],
- function(keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg, yipee){
+ function(keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg){
 
   var speed = 8;
 
@@ -56,11 +55,6 @@ require([
 
       if(im.keyActions['D'].isPressed()){
         this.box.applyTorque(yarn.id, speed);
-      }
-
-      //.play sounds with the space bar !
-      if(im.keyActions[keys.SPACE].getAmount()){
-        yipee.play();
       }
 
     },
