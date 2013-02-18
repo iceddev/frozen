@@ -1,3 +1,16 @@
+/**
+ * AMD Plugin for loading Images
+ * @module plugins/loadImage
+ * @example
+ * define([
+ *   'frozen/plugins/loadImage!someImage.png'
+ * ], function(someImage){
+ *
+ *   // Use someImage
+ *
+ * });
+ */
+
 define([
   '../ResourceManager',
   '../utils/parseString'
