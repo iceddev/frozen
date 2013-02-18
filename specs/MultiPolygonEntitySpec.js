@@ -7,7 +7,7 @@ define([
 
   var mpolyJSON = {id: 'a', polys: [[{x: -30, y: 0}, {x: 30, y: 0}, {x: 0, y: 30}],[{x: 30, y: 0}, {x: 90, y: 0}, {x: 30, y: 30}]], staticBody: false, x: 0, y: 0};
 
-  describe('Box', function(){
+  describe('MultiPolygon Entity', function(){
 
     it('check defaults sizes', function(){
       var mpoly = new MultiPolygon();

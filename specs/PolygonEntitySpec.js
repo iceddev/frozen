@@ -7,7 +7,7 @@ define([
 
   var polyJSON = {id: 'a', points: [{x: -30, y: 0}, {x: 30, y: 0}, {x: 0, y: 30}], staticBody: false, x: 0, y: 0};
 
-  describe('Box', function(){
+  describe('Polygon Entity', function(){
 
     it('check defaults sizes', function(){
       var poly = new Polygon();
