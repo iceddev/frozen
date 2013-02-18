@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Prismatic</title>
+    <title>JSDoc: Class: HTML5Audio</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Prismatic</h1>
+    <h1 class="page-title">Class: HTML5Audio</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    Prismatic
+    HTML5Audio
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Prismatic"><span class="type-signature"></span>new Prismatic<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="HTML5Audio"><span class="type-signature"></span>new HTML5Audio<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        <p>This represents a prismatic joint between two bodies.<br />This type of joint forces a body to keep its angle rotation consitent with another body</p>
+        <p>A Sound object that abstracts HTML5 Audio into a generic API that can also be used with WebAudio</p>
     </div>
     
 
@@ -79,7 +79,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Prismatic.js, line 1</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 1</li></ul></dd>
 	
     
     
@@ -102,12 +102,6 @@
     
     </div>
     
-    
-        <h3 class="subsection-title">Extends</h3>
-        
-        <ul>
-            <li><a href="Joint.html">Joint</a></li>
-        </ul>
     
     
     
@@ -124,14 +118,14 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="axisScale"><span class="type-signature"></span>axisScale<span class="type-signature"> :Object</span></h4>
+    <h4 class="name" id="audio"><span class="type-signature"></span>audio<span class="type-signature"> :Audio</span></h4>
     
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>An object with x and y numeric components representing the line in which the entities can move relative to each other</p>
+        <p>The initial Audio object - used to load the sound prior to playing</p>
     </div>
     
     
@@ -160,7 +154,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Prismatic.js, line 29</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 43</li></ul></dd>
 	
     
     
@@ -177,14 +171,14 @@
         
             
 <dt>
-    <h4 class="name" id="bodyId1"><span class="type-signature"></span>bodyId1<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="complete"><span class="type-signature"></span>complete<span class="type-signature"> :Boolean</span></h4>
     
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>The id of the first entity that will be attached to this joint</p>
+        <p>Signals if the Sound object has completed loading</p>
     </div>
     
     
@@ -197,11 +191,6 @@
 	
 
 	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="Joint.html#bodyId1">Joint#bodyId1</a>
-	</li></dd>
-	
 	
 	
 	
@@ -213,12 +202,12 @@
 	
 	
 	<dt class="tag-default">Default Value:</dt>
-	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	<dd class="tag-default"><ul class="dummy"><li>false</li></ul></dd>
 	
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 21</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 36</li></ul></dd>
 	
     
     
@@ -235,14 +224,14 @@
         
             
 <dt>
-    <h4 class="name" id="bodyId2"><span class="type-signature"></span>bodyId2<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="declaredClass"><span class="type-signature"></span>declaredClass<span class="type-signature"> :String</span></h4>
     
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>The id of the second entity that will be attached to this joint</p>
+        <p>The declared class - used for debugging in dcl</p>
     </div>
     
     
@@ -255,11 +244,6 @@
 	
 
 	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="Joint.html#bodyId2">Joint#bodyId2</a>
-	</li></dd>
-	
 	
 	
 	
@@ -271,12 +255,12 @@
 	
 	
 	<dt class="tag-default">Default Value:</dt>
-	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
+	<dd class="tag-default"><ul class="dummy"><li>"frozen/sounds/HTML5Audio"</li></ul></dd>
 	
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 28</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 22</li></ul></dd>
 	
     
     
@@ -293,14 +277,14 @@
         
             
 <dt>
-    <h4 class="name" id="bodyPoint1"><span class="type-signature"></span>bodyPoint1<span class="type-signature"> :Object</span></h4>
+    <h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :String</span></h4>
     
     
 </dt>
 <dd>
     
     <div class="description">
-        <p>A point on the first entity where be attached to the second body. If no point is specified, the first body will be attached at its center point.</p>
+        <p>The name of the Sound object - typically the filename</p>
     </div>
     
     
@@ -312,11 +296,6 @@
 	
 	
 
-	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="Joint.html#bodyPoint1">Joint#bodyPoint1</a>
-	</li></dd>
 	
 	
 	
@@ -334,65 +313,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 35</li></ul></dd>
-	
-    
-    
-	
-	
-	
-	
-</dl>
-
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="jointAttributes"><span class="type-signature"></span>jointAttributes<span class="type-signature"> :Object</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>An object with any other properties that should be mixed into the box2d joint definition.</p>
-    </div>
-    
-    
-    
-<dl class="details">
-    
-        
-	
-	
-	
-
-	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="Joint.html#jointAttributes">Joint#jointAttributes</a>
-	</li></dd>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<dt class="tag-default">Default Value:</dt>
-	<dd class="tag-default"><ul class="dummy"><li>null</li></ul></dd>
-	
-	
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 42</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 29</li></ul></dd>
 	
     
     
@@ -415,7 +336,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="createB2Joint"><span class="type-signature"></span>createB2Joint<span class="signature">(the)</span><span class="type-signature"> &rarr; {b2Joint}</span></h4>
+    <h4 class="name" id="load"><span class="type-signature"></span>load<span class="signature">(filename)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -423,7 +344,7 @@
     
     
     <div class="description">
-        <p>Creates and adds this joint in the Box2d world.</p>
+        <p>Load the sound by filename</p>
     </div>
     
 
@@ -457,13 +378,13 @@
 	
         <tr>
             
-                <td class="name"><code>the</code></td>
+                <td class="name"><code>filename</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="Box.html">Box</a></span>
+<span class="param-type">String</span>
 
 
             
@@ -473,7 +394,7 @@
             
             
             
-            <td class="description last"><p>box in which to create the joint.</p></td>
+            <td class="description last"><p>The filename of the file to load</p></td>
         </tr>
 	
 	
@@ -503,7 +424,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Prismatic.js, line 38</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 58</li></ul></dd>
 	
     
     
@@ -519,28 +440,6 @@
     
     
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Joint created by box2d</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">b2Joint</span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
@@ -548,7 +447,7 @@
         
             
 <dt>
-    <h4 class="name" id="scaleJointLocation"><span class="type-signature"></span>scaleJointLocation<span class="signature">(scale)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loop"><span class="type-signature"></span>loop<span class="signature">(volume)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -556,7 +455,7 @@
     
     
     <div class="description">
-        <p>Scales the position that on the first body that the joint is connected at.</p>
+        <p>Loop the sound at a certain volume</p>
     </div>
     
 
@@ -590,7 +489,7 @@
 	
         <tr>
             
-                <td class="name"><code>scale</code></td>
+                <td class="name"><code>volume</code></td>
             
             
             <td class="type">
@@ -606,7 +505,7 @@
             
             
             
-            <td class="description last"><p>the scale to multiply the dimentions by</p></td>
+            <td class="description last"><p>Value of volume - between 0 and 1</p></td>
         </tr>
 	
 	
@@ -623,10 +522,139 @@
 	
 
 	
-	<dt class="inherited-from">Inherited From:</dt>
-	<dd class="inherited-from"><ul class="dummy"><li>
-		<a href="Joint.html#scaleJointLocation">Joint#scaleJointLocation</a>
-	</li></dd>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 74</li></ul></dd>
+	
+    
+    
+	
+	
+	
+	
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="play"><span class="type-signature"></span>play<span class="signature">(volume, startTime)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Play the sound at a certain volume and start time</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>volume</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Value of volume - between 0 and 1</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>startTime</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Value of milliseconds into the track to start</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+	
+	
+	
+
 	
 	
 	
@@ -641,7 +669,7 @@
 	
 	
 	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source"><ul class="dummy"><li>Joint.js, line 50</li></ul></dd>
+	<dd class="tag-source"><ul class="dummy"><li>HTML5Audio.js, line 88</li></ul></dd>
 	
     
     
@@ -683,7 +711,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 14:03:51 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 14:03:50 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>
