@@ -7,7 +7,7 @@ define([
 
   var rectJSON = {id: 'a', halfHeight: 30, halfWidth: 60, staticBody: false, x: 0, y: 0};
 
-  describe('Box', function(){
+  describe('Rectangle Entity', function(){
 
     it('check defaults sizes', function(){
       var rect = new Rectangle();

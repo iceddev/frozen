@@ -7,7 +7,7 @@ define([
 
   var circJSON = {id: 'a', radius: 30, staticBody: false, x: 0, y: 0};
 
-  describe('Box', function(){
+  describe('Circle Entity', function(){
 
     it('check defaults sizes', function(){
       var circ = new Circle();
