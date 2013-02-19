@@ -41,27 +41,98 @@
 
 
     <section>
-        <article><h1>Frozen is an open source HTML5 game engine.</h1>
+        <article><h1>Frozen <sup>v0.2.0</sup></h1>
 
 <p><a href="http://travis-ci.org/iceddev/frozen"><img src="https://secure.travis-ci.org/iceddev/frozen.png?branch=0.2.0" alt="build status" title="" /></a></p>
 
+<h2>What is Frozen?</h2>
+
+<p>Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.</p>
+
+<p>Our goal is to apply techniques used in building modern webapps to game development, such as AMD modules, dependency management, build process, and project scaffolding.</p>
+
+<h2>Get Frozen</h2>
+
+<ul>
+<li><p>Frozen (single file - AMD loader included)<br><br /><a href="https://raw.github.com/iceddev/frozen/master/dist/frozen.js.uncompressed.js">Development</a> and<br /><a href="https://raw.github.com/iceddev/frozen/master/dist/frozen.js">Production</a></p></li>
+<li><p>Frozen Source (individual modules - bring your own loader or use Dojo)<br><br />Use <code>volo add iceddev/frozen</code> to add it to your project<br><br />or grab the zip: <a href="https://github.com/iceddev/frozen/archive/master.zip">Frozen Source</a> (but don't forget your dependencies)</p></li>
+<li><p>Or just use the boilerplate!<br><br />Use <code>volo create your_project iceddev/frozen-dev-boilerplate</code> which will scaffold out a new project for you and install all dependencies</p></li>
+</ul>
+
+<h2>Documentation</h2>
+
+<p>Documentation is available at <a href='http://iceddev.github.com/frozen/'>http://iceddev.github.com/frozen/</a></p>
+
 <h2>Examples</h2>
 
-<p>Examples can be found at <a href='https://github.com/iceddev/frozen/tree/master/examples'>https://github.com/iceddev/frozen/tree/master/examples</a></p>
+<p>Play examples at <a href='http://iceddev.github.com/frozen/examples'>http://iceddev.github.com/frozen/examples</a><br><br />Examples source code can be found at <a href='https://github.com/iceddev/frozen/tree/master/examples'>https://github.com/iceddev/frozen/tree/master/examples</a></p>
 
-<h2>Building</h2>
+<h2>Browser Support</h2>
 
-<p>Warning: don't run <code>npm install</code> unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D</p>
+<p>We have tested in:</p>
 
-<p>If you want to build from source, run:</p>
+<ul>
+<li>Chrome 24 &amp; 26-dev</li>
+<li>Firefox 18</li>
+<li>IE10 (limited sound support)</li>
+<li>Chrome for Android 18 &amp; 24 (no sound support)</li>
+<li>Firefox for Android 18-19 &amp; 20a2</li>
+<li>PhantomJS 1.8.1</li>
+</ul>
 
-<ol>
-<li><code>npm install</code> to get all the NPM dependencies and start the <code>volo add</code></li>
-<li><code>grunt dojo</code> to start the dojo build</li>
-<li>Optionally, <code>grunt jsdoc</code> will generate docs</li>
-</ol>
+<p><strong>Most modern browsers should support this game engine if they support canvas, but YMMV with sounds</strong></p>
 
-<p>More documentation coming.  Promise :)</p>
+<h2>Rapid Development Through Tooling</h2>
+
+<p>Our Frozen Box2d Editor is available at <a href='http://phated.github.com/frozen-editor/'>http://phated.github.com/frozen-editor/</a></p>
+
+<h2>Technologies behind Frozen</h2>
+
+<p>While builds of Frozen may be tiny, we use some libraries and technologies behind the scenes as to not reinvent the wheel.</p>
+
+<p>These technologies include:</p>
+
+<ul>
+<li><a href="http://nodejs.org/">Node.js</a> and <a href="https://npmjs.org/">npm</a> - used for dependecy mangement for our build process and development workflow</li>
+<li><a href="http://gruntjs.com/">Grunt</a> - task runner for our development workflow, and allows for a single entry point into development configuration</li>
+<li><a href="http://volojs.org/">Volo</a> - clientside dependency management and project scaffolding tool</li>
+<li><a href="http://dojotoolkit.org/">Dojo</a> - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file</li>
+<li><a href="http://www.dcljs.org/">dcl</a> - used for generating constructors and supplying AOP convenience methods</li>
+<li><a href="https://box2dweb.googlecode.com/">Box2d</a> - used for physics calculations in games</li>
+<li><a href="http://usejsdoc.org/">JSDoc</a> - generates documentation for code</li>
+<li><a href="http://pivotal.github.com/jasmine/">Jasmine</a> - tests all use Jasmine</li>
+<li><a href="http://requirejs.org/docs/whyamd.html">AMD</a> - all modules are written with AMD and the single layer includes an AMD module loader</li>
+</ul>
+
+<h2>Development</h2>
+
+<p><strong>Warning: don't run <code>npm install</code> unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D</strong></p>
+
+<h3>Dependencies</h3>
+
+<p>All development tasks depend on having dependencies installed.</p>
+
+<p>Use <code>npm install</code> to get all the NPM dependencies and start the <code>volo add</code></p>
+
+<h3>Building the dist/frozen layer</h3>
+
+<p><code>grunt dojo</code> to start the dojo build</p>
+
+<h3>Generating the docs</h3>
+
+<p><code>grunt jsdoc</code> will generate docs</p>
+
+<h3>Running the tests</h3>
+
+<p><code>grunt jasmine</code> to run tests in PhantomJS or <code>grunt jasmine-server</code> to run tests in the browser</p>
+
+<h3>Linting the source</h3>
+
+<p><code>grunt lint</code> to lint the source</p>
+
+<h3>Linting and running tests when files change</h3>
+
+<p><code>grunt watch</code> to watch the source and specs and run lint and jasmine when a file changes</p>
 
 <h2>License</h2>
 
@@ -90,7 +161,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 14:03:50 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3</a> on Mon Feb 18 2013 18:23:19 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>
