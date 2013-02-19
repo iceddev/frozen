@@ -93,6 +93,47 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 
 `grunt watch` to watch the source and specs and run lint and jasmine when a file changes
 
+## Release Notes
+
+Breaking Changes
+
+* Default Box#gravityY to 9.8 instead of 10
+* Auto-scaling on Box (Will cause problems if you are already scaling and don't account for auto-scaling)P
+* Remove dojo/_base/declare from single layer - switch to dcl
+* Change color to fillStyle and strokeColor to strokeStyle to stay consistent with canvas API
+
+New Features
+
+* Added Joints (Distance, Prismatic, Revolute) - Box gained methods related to Joints
+* Added GameCore#setHeight and GameCore#setWidth to set the game's and canvas' height or width
+* Entities gained pointInShape function to determine if a point is within shape
+* Collision filtering inside Box and properties on Entities
+* Added insideCanvas utility and an insideCanvas property flag on mouse or touch events
+* HTML5 Audio Support - with plugin that auto-detects which audio type to use
+* Default lineWidth on Entities - used inside default draw
+* AMD Plugins for loadImage and loadSound
+* BoxGame added for easy creation of Box2d games - added preUpdate to GameCore to support this
+* Jasmine tests for the library
+
+Non-Breaking Changes
+
+* loadSound and loadImage now accept a String, Array of Strings, or Object of Strings and return the same type
+* Dojo/on is used to listen for Image loading - allows for other event listeners to be added without breaking things
+* Removed width and height from Box
+* Cleaned up InputManager#resize
+* Rewrote pointInPolygon module
+* Fix some InputManager bugs
+* Add more documentation
+* Update examples
+
+Deprecations
+
+* Any method that is just a getter or setter that did nothing else - No reason to continue the Java paradigms
+* Animation#createFromTile
+* ResourceManager#imageCount, ResourceManager#loadedImages, ResourceManager#playSound
+* Sprite#drawCurrentFrame
+* Entity#hidden
+
 ## License
 
 The MIT License (MIT)
