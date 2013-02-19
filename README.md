@@ -23,12 +23,16 @@ Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffol
 
 ## Documentation
 
-Documentation is available at http://iceddev.github.com/frozen/
+Documentation is available at http://frozenjs.com/doc/
 
 ## Examples
 
-Play examples at http://iceddev.github.com/frozen/examples<br>
+Play examples at http://frozenjs.com/examples/<br>
 Examples source code can be found at https://github.com/iceddev/frozen/tree/master/examples
+
+## Source
+
+Source available on github: https://github.com/iceddev/frozen
 
 ## Browser Support
 
