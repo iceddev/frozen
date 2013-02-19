@@ -1,6 +1,8 @@
 node_modules/
 libs/
-deps/
+deps/dojo
+deps/util
+deps/dcl
 
 # Don't commit SpecRunner that grunt-jasmine-runner generates in base of project
 _SpecRunner.html
