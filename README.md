@@ -49,7 +49,7 @@ Our Frozen Box2d Editor is available at http://phated.github.com/frozen-editor/
 
 ## Technologies behind Frozen
 
-While builds of Frozen may be tiny, we use many libraries and technologies behind the scenes so that we don't have to reinvent the wheel.
+While builds of Frozen may be tiny, we some libraries and technologies behind the scenes as to not reinvent the wheel.
 
 These technologies include:
 
