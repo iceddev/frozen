@@ -36,12 +36,32 @@ We have tested in:
 
 * Chrome 24 & 26-dev
 * Firefox 18
-* IE10 (limitated sound support)
+* IE10 (limited sound support)
 * Chrome for Android 18 & 24 (no sound support)
 * Firefox for Android 18-19 & 20a2
 * PhantomJS 1.8.1
 
 __Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
+
+## Rapid Development Through Tooling
+
+Our Frozen Box2d Editor is available at http://phated.github.com/frozen-editor/
+
+## Technologies behind Frozen
+
+While builds of Frozen may be tiny, we use many libraries and technologies behind the scenes so that we don't have to reinvent the wheel.
+
+These technologies include:
+
+* [Node.js](http://nodejs.org/) and [npm](https://npmjs.org/) - used for dependecy mangement for our build process and development workflow
+* [Grunt](http://gruntjs.com/) - task runner for our development workflow, and allows for a single entry point into development configuration
+* [Volo](http://volojs.org/) - clientside dependency management and project scaffolding tool
+* [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
+* [dcl](http://www.dcljs.org/) - used for generating constructors and supplying AOP convenience methods
+* [Box2d](https://box2dweb.googlecode.com/) - used for physics calculations in games
+* [JSDoc](http://usejsdoc.org/) - generates documentation for code
+* [Jasmine](http://pivotal.github.com/jasmine/) - tests all use Jasmine
+* [AMD](http://requirejs.org/docs/whyamd.html) - all modules are written with AMD and the single layer includes an AMD module loader
 
 ## Development
 
