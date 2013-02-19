@@ -1,6 +1,6 @@
 Frozen <sup>v0.2.0</sup>
 ========================
-[![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=0.2.0)](http://travis-ci.org/iceddev/frozen)
+[![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
 ## What is Frozen?
 
