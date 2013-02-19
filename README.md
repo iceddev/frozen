@@ -27,7 +27,7 @@ Documentation is available at http://iceddev.github.com/frozen/
 
 ## Examples
 
-Play examples at http://iceddev.github.com/frozen/examples
+Play examples at http://iceddev.github.com/frozen/examples<br>
 Examples source code can be found at https://github.com/iceddev/frozen/tree/master/examples
 
 ## Browser Support
