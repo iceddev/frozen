@@ -136,6 +136,8 @@ __Deprecations__
 * Sprite#drawCurrentFrame
 * Entity#hidden
 
+Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
+
 ## License
 
 The MIT License (MIT)
