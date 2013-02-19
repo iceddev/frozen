@@ -95,14 +95,16 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 
 ## Release Notes
 
-Breaking Changes
+### <sup>v0.2.0</sup>
+
+__Breaking Changes__
 
 * Default Box#gravityY to 9.8 instead of 10
 * Auto-scaling on Box (Will cause problems if you are already scaling and don't account for auto-scaling)P
 * Remove dojo/_base/declare from single layer - switch to dcl
 * Change color to fillStyle and strokeColor to strokeStyle to stay consistent with canvas API
 
-New Features
+__New Features__
 
 * Added Joints (Distance, Prismatic, Revolute) - Box gained methods related to Joints
 * Added GameCore#setHeight and GameCore#setWidth to set the game's and canvas' height or width
@@ -115,7 +117,7 @@ New Features
 * BoxGame added for easy creation of Box2d games - added preUpdate to GameCore to support this
 * Jasmine tests for the library
 
-Non-Breaking Changes
+__Non-Breaking Changes__
 
 * loadSound and loadImage now accept a String, Array of Strings, or Object of Strings and return the same type
 * Dojo/on is used to listen for Image loading - allows for other event listeners to be added without breaking things
@@ -126,7 +128,7 @@ Non-Breaking Changes
 * Add more documentation
 * Update examples
 
-Deprecations
+__Deprecations__
 
 * Any method that is just a getter or setter that did nothing else - No reason to continue the Java paradigms
 * Animation#createFromTile
