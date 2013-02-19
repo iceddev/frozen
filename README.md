@@ -1,11 +1,34 @@
-Frozen is an open source HTML5 game engine.
-===========================================
-
+Frozen <sup>v0.2.0</sup>
+========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=0.2.0)](http://travis-ci.org/iceddev/frozen)
+
+## What is Frozen?
+
+Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.
+
+Our goal is to apply techniques used in building modern webapps to game development, such as AMD modules, dependency management, build process, and project scaffolding.
+
+## Get Frozen
+
+* Frozen (single file - AMD loader included)<br>
+[Development](https://raw.github.com/iceddev/frozen/master/dist/frozen.js.uncompressed.js) and
+[Production](https://raw.github.com/iceddev/frozen/master/dist/frozen.js)
+
+* Frozen Source (individual modules - bring your own loader or use Dojo)<br>
+Use `volo add iceddev/frozen` to add it to your project<br>
+or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)
+
+* Or just use the boilerplate!<br>
+Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffold out a new project for you and install all dependencies
+
+## Documentation
+
+Documentation is available at http://iceddev.github.com/frozen/
 
 ## Examples
 
-Examples can be found at https://github.com/iceddev/frozen/tree/master/examples
+Play examples at http://iceddev.github.com/frozen/examples
+Examples source code can be found at https://github.com/iceddev/frozen/tree/master/examples
 
 ## Browser Support
 

@@ -1,6 +1,6 @@
 # Examples
 
-Test the examples at http://iceddev.github.com/frozen/examples
+Play examples at http://iceddev.github.com/frozen/examples
 
 Basic Usage
 ===========
