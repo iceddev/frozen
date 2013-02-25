@@ -227,6 +227,8 @@ define([
      * @param {Entity} entity Any Entity object
      */
     addBody: function(entity) {
+      /*jshint eqnull:true */
+
       if(!entity.alreadyScaled){
         entity.scaleShape(1 / this.scale);
         entity.scale = this.scale;
@@ -241,13 +243,13 @@ define([
 
 
       //these three props are for custom collision filtering
-      if(entity.hasOwnProperty('maskBits')){
+      if(entity.maskBits != null){
         fixDef.filter.maskBits = entity.maskBits;
       }
-      if(entity.hasOwnProperty('categoryBits')){
+      if(entity.categoryBits != null){
         fixDef.filter.categoryBits = entity.categoryBits;
       }
-      if(entity.hasOwnProperty('groupIndex')){
+      if(entity.groupIndex != null){
         fixDef.filter.groupIndex = entity.groupIndex;
       }
 
