@@ -12,34 +12,25 @@
  */
 
 define([
-  './Audio',
+  './AudioBase',
   './WebAudio',
   './HTML5Audio',
-  'dojo/has',
-  '../shims/AudioContext'
-], function(Audio, WebAudio, HTML5Audio, has){
+  'dojo/has'
+], function(AudioBase, WebAudio, HTML5Audio, has){
 
   'use strict';
-
-  has.add('WebAudio', function(global){
-    return !!global.AudioContext;
-  });
-
-  has.add('HTML5Audio', function(global){
-    return !!global.Audio;
-  });
 
   return {
     load: function(id, parentRequire, loaded, config){
       if(has('WebAudio')){
-        loaded(WebAudio);
+        return loaded(WebAudio);
       }
 
       if(has('HTML5Audio')){
-        loaded(HTML5Audio);
+        return loaded(HTML5Audio);
       }
 
-      loaded(Audio);
+      return loaded(AudioBase);
     }
   };
 

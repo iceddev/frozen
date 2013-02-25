@@ -7,6 +7,8 @@ require([
   'frozen/plugins/loadSound!sounds/yipee.wav'
 ], function(GameCore, keys, backImg, nyan, yipee){
 
+  'use strict';
+
   var x = 100;
   var y = 100;
   var speed = 2.5;
@@ -14,6 +16,8 @@ require([
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
+    gameAreaId: 'container',
+    canvasPercentage: 0.95,
     initInput: function(im){ //im = this.inputManager
       //tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);
@@ -45,7 +49,7 @@ require([
       }
 
       //.play sounds with the space bar !
-      if(im.keyActions[keys.SPACE].getAmount()){
+      if(im.keyActions[keys.SPACE].getAmount() || im.touchAction.isPressed()){
         yipee.play();
       }
 
@@ -53,6 +57,11 @@ require([
       if(im.mouseAction.isPressed()){
         x = im.mouseAction.position.x;
         y = im.mouseAction.position.y;
+      }
+
+      if(im.touchAction.isPressed()){
+        x = im.touchAction.position.x;
+        y = im.touchAction.position.y;
       }
     },
     update: function(millis){

@@ -2,19 +2,26 @@
  * An Audio object that implements HTML5 Audio into a generic API
  * @name HTML5Audio
  * @constructor HTML5Audio
- * @extends Audio
+ * @extends AudioBase
  */
 
 define([
-  './Audio',
+  './AudioBase',
   'dcl',
   'dojo/on',
+  'dojo/has',
   'dojo/_base/lang'
-], function(Audio, dcl, on, lang){
+], function(AudioBase, dcl, on, has, lang){
 
   'use strict';
 
-  return dcl(Audio, {
+  has.add('HTML5Audio', function(global){
+    return !!global.Audio;
+  });
+
+  has.add('shittySound', (has('ios') || has('android')) && has('webkit'));
+
+  return dcl(AudioBase, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
@@ -30,16 +37,20 @@ define([
      */
     audio: null,
 
-    constructor: function(filename){
-      this.audio = new Audio();
-    },
-
     load: function(filename){
       this.name = filename;
+
+      this.audio = new Audio();
+      if(has('shittySound')){
+        on.once(document, 'touchstart', lang.hitch(this, function(e){
+          this.audio.load();
+        }));
+      }
+
       this.audio.pause();
       this.audio.preload = 'auto';
       this.audio.src = filename;
-      on(this.audio, 'loadeddata', lang.hitch(this, function(e){
+      on.once(this.audio, 'loadeddata', lang.hitch(this, function(e){
         this.complete = true;
       }));
     },
@@ -53,6 +64,11 @@ define([
 
     play: function(volume, startTime){
       startTime = startTime || 0;
+
+      if(has('shittySound')){
+        this.audio.currentTime = startTime / 1000;
+        return this.audio.play();
+      }
 
       var audio = this._initAudio(volume, false);
       on(audio, 'loadeddata', function(e){

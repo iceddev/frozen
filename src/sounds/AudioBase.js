@@ -1,35 +1,34 @@
 /**
  * An Audio object that implements a generic API
- * @name Audio
- * @constructor Audio
+ * @name AudioBase
+ * @constructor AudioBase
  */
 
 define([
-  'dcl',
-  'dcl/bases/Mixer'
-], function(dcl, Mixer){
+  'dcl'
+], function(dcl){
 
   'use strict';
 
-  return dcl(Mixer, {
+  return dcl(null, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @default
      */
-    declaredClass: 'frozen/sounds/Audio',
+    declaredClass: 'frozen/sounds/AudioBase',
     /**
      * The name of the Audio object - typically the filename
      * @type {String}
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @default
      */
     name: null,
     /**
      * Signals if the Audio object has completed loading
      * @type {Boolean}
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @default
      */
     complete: false,
@@ -43,7 +42,7 @@ define([
     /**
      * Load the sound by filename
      * @function
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @param  {String} filename The filename of the file to load
      */
     load: function(filename){
@@ -54,7 +53,7 @@ define([
     /**
      * Loop the sound at a certain volume
      * @function
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @param  {Number} volume Value of volume - between 0 and 1
      */
     loop: function(volume){},
@@ -62,7 +61,7 @@ define([
     /**
      * Play the sound at a certain volume and start time
      * @function
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @param  {Number} volume    Value of volume - between 0 and 1
      * @param  {Number} startTime Value of milliseconds into the track to start
      */
@@ -71,7 +70,7 @@ define([
     /**
      * Method used to construct Audio objects internally
      * @function
-     * @memberOf Audio#
+     * @memberOf AudioBase#
      * @private
      * @param  {Number} volume Value of volume - between 0 and 1
      * @param  {Boolean} loop Whether or not to loop audio

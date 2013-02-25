@@ -3,22 +3,22 @@ define([
   'frozen/plugins/loadSound!specs/fixtures/yipee.wav',
   'frozen/plugins/loadSound![specs/fixtures/yipee.wav,specs/fixtures/yipee.wav,specs/fixtures/yipee.wav]',
   'frozen/plugins/loadSound!{sound1:specs/fixtures/yipee.wav,sound2:specs/fixtures/yipee.wav,sound3:specs/fixtures/yipee.wav}',
-  'frozen/sounds/Audio'
-], function(dcl, singleSound, soundArray, soundObject, Audio){
+  'frozen/sounds/AudioBase'
+], function(dcl, singleSound, soundArray, soundObject, AudioBase){
 
   'use strict';
 
   describe('plugins/loadSound', function(){
 
     it('should load a single sound', function(){
-      expect(dcl.isInstanceOf(singleSound, Audio)).toBe(true);
+      expect(dcl.isInstanceOf(singleSound, AudioBase)).toBe(true);
     });
 
     it('should load an array of sounds', function(){
       expect(Array.isArray(soundArray)).toBe(true);
       expect(soundArray.length).toBe(3);
       soundArray.forEach(function(sound){
-        expect(dcl.isInstanceOf(sound, Audio)).toBe(true);
+        expect(dcl.isInstanceOf(sound, AudioBase)).toBe(true);
       });
     });
 
