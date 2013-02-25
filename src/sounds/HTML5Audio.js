@@ -45,6 +45,12 @@ define([
         on.once(document, 'touchstart', lang.hitch(this, function(e){
           this.audio.load();
         }));
+        this._updateCurrentTime = null;
+        on.once(this.audio, 'progress', lang.hitch(this, function(){
+          if(this._updateCurrentTime !== null){
+            this._updateCurrentTime();
+          }
+        }));
       }
 
       this.audio.pause();
@@ -66,8 +72,17 @@ define([
       startTime = startTime || 0;
 
       if(has('shittySound')){
-        this.audio.currentTime = startTime / 1000;
-        return this.audio.play();
+        try {
+          this.audio.currentTime = startTime / 1000;
+          return this.audio.play();
+        } catch(err){
+          this._updateCurrentTime = function(){
+            this._updateCurrentTime = null;
+            this.audio.currentTime = startTime / 1000;
+            return this.audio.play();
+          };
+          return this.audio.play();
+        }
       }
 
       var audio = this._initAudio(volume, false);
