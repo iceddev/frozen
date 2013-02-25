@@ -1,8 +1,8 @@
 define([
+  'dcl',
   'frozen/ResourceManager',
-  'frozen/sounds/HTML5Audio',
-  'frozen/sounds/WebAudio'
-], function(ResourceManager, HTML5Audio, WebAudio){
+  'frozen/sounds/Audio'
+], function(dcl, ResourceManager, Audio){
 
   'use strict';
 
@@ -143,7 +143,7 @@ define([
     });
 
     // Only use these tests in browsers, PhantomJS blows up due to no HTML5 Audio support
-    xdescribe('ResourceManager.loadSound()', function(){
+    describe('ResourceManager.loadSound()', function(){
       var sound;
 
       beforeEach(function(){
@@ -152,7 +152,7 @@ define([
 
       it('should take a string filename and return a single sound', function(){
         var origin = window.location.toString().replace(window.location.pathname, '');
-        expect(sound instanceof HTML5Audio || sound instanceof WebAudio).toBe(true);
+        expect(dcl.isInstanceOf(sound, Audio)).toBe(true);
       });
 
       it('should take an array of filenames and return an array of sounds', function(){
@@ -166,7 +166,7 @@ define([
         expect(Array.isArray(sounds)).toBe(true);
         expect(sounds.length).toBe(3);
         sounds.forEach(function(sound){
-          expect(sound instanceof HTML5Audio || sound instanceof WebAudio).toBe(true);
+          expect(dcl.isInstanceOf(sound, Audio)).toBe(true);
         });
       });
 
@@ -185,7 +185,7 @@ define([
         });
         for(var key in sounds){
           var sound = sounds[key];
-          expect(sound instanceof HTML5Audio || sound instanceof WebAudio).toBe(true);
+          expect(dcl.isInstanceOf(sound, Audio)).toBe(true);
         }
       });
 
@@ -226,7 +226,7 @@ define([
 
     });
 
-    xdescribe('ResourceManager.playSound()', function(){
+    describe('ResourceManager.playSound()', function(){
       var sound;
 
       beforeEach(function(){

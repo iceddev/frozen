@@ -1,25 +1,25 @@
 /**
- * A Sound object that abstracts WebAudio into a generic API that can also be used with HTML5 Audio
+ * An Audio object that implements WebAudio into a generic API
  * @name WebAudio
  * @constructor WebAudio
+ * @extends Audio
  */
 
 define([
+  './Audio',
   'dcl',
   'dojo/on',
   'dojo/_base/lang'
-], function(dcl, on, lang){
+], function(Audio, dcl, on, lang){
 
   'use strict';
 
   var audioContext = null;
   if(window.AudioContext){
     audioContext = new window.AudioContext();
-  } else {
-    console.log('WebAudio not supported');
   }
 
-  return dcl(null, {
+  return dcl(Audio, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
@@ -27,20 +27,6 @@ define([
      * @default
      */
     declaredClass: 'frozen/sounds/WebAudio',
-    /**
-     * The name of the Sound object - typically the filename
-     * @type {String}
-     * @memberOf WebAudio#
-     * @default
-     */
-    name: null,
-    /**
-     * Signals if the Sound object has completed loading
-     * @type {Boolean}
-     * @memberOf WebAudio#
-     * @default
-     */
-    complete: false,
     /**
      * The WebAudio AudioContext - used to perform operations on a sound
      * @type {AudioContext}
@@ -56,18 +42,6 @@ define([
      */
     buffer: null,
 
-    constructor: function(filename){
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-    },
-
-    /**
-     * Load the sound by filename
-     * @function
-     * @memberOf WebAudio#
-     * @param  {String} filename The filename of the file to load
-     */
     load: function(filename){
       this.name = filename;
 
@@ -93,24 +67,11 @@ define([
       request.send();
     },
 
-    /**
-     * Loop the sound at a certain volume
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume Value of volume - between 0 and 1
-     */
     loop: function(volume){
       var audio = this._initAudio(volume, true);
       audio.noteOn(0);
     },
 
-    /**
-     * Play the sound at a certain volume and start time
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume    Value of volume - between 0 and 1
-     * @param  {Number} startTime Value of milliseconds into the track to start
-     */
     play: function(volume, startTime){
       startTime = startTime || 0;
 
@@ -118,15 +79,6 @@ define([
       audio.noteOn(startTime);
     },
 
-    /**
-     * Method used to construct Audio objects internally
-     * @function
-     * @memberOf WebAudio#
-     * @private
-     * @param  {Number} volume Value of volume - between 0 and 1
-     * @param  {Boolean} loop Whether or not to loop audio
-     * @return {Audio} Audio object that was constructed
-     */
     _initAudio: function(volume, loop){
       loop = typeof loop === 'boolean' ? loop : false;
 
