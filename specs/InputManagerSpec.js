@@ -508,7 +508,13 @@ define([
 
         im.gameArea.appendChild(im.canvas);
 
+        document.body.appendChild(im.gameArea);
+
         im.resize();
+      });
+
+      afterEach(function(){
+        document.body.removeChild(im.gameArea);
       });
 
       it('should set the zoomRatio', function(){
