@@ -2158,6 +2158,8 @@ define("frozen/box2d/Box", [
      * @param {Entity} entity Any Entity object
      */
     addBody: function(entity) {
+      /*jshint eqnull:true */
+
       if(!entity.alreadyScaled){
         entity.scaleShape(1 / this.scale);
         entity.scale = this.scale;
@@ -2172,13 +2174,13 @@ define("frozen/box2d/Box", [
 
 
       //these three props are for custom collision filtering
-      if(entity.hasOwnProperty('maskBits')){
+      if(entity.maskBits != null){
         fixDef.filter.maskBits = entity.maskBits;
       }
-      if(entity.hasOwnProperty('categoryBits')){
+      if(entity.categoryBits != null){
         fixDef.filter.categoryBits = entity.categoryBits;
       }
-      if(entity.hasOwnProperty('groupIndex')){
+      if(entity.groupIndex != null){
         fixDef.filter.groupIndex = entity.groupIndex;
       }
 
@@ -3746,7 +3748,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define(["require", "module"], function(require, module){
+define("dojo/has", ["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -5297,7 +5299,9 @@ define("frozen/InputManager", [
         if (newWidthToHeight > widthToHeight) {
           newWidth = newHeight * widthToHeight;
           newWidthStyle = newWidth + 'px';
+          newHeightStyle = newHeight + 'px';
         } else {
+          newWidthStyle = newWidth + 'px';
           newHeightStyle = Math.round(newWidth / widthToHeight) + 'px';
         }
 
@@ -5556,7 +5560,7 @@ define("frozen/utils/insideCanvas", function(){
 });
 },
 'dojo/on':function(){
-define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define("dojo/on", ["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6073,7 +6077,7 @@ define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 },
 'dojo/dom-style':function(){
-define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
+define(["./sniff", "./dom"], function(has, dom){
 	// module:
 	//		dojo/dom-style
 
@@ -6382,7 +6386,7 @@ define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
 
 },
 'dojo/dom-geometry':function(){
-define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
+define(["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -6990,7 +6994,7 @@ define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"]
 
 },
 'dojo/domReady':function(){
-define(['./has'], function(has){
+define("dojo/domReady", ['./has'], function(has){
 	var global = this,
 		doc = document,
 		readyStates = { 'loaded': 1, 'complete': 1 },
@@ -7338,10 +7342,130 @@ define("frozen/ResourceManager", [
  */
 
 define([
-  'require',
+  './AudioBase',
+  './WebAudio',
+  './HTML5Audio',
+  'dojo/has'
+], function(AudioBase, WebAudio, HTML5Audio, has){
+
+  'use strict';
+
+  return {
+    load: function(id, parentRequire, loaded, config){
+      if(has('WebAudio')){
+        return loaded(WebAudio);
+      }
+
+      if(has('HTML5Audio')){
+        return loaded(HTML5Audio);
+      }
+
+      return loaded(AudioBase);
+    }
+  };
+
+});
+},
+'frozen/sounds/AudioBase':function(){
+/**
+ * An Audio object that implements a generic API
+ * @name AudioBase
+ * @constructor AudioBase
+ */
+
+define("frozen/sounds/AudioBase", [
+  'dcl'
+], function(dcl){
+
+  'use strict';
+
+  return dcl(null, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf AudioBase#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/AudioBase',
+    /**
+     * The name of the Audio object - typically the filename
+     * @type {String}
+     * @memberOf AudioBase#
+     * @default
+     */
+    name: null,
+    /**
+     * Signals if the Audio object has completed loading
+     * @type {Boolean}
+     * @memberOf AudioBase#
+     * @default
+     */
+    complete: false,
+
+    constructor: function(filename){
+      if(typeof filename === 'string'){
+        this.load(filename);
+      }
+    },
+
+    /**
+     * Load the sound by filename
+     * @function
+     * @memberOf AudioBase#
+     * @param  {String} filename The filename of the file to load
+     */
+    load: function(filename){
+      this.name = filename;
+      this.complete = true;
+    },
+
+    /**
+     * Loop the sound at a certain volume
+     * @function
+     * @memberOf AudioBase#
+     * @param  {Number} volume Value of volume - between 0 and 1
+     */
+    loop: function(volume){},
+
+    /**
+     * Play the sound at a certain volume and start time
+     * @function
+     * @memberOf AudioBase#
+     * @param  {Number} volume    Value of volume - between 0 and 1
+     * @param  {Number} startTime Value of milliseconds into the track to start
+     */
+    play: function(volume, startTime){},
+
+    /**
+     * Method used to construct Audio objects internally
+     * @function
+     * @memberOf AudioBase#
+     * @private
+     * @param  {Number} volume Value of volume - between 0 and 1
+     * @param  {Boolean} loop Whether or not to loop audio
+     * @return {Audio} Audio object that was constructed
+     */
+    _initAudio: function(volume, loop){}
+  });
+
+});
+},
+'frozen/sounds/WebAudio':function(){
+/**
+ * An Audio object that implements WebAudio into a generic API
+ * @name WebAudio
+ * @constructor WebAudio
+ * @extends AudioBase
+ */
+
+define("frozen/sounds/WebAudio", [
+  './AudioBase',
+  'dcl',
+  'dojo/on',
   'dojo/has',
+  'dojo/_base/lang',
   '../shims/AudioContext'
-], function(require, has){
+], function(AudioBase, dcl, on, has, lang){
 
   'use strict';
 
@@ -7349,13 +7473,88 @@ define([
     return !!global.AudioContext;
   });
 
-  return {
-    load: function(id, parentRequire, loaded, config){
-      require([has('WebAudio') ? './WebAudio' : './HTML5Audio'], function(Sound){
-        loaded(Sound);
-      });
+  var audioContext = null;
+  if(has('WebAudio')){
+    audioContext = new window.AudioContext();
+  }
+
+  return dcl(AudioBase, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf WebAudio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/WebAudio',
+    /**
+     * The WebAudio AudioContext - used to perform operations on a sound
+     * @type {AudioContext}
+     * @memberOf WebAudio#
+     * @default
+     */
+    audioContext: audioContext,
+    /**
+     * The sound buffer
+     * @type {Buffer}
+     * @memberOf WebAudio#
+     * @default
+     */
+    buffer: null,
+
+    load: function(filename){
+      this.name = filename;
+
+      var decodeAudioData = lang.partial(function(self, evt){
+        // Decode asynchronously
+        self.audioContext.decodeAudioData(this.response,
+          function(buffer){
+            self.buffer = buffer;
+            self.complete = true;
+          },
+          function(err){
+            console.info('error loading sound', err);
+          }
+        );
+      }, this);
+
+      //if the browser AudioContext, it's new enough for XMLHttpRequest
+      var request = new XMLHttpRequest();
+      request.open('GET', filename, true);
+      request.responseType = 'arraybuffer';
+
+      on(request, 'load', decodeAudioData);
+      request.send();
+    },
+
+    loop: function(volume){
+      var audio = this._initAudio(volume, true);
+      audio.noteOn(0);
+    },
+
+    play: function(volume, startTime){
+      startTime = startTime || 0;
+
+      var audio = this._initAudio(volume, false);
+      audio.noteOn(startTime);
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var source = this.audioContext.createBufferSource();
+      source.buffer = this.buffer;
+      source.loop = loop;
+      if(volume){
+        var gainNode = this.audioContext.createGainNode();
+        gainNode.gain.value = volume;
+        source.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+      } else {
+        source.connect(this.audioContext.destination);
+      }
+      return source;
     }
-  };
+  });
 
 });
 },
@@ -7369,6 +7568,120 @@ define("frozen/shims/AudioContext", function(){
   for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
     window.AudioContext = window[vendors[x]+'AudioContext'];
   }
+
+});
+},
+'frozen/sounds/HTML5Audio':function(){
+/**
+ * An Audio object that implements HTML5 Audio into a generic API
+ * @name HTML5Audio
+ * @constructor HTML5Audio
+ * @extends AudioBase
+ */
+
+define("frozen/sounds/HTML5Audio", [
+  './AudioBase',
+  'dcl',
+  'dojo/on',
+  'dojo/has',
+  'dojo/_base/lang'
+], function(AudioBase, dcl, on, has, lang){
+
+  'use strict';
+
+  has.add('HTML5Audio', function(global){
+    return !!global.Audio;
+  });
+
+  has.add('shittySound', (has('ios') || has('android')) && has('webkit'));
+
+  return dcl(AudioBase, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/HTML5Audio',
+    /**
+     * The initial Audio object - used to load the sound prior to playing
+     * @type {Audio}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    audio: null,
+
+    load: function(filename){
+      this.name = filename;
+
+      this.audio = new Audio();
+      if(has('shittySound')){
+        on.once(document, 'touchstart', lang.hitch(this, function(e){
+          this.audio.load();
+        }));
+        this._updateCurrentTime = null;
+        on.once(this.audio, 'progress', lang.hitch(this, function(){
+          if(this._updateCurrentTime !== null){
+            this._updateCurrentTime();
+          }
+        }));
+      }
+
+      this.audio.pause();
+      this.audio.preload = 'auto';
+      on.once(this.audio, 'loadeddata, error', lang.hitch(this, function(e){
+        this.complete = true;
+      }));
+      this.audio.src = filename;
+    },
+
+    loop: function(volume){
+      var audio = this._initAudio(volume, true);
+      on(audio, 'loadeddata', function(e){
+        audio.play();
+      });
+    },
+
+    play: function(volume, startTime){
+      startTime = startTime || 0;
+
+      if(has('shittySound')){
+        try {
+          this.audio.currentTime = startTime / 1000;
+          return this.audio.play();
+        } catch(err){
+          this._updateCurrentTime = function(){
+            this._updateCurrentTime = null;
+            this.audio.currentTime = startTime / 1000;
+            return this.audio.play();
+          };
+          return this.audio.play();
+        }
+      }
+
+      var audio = this._initAudio(volume, false);
+      on(audio, 'loadeddata', function(e){
+        audio.currentTime = startTime / 1000;
+        audio.play();
+      });
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var audio = new Audio();
+      audio.pause();
+      audio.volume = volume || 1;
+      audio.loop = loop;
+      audio.preload = 'auto';
+      if(audio.mozLoadFrom){
+        audio.mozLoadFrom(this.audio);
+      } else {
+        audio.src = this.name;
+      }
+      return audio;
+    }
+  });
 
 });
 },
@@ -9370,282 +9683,6 @@ define("frozen/utils/parseString", function(){
 
 });
 },
-'frozen/sounds/WebAudio':function(){
-/**
- * A Sound object that abstracts WebAudio into a generic API that can also be used with HTML5 Audio
- * @name WebAudio
- * @constructor WebAudio
- */
-
-define("frozen/sounds/WebAudio", [
-  'dcl',
-  'dojo/on',
-  'dojo/_base/lang'
-], function(dcl, on, lang){
-
-  'use strict';
-
-  var audioContext = null;
-  if(window.AudioContext){
-    audioContext = new window.AudioContext();
-  } else {
-    console.log('WebAudio not supported');
-  }
-
-  return dcl(null, {
-    /**
-     * The declared class - used for debugging in dcl
-     * @type {String}
-     * @memberOf WebAudio#
-     * @default
-     */
-    declaredClass: 'frozen/sounds/WebAudio',
-    /**
-     * The name of the Sound object - typically the filename
-     * @type {String}
-     * @memberOf WebAudio#
-     * @default
-     */
-    name: null,
-    /**
-     * Signals if the Sound object has completed loading
-     * @type {Boolean}
-     * @memberOf WebAudio#
-     * @default
-     */
-    complete: false,
-    /**
-     * The WebAudio AudioContext - used to perform operations on a sound
-     * @type {AudioContext}
-     * @memberOf WebAudio#
-     * @default
-     */
-    audioContext: audioContext,
-    /**
-     * The sound buffer
-     * @type {Buffer}
-     * @memberOf WebAudio#
-     * @default
-     */
-    buffer: null,
-
-    constructor: function(filename){
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-    },
-
-    /**
-     * Load the sound by filename
-     * @function
-     * @memberOf WebAudio#
-     * @param  {String} filename The filename of the file to load
-     */
-    load: function(filename){
-      this.name = filename;
-
-      var decodeAudioData = lang.partial(function(self, evt){
-        // Decode asynchronously
-        self.audioContext.decodeAudioData(this.response,
-          function(buffer){
-            self.buffer = buffer;
-            self.complete = true;
-          },
-          function(err){
-            console.info('error loading sound', err);
-          }
-        );
-      }, this);
-
-      //if the browser AudioContext, it's new enough for XMLHttpRequest
-      var request = new XMLHttpRequest();
-      request.open('GET', filename, true);
-      request.responseType = 'arraybuffer';
-
-      on(request, 'load', decodeAudioData);
-      request.send();
-    },
-
-    /**
-     * Loop the sound at a certain volume
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume Value of volume - between 0 and 1
-     */
-    loop: function(volume){
-      var audio = this._initAudio(volume, true);
-      audio.noteOn(0);
-    },
-
-    /**
-     * Play the sound at a certain volume and start time
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume    Value of volume - between 0 and 1
-     * @param  {Number} startTime Value of milliseconds into the track to start
-     */
-    play: function(volume, startTime){
-      startTime = startTime || 0;
-
-      var audio = this._initAudio(volume, false);
-      audio.noteOn(startTime);
-    },
-
-    /**
-     * Method used to construct Audio objects internally
-     * @function
-     * @memberOf WebAudio#
-     * @private
-     * @param  {Number} volume Value of volume - between 0 and 1
-     * @param  {Boolean} loop Whether or not to loop audio
-     * @return {Audio} Audio object that was constructed
-     */
-    _initAudio: function(volume, loop){
-      loop = typeof loop === 'boolean' ? loop : false;
-
-      var source = this.audioContext.createBufferSource();
-      source.buffer = this.buffer;
-      source.loop = loop;
-      if(volume){
-        var gainNode = this.audioContext.createGainNode();
-        gainNode.gain.value = volume;
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-      } else {
-        source.connect(this.audioContext.destination);
-      }
-      return source;
-    }
-  });
-
-});
-},
-'frozen/sounds/HTML5Audio':function(){
-/**
- * A Sound object that abstracts HTML5 Audio into a generic API that can also be used with WebAudio
- * @name HTML5Audio
- * @constructor HTML5Audio
- */
-
-define("frozen/sounds/HTML5Audio", [
-  'dcl',
-  'dojo/on',
-  'dojo/_base/lang'
-], function(dcl, on, lang){
-
-  'use strict';
-
-  return dcl(null, {
-    /**
-     * The declared class - used for debugging in dcl
-     * @type {String}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    declaredClass: 'frozen/sounds/HTML5Audio',
-    /**
-     * The name of the Sound object - typically the filename
-     * @type {String}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    name: null,
-    /**
-     * Signals if the Sound object has completed loading
-     * @type {Boolean}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    complete: false,
-    /**
-     * The initial Audio object - used to load the sound prior to playing
-     * @type {Audio}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    audio: null,
-
-    constructor: function(filename){
-      this.audio = new Audio();
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-    },
-
-    /**
-     * Load the sound by filename
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {String} filename The filename of the file to load
-     */
-    load: function(filename){
-      this.name = filename;
-      this.audio.pause();
-      this.audio.preload = 'auto';
-      this.audio.src = filename;
-      on(this.audio, 'loadeddata', lang.hitch(this, function(e){
-        this.complete = true;
-      }));
-    },
-
-    /**
-     * Loop the sound at a certain volume
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {Number} volume Value of volume - between 0 and 1
-     */
-    loop: function(volume){
-      var audio = this._initAudio(volume, true);
-      on(audio, 'loadeddata', function(e){
-        audio.play();
-      });
-    },
-
-    /**
-     * Play the sound at a certain volume and start time
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {Number} volume    Value of volume - between 0 and 1
-     * @param  {Number} startTime Value of milliseconds into the track to start
-     */
-    play: function(volume, startTime){
-      startTime = startTime || 0;
-
-      var audio = this._initAudio(volume, false);
-      on(audio, 'loadeddata', function(e){
-        audio.currentTime = startTime / 1000;
-        audio.play();
-      });
-    },
-
-    /**
-     * Method used to construct Audio objects internally
-     * @function
-     * @memberOf HTML5Audio#
-     * @private
-     * @param  {Number} volume Value of volume - between 0 and 1
-     * @param  {Boolean} loop Whether or not to loop audio
-     * @return {Audio} Audio object that was constructed
-     */
-    _initAudio: function(volume, loop){
-      loop = typeof loop === 'boolean' ? loop : false;
-
-      var audio = new Audio();
-      audio.pause();
-      audio.volume = volume || 1;
-      audio.loop = loop;
-      audio.preload = 'auto';
-      if(audio.mozLoadFrom){
-        audio.mozLoadFrom(this.audio);
-      } else {
-        audio.src = this.name;
-      }
-      return audio;
-    }
-  });
-
-});
-},
 'frozen/plugins/loadImage':function(){
 /**
  * AMD Plugin for loading Images
@@ -9712,7 +9749,7 @@ define([
 });
 },
 'dojo/keys':function(){
-define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
+define(["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys
