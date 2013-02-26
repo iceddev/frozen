@@ -55,10 +55,10 @@ define([
 
       this.audio.pause();
       this.audio.preload = 'auto';
-      this.audio.src = filename;
-      on.once(this.audio, 'loadeddata', lang.hitch(this, function(e){
+      on.once(this.audio, 'loadeddata, error', lang.hitch(this, function(e){
         this.complete = true;
       }));
+      this.audio.src = filename;
     },
 
     loop: function(volume){
