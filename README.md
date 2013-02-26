@@ -39,10 +39,10 @@ Source available on github: https://github.com/iceddev/frozen
 We have tested in:
 
 * Chrome 24 & 26-dev
-* Firefox 18
+* Firefox 18 & 19
 * IE10 (limited sound support)
-* Chrome for Android 18 & 24 (no sound support)
-* Firefox for Android 18-19 & 20a2
+* Chrome for Android 18 & 24 (limited sound support)
+* Firefox for Android 18-19 & 20a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
 * PhantomJS 1.8.1
 
 __Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
@@ -98,6 +98,28 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 `grunt watch` to watch the source and specs and run lint and jasmine when a file changes
 
 ## Release Notes
+
+### <sup>v0.2.1</sup>
+
+__Breaking Changes__
+
+* None! This is a bug fix release
+
+__New Features__
+
+* None! This is a bug fix release
+
+__Non-Breaking Changes__
+
+* Scaling issues in IE10 were fixed
+* Fixed issue where ResourceManager was hanging when Audio loading errored
+* Made collision masking check against null or undefined instead of hasOwnProperty
+* Partial Chrome for Android sound support
+
+__Deprecations__
+
+* Sound plugin will be moved to plugins 0.3.0
+* AudioBase will be renamed Sound in 0.3.0
 
 ### <sup>v0.2.0</sup>
 
