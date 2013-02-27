@@ -8,6 +8,8 @@ require([
   'frozen/plugins/loadImage!images/walking.png'
 ], function(GameCore, Sprite, Animation, keys, backImg, spriteImg){
 
+  'use strict';
+
   var speed = 0.5;
 
   //new sprite object maintian position, and velocities

@@ -8,8 +8,9 @@ require([
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadImage!images/yarn.png'
-  ],
- function(keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg){
+], function(keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg){
+
+  'use strict';
 
   var speed = 8;
 
@@ -18,8 +19,6 @@ require([
 
   //shapes in the box2 world, locations are their centers
   var nyan, moon, pyramid, ground, ceiling, leftWall, rightWall, yarn;
-
-
 
   //setup a GameCore instance
   var game = new BoxGame({
@@ -49,11 +48,11 @@ require([
         this.box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
-      if(im.keyActions['A'].isPressed()){
+      if(im.keyActions.A.isPressed()){
         this.box.applyTorque(yarn.id, -speed);
       }
 
-      if(im.keyActions['D'].isPressed()){
+      if(im.keyActions.D.isPressed()){
         this.box.applyTorque(yarn.id, speed);
       }
 
@@ -78,7 +77,7 @@ require([
   game.entities[geomId] = ground; //keep a reference to the shape for fast lookup
 
   geomId++;
-  celing = new Rectangle({
+  ceiling = new Rectangle({
     id: geomId,
     x: 385,
     y: -200,
@@ -86,8 +85,8 @@ require([
     halfHeight: 40,
     staticBody: true
   });
-  game.box.addBody(celing);
-  game.entities[geomId] = celing;
+  game.box.addBody(ceiling);
+  game.entities[geomId] = ceiling;
 
   geomId++;
   leftWall = new Rectangle({

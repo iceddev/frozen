@@ -1,5 +1,9 @@
 //load the AMD modules we need
-require(['frozen/GameCore'], function(GameCore){
+require([
+  'frozen/GameCore'
+], function(GameCore){
+
+  'use strict';
 
   // game state
   var x = 0;
