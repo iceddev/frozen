@@ -41,7 +41,6 @@ define([
     // TODO: should these be split out into their own tests?
     it('should have functions defined', function(){
       expect(gameAction.constructor).toBeDefined();
-      expect(gameAction.getName).toBeDefined();
       expect(gameAction.reset).toBeDefined();
       expect(gameAction.tap).toBeDefined();
       expect(gameAction.press).toBeDefined();
@@ -61,14 +60,6 @@ define([
         gameAction.constructor();
 
         expect(gameAction.reset).toHaveBeenCalled();
-      });
-
-    });
-
-    describe('GameAction.getName()', function(){
-
-      it('should return the name', function(){
-        expect(gameAction.getName()).toBe(gameAction.name);
       });
 
     });

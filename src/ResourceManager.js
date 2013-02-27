@@ -25,22 +25,6 @@ define([
 
   return dcl(Mixer, {
     /**
-     * The number of images requested
-     * @type {Number}
-     * @memberOf ResourceManager#
-     * @default
-     * @deprecated This property is no longer used internally and will be removed in the future
-     */
-    imageCount: 0,
-    /**
-     * The number of images loaded
-     * @type {Number}
-     * @memberOf ResourceManager#
-     * @default
-     * @deprecated This property is no longer used internally and will be removed in the future
-     */
-    loadedImages: 0,
-    /**
      * Whether all the resources have been loaded
      * @type {Boolean}
      * @memberOf ResourceManager#
@@ -161,27 +145,6 @@ define([
         files[key] = sound;
       }
       return singleFile ? files[0] : files;
-    },
-
-    /**
-     * Plays a sound that was loaded from loadSound()
-     * @function
-     * @memberOf ResourceManager#
-     * @param {Object} sound A sound object that was returned from loadSound()
-     * @param {Boolean=} loop whether or not to loop the sound (default: false)
-     * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
-     * @param {Number=} gain The volume of the playback from 0 to 1.0
-     * @deprecated This method is no longer needed because sounds have play() on them directly and it will be removed in the future
-     */
-    playSound: function(sound, loop, noteOn, gain){
-      if(sound){
-        if(loop){
-          sound.loop(gain);
-        } else {
-          noteOn = noteOn || 0;
-          sound.play(gain, noteOn);
-        }
-      }
     },
 
     /**
