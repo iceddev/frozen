@@ -1,6 +1,6 @@
 {
   "name": "frozen",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "devDependencies": {
     "grunt-dojo": "~0.1.2",
     "grunt-jsdoc-plugin": "0.1.4",

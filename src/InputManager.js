@@ -355,7 +355,9 @@ define([
         if (newWidthToHeight > widthToHeight) {
           newWidth = newHeight * widthToHeight;
           newWidthStyle = newWidth + 'px';
+          newHeightStyle = newHeight + 'px';
         } else {
+          newWidthStyle = newWidth + 'px';
           newHeightStyle = Math.round(newWidth / widthToHeight) + 'px';
         }
 
