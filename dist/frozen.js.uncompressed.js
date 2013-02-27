@@ -3748,7 +3748,7 @@ define(["../has", "./config", "require", "module"], function(has, config, requir
 
 },
 'dojo/has':function(){
-define("dojo/has", ["require", "module"], function(require, module){
+define(["require", "module"], function(require, module){
 	// module:
 	//		dojo/has
 	// summary:
@@ -5560,7 +5560,7 @@ define("frozen/utils/insideCanvas", function(){
 });
 },
 'dojo/on':function(){
-define("dojo/on", ["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
+define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 	"use strict";
 	if( 1 ){ // check to make sure we are in a browser, this module should work anywhere
@@ -6077,7 +6077,7 @@ define("dojo/on", ["require", "./_base/kernel", "./has"], function(aspect, dojo,
 
 },
 'dojo/dom-style':function(){
-define(["./sniff", "./dom"], function(has, dom){
+define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
 	// module:
 	//		dojo/dom-style
 
@@ -6386,7 +6386,7 @@ define(["./sniff", "./dom"], function(has, dom){
 
 },
 'dojo/dom-geometry':function(){
-define(["./sniff", "./_base/window","./dom", "./dom-style"],
+define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -6994,7 +6994,7 @@ define(["./sniff", "./_base/window","./dom", "./dom-style"],
 
 },
 'dojo/domReady':function(){
-define("dojo/domReady", ['./has'], function(has){
+define(['./has'], function(has){
 	var global = this,
 		doc = document,
 		readyStates = { 'loaded': 1, 'complete': 1 },
@@ -9749,7 +9749,7 @@ define([
 });
 },
 'dojo/keys':function(){
-define(["./_base/kernel", "./sniff"], function(dojo, has){
+define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys
