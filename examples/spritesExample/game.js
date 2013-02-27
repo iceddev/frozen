@@ -16,7 +16,7 @@ require([
   var sprite = new Sprite({x:100,y:100, w:96, h: 96, dx:0, dy: 0});
 
   //set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
-  sprite.anim = new Animation().createFromTile(8,100,spriteImg,96,96);
+  sprite.anim = Animation.prototype.createFromSheet(8, 100, spriteImg, 96, 96);
 
   //setup a GameCore instance
   var game = new GameCore({
@@ -56,7 +56,7 @@ require([
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
-      sprite.drawCurrentFrame(context);
+      sprite.draw(context);
     }
   });
 
