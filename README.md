@@ -1,4 +1,4 @@
-Frozen <sup>v0.2.0</sup>
+Frozen <sup>v0.2.1</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
