@@ -17,14 +17,6 @@ define([
       delete rm.resourceList;
     });
 
-    it('should default to imageCount of 0', function(){
-      expect(rm.imageCount).toBe(0);
-    });
-
-    it('should default to loadedImages of 0', function(){
-      expect(rm.loadedImages).toBe(0);
-    });
-
     it('should default to allLoaded as false', function(){
       expect(rm.allLoaded).toBe(false);
     });
@@ -46,7 +38,6 @@ define([
     it('should have functions defined', function(){
       expect(rm.loadImage).toBeDefined();
       expect(rm.loadSound).toBeDefined();
-      expect(rm.playSound).toBeDefined();
       expect(rm.resourcesReady).toBeDefined();
       expect(rm.getPercentComplete).toBeDefined();
     });
@@ -222,43 +213,6 @@ define([
         waitsFor(function(){
           return rm.resourceList['specs/fixtures/yipee.wav'].complete;
         }, 'should have complete downloading and flagged as complete', 500); // TODO: might need to change timeout if image loads slow
-      });
-
-    });
-
-    describe('ResourceManager.playSound()', function(){
-      var sound;
-
-      beforeEach(function(){
-        sound = rm.loadSound('specs/fixtures/yipee.wav');
-
-        spyOn(sound, 'play');
-        spyOn(sound, 'loop');
-      });
-
-      it('should call play on the sound passed in', function(){
-        rm.playSound(sound);
-
-        expect(sound.play).toHaveBeenCalled();
-      });
-
-      it('should call loop on the sound passed in if true is passed as 2nd param', function(){
-        rm.playSound(sound, true);
-
-        expect(sound.loop).toHaveBeenCalled();
-      });
-
-      it('should call play with noteOn and gain passed in', function(){
-        rm.playSound(sound, null, 500, 0.5);
-
-        expect(sound.play).toHaveBeenCalledWith(0.5, 500);
-      });
-
-      it('should not call loop with noteOn, but call it with gain passed in', function(){
-        rm.playSound(sound, true, 500, 0.5);
-
-        expect(sound.loop).toHaveBeenCalledWith(0.5);
-        expect(sound.loop).wasNotCalledWith(500);
       });
 
     });

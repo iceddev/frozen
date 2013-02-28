@@ -66,17 +66,6 @@ define([
     },
 
     /**
-     * Returns the name of the GameAction
-     * @function
-     * @memberOf GameAction#
-     * @return {String} The name of the GameAction
-     * @deprecated This method is deprecated because name is accessible on the instance and will be removed in the future
-     */
-    getName: function() {
-      return this.name;
-    },
-
-    /**
      * Resets this GameAction so that it appears like it hasn't been pressed.
      * @function
      * @memberOf GameAction#
