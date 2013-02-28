@@ -152,28 +152,6 @@ define([
     },
 
     /**
-     * Sets the mouseAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because mouseAction is available on an instance and it will be removed in the future
-     */
-    setMouseAction: function(gameAction){
-      this.mouseAction = gameAction;
-    },
-
-    /**
-     * Sets the touchAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because touchAction is available on an instance and it will be removed in the future
-     */
-    setTouchAction: function(gameAction){
-      this.touchAction = gameAction;
-    },
-
-    /**
      * Called upon mouseup event
      * @function
      * @memberOf InputManager#

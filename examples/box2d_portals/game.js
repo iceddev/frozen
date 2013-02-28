@@ -22,12 +22,11 @@ require([
   var speed = 8;
 
   var portalCollisionDistance = 50;
-  var animFactory = new Animation();
 
-  var orangePortalAnim = animFactory.createFromTile(12, 100, orangePortalSheet, 120, 80, 0);
+  var orangePortalAnim = Animation.prototype.createFromSheet(12, 100, orangePortalSheet, 80, 120, 0);
   var orangePortal = {x: 150, y: 100, collided: true};
 
-  var bluePortalAnim = animFactory.createFromTile(12, 100, bluePortalSheet, 120, 80, 0);
+  var bluePortalAnim = Animation.prototype.createFromSheet(12, 100, bluePortalSheet, 80, 120, 0);
   var bluePortal = {x: 600, y: 100, collided: true};
 
   //objects in box2d need an id

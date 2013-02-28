@@ -47,14 +47,11 @@ define([
     // TODO: should these be split out into their own tests?
     it('should have functions defined', function(){
       expect(anim.constructor).toBeDefined();
-      expect(anim.createFromTile).toBeDefined();
       expect(anim.createFromSheet).toBeDefined();
       expect(anim.clone).toBeDefined();
       expect(anim.addFrame).toBeDefined();
       expect(anim.start).toBeDefined();
       expect(anim.update).toBeDefined();
-      expect(anim.getImage).toBeDefined();
-      expect(anim.getFrame).toBeDefined();
       expect(anim.getCurrentFrame).toBeDefined();
       expect(anim.draw).toBeDefined();
     });
@@ -69,33 +66,6 @@ define([
       it('should be call start', function(){
         anim.constructor();
         expect(anim.start).toHaveBeenCalled();
-      });
-
-    });
-
-    describe('Animation.createFromTile()', function(){
-      var frameCount = 4;
-      var frameTimes = [2,2,2,2];
-      var img = new Image();
-      var height = 64;
-      var width = 64;
-      var ySlot = 2;
-
-      var anim2;
-
-      beforeEach(function(){
-        spyOn(anim, 'createFromSheet').andCallThrough();
-        anim2 = anim.createFromTile(frameCount, frameTimes, img, height, width, ySlot);
-      });
-
-      it('should pass all arguments to createFromSheet', function(){
-        expect(anim.createFromSheet).toHaveBeenCalled();
-        expect(anim.createFromSheet).toHaveBeenCalledWith(frameCount, frameTimes, img, width, height, ySlot);
-      });
-
-      it('should not return the Animation it was called from', function(){
-        expect(anim2 instanceof Animation).toBe(true);
-        expect(anim2).not.toBe(anim);
       });
 
     });
@@ -270,33 +240,6 @@ define([
         anim.update(6);
 
         expect(anim.currFrameIndex).toBe(4);
-      });
-
-    });
-
-    describe('Animation.getImage()', function(){
-
-      it('should return the image on Animation', function(){
-        expect(anim.getImage()).toBe(anim.image);
-      });
-
-    });
-
-    describe('Animation.getFrame()', function(){
-
-      beforeEach(function(){
-        for(var x = 0; x < 5; x++){
-          anim.addFrame(2, x, x);
-        }
-      });
-
-      it('should return frame at index passed in', function(){
-        expect(anim.getFrame(0)).toBe(anim.frames[0]);
-        expect(anim.getFrame(1)).toBe(anim.frames[1]);
-        expect(anim.getFrame(2)).toBe(anim.frames[2]);
-        expect(anim.getFrame(3)).toBe(anim.frames[3]);
-        expect(anim.getFrame(4)).toBe(anim.frames[4]);
-        expect(anim.getFrame(5)).toBeUndefined();
       });
 
     });

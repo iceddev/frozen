@@ -133,15 +133,6 @@ define([
      */
     lineWidth: 1,
     /**
-     * Whether to render this object
-     * @type {Boolean}
-     * @memberOf Entity#
-     * @default
-     * @deprecated This property is no longer used and will be removed in the future
-     */
-    hidden: false,
-    /* Used for collision filtering */
-    /**
      * The 16 bit integer used in determining which other types of entities this body will collide with.
      * @type {Number}
      * @memberOf Entity#
