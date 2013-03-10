@@ -7,12 +7,13 @@
 
 define([
   './AudioBase',
+  '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has',
   'dojo/_base/lang',
   '../shims/AudioContext'
-], function(AudioBase, dcl, on, has, lang){
+], function(AudioBase, removeExtension, dcl, on, has, lang){
 
   'use strict';
 
@@ -49,24 +50,31 @@ define([
     buffer: null,
 
     load: function(filename){
-      this.name = filename;
+      this.name = removeExtension(filename) + this._chooseFormat();
 
-      var decodeAudioData = lang.partial(function(self, evt){
+      var self = this;
+
+      function decodeAudioData(e){
         // Decode asynchronously
-        self.audioContext.decodeAudioData(this.response,
+        self.audioContext.decodeAudioData(e.target.response,
           function(buffer){
             self.buffer = buffer;
             self.complete = true;
           },
           function(err){
-            console.info('error loading sound', err);
+            var format = self._nextFormat();
+            if(format){
+              self.load(self.name);
+            } else {
+              self.complete = true;
+            }
           }
         );
-      }, this);
+      }
 
       //if the browser AudioContext, it's new enough for XMLHttpRequest
       var request = new XMLHttpRequest();
-      request.open('GET', filename, true);
+      request.open('GET', this.name, true);
       request.responseType = 'arraybuffer';
 
       on(request, 'load', decodeAudioData);

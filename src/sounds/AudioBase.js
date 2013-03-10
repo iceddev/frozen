@@ -32,6 +32,40 @@ define([
      * @default
      */
     complete: false,
+    /**
+     * Map of audio types and codecs used in fallback loading of sounds
+     * Reference: https://developer.mozilla.org/en-US/docs/HTML/Supported_media_formats
+     * @type {Object}
+     * @memberOf AudioBase#
+     * @property {String} mp3 'audio/mpeg'
+     * @property {String} webm 'audio/webm'
+     * @property {String} ogg 'audio/ogg'
+     * @property {String} wav 'audio/wav'
+     * @property {String} aac 'audio/aac'
+     * @property {String} m4a 'audio/x-m4a'
+     */
+    formats: {
+      'audio/mpeg': '.mp3',
+      'audio/webm': '.webm',
+      'audio/ogg': '.ogg',
+      'audio/wav': '.wav',
+      'audio/aac': '.aac',
+      'audio/x-m4a': '.m4a'
+    },
+    /**
+     * An array of extensions the browser "probably" can play
+     * @type {Array}
+     * @memberOf AudioBase#
+     * @default
+     */
+    probably: null,
+    /**
+     * An array of extensions the browser "maybe" can play
+     * @type {Array}
+     * @memberOf AudioBase#
+     * @default
+     */
+    maybe: null,
 
     constructor: function(filename){
       if(typeof filename === 'string'){
@@ -76,7 +110,71 @@ define([
      * @param  {Boolean} loop Whether or not to loop audio
      * @return {Audio} Audio object that was constructed
      */
-    _initAudio: function(volume, loop){}
+    _initAudio: function(volume, loop){},
+
+    _chooseFormat: function(){
+      if(!this.probably){
+        this.probably = [];
+      }
+
+      if(!this.maybe){
+        this.maybe = [];
+      }
+
+      if(!this.probably.length && !this.maybe.length){
+        // Figure out the best extension if we have no cache
+        var audio = new Audio();
+        var codec;
+        var result;
+        for(codec in this.formats){
+          result = audio.canPlayType(codec);
+          if(result === 'probably'){
+            this.probably.push(this.formats[codec]);
+            continue;
+          }
+
+          if(result === 'maybe'){
+            this.maybe.push(this.formats[codec]);
+            continue;
+          }
+        }
+      }
+
+      if(this.probably.length){
+        return this.probably[0];
+      }
+
+      if(this.maybe.length){
+        return this.maybe[0];
+      }
+
+      return '';
+    },
+
+    _nextFormat: function(){
+      if(this.probably.length > 1){
+        this.probably.shift();
+        return this.probably[0];
+      }
+
+      if(this.probably.length === 1){
+        this.probably.length = 0;
+        if(this.maybe.length){
+          return this.maybe[0];
+        }
+      }
+
+      if(this.maybe.length > 1){
+        this.maybe.shift();
+        return this.maybe[0];
+      }
+
+      if(this.maybe.length === 1){
+        this.maybe.length = 0;
+      }
+
+      return '';
+    },
   });
 
 });

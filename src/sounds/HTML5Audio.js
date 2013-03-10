@@ -7,11 +7,11 @@
 
 define([
   './AudioBase',
+  '../utils/removeExtension',
   'dcl',
   'dojo/on',
-  'dojo/has',
-  'dojo/_base/lang'
-], function(AudioBase, dcl, on, has, lang){
+  'dojo/has'
+], function(AudioBase, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -38,27 +38,38 @@ define([
     audio: null,
 
     load: function(filename){
-      this.name = filename;
-
       this.audio = new Audio();
+
+      var self = this;
+
+      this.name = removeExtension(filename) + this._chooseFormat();
+
       if(has('shittySound')){
-        on.once(document, 'touchstart', lang.hitch(this, function(e){
-          this.audio.load();
-        }));
+        on.once(document, 'touchstart', function(e){
+          self.audio.load();
+        });
         this._updateCurrentTime = null;
-        on.once(this.audio, 'progress', lang.hitch(this, function(){
-          if(this._updateCurrentTime !== null){
-            this._updateCurrentTime();
+        on.once(this.audio, 'progress', function(){
+          if(self._updateCurrentTime !== null){
+            self._updateCurrentTime();
           }
-        }));
+        });
       }
 
       this.audio.pause();
       this.audio.preload = 'auto';
-      on.once(this.audio, 'loadeddata, error', lang.hitch(this, function(e){
-        this.complete = true;
-      }));
-      this.audio.src = filename;
+      on.once(this.audio, 'error', function(){
+        var format = self._nextFormat();
+        if(format){
+          self.load(self.name);
+        } else {
+          self.complete = true;
+        }
+      });
+      on.once(this.audio, 'loadeddata', function(e){
+        self.complete = true;
+      });
+      this.audio.src = this.name;
     },
 
     loop: function(volume){
