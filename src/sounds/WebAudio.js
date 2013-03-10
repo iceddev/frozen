@@ -11,9 +11,8 @@ define([
   'dcl',
   'dojo/on',
   'dojo/has',
-  'dojo/_base/lang',
   '../shims/AudioContext'
-], function(AudioBase, removeExtension, dcl, on, has, lang){
+], function(AudioBase, removeExtension, dcl, on, has){
 
   'use strict';
 
