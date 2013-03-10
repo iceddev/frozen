@@ -76,7 +76,7 @@ define([
       request.open('GET', this.name, true);
       request.responseType = 'arraybuffer';
 
-      on(request, 'load', decodeAudioData);
+      on.once(request, 'load', decodeAudioData);
       request.send();
     },
 
