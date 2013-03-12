@@ -9,15 +9,19 @@ define([
   describe('GameCore', function(){
 
     var game;
+    var canvas;
 
     beforeEach(function(){
+      canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
       game = new GameCore({
-        canvas: document.createElement('canvas')
+        canvas: canvas
       });
     });
 
     afterEach(function(){
       game.stop();
+      document.body.removeChild(canvas);
     });
 
     it('should default to FONT_SIZE of 24', function(){
