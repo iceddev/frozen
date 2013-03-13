@@ -5,7 +5,7 @@
  */
 
 define([
-  './sounds/Sound!',
+  './plugins/sound!',
   'dcl',
   'dcl/bases/Mixer',
   'dojo/_base/lang',
