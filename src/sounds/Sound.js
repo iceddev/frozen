@@ -76,7 +76,71 @@ define([
      * @param  {Boolean} loop Whether or not to loop audio
      * @return {Audio} Audio object that was constructed
      */
-    _initAudio: function(volume, loop){}
+    _initAudio: function(volume, loop){},
+
+    _chooseFormat: function(){
+      if(!this.probably){
+        this.probably = [];
+      }
+
+      if(!this.maybe){
+        this.maybe = [];
+      }
+
+      if(!this.probably.length && !this.maybe.length){
+        // Figure out the best extension if we have no cache
+        var audio = new Audio();
+        var codec;
+        var result;
+        for(codec in this.formats){
+          result = audio.canPlayType(codec);
+          if(result === 'probably'){
+            this.probably.push(this.formats[codec]);
+            continue;
+          }
+
+          if(result === 'maybe'){
+            this.maybe.push(this.formats[codec]);
+            continue;
+          }
+        }
+      }
+
+      if(this.probably.length){
+        return this.probably[0];
+      }
+
+      if(this.maybe.length){
+        return this.maybe[0];
+      }
+
+      return '';
+    },
+
+    _nextFormat: function(){
+      if(this.probably.length > 1){
+        this.probably.shift();
+        return this.probably[0];
+      }
+
+      if(this.probably.length === 1){
+        this.probably.length = 0;
+        if(this.maybe.length){
+          return this.maybe[0];
+        }
+      }
+
+      if(this.maybe.length > 1){
+        this.maybe.shift();
+        return this.maybe[0];
+      }
+
+      if(this.maybe.length === 1){
+        this.maybe.length = 0;
+      }
+
+      return '';
+    }
   });
 
 });
