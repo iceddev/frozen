@@ -1,8 +1,8 @@
 define([
   'dcl',
   'frozen/ResourceManager',
-  'frozen/sounds/AudioBase'
-], function(dcl, ResourceManager, AudioBase){
+  'frozen/sounds/Sound'
+], function(dcl, ResourceManager, Sound){
 
   'use strict';
 
@@ -143,7 +143,7 @@ define([
 
       it('should take a string filename and return a single sound', function(){
         var origin = window.location.toString().replace(window.location.pathname, '');
-        expect(dcl.isInstanceOf(sound, AudioBase)).toBe(true);
+        expect(dcl.isInstanceOf(sound, Sound)).toBe(true);
       });
 
       it('should take an array of filenames and return an array of sounds', function(){
@@ -157,7 +157,7 @@ define([
         expect(Array.isArray(sounds)).toBe(true);
         expect(sounds.length).toBe(3);
         sounds.forEach(function(sound){
-          expect(dcl.isInstanceOf(sound, AudioBase)).toBe(true);
+          expect(dcl.isInstanceOf(sound, Sound)).toBe(true);
         });
       });
 
@@ -176,7 +176,7 @@ define([
         });
         for(var key in sounds){
           var sound = sounds[key];
-          expect(dcl.isInstanceOf(sound, AudioBase)).toBe(true);
+          expect(dcl.isInstanceOf(sound, Sound)).toBe(true);
         }
       });
 

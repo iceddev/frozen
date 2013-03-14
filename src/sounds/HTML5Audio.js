@@ -2,16 +2,16 @@
  * An Audio object that implements HTML5 Audio into a generic API
  * @name HTML5Audio
  * @constructor HTML5Audio
- * @extends AudioBase
+ * @extends Sound
  */
 
 define([
-  './AudioBase',
+  './Sound',
   '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has'
-], function(AudioBase, removeExtension, dcl, on, has){
+], function(Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -21,7 +21,7 @@ define([
 
   has.add('shittySound', (has('ios') || has('android')) && has('webkit'));
 
-  return dcl(AudioBase, {
+  return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}

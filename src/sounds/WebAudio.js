@@ -2,17 +2,17 @@
  * An Audio object that implements WebAudio into a generic API
  * @name WebAudio
  * @constructor WebAudio
- * @extends AudioBase
+ * @extends Sound
  */
 
 define([
-  './AudioBase',
+  './Sound',
   '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has',
   '../shims/AudioContext'
-], function(AudioBase, removeExtension, dcl, on, has){
+], function(Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -25,7 +25,7 @@ define([
     audioContext = new window.AudioContext();
   }
 
-  return dcl(AudioBase, {
+  return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
