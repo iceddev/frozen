@@ -71,6 +71,15 @@ define([
       if(typeof filename === 'string'){
         this.load(filename);
       }
+
+      // Initialize probably and maybe arrays
+      if(!this.probably){
+        this.probably = [];
+      }
+
+      if(!this.maybe){
+        this.maybe = [];
+      }
     },
 
     /**
@@ -113,14 +122,6 @@ define([
     _initAudio: function(volume, loop){},
 
     _chooseFormat: function(){
-      if(!this.probably){
-        this.probably = [];
-      }
-
-      if(!this.maybe){
-        this.maybe = [];
-      }
-
       if(!this.probably.length && !this.maybe.length){
         // Figure out the best extension if we have no cache
         var audio = new Audio();

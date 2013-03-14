@@ -49,9 +49,14 @@ define([
     buffer: null,
 
     load: function(filename){
-      this.name = removeExtension(filename) + this._chooseFormat();
-
       var self = this;
+
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
 
       function decodeAudioData(e){
         // Decode asynchronously
@@ -71,9 +76,9 @@ define([
         );
       }
 
-      //if the browser AudioContext, it's new enough for XMLHttpRequest
+      //if the browser has AudioContext, it's new enough for XMLHttpRequest
       var request = new XMLHttpRequest();
-      request.open('GET', this.name, true);
+      request.open('GET', filename, true);
       request.responseType = 'arraybuffer';
 
       on.once(request, 'load', decodeAudioData);

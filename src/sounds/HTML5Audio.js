@@ -42,7 +42,12 @@ define([
 
       var self = this;
 
-      this.name = removeExtension(filename) + this._chooseFormat();
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
 
       if(has('shittySound')){
         on.once(document, 'touchstart', function(e){
@@ -69,7 +74,7 @@ define([
       on.once(this.audio, 'loadeddata', function(e){
         self.complete = true;
       });
-      this.audio.src = this.name;
+      this.audio.src = filename;
     },
 
     loop: function(volume){
