@@ -352,6 +352,21 @@ define([
     },
 
     /**
+     * Set the angular velocity of an entity.
+     *
+     * This must be done outside of the update() iteration!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} bodyId The id of the Entity/Body
+     * @param {Number} velocity The angular velocity for the body
+     */
+    setAngularVelocity: function(bodyId, velocity){
+      var body = this.bodiesMap[bodyId];
+      body.SetAngularVelocity(velocity);
+    },
+
+    /**
      * Apply an impulse to a body at an angle in degrees
      *
      * This must be done outside of the update() iteration!
