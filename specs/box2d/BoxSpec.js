@@ -62,6 +62,16 @@ define([
       expect(rect.angle).toBe(2);
     });
 
+    it('check if can set angular velocity', function(){
+      rect.linearDamping = 0;
+      rect.angularDamping = 0;
+      box.setGravity({x:0, y:0});
+      box.addBody(rect);
+      box.setAngularVelocity(rect.id, 2);
+      box.updateExternalState(extMap);
+      expect(rect.angularVelocity).toBe(2);
+    });
+
     it('check if can set linearVelocity', function(){
       box.addBody(rect);
       box.setLinearVelocity(rect.id, 10, 20);
