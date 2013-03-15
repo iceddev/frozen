@@ -33,16 +33,27 @@ define([
      */
     complete: false,
     /**
-     * Map of audio types and codecs used in fallback loading of sounds
+     * Map of audio types and codecs used in fallback loading of sounds <br>
      * Reference: https://developer.mozilla.org/en-US/docs/HTML/Supported_media_formats
      * @type {Object}
      * @memberOf Sound#
-     * @property {String} mp3 'audio/mpeg'
-     * @property {String} webm 'audio/webm'
-     * @property {String} ogg 'audio/ogg'
-     * @property {String} wav 'audio/wav'
-     * @property {String} aac 'audio/aac'
-     * @property {String} m4a 'audio/x-m4a'
+     * @property {String} 'audio/mpeg' '.mp3'
+     * @property {String} 'audio/webm' '.webm'
+     * @property {String} 'audio/ogg' '.ogg'
+     * @property {String} 'audio/wav' '.wav'
+     * @property {String} 'audio/aac' '.aac'
+     * @property {String} 'audio/x-m4a' '.m4a'
+     * @example
+     * // To override the default formats:
+     * // Do this before loading any sounds
+     * require([
+     *   'frozen/sounds/Sound'
+     * ], function(Sound){
+     *   Sound.prototype.formats = {
+     *     'audio/mpeg': '.mp3',
+     *     'audio/webm': '.webm'
+     *   };
+     * });
      */
     formats: {
       'audio/mpeg': '.mp3',
@@ -68,10 +79,6 @@ define([
     maybe: null,
 
     constructor: function(filename){
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-
       // Initialize probably and maybe arrays
       if(!this.probably){
         this.probably = [];
@@ -79,6 +86,10 @@ define([
 
       if(!this.maybe){
         this.maybe = [];
+      }
+
+      if(typeof filename === 'string'){
+        this.load(filename);
       }
     },
 
@@ -121,6 +132,13 @@ define([
      */
     _initAudio: function(volume, loop){},
 
+    /**
+     * Method used to generate a cache of extensions (probably/maybe arrays) to try loading
+     * @function
+     * @memberOf Sound#
+     * @private
+     * @return {String} First extension to try loading
+     */
     _chooseFormat: function(){
       if(!this.probably.length && !this.maybe.length){
         // Figure out the best extension if we have no cache
@@ -152,6 +170,13 @@ define([
       return '';
     },
 
+    /**
+     * Method used to remove a extension that didn't work and return the next viable extension
+     * @function
+     * @memberOf Sound#
+     * @private
+     * @return {String} Next extension to try loading
+     */
     _nextFormat: function(){
       if(this.probably.length > 1){
         this.probably.shift();

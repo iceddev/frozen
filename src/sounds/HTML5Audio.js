@@ -68,6 +68,7 @@ define([
         if(format){
           self.load(self.name);
         } else {
+          self.audio.src = null;
           self.complete = true;
         }
       });
@@ -119,7 +120,7 @@ define([
       if(audio.mozLoadFrom){
         audio.mozLoadFrom(this.audio);
       } else {
-        audio.src = this.name;
+        audio.src = this.audio.src;
       }
       return audio;
     }

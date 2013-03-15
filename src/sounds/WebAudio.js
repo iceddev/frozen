@@ -76,7 +76,7 @@ define([
         );
       }
 
-      //if the browser has AudioContext, it's new enough for XMLHttpRequest
+      // If the browser has AudioContext, it's new enough for XMLHttpRequest
       var request = new XMLHttpRequest();
       request.open('GET', filename, true);
       request.responseType = 'arraybuffer';
@@ -86,11 +86,21 @@ define([
     },
 
     loop: function(volume){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
       var audio = this._initAudio(volume, true);
       audio.noteOn(0);
     },
 
     play: function(volume, startTime){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
       startTime = startTime || 0;
 
       var audio = this._initAudio(volume, false);
