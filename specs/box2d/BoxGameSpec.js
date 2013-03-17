@@ -12,11 +12,22 @@ define([
   describe('BoxGame', function(){
 
     var game;
+    var rect;
+    var rect2;
+    var joint;
 
     beforeEach(function(){
       game = new BoxGame({
         canvas: document.createElement('canvas')
       });
+
+      rect = new Rectangle(rectJSON);
+      rect2 = new Rectangle(rectJSON2);
+      joint = new Revolute({id: 'j1', bodyId1: rect.id, bodyId2: rect2.id});
+
+      game.addBody(rect);
+      game.addBody(rect2);
+      game.addJoint(joint);
     });
 
     afterEach(function(){
@@ -50,9 +61,8 @@ define([
     describe('BoxGame.addBody()', function(){
 
       it('should add a body to the box', function(){
-        var rect = new Rectangle(rectJSON);
-        game.addBody(rect);
         expect(game.entities[rect.id]).toBeDefined();
+        expect(game.entities[rect.id]).toBe(rect);
       });
 
     });
@@ -60,25 +70,17 @@ define([
     describe('BoxGame.removeBody()', function(){
 
       it('should remove a body from the box', function(){
-        var rect = new Rectangle(rectJSON);
-        game.addBody(rect);
         game.removeBody(rect);
         expect(game.entities[rect.id]).not.toBeDefined();
       });
 
     });
 
-
     describe('BoxGame.addJoint()', function(){
 
       it('should add a joint to the box', function(){
-        var rect = new Rectangle(rectJSON);
-        var rect2 = new Rectangle(rectJSON2);
-        var joint = new Revolute({id: 'j1', bodyId1: rect.id, bodyId2: rect2.id});
-        game.addBody(rect);
-        game.addBody(rect2);
-        game.addJoint(joint);
         expect(game.joints[joint.id]).toBeDefined();
+        expect(game.joints[joint.id]).toBe(joint);
       });
 
     });
@@ -86,12 +88,6 @@ define([
     describe('BoxGame.removeJoint()', function(){
 
       it('should remove a joint from the box', function(){
-        var rect = new Rectangle(rectJSON);
-        var rect2 = new Rectangle(rectJSON2);
-        var joint = new Revolute({id: 'j1', bodyId1: rect.id, bodyId2: rect2.id});
-        game.addBody(rect);
-        game.addBody(rect2);
-        game.addJoint(joint);
         game.removeJoint(joint);
         expect(game.joints[joint.id]).not.toBeDefined();
       });
