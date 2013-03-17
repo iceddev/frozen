@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "devDependencies": {
     "volo": "~0.2.9",
-    "grunt": "~0.4.0",
+    "grunt": "~0.4.1",
     "grunt-dojo": "~0.2.0",
     "grunt-open": "~0.2.0",
     "grunt-jsdoc": "~0.2.3",
