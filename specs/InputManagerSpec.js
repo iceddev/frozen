@@ -30,6 +30,10 @@ define([
       });
     });
 
+    afterEach(function(){
+      im.destroy();
+    });
+
     it('should default to empty array of keyActions', function(){
       expect(im.keyActions).toEqual([]);
       expect(Array.isArray(im.keyActions)).toBe(true);
