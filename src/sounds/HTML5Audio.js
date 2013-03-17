@@ -7,11 +7,11 @@
 
 define([
   './Sound',
+  '../utils/removeExtension',
   'dcl',
   'dojo/on',
-  'dojo/has',
-  'dojo/_base/lang'
-], function(Sound, dcl, on, has, lang){
+  'dojo/has'
+], function(Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -19,7 +19,7 @@ define([
     return !!global.Audio;
   });
 
-  has.add('shittySound', (has('ios') || has('android')) && has('webkit'));
+  has.add('shittySound', !!((has('ios') || has('android')) && has('webkit')));
 
   return dcl(Sound, {
     /**
@@ -38,32 +38,49 @@ define([
     audio: null,
 
     load: function(filename){
+      this.audio = new Audio();
+
+      var self = this;
+
       this.name = filename;
 
-      this.audio = new Audio();
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
       if(has('shittySound')){
-        on.once(document, 'touchstart', lang.hitch(this, function(e){
-          this.audio.load();
-        }));
+        on.once(document, 'touchstart', function(e){
+          self.audio.load();
+        });
         this._updateCurrentTime = null;
-        on.once(this.audio, 'progress', lang.hitch(this, function(){
-          if(this._updateCurrentTime !== null){
-            this._updateCurrentTime();
+        on.once(this.audio, 'progress', function(){
+          if(self._updateCurrentTime !== null){
+            self._updateCurrentTime();
           }
-        }));
+        });
       }
 
       this.audio.pause();
       this.audio.preload = 'auto';
-      on.once(this.audio, 'loadeddata, error', lang.hitch(this, function(e){
-        this.complete = true;
-      }));
+      on.once(this.audio, 'error', function(){
+        var format = self._nextFormat();
+        if(format){
+          self.load(self.name);
+        } else {
+          self.audio.src = null;
+          self.complete = true;
+        }
+      });
+      on.once(this.audio, 'loadeddata', function(e){
+        self.complete = true;
+      });
       this.audio.src = filename;
     },
 
     loop: function(volume){
       var audio = this._initAudio(volume, true);
-      on(audio, 'loadeddata', function(e){
+      on.once(audio, 'loadeddata', function(e){
         audio.play();
       });
     },
@@ -86,7 +103,7 @@ define([
       }
 
       var audio = this._initAudio(volume, false);
-      on(audio, 'loadeddata', function(e){
+      on.once(audio, 'loadeddata', function(e){
         audio.currentTime = startTime / 1000;
         audio.play();
       });
@@ -100,10 +117,11 @@ define([
       audio.volume = volume || 1;
       audio.loop = loop;
       audio.preload = 'auto';
+      // TODO: investigate if this.audio.currentSrc shares buffer and ditch mozLoadFrom if it does
       if(audio.mozLoadFrom){
         audio.mozLoadFrom(this.audio);
       } else {
-        audio.src = this.name;
+        audio.src = this.audio.currentSrc;
       }
       return audio;
     }
