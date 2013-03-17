@@ -173,7 +173,6 @@ define([
 
         beforeEach(function(){
           format1 = sound._chooseFormat();
-          console.log(sound.probably, sound.maybe);
           format2 = sound._nextFormat();
           format3 = sound._chooseFormat();
         });
