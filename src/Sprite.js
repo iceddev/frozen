@@ -41,6 +41,13 @@ define([
      */
     dy: 0.0,
     /**
+     * The max speed a sprite can move in either direction
+     * @type {Number}
+     * @memberOf Sprite#
+     * @default
+     */
+    maxSpeed: 0.0,
+    /**
      * The name of this Sprite
      * @type {String}
      * @memberOf Sprite#
@@ -75,12 +82,12 @@ define([
      * @return {Number} maxSpeed up to speed limit
      */
     limitSpeed: function(v){
-      if(this.getMaxSpeed()){
-        if(Math.abs(v) > this.getMaxSpeed()){
+      if(this.maxSpeed){
+        if(Math.abs(v) > this.maxSpeed){
           if(v > 0){
-            return this.getMaxSpeed();
+            return this.maxSpeed;
           }else if(v < 0){
-            return this.getMaxSpeed();
+            return this.maxSpeed;
           }else{
             return  0;
           }
