@@ -18,6 +18,9 @@ define([
   if(has('WebAudio')){
     describe('WebAudio', function(){
       var sound;
+      var filename = 'specs/fixtures/yipee.wav';
+      var filename2 = 'specs/fixtures/yipee';
+      var noteOn = jasmine.createSpy('noteOn');
 
       beforeEach(function(){
         sound = new WebAudio();
@@ -36,8 +39,6 @@ define([
       });
 
       describe('WebAudio.load()', function(){
-        var filename = 'specs/fixtures/yipee.wav';
-        var filename2 = 'specs/fixtures/yipee';
 
         it('should set the name to the filename passed in', function(){
           sound.load(filename);
@@ -143,8 +144,6 @@ define([
       });
 
       describe('WebAudio.loop()', function(){
-        var filename = 'specs/fixtures/yipee.wav';
-        var noteOn = jasmine.createSpy('noteOn');
 
         beforeEach(function(){
           spyOn(sound, '_initAudio').andReturn({
@@ -195,8 +194,6 @@ define([
       });
 
       describe('WebAudio.play()', function(){
-        var filename = 'specs/fixtures/yipee.wav';
-        var noteOn = jasmine.createSpy('noteOn');
 
         beforeEach(function(){
           spyOn(sound, '_initAudio').andReturn({
@@ -255,7 +252,6 @@ define([
       });
 
       describe('WebAudio._initAudio()', function(){
-        var filename = 'specs/fixtures/yipee.wav';
 
         beforeEach(function(){
           runs(function(){
