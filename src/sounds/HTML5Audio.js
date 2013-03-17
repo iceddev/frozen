@@ -19,7 +19,7 @@ define([
     return !!global.Audio;
   });
 
-  has.add('shittySound', (has('ios') || has('android')) && has('webkit'));
+  has.add('shittySound', !!((has('ios') || has('android')) && has('webkit')));
 
   return dcl(Sound, {
     /**
