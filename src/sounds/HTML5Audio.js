@@ -80,7 +80,7 @@ define([
 
     loop: function(volume){
       var audio = this._initAudio(volume, true);
-      on(audio, 'loadeddata', function(e){
+      on.once(audio, 'loadeddata', function(e){
         audio.play();
       });
     },
@@ -103,7 +103,7 @@ define([
       }
 
       var audio = this._initAudio(volume, false);
-      on(audio, 'loadeddata', function(e){
+      on.once(audio, 'loadeddata', function(e){
         audio.currentTime = startTime / 1000;
         audio.play();
       });
@@ -117,10 +117,11 @@ define([
       audio.volume = volume || 1;
       audio.loop = loop;
       audio.preload = 'auto';
+      // TODO: investigate if this.audio.currentSrc shares buffer and ditch mozLoadFrom if it does
       if(audio.mozLoadFrom){
         audio.mozLoadFrom(this.audio);
       } else {
-        audio.src = this.audio.src;
+        audio.src = this.audio.currentSrc;
       }
       return audio;
     }
