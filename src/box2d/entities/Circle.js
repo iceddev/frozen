@@ -1,32 +1,32 @@
 /**
  * This represents a Circle body and shape in a Box2d world
- * @name CircleEntity
- * @constructor CircleEntity
+ * @name Circle
+ * @constructor Circle
  * @extends Entity
  */
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/distance'
-], function(dcl, Mixer, Entity, distance){
+  '../../utils/distance'
+], function(dcl, Entity, distance){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Circle',
     /**
      * The radius of this circle.
      * @type {Number}
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @default
      */
     radius: 1,
 
     /**
-     * Draws the CircleEntity at a given scale
+     * Draws the Circle at a given scale
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -63,7 +63,7 @@ define([
     /**
      * Scale this shape
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -76,7 +76,7 @@ define([
     /**
      * Checks if a given point is contained within this Circle.
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */

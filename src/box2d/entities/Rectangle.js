@@ -1,38 +1,38 @@
 /**
  * This Entity represents a Rectangle
- * @name RectangleEntity
- * @constructor RectangleEntity
+ * @name Rectangle
+ * @constructor Rectangle
  * @extends Entity
  */
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   './Entity'
-], function(dcl, Mixer, Entity){
+], function(dcl, Entity){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Rectangle',
     /**
      * Half of the Rectangle's total width
      * @type {Number}
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @default
      */
     halfWidth: 1,
     /**
      * Half of the Rectangle's total width
      * @type {Number}
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @default
      */
     halfHeight: 1,
 
     /**
-     * Draws the RectangleEntity at a given scale
+     * Draws the Rectangle at a given scale
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -68,7 +68,7 @@ define([
     /**
      * Scale this shape
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -82,7 +82,7 @@ define([
     /**
      * Checks if a given point is contained within this Rectangle.
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */

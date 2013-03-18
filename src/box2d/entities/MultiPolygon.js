@@ -1,26 +1,26 @@
 /**
  * This Entity is for building complex and possibly concave shapes
- * @name MultiPolygonEntity
- * @constructor MultiPolygonEntity
+ * @name MultiPolygon
+ * @constructor MultiPolygon
  * @extends Entity
  */
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/scalePoints',
-  '../utils/pointInPolygon',
-  '../utils/translatePoints'
-], function(dcl, Mixer, Entity, scalePoints, pointInPolygon, translatePoints){
+  '../../utils/scalePoints',
+  '../../utils/pointInPolygon',
+  '../../utils/translatePoints'
+], function(dcl, Entity, scalePoints, pointInPolygon, translatePoints){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/MultiPolygon',
     /**
      * An array of polygons
      * @type {Array}
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @default
      */
     polys: [],
@@ -28,7 +28,7 @@ define([
     /**
      * Draws each polygon in the entity
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {2dContext} ctx the HTML5 2d drawing context
      * @param {Number} scale the scale to draw the entity at
      */
@@ -65,7 +65,7 @@ define([
     /**
      * Scale this shape
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -78,7 +78,7 @@ define([
     /**
      * Checks if a given point is contained within this MultiPolygon.
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */

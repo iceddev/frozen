@@ -14,6 +14,13 @@ define([
 
   return dcl(Mixer, {
     /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf Entity#
+     * @default
+     */
+    declaredClass: 'frozen/box2d/entities/Entity',
+    /**
      * The id in which to reference this object. Also the userData property for box2d bodies.
      * @type {Number}
      * @memberOf Entity#

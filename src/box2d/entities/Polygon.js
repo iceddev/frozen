@@ -1,34 +1,34 @@
 /**
  * This Entity represents a polygon which is build from an array of points.
- * @name PolygonEntity
- * @constructor PolygonEntity
+ * @name Polygon
+ * @constructor Polygon
  * @extends Entity
  */
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/scalePoints',
-  '../utils/pointInPolygon',
-  '../utils/translatePoints'
-], function(dcl, Mixer, Entity, scalePoints, pointInPolygon, translatePoints){
+  '../../utils/scalePoints',
+  '../../utils/pointInPolygon',
+  '../../utils/translatePoints'
+], function(dcl, Entity, scalePoints, pointInPolygon, translatePoints){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Polygon',
     /**
      * An array of objects that have x and y values.
      * @type {Array}
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @default
      */
     points: [],
 
     /**
-     * Draws the PolygonEntity at a given scale
+     * Draws the Polygon at a given scale
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -63,7 +63,7 @@ define([
     /**
      * Scale this shape
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -76,7 +76,7 @@ define([
     /**
      * Checks if a given point is contained within this Polygon.
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */
