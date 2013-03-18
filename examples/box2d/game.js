@@ -2,9 +2,9 @@
 require([
   'dojo/keys',
   'frozen/box2d/BoxGame',
-  'frozen/box2d/RectangleEntity',
-  'frozen/box2d/PolygonEntity',
-  'frozen/box2d/CircleEntity',
+  'frozen/box2d/entities/Rectangle',
+  'frozen/box2d/entities/Polygon',
+  'frozen/box2d/entities/Circle',
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadImage!images/yarn.png'
