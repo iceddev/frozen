@@ -1,6 +1,6 @@
 define([
   'frozen/box2d/Box',
-  'frozen/box2d/PolygonEntity'
+  'frozen/box2d/entities/Polygon'
 ], function(Box, Polygon){
 
   'use strict';

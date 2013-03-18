@@ -1,6 +1,6 @@
 define([
   'frozen/box2d/Box',
-  'frozen/box2d/CircleEntity'
+  'frozen/box2d/entities/Circle'
 ], function(Box, Circle){
 
   'use strict';

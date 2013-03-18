@@ -1,6 +1,6 @@
 define([
   'frozen/box2d/BoxGame',
-  'frozen/box2d/RectangleEntity',
+  'frozen/box2d/entities/Rectangle',
   'frozen/box2d/joints/Revolute'
 ], function(BoxGame, Rectangle, Revolute){
 
