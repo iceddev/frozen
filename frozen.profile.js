@@ -92,7 +92,6 @@ var profile = (function(){
           'frozen/shims/RAF',
           'frozen/Sprite',
           'frozen/utils',
-          'frozen/utils/parseString',
           'frozen/sounds/Sound',
           'frozen/sounds/WebAudio',
           'frozen/sounds/HTML5Audio',
