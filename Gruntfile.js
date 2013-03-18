@@ -69,7 +69,7 @@ module.exports = function(grunt) {
       },
       all: {
         files: '<%= jshint.all %>',
-        tasks: ['jshint:all', 'connect:test', 'jasmine:all', 'jsdoc:all', 'dojo']
+        tasks: ['build']
       }
     },
     dojo: {
@@ -119,6 +119,7 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', ['jshint:all', 'connect:test', 'jasmine:all']);
 
+  grunt.registerTask('build', ['jshint:all', 'connect:test', 'jasmine:all', 'jsdoc:all', 'dojo']);
   grunt.registerTask('test', ['jshint:test', 'connect:test', 'jasmine:all', 'jasmine:all:build', 'open:test', 'watch:test']);
   grunt.registerTask('docs', ['jshint:docs', 'jsdoc:all', 'connect:docs', 'open:docs', 'watch:docs']);
   grunt.registerTask('examples', ['jshint:examples', 'dojo', 'connect:examples', 'open:examples', 'watch:examples']);
