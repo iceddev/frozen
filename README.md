@@ -23,7 +23,7 @@ Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffol
 
 ## Documentation
 
-Documentation is available at http://frozenjs.com/doc/
+Documentation is available at http://frozenjs.com/docs/
 
 ## Examples
 
@@ -83,7 +83,7 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 
 ### Generating the docs
 
-`grunt doc` will lint and generate docs
+`grunt docs` will lint and generate docs
 
 ### Running the tests
 
