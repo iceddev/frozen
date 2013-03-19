@@ -85,8 +85,11 @@ module.exports = function(grunt) {
     jsdoc: {
       all: {
         src: ['src/**/*.js', 'README.md'],
-        dest: 'docs',
-        config: 'jsdoc_config.json'
+        options: {
+          destination: 'docs',
+          config: 'jsdoc_config.json',
+          private: false
+        }
       }
     },
     jasmine: {
