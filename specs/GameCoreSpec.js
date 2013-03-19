@@ -435,7 +435,6 @@ define([
 
         runs(function(){
           expect(game.gameLoop).toHaveBeenCalled();
-          expect(game.gameLoop.calls.length).toEqual(1);
         });
       });
 
