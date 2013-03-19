@@ -4,9 +4,9 @@ require([
   'frozen/Animation',
   'frozen/box2d/Box',
   'frozen/box2d/BoxGame',
-  'frozen/box2d/RectangleEntity',
-  'frozen/box2d/PolygonEntity',
-  'frozen/box2d/CircleEntity',
+  'frozen/box2d/entities/Rectangle',
+  'frozen/box2d/entities/Polygon',
+  'frozen/box2d/entities/Circle',
   'frozen/utils',
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
@@ -17,27 +17,23 @@ require([
   'frozen/plugins/loadSound!sounds/backWhoosh.wav'
 ], function(keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
 
+  'use strict';
 
   var speed = 8;
 
   var portalCollisionDistance = 50;
-  var animFactory = new Animation();
 
-  var orangePortalAnim = animFactory.createFromTile(12, 100, orangePortalSheet, 120, 80, 0);
+  var orangePortalAnim = Animation.prototype.createFromSheet(12, 100, orangePortalSheet, 80, 120, 0);
   var orangePortal = {x: 150, y: 100, collided: true};
 
-  var bluePortalAnim = animFactory.createFromTile(12, 100, bluePortalSheet, 120, 80, 0);
+  var bluePortalAnim = Animation.prototype.createFromSheet(12, 100, bluePortalSheet, 80, 120, 0);
   var bluePortal = {x: 600, y: 100, collided: true};
-
 
   //objects in box2d need an id
   var geomId = 1;
 
   //shapes in the box2 world, locations are their centers
   var nyan, pyramid, ground, ceiling, leftWall, rightWall;
-
-
-
 
   //setup a GameCore instance
   var game = new BoxGame({
@@ -51,7 +47,6 @@ require([
       im.addKeyAction(keys.RIGHT_ARROW);
       im.addKeyAction(keys.UP_ARROW);
       im.addKeyAction(keys.DOWN_ARROW);
-
     },
     handleInput: function(im){
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
@@ -66,7 +61,6 @@ require([
         this.box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
-
       if(im.touchAction.isPressed()){ //mobile first :)
         this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.touchAction.position), speed / 2);
       }
@@ -75,11 +69,9 @@ require([
       }
     },
     update: function(millis){
-
       //update the animations
       orangePortalAnim.update(millis);
       bluePortalAnim.update(millis);
-
 
       //this is for simple distance-based collision detection outside of box2s
       var blueDist = utils.distance({x: nyan.x * this.box.scale, y: nyan.y * this.box.scale}, bluePortal);
@@ -103,7 +95,6 @@ require([
         backWhoosh.play();
       }
 
-
       // this uses a simple wrapper for box2d's own collision detection
       if(nyan.collisions){
         nyan.collisions.forEach(function(collision){
@@ -113,7 +104,6 @@ require([
           }
         });
       }
-
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
@@ -122,8 +112,6 @@ require([
       nyan.draw(context);
     }
   });
-
-
 
   //create each of the shapes in the world
   ground = new Rectangle({
@@ -137,7 +125,7 @@ require([
   game.box.addBody(ground); //add the shape to the box
   game.entities[geomId] = ground; //keep a reference to the shape for fast lookup
 
-  celing = new Rectangle({
+  ceiling = new Rectangle({
     id: geomId,
     x: 385,
     y: -200,
@@ -145,8 +133,8 @@ require([
     halfHeight: 40,
     staticBody: true
   });
-  game.box.addBody(celing);
-  game.entities[geomId] = celing;
+  game.box.addBody(ceiling);
+  game.entities[geomId] = ceiling;
 
   leftWall = new Rectangle({
     id: geomId,

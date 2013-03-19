@@ -13,6 +13,13 @@ define([
 
   return dcl(Mixer, {
     /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf Joint#
+     * @default
+     */
+    declaredClass: 'frozen/box2d/joints/Joint',
+    /**
      * The id of the first entity that will be attached to this joint
      * @type {String}
      * @memberOf Joint#

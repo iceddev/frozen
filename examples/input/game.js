@@ -1,5 +1,10 @@
 //load the AMD modules we need
-require(['frozen/GameCore', 'dojo/keys'], function(GameCore, keys){
+require([
+  'frozen/GameCore',
+  'dojo/keys'
+], function(GameCore, keys){
+
+  'use strict';
 
   var x = 100;
   var y = 100;

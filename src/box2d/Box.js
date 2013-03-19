@@ -352,6 +352,21 @@ define([
     },
 
     /**
+     * Set the angular velocity of an entity.
+     *
+     * This must be done outside of the update() iteration!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} bodyId The id of the Entity/Body
+     * @param {Number} velocity The angular velocity for the body
+     */
+    setAngularVelocity: function(bodyId, velocity){
+      var body = this.bodiesMap[bodyId];
+      body.SetAngularVelocity(velocity);
+    },
+
+    /**
      * Apply an impulse to a body at an angle in degrees
      *
      * This must be done outside of the update() iteration!
@@ -535,8 +550,22 @@ define([
      * @function
      * @memberOf Box#
      * @param {Number} jointId The id of joint to be destroyed.
+     * @deprecated This method is deprecated in favor of removeJoint
      */
-    destroyJoint: function(jointId) {
+    destroyJoint: function(jointId){
+      this.removeJoint(jointId);
+    },
+
+    /**
+     * Remove a joint from the world.
+     *
+     * This must be done outside of the update() iteration, and BEFORE any bodies connected to the joint are removed!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} jointId The id of joint to be destroyed.
+     */
+    removeJoint: function(jointId) {
       if(this.jointsMap[jointId]){
         this.b2World.DestroyJoint(this.jointsMap[jointId]);
         delete this.jointsMap[jointId];

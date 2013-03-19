@@ -8,10 +8,9 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -19,7 +18,8 @@ define([
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
 
-  return dcl([Mixer, Joint], {
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Distance',
     /**
      * A point on the second entity where the joint will be attached. If no point is specified, the second body will be attached at its center point.
      * @type {Object}
