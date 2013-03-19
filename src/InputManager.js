@@ -10,17 +10,18 @@ define([
   './utils/insideCanvas',
   'dcl',
   'dcl/bases/Mixer',
+  'dcl/mixins/Cleanup',
   'dojo/has',
   'dojo/on',
   'dojo/dom-style',
   'dojo/dom-geometry',
   'dojo/_base/lang',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, has, on, domStyle, domGeom, lang){
+], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, domStyle, domGeom, lang){
 
   'use strict';
 
-  return dcl(Mixer, {
+  return dcl([Mixer, Cleanup], {
     /**
      * An array of keyActions being listened for
      * @type {Array}
@@ -86,21 +87,25 @@ define([
     canvasPercentage: null,
 
     constructor: function(){
+      function cleanup(handler){
+        handler.remove();
+      }
+
       if(this.handleKeys){
-        on(document, 'keydown', lang.hitch(this, "keyDown"));
-        on(document, 'keyup', lang.hitch(this, "keyReleased"));
+        this.pushCleanup(on(document, 'keydown', lang.hitch(this, "keyDown")), cleanup);
+        this.pushCleanup(on(document, 'keyup', lang.hitch(this, "keyReleased")), cleanup);
       }
 
       if(this.handleMouse && !has('touch')){
-        on(document, 'mousedown', lang.hitch(this, "mouseDown"));
-        on(document, 'mousemove', lang.hitch(this, "mouseMove"));
-        on(document, 'mouseup', lang.hitch(this, "mouseUp"));
+        this.pushCleanup(on(document, 'mousedown', lang.hitch(this, "mouseDown")), cleanup);
+        this.pushCleanup(on(document, 'mousemove', lang.hitch(this, "mouseMove")), cleanup);
+        this.pushCleanup(on(document, 'mouseup', lang.hitch(this, "mouseUp")), cleanup);
       }
 
       if(this.handleTouch && has('touch')){
-        on(document, 'touchstart', lang.hitch(this, "touchStart"));
-        on(document, 'touchmove', lang.hitch(this, "touchMove"));
-        on(document, 'touchend', lang.hitch(this, "touchEnd"));
+        this.pushCleanup(on(document, 'touchstart', lang.hitch(this, "touchStart")), cleanup);
+        this.pushCleanup(on(document, 'touchmove', lang.hitch(this, "touchMove")), cleanup);
+        this.pushCleanup(on(document, 'touchend', lang.hitch(this, "touchEnd")), cleanup);
       }
 
       if(!this.mouseAction){
@@ -112,8 +117,8 @@ define([
       }
 
       if(this.gameArea && this.canvasPercentage){
-        on(window, 'resize', lang.hitch(this, "resize"));
-        on(window, 'orientationchange', lang.hitch(this, "resize"));
+        this.pushCleanup(on(window, 'resize', lang.hitch(this, "resize")), cleanup);
+        this.pushCleanup(on(window, 'orientationchange', lang.hitch(this, "resize")), cleanup);
       }
     },
 
@@ -149,28 +154,6 @@ define([
       this.mapToKey(ga,keyCode);
 
       return ga;
-    },
-
-    /**
-     * Sets the mouseAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because mouseAction is available on an instance and it will be removed in the future
-     */
-    setMouseAction: function(gameAction){
-      this.mouseAction = gameAction;
-    },
-
-    /**
-     * Sets the touchAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because touchAction is available on an instance and it will be removed in the future
-     */
-    setTouchAction: function(gameAction){
-      this.touchAction = gameAction;
     },
 
     /**

@@ -30,6 +30,10 @@ define([
       });
     });
 
+    afterEach(function(){
+      im.destroy();
+    });
+
     it('should default to empty array of keyActions', function(){
       expect(im.keyActions).toEqual([]);
       expect(Array.isArray(im.keyActions)).toBe(true);
@@ -73,8 +77,6 @@ define([
       expect(im.constructor).toBeDefined();
       expect(im.mapToKey).toBeDefined();
       expect(im.addKeyAction).toBeDefined();
-      expect(im.setMouseAction).toBeDefined();
-      expect(im.setTouchAction).toBeDefined();
       expect(im.mouseUp).toBeDefined();
       expect(im.mouseDown).toBeDefined();
       expect(im.mouseMove).toBeDefined();
@@ -142,30 +144,6 @@ define([
         var action = im.addKeyAction(12, true);
 
         expect(action.behavior).toBe(gameAction.statics.DETECT_INITAL_PRESS_ONLY);
-      });
-
-    });
-
-    describe('InputManager.setMouseAction()', function(){
-
-      it('should set the mouseAction to the gameAction passed in', function(){
-        expect(im.mouseAction).not.toBe(gameAction);
-
-        im.setMouseAction(gameAction);
-
-        expect(im.mouseAction).toBe(gameAction);
-      });
-
-    });
-
-    describe('InputManager.setTouchAction()', function(){
-
-      it('should set the touchAction to the gameAction passed in', function(){
-        expect(im.touchAction).not.toBe(gameAction);
-
-        im.setTouchAction(gameAction);
-
-        expect(im.touchAction).toBe(gameAction);
       });
 
     });

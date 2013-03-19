@@ -8,10 +8,9 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -19,8 +18,8 @@ define([
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
-  return dcl([Mixer, Joint], {
-
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Revolute',
     /**
      * Creates and adds this joint in the Box2d world.
      * @function

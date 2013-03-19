@@ -2,17 +2,17 @@
  * An Audio object that implements WebAudio into a generic API
  * @name WebAudio
  * @constructor WebAudio
- * @extends AudioBase
+ * @extends Sound
  */
 
 define([
-  './AudioBase',
+  './Sound',
+  '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has',
-  'dojo/_base/lang',
   '../shims/AudioContext'
-], function(AudioBase, dcl, on, has, lang){
+], function(Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -25,7 +25,7 @@ define([
     audioContext = new window.AudioContext();
   }
 
-  return dcl(AudioBase, {
+  return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
@@ -49,36 +49,58 @@ define([
     buffer: null,
 
     load: function(filename){
+      var self = this;
+
       this.name = filename;
 
-      var decodeAudioData = lang.partial(function(self, evt){
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
+      function decodeAudioData(e){
         // Decode asynchronously
-        self.audioContext.decodeAudioData(this.response,
+        self.audioContext.decodeAudioData(e.target.response,
           function(buffer){
             self.buffer = buffer;
             self.complete = true;
           },
           function(err){
-            console.info('error loading sound', err);
+            var format = self._nextFormat();
+            if(format){
+              self.load(self.name);
+            } else {
+              self.complete = true;
+            }
           }
         );
-      }, this);
+      }
 
-      //if the browser AudioContext, it's new enough for XMLHttpRequest
+      // If the browser has AudioContext, it's new enough for XMLHttpRequest
       var request = new XMLHttpRequest();
       request.open('GET', filename, true);
       request.responseType = 'arraybuffer';
 
-      on(request, 'load', decodeAudioData);
+      on.once(request, 'load', decodeAudioData);
       request.send();
     },
 
     loop: function(volume){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
       var audio = this._initAudio(volume, true);
       audio.noteOn(0);
     },
 
     play: function(volume, startTime){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
       startTime = startTime || 0;
 
       var audio = this._initAudio(volume, false);
