@@ -19,7 +19,7 @@ define([
 
   });
 
-  if(has('HTML5Audio')){
+  if(has('HTML5Audio') && !has('shittySound')){
     describe('HTML5Audio', function(){
       var sound;
       var filename = 'specs/fixtures/yipee.wav';
