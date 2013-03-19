@@ -38,20 +38,20 @@ module.exports = function(grunt) {
         }
       },
       options: {
-        host: 'localhost',
+        hostname: '0.0.0.0',
         port: 8000,
         keepalive: false
       }
     },
     open: {
       test: {
-        path: 'http://<%= connect.options.host %>:<%= connect.options.port %>/_SpecRunner.html'
+        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/_SpecRunner.html'
       },
       docs: {
-        path: 'http://<%= connect.options.host %>:<%= connect.options.port %>/docs/'
+        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/docs/'
       },
       examples: {
-        path: 'http://<%= connect.options.host %>:<%= connect.options.port %>/examples/'
+        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/examples/'
       }
     },
     watch: {
