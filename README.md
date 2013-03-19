@@ -38,11 +38,11 @@ Source available on github: https://github.com/iceddev/frozen
 
 We have tested in:
 
-* Chrome 24 & 26-dev
-* Firefox 18 & 19
-* IE10 (limited sound support)
-* Chrome for Android 18 & 24 (limited sound support)
-* Firefox for Android 18-19 & 20a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
+* Chrome 25 & 27-dev
+* Firefox 19.0.2
+* IE10 (sound with supported codecs)
+* Chrome for Android 25 & Beta 26 (limited sound support)
+* Firefox for Android 19.0.2, Beta 20 & 21.0a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
 * PhantomJS 1.8.1
 
 __Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
