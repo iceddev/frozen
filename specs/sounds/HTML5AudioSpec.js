@@ -22,7 +22,7 @@ define([
   if(has('HTML5Audio') && !has('shittySound')){
     describe('HTML5Audio', function(){
       var sound;
-      var filename = 'specs/fixtures/yipee.wav';
+      var filename = has('ie') ? 'specs/fixtures/yipee.mp3' : 'specs/fixtures/yipee.wav';
       var filename2 = 'specs/fixtures/yipee';
 
       beforeEach(function(){
@@ -72,7 +72,7 @@ define([
 
           waitsFor(function(){
             return flag;
-          }, '_nextFormat should have been called', 500);
+          }, '_nextFormat should have been called', 1000);
 
           runs(function(){
             expect(sound._nextFormat).toHaveBeenCalled();
@@ -93,7 +93,7 @@ define([
 
           waitsFor(function(){
             return sound.complete;
-          }, 'sound should have been marked as complete', 500);
+          }, 'sound should have been marked as complete', 1000);
 
           runs(function(){
             expect(sound.complete).toBe(true);
@@ -113,7 +113,7 @@ define([
 
           waitsFor(function(){
             return sound.complete;
-          }, 'sound should have been marked as complete', 500);
+          }, 'sound should have been marked as complete', 1000);
 
           runs(function(){
             expect(sound.complete).toBe(true);
@@ -141,7 +141,7 @@ define([
 
           waitsFor(function(){
             return sound.complete;
-          }, 'sound should have been marked as complete', 500);
+          }, 'sound should have been marked as complete', 1000);
         });
 
         it('should initialize a new audio', function(){
@@ -167,7 +167,7 @@ define([
 
           waitsFor(function(){
             return audio.play.callCount;
-          }, 'play should have been called', 500);
+          }, 'play should have been called', 1000);
 
           runs(function(){
             expect(audio.play).toHaveBeenCalled();
@@ -195,7 +195,7 @@ define([
 
           waitsFor(function(){
             return sound.complete;
-          }, 'sound should have been marked as complete', 500);
+          }, 'sound should have been marked as complete', 1000);
         });
 
         it('should initialize a new audio', function(){
@@ -221,7 +221,7 @@ define([
 
           waitsFor(function(){
             return audio.play.callCount;
-          }, 'play should have been called', 500);
+          }, 'play should have been called', 1000);
 
           runs(function(){
             expect(audio.play).toHaveBeenCalled();
@@ -235,7 +235,7 @@ define([
 
           waitsFor(function(){
             return audio.play.callCount;
-          }, 'play should have been called', 500);
+          }, 'play should have been called', 1000);
 
           runs(function(){
             expect(audio.currentTime).toBe(0);
@@ -249,7 +249,7 @@ define([
 
           waitsFor(function(){
             return audio.play.callCount;
-          }, 'play should have been called', 500);
+          }, 'play should have been called', 1000);
 
           runs(function(){
             // Floating-point...
@@ -269,7 +269,7 @@ define([
 
           waitsFor(function(){
             return sound.complete;
-          }, 'sound should have been marked as complete', 500);
+          }, 'sound should have been marked as complete', 1000);
         });
 
         it('should return a new Audio', function(){
