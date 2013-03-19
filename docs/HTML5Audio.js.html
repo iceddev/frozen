@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: sounds/HTML5Audio.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: sounds/HTML5Audio.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * An Audio object that implements HTML5 Audio into a generic API
+ * @name HTML5Audio
+ * @constructor HTML5Audio
+ * @extends Sound
+ */
+
+define([
+  './Sound',
+  '../utils/removeExtension',
+  'dcl',
+  'dojo/on',
+  'dojo/has'
+], function(Sound, removeExtension, dcl, on, has){
+
+  'use strict';
+
+  has.add('HTML5Audio', function(global){
+    return !!global.Audio;
+  });
+
+  has.add('shittySound', function(){
+    return !!((has('android') || has('ios')) && has('webkit'));
+  });
+
+  return dcl(Sound, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/HTML5Audio',
+    /**
+     * The initial Audio object - used to load the sound prior to playing
+     * @type {Audio}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    audio: null,
+
+    load: function(filename){
+      this.audio = new Audio();
+
+      var self = this;
+
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
+      if(has('shittySound')){
+        on.once(document, 'touchstart', function(e){
+          self.audio.load();
+        });
+        this._updateCurrentTime = null;
+        on.once(this.audio, 'progress', function(){
+          if(self._updateCurrentTime !== null){
+            self._updateCurrentTime();
+          }
+        });
+      }
+
+      this.audio.pause();
+      this.audio.preload = 'auto';
+      on.once(this.audio, 'error', function(){
+        var format = self._nextFormat();
+        if(format){
+          self.load(self.name);
+        } else {
+          self.audio.src = null;
+          self.complete = true;
+        }
+      });
+      on.once(this.audio, 'loadeddata', function(e){
+        self.complete = true;
+      });
+      this.audio.src = filename;
+    },
+
+    loop: function(volume){
+      var audio = this._initAudio(volume, true);
+      on.once(audio, 'loadeddata', function(e){
+        audio.play();
+      });
+    },
+
+    play: function(volume, startTime){
+      startTime = startTime || 0;
+
+      if(has('shittySound')){
+        try {
+          this.audio.currentTime = startTime / 1000;
+          return this.audio.play();
+        } catch(err){
+          this._updateCurrentTime = function(){
+            this._updateCurrentTime = null;
+            this.audio.currentTime = startTime / 1000;
+            return this.audio.play();
+          };
+          return this.audio.play();
+        }
+      }
+
+      var audio = this._initAudio(volume, false);
+      on.once(audio, 'loadeddata', function(e){
+        audio.currentTime = startTime / 1000;
+        audio.play();
+      });
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var audio = new Audio();
+      audio.pause();
+      audio.volume = volume || 1;
+      audio.loop = loop;
+      audio.preload = 'auto';
+      // TODO: investigate if this.audio.currentSrc shares buffer and ditch mozLoadFrom if it does
+      if(audio.mozLoadFrom){
+        audio.mozLoadFrom(this.audio);
+      } else {
+        audio.src = this.audio.currentSrc;
+      }
+      return audio;
+    }
+  });
+
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Mar 18 2013 19:40:27 GMT-0700 (MST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>
