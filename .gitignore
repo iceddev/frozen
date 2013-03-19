@@ -3,6 +3,7 @@ libs/
 deps/dojo
 deps/util
 deps/dcl
+jam/
 
 # Don't commit SpecRunner that grunt-jasmine-runner generates in base of project
 .grunt/
