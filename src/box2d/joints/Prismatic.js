@@ -8,10 +8,9 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -19,7 +18,8 @@ define([
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
-  return dcl([Mixer, Joint], {
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Prismatic',
     /**
      * An object with x and y numeric components representing the line in which the entities can move relative to each other
      * @type {Object}

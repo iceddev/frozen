@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: sounds/WebAudio.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: sounds/WebAudio.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * An Audio object that implements WebAudio into a generic API
+ * @name WebAudio
+ * @constructor WebAudio
+ * @extends Sound
+ */
+
+define([
+  './Sound',
+  '../utils/removeExtension',
+  'dcl',
+  'dojo/on',
+  'dojo/has',
+  '../shims/AudioContext'
+], function(Sound, removeExtension, dcl, on, has){
+
+  'use strict';
+
+  has.add('WebAudio', function(global){
+    return !!global.AudioContext;
+  });
+
+  var audioContext = null;
+  if(has('WebAudio')){
+    audioContext = new window.AudioContext();
+  }
+
+  return dcl(Sound, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf WebAudio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/WebAudio',
+    /**
+     * The WebAudio AudioContext - used to perform operations on a sound
+     * @type {AudioContext}
+     * @memberOf WebAudio#
+     * @default
+     */
+    audioContext: audioContext,
+    /**
+     * The sound buffer
+     * @type {Buffer}
+     * @memberOf WebAudio#
+     * @default
+     */
+    buffer: null,
+
+    load: function(filename){
+      var self = this;
+
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
+      function decodeAudioData(e){
+        // Decode asynchronously
+        self.audioContext.decodeAudioData(e.target.response,
+          function(buffer){
+            self.buffer = buffer;
+            self.complete = true;
+          },
+          function(err){
+            var format = self._nextFormat();
+            if(format){
+              self.load(self.name);
+            } else {
+              self.complete = true;
+            }
+          }
+        );
+      }
+
+      // If the browser has AudioContext, it's new enough for XMLHttpRequest
+      var request = new XMLHttpRequest();
+      request.open('GET', filename, true);
+      request.responseType = 'arraybuffer';
+
+      on.once(request, 'load', decodeAudioData);
+      request.send();
+    },
+
+    loop: function(volume){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
+      var audio = this._initAudio(volume, true);
+      audio.noteOn(0);
+    },
+
+    play: function(volume, startTime){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
+      startTime = startTime || 0;
+
+      var audio = this._initAudio(volume, false);
+      audio.noteOn(startTime);
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var source = this.audioContext.createBufferSource();
+      source.buffer = this.buffer;
+      source.loop = loop;
+      if(volume){
+        var gainNode = this.audioContext.createGainNode();
+        gainNode.gain.value = volume;
+        source.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+      } else {
+        source.connect(this.audioContext.destination);
+      }
+      return source;
+    }
+  });
+
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Mar 18 2013 19:40:27 GMT-0700 (MST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

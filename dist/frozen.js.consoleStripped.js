@@ -2158,6 +2158,8 @@ define("frozen/box2d/Box", [
      * @param {Entity} entity Any Entity object
      */
     addBody: function(entity) {
+      /*jshint eqnull:true */
+
       if(!entity.alreadyScaled){
         entity.scaleShape(1 / this.scale);
         entity.scale = this.scale;
@@ -2172,13 +2174,13 @@ define("frozen/box2d/Box", [
 
 
       //these three props are for custom collision filtering
-      if(entity.hasOwnProperty('maskBits')){
+      if(entity.maskBits != null){
         fixDef.filter.maskBits = entity.maskBits;
       }
-      if(entity.hasOwnProperty('categoryBits')){
+      if(entity.categoryBits != null){
         fixDef.filter.categoryBits = entity.categoryBits;
       }
-      if(entity.hasOwnProperty('groupIndex')){
+      if(entity.groupIndex != null){
         fixDef.filter.groupIndex = entity.groupIndex;
       }
 
@@ -2278,6 +2280,21 @@ define("frozen/box2d/Box", [
     setLinearVelocity: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
       body.SetLinearVelocity(new B2Vec2(x, y));
+    },
+
+    /**
+     * Set the angular velocity of an entity.
+     *
+     * This must be done outside of the update() iteration!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} bodyId The id of the Entity/Body
+     * @param {Number} velocity The angular velocity for the body
+     */
+    setAngularVelocity: function(bodyId, velocity){
+      var body = this.bodiesMap[bodyId];
+      body.SetAngularVelocity(velocity);
     },
 
     /**
@@ -2464,8 +2481,22 @@ define("frozen/box2d/Box", [
      * @function
      * @memberOf Box#
      * @param {Number} jointId The id of joint to be destroyed.
+     * @deprecated This method is deprecated in favor of removeJoint
      */
-    destroyJoint: function(jointId) {
+    destroyJoint: function(jointId){
+      this.removeJoint(jointId);
+    },
+
+    /**
+     * Remove a joint from the world.
+     *
+     * This must be done outside of the update() iteration, and BEFORE any bodies connected to the joint are removed!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} jointId The id of joint to be destroyed.
+     */
+    removeJoint: function(jointId) {
       if(this.jointsMap[jointId]){
         this.b2World.DestroyJoint(this.jointsMap[jointId]);
         delete this.jointsMap[jointId];
@@ -4195,13 +4226,12 @@ define(["./has"], function(has){
  define("frozen/box2d/BoxGame", [
   '../GameCore',
   './Box',
-  'dcl',
-  'dcl/bases/Mixer'
-], function(GameCore, Box, dcl, Mixer){
+  'dcl'
+], function(GameCore, Box, dcl){
 
   'use strict';
 
-  return dcl([GameCore, Mixer], {
+  return dcl(GameCore, {
     /**
      * The instance of Box used for this game.
      * @type {Box}
@@ -4217,12 +4247,19 @@ define(["./has"], function(has){
      */
     boxUpdating: true,
     /**
-     * A map of Entity objects that have are added to the Box
+     * A map of Entity objects that are added to the Box
      * @type {Object}
      * @memberOf BoxGame#
      * @default
      */
     entities: null,
+    /**
+     * A map of Joint objects that are added to the Box
+     * @type {Object}
+     * @memberOf BoxGame#
+     * @default
+     */
+    joints: null,
 
     constructor: function(){
       if(!this.box){
@@ -4231,6 +4268,10 @@ define(["./has"], function(has){
 
       if(!this.entities){
         this.entities = {};
+      }
+
+      if(!this.joints){
+        this.joints = {};
       }
     },
 
@@ -4245,6 +4286,50 @@ define(["./has"], function(has){
         this.box.update(millis);
         this.box.updateExternalState(this.entities);
       }
+    },
+
+    /**
+     * Adds an Entity to entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Entity} entity Entity to add
+     */
+    addBody: function(entity){
+      this.entities[entity.id] = entity;
+      this.box.addBody(entity);
+    },
+
+    /**
+     * Removes an Entity from entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param  {Entity} entity Entity to remove
+     */
+    removeBody: function(entity){
+      this.box.removeBody(entity.id);
+      delete this.entities[entity.id];
+    },
+
+    /**
+     * Adds a Joint to joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Joint} joint Joint to add
+     */
+    addJoint: function(joint){
+      this.joints[joint.id] = joint;
+      this.box.addJoint(joint);
+    },
+
+    /**
+     * Removes a Joint from joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param  {Joint} joint Joint to remove
+     */
+    removeJoint: function(joint){
+      this.box.removeJoint(joint.id);
+      delete this.joints[joint.id];
     }
   });
 
@@ -4952,17 +5037,18 @@ define("frozen/InputManager", [
   './utils/insideCanvas',
   'dcl',
   'dcl/bases/Mixer',
+  'dcl/mixins/Cleanup',
   'dojo/has',
   'dojo/on',
   'dojo/dom-style',
   'dojo/dom-geometry',
   'dojo/_base/lang',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, has, on, domStyle, domGeom, lang){
+], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, domStyle, domGeom, lang){
 
   'use strict';
 
-  return dcl(Mixer, {
+  return dcl([Mixer, Cleanup], {
     /**
      * An array of keyActions being listened for
      * @type {Array}
@@ -5028,21 +5114,25 @@ define("frozen/InputManager", [
     canvasPercentage: null,
 
     constructor: function(){
+      function cleanup(handler){
+        handler.remove();
+      }
+
       if(this.handleKeys){
-        on(document, 'keydown', lang.hitch(this, "keyDown"));
-        on(document, 'keyup', lang.hitch(this, "keyReleased"));
+        this.pushCleanup(on(document, 'keydown', lang.hitch(this, "keyDown")), cleanup);
+        this.pushCleanup(on(document, 'keyup', lang.hitch(this, "keyReleased")), cleanup);
       }
 
       if(this.handleMouse && !has('touch')){
-        on(document, 'mousedown', lang.hitch(this, "mouseDown"));
-        on(document, 'mousemove', lang.hitch(this, "mouseMove"));
-        on(document, 'mouseup', lang.hitch(this, "mouseUp"));
+        this.pushCleanup(on(document, 'mousedown', lang.hitch(this, "mouseDown")), cleanup);
+        this.pushCleanup(on(document, 'mousemove', lang.hitch(this, "mouseMove")), cleanup);
+        this.pushCleanup(on(document, 'mouseup', lang.hitch(this, "mouseUp")), cleanup);
       }
 
       if(this.handleTouch && has('touch')){
-        on(document, 'touchstart', lang.hitch(this, "touchStart"));
-        on(document, 'touchmove', lang.hitch(this, "touchMove"));
-        on(document, 'touchend', lang.hitch(this, "touchEnd"));
+        this.pushCleanup(on(document, 'touchstart', lang.hitch(this, "touchStart")), cleanup);
+        this.pushCleanup(on(document, 'touchmove', lang.hitch(this, "touchMove")), cleanup);
+        this.pushCleanup(on(document, 'touchend', lang.hitch(this, "touchEnd")), cleanup);
       }
 
       if(!this.mouseAction){
@@ -5054,8 +5144,8 @@ define("frozen/InputManager", [
       }
 
       if(this.gameArea && this.canvasPercentage){
-        on(window, 'resize', lang.hitch(this, "resize"));
-        on(window, 'orientationchange', lang.hitch(this, "resize"));
+        this.pushCleanup(on(window, 'resize', lang.hitch(this, "resize")), cleanup);
+        this.pushCleanup(on(window, 'orientationchange', lang.hitch(this, "resize")), cleanup);
       }
     },
 
@@ -5091,28 +5181,6 @@ define("frozen/InputManager", [
       this.mapToKey(ga,keyCode);
 
       return ga;
-    },
-
-    /**
-     * Sets the mouseAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because mouseAction is available on an instance and it will be removed in the future
-     */
-    setMouseAction: function(gameAction){
-      this.mouseAction = gameAction;
-    },
-
-    /**
-     * Sets the touchAction to the gameAction
-     * @function
-     * @memberOf InputManager#
-     * @param {GameAction} gameAction The GameAction to assign
-     * @deprecated This method is deprecated because touchAction is available on an instance and it will be removed in the future
-     */
-    setTouchAction: function(gameAction){
-      this.touchAction = gameAction;
     },
 
     /**
@@ -5297,7 +5365,9 @@ define("frozen/InputManager", [
         if (newWidthToHeight > widthToHeight) {
           newWidth = newHeight * widthToHeight;
           newWidthStyle = newWidth + 'px';
+          newHeightStyle = newHeight + 'px';
         } else {
+          newWidthStyle = newWidth + 'px';
           newHeightStyle = Math.round(newWidth / widthToHeight) + 'px';
         }
 
@@ -5389,17 +5459,6 @@ define("frozen/GameAction", [
 
     constructor: function(){
       this.reset();
-    },
-
-    /**
-     * Returns the name of the GameAction
-     * @function
-     * @memberOf GameAction#
-     * @return {String} The name of the GameAction
-     * @deprecated This method is deprecated because name is accessible on the instance and will be removed in the future
-     */
-    getName: function() {
-      return this.name;
     },
 
     /**
@@ -5554,6 +5613,70 @@ define("frozen/utils/insideCanvas", function(){
   return insideCanvas;
 
 });
+},
+'dcl/mixins/Cleanup':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["../dcl", "./Destroyable"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("../dcl"), require("./Destroyable"));
+	}else{
+		dclMixinsCleanup = factory(dcl, dclMixinsDestroyable);
+	}
+})(function(dcl, Destroyable){
+	"use strict";
+	return dcl(Destroyable, {
+		declaredClass: "dcl/mixins/Cleanup",
+		constructor: function(){
+			this.__cleanupStack = [];
+		},
+		pushCleanup: function(resource, cleanup){
+			var f = cleanup ? function(){ cleanup(resource); } : function(){ resource.destroy(); };
+			this.__cleanupStack.push(f);
+			return f;
+		},
+		popCleanup: function(dontRun){
+			if(dontRun){
+				return this.__cleanupStack.pop();
+			}
+			this.__cleanupStack.pop()();
+		},
+		removeCleanup: function(f){
+			for(var i = this.__cleanupStack.length - 1; i >= 0; --i){
+				if(this.__cleanupStack[i] === f){
+					this.__cleanupStack.splice(i, 1);
+					return true;
+				}
+			}
+		},
+		cleanup: function(){
+			while(this.__cleanupStack.length){
+				this.__cleanupStack.pop()();
+			}
+		},
+		destroy: function(){
+			this.cleanup();
+		}
+	});
+});
+
+},
+'dcl/mixins/Destroyable':function(){
+(function(factory){
+	if(typeof define != "undefined"){
+		define(["../dcl"], factory);
+	}else if(typeof module != "undefined"){
+		module.exports = factory(require("../dcl"));
+	}else{
+		dclMixinsDestroyable = factory(dcl);
+	}
+})(function(dcl){
+	"use strict";
+	var Destroyable = dcl(null, {declaredClass: "dcl/mixins/Destroyable"});
+	dcl.chainBefore(Destroyable, "destroy");
+	return Destroyable;
+});
+
 },
 'dojo/on':function(){
 define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
@@ -7097,7 +7220,7 @@ define(['./has'], function(has){
  */
 
 define("frozen/ResourceManager", [
-  './sounds/Sound!',
+  './plugins/sound!',
   'dcl',
   'dcl/bases/Mixer',
   'dojo/_base/lang',
@@ -7116,22 +7239,6 @@ define("frozen/ResourceManager", [
   }
 
   return dcl(Mixer, {
-    /**
-     * The number of images requested
-     * @type {Number}
-     * @memberOf ResourceManager#
-     * @default
-     * @deprecated This property is no longer used internally and will be removed in the future
-     */
-    imageCount: 0,
-    /**
-     * The number of images loaded
-     * @type {Number}
-     * @memberOf ResourceManager#
-     * @default
-     * @deprecated This property is no longer used internally and will be removed in the future
-     */
-    loadedImages: 0,
     /**
      * Whether all the resources have been loaded
      * @type {Boolean}
@@ -7256,27 +7363,6 @@ define("frozen/ResourceManager", [
     },
 
     /**
-     * Plays a sound that was loaded from loadSound()
-     * @function
-     * @memberOf ResourceManager#
-     * @param {Object} sound A sound object that was returned from loadSound()
-     * @param {Boolean=} loop whether or not to loop the sound (default: false)
-     * @param {Number=} noteOn The number of milliseconds from the beginning of the sound file to start (default: zero)
-     * @param {Number=} gain The volume of the playback from 0 to 1.0
-     * @deprecated This method is no longer needed because sounds have play() on them directly and it will be removed in the future
-     */
-    playSound: function(sound, loop, noteOn, gain){
-      if(sound){
-        if(loop){
-          sound.loop(gain);
-        } else {
-          noteOn = noteOn || 0;
-          sound.play(gain, noteOn);
-        }
-      }
-    },
-
-    /**
      * Checks whether the resources have finished loading
      * @function
      * @memberOf ResourceManager#
@@ -7323,13 +7409,13 @@ define("frozen/ResourceManager", [
 });
 
 },
-'frozen/sounds/Sound':function(){
+'frozen/plugins/sound':function(){
 /**
  * AMD Plugin to load the correct Sound object
- * @module sounds/Sound
+ * @module plugins/sound
  * @example
- * define("frozen/sounds/Sound", [
- *   'frozen/sounds/Sound!'
+ * define("frozen/plugins/sound", [
+ *   'frozen/plugins/sound!'
  * ], function(Sound){
  *
  *   // Use the generic sound object API here - the correct Sound object will be used
@@ -7338,10 +7424,254 @@ define("frozen/ResourceManager", [
  */
 
 define([
-  'require',
+  '../sounds/Sound',
+  '../sounds/WebAudio',
+  '../sounds/HTML5Audio',
+  'dojo/has'
+], function(Sound, WebAudio, HTML5Audio, has){
+
+  'use strict';
+
+  return {
+    load: function(id, parentRequire, loaded, config){
+      if(has('WebAudio')){
+        return loaded(WebAudio);
+      }
+
+      if(has('HTML5Audio')){
+        return loaded(HTML5Audio);
+      }
+
+      return loaded(Sound);
+    }
+  };
+
+});
+},
+'frozen/sounds/Sound':function(){
+/**
+ * An Audio object that implements a generic API
+ * @name Sound
+ * @constructor Sound
+ */
+
+define("frozen/sounds/Sound", [
+  'dcl'
+], function(dcl){
+
+  'use strict';
+
+  return dcl(null, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf Sound#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/Sound',
+    /**
+     * The name of the Audio object - typically the filename
+     * @type {String}
+     * @memberOf Sound#
+     * @default
+     */
+    name: null,
+    /**
+     * Signals if the Audio object has completed loading
+     * @type {Boolean}
+     * @memberOf Sound#
+     * @default
+     */
+    complete: false,
+    /**
+     * Map of audio types and codecs used in fallback loading of sounds <br>
+     * Reference: https://developer.mozilla.org/en-US/docs/HTML/Supported_media_formats
+     * @type {Object}
+     * @memberOf Sound#
+     * @property {String} 'audio/mpeg' '.mp3'
+     * @property {String} 'audio/webm' '.webm'
+     * @property {String} 'audio/ogg' '.ogg'
+     * @property {String} 'audio/wav' '.wav'
+     * @property {String} 'audio/aac' '.aac'
+     * @property {String} 'audio/x-m4a' '.m4a'
+     * @example
+     * // To override the default formats:
+     * // Do this before loading any sounds
+     * require([
+     *   'frozen/sounds/Sound'
+     * ], function(Sound){
+     *   Sound.prototype.formats = {
+     *     'audio/mpeg': '.mp3',
+     *     'audio/webm': '.webm'
+     *   };
+     * });
+     */
+    formats: {
+      'audio/mpeg': '.mp3',
+      'audio/webm': '.webm',
+      'audio/ogg': '.ogg',
+      'audio/wav': '.wav',
+      'audio/aac': '.aac',
+      'audio/x-m4a': '.m4a'
+    },
+    /**
+     * An array of extensions the browser "probably" can play
+     * @type {Array}
+     * @memberOf Sound#
+     * @default
+     */
+    probably: null,
+    /**
+     * An array of extensions the browser "maybe" can play
+     * @type {Array}
+     * @memberOf Sound#
+     * @default
+     */
+    maybe: null,
+
+    constructor: function(filename){
+      // Initialize probably and maybe arrays
+      if(!this.probably){
+        this.probably = [];
+      }
+
+      if(!this.maybe){
+        this.maybe = [];
+      }
+
+      if(typeof filename === 'string'){
+        this.load(filename);
+      }
+    },
+
+    /**
+     * Load the sound by filename
+     * @function
+     * @memberOf Sound#
+     * @param  {String} filename The filename of the file to load
+     */
+    load: function(filename){
+      this.name = filename;
+      this.complete = true;
+    },
+
+    /**
+     * Loop the sound at a certain volume
+     * @function
+     * @memberOf Sound#
+     * @param  {Number} volume Value of volume - between 0 and 1
+     */
+    loop: function(volume){},
+
+    /**
+     * Play the sound at a certain volume and start time
+     * @function
+     * @memberOf Sound#
+     * @param  {Number} volume    Value of volume - between 0 and 1
+     * @param  {Number} startTime Value of milliseconds into the track to start
+     */
+    play: function(volume, startTime){},
+
+    /**
+     * Method used to construct Audio objects internally
+     * @function
+     * @memberOf Sound#
+     * @private
+     * @param  {Number} volume Value of volume - between 0 and 1
+     * @param  {Boolean} loop Whether or not to loop audio
+     * @return {Audio} Audio object that was constructed
+     */
+    _initAudio: function(volume, loop){},
+
+    /**
+     * Method used to generate a cache of extensions (probably/maybe arrays) to try loading
+     * @function
+     * @memberOf Sound#
+     * @private
+     * @return {String} First extension to try loading
+     */
+    _chooseFormat: function(){
+      if(!this.probably.length && !this.maybe.length){
+        // Figure out the best extension if we have no cache
+        var audio = new Audio();
+        var codec;
+        var result;
+        for(codec in this.formats){
+          result = audio.canPlayType(codec);
+          if(result === 'probably'){
+            this.probably.push(this.formats[codec]);
+            continue;
+          }
+
+          if(result === 'maybe'){
+            this.maybe.push(this.formats[codec]);
+            continue;
+          }
+        }
+      }
+
+      if(this.probably.length){
+        return this.probably[0];
+      }
+
+      if(this.maybe.length){
+        return this.maybe[0];
+      }
+
+      return '';
+    },
+
+    /**
+     * Method used to remove a extension that didn't work and return the next viable extension
+     * @function
+     * @memberOf Sound#
+     * @private
+     * @return {String} Next extension to try loading
+     */
+    _nextFormat: function(){
+      if(this.probably.length > 1){
+        this.probably.shift();
+        return this.probably[0];
+      }
+
+      if(this.probably.length === 1){
+        this.probably.length = 0;
+        if(this.maybe.length){
+          return this.maybe[0];
+        }
+      }
+
+      if(this.maybe.length > 1){
+        this.maybe.shift();
+        return this.maybe[0];
+      }
+
+      if(this.maybe.length === 1){
+        this.maybe.length = 0;
+      }
+
+      return '';
+    }
+  });
+
+});
+},
+'frozen/sounds/WebAudio':function(){
+/**
+ * An Audio object that implements WebAudio into a generic API
+ * @name WebAudio
+ * @constructor WebAudio
+ * @extends Sound
+ */
+
+define("frozen/sounds/WebAudio", [
+  './Sound',
+  '../utils/removeExtension',
+  'dcl',
+  'dojo/on',
   'dojo/has',
   '../shims/AudioContext'
-], function(require, has){
+], function(Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -7349,12 +7679,124 @@ define([
     return !!global.AudioContext;
   });
 
-  return {
-    load: function(id, parentRequire, loaded, config){
-      require([has('WebAudio') ? './WebAudio' : './HTML5Audio'], function(Sound){
-        loaded(Sound);
-      });
+  var audioContext = null;
+  if(has('WebAudio')){
+    audioContext = new window.AudioContext();
+  }
+
+  return dcl(Sound, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf WebAudio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/WebAudio',
+    /**
+     * The WebAudio AudioContext - used to perform operations on a sound
+     * @type {AudioContext}
+     * @memberOf WebAudio#
+     * @default
+     */
+    audioContext: audioContext,
+    /**
+     * The sound buffer
+     * @type {Buffer}
+     * @memberOf WebAudio#
+     * @default
+     */
+    buffer: null,
+
+    load: function(filename){
+      var self = this;
+
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
+      function decodeAudioData(e){
+        // Decode asynchronously
+        self.audioContext.decodeAudioData(e.target.response,
+          function(buffer){
+            self.buffer = buffer;
+            self.complete = true;
+          },
+          function(err){
+            var format = self._nextFormat();
+            if(format){
+              self.load(self.name);
+            } else {
+              self.complete = true;
+            }
+          }
+        );
+      }
+
+      // If the browser has AudioContext, it's new enough for XMLHttpRequest
+      var request = new XMLHttpRequest();
+      request.open('GET', filename, true);
+      request.responseType = 'arraybuffer';
+
+      on.once(request, 'load', decodeAudioData);
+      request.send();
+    },
+
+    loop: function(volume){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
+      var audio = this._initAudio(volume, true);
+      audio.noteOn(0);
+    },
+
+    play: function(volume, startTime){
+      // Return early if we don't have a buffer to protect from unloaded resources
+      if(!this.buffer){
+        return;
+      }
+
+      startTime = startTime || 0;
+
+      var audio = this._initAudio(volume, false);
+      audio.noteOn(startTime);
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var source = this.audioContext.createBufferSource();
+      source.buffer = this.buffer;
+      source.loop = loop;
+      if(volume){
+        var gainNode = this.audioContext.createGainNode();
+        gainNode.gain.value = volume;
+        source.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+      } else {
+        source.connect(this.audioContext.destination);
+      }
+      return source;
     }
+  });
+
+});
+},
+'frozen/utils/removeExtension':function(){
+define("frozen/utils/removeExtension", function(){
+
+  'use strict';
+
+  return function removeExtension(path){
+    var lastIndex = path.lastIndexOf('.');
+    if(lastIndex < 0){
+      return path;
+    }
+    return path.slice(0, lastIndex);
   };
 
 });
@@ -7369,6 +7811,140 @@ define("frozen/shims/AudioContext", function(){
   for(var x = 0; x < vendors.length && !window.AudioContext; ++x) {
     window.AudioContext = window[vendors[x]+'AudioContext'];
   }
+
+});
+},
+'frozen/sounds/HTML5Audio':function(){
+/**
+ * An Audio object that implements HTML5 Audio into a generic API
+ * @name HTML5Audio
+ * @constructor HTML5Audio
+ * @extends Sound
+ */
+
+define("frozen/sounds/HTML5Audio", [
+  './Sound',
+  '../utils/removeExtension',
+  'dcl',
+  'dojo/on',
+  'dojo/has'
+], function(Sound, removeExtension, dcl, on, has){
+
+  'use strict';
+
+  has.add('HTML5Audio', function(global){
+    return !!global.Audio;
+  });
+
+  has.add('shittySound', function(){
+    return !!((has('android') || has('ios')) && has('webkit'));
+  });
+
+  return dcl(Sound, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    declaredClass: 'frozen/sounds/HTML5Audio',
+    /**
+     * The initial Audio object - used to load the sound prior to playing
+     * @type {Audio}
+     * @memberOf HTML5Audio#
+     * @default
+     */
+    audio: null,
+
+    load: function(filename){
+      this.audio = new Audio();
+
+      var self = this;
+
+      this.name = filename;
+
+      var basename = removeExtension(filename);
+      if(basename === filename){
+        filename = basename + this._chooseFormat();
+      }
+
+      if(has('shittySound')){
+        on.once(document, 'touchstart', function(e){
+          self.audio.load();
+        });
+        this._updateCurrentTime = null;
+        on.once(this.audio, 'progress', function(){
+          if(self._updateCurrentTime !== null){
+            self._updateCurrentTime();
+          }
+        });
+      }
+
+      this.audio.pause();
+      this.audio.preload = 'auto';
+      on.once(this.audio, 'error', function(){
+        var format = self._nextFormat();
+        if(format){
+          self.load(self.name);
+        } else {
+          self.audio.src = null;
+          self.complete = true;
+        }
+      });
+      on.once(this.audio, 'loadeddata', function(e){
+        self.complete = true;
+      });
+      this.audio.src = filename;
+    },
+
+    loop: function(volume){
+      var audio = this._initAudio(volume, true);
+      on.once(audio, 'loadeddata', function(e){
+        audio.play();
+      });
+    },
+
+    play: function(volume, startTime){
+      startTime = startTime || 0;
+
+      if(has('shittySound')){
+        try {
+          this.audio.currentTime = startTime / 1000;
+          return this.audio.play();
+        } catch(err){
+          this._updateCurrentTime = function(){
+            this._updateCurrentTime = null;
+            this.audio.currentTime = startTime / 1000;
+            return this.audio.play();
+          };
+          return this.audio.play();
+        }
+      }
+
+      var audio = this._initAudio(volume, false);
+      on.once(audio, 'loadeddata', function(e){
+        audio.currentTime = startTime / 1000;
+        audio.play();
+      });
+    },
+
+    _initAudio: function(volume, loop){
+      loop = typeof loop === 'boolean' ? loop : false;
+
+      var audio = new Audio();
+      audio.pause();
+      audio.volume = volume || 1;
+      audio.loop = loop;
+      audio.preload = 'auto';
+      // TODO: investigate if this.audio.currentSrc shares buffer and ditch mozLoadFrom if it does
+      if(audio.mozLoadFrom){
+        audio.mozLoadFrom(this.audio);
+      } else {
+        audio.src = this.audio.currentSrc;
+      }
+      return audio;
+    }
+  });
 
 });
 },
@@ -7403,36 +7979,36 @@ define("frozen/shims/RAF", function(){
 
 });
 },
-'frozen/box2d/CircleEntity':function(){
+'frozen/box2d/entities/Circle':function(){
 /**
  * This represents a Circle body and shape in a Box2d world
- * @name CircleEntity
- * @constructor CircleEntity
+ * @name Circle
+ * @constructor Circle
  * @extends Entity
  */
 
-define("frozen/box2d/CircleEntity", [
+define("frozen/box2d/entities/Circle", [
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/distance'
-], function(dcl, Mixer, Entity, distance){
+  '../../utils/distance'
+], function(dcl, Entity, distance){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Circle',
     /**
      * The radius of this circle.
      * @type {Number}
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @default
      */
     radius: 1,
 
     /**
-     * Draws the CircleEntity at a given scale
+     * Draws the Circle at a given scale
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -7469,7 +8045,7 @@ define("frozen/box2d/CircleEntity", [
     /**
      * Scale this shape
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -7482,7 +8058,7 @@ define("frozen/box2d/CircleEntity", [
     /**
      * Checks if a given point is contained within this Circle.
      * @function
-     * @memberOf CircleEntity#
+     * @memberOf Circle#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */
@@ -7493,14 +8069,14 @@ define("frozen/box2d/CircleEntity", [
 
 });
 },
-'frozen/box2d/Entity':function(){
+'frozen/box2d/entities/Entity':function(){
 /**
  * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
  * @name Entity
  * @constructor Entity
  */
 
-define("frozen/box2d/Entity", [
+define("frozen/box2d/entities/Entity", [
   'dcl',
   'dcl/bases/Mixer',
   'dojo/_base/lang'
@@ -7509,6 +8085,13 @@ define("frozen/box2d/Entity", [
   'use strict';
 
   return dcl(Mixer, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf Entity#
+     * @default
+     */
+    declaredClass: 'frozen/box2d/entities/Entity',
     /**
      * The id in which to reference this object. Also the userData property for box2d bodies.
      * @type {Number}
@@ -7629,15 +8212,6 @@ define("frozen/box2d/Entity", [
      */
     lineWidth: 1,
     /**
-     * Whether to render this object
-     * @type {Boolean}
-     * @memberOf Entity#
-     * @default
-     * @deprecated This property is no longer used and will be removed in the future
-     */
-    hidden: false,
-    /* Used for collision filtering */
-    /**
      * The 16 bit integer used in determining which other types of entities this body will collide with.
      * @type {Number}
      * @memberOf Entity#
@@ -7726,38 +8300,38 @@ define("frozen/utils/distance", function(){
 
 });
 },
-'frozen/box2d/PolygonEntity':function(){
+'frozen/box2d/entities/Polygon':function(){
 /**
  * This Entity represents a polygon which is build from an array of points.
- * @name PolygonEntity
- * @constructor PolygonEntity
+ * @name Polygon
+ * @constructor Polygon
  * @extends Entity
  */
 
-define("frozen/box2d/PolygonEntity", [
+define("frozen/box2d/entities/Polygon", [
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/scalePoints',
-  '../utils/pointInPolygon',
-  '../utils/translatePoints'
-], function(dcl, Mixer, Entity, scalePoints, pointInPolygon, translatePoints){
+  '../../utils/scalePoints',
+  '../../utils/pointInPolygon',
+  '../../utils/translatePoints'
+], function(dcl, Entity, scalePoints, pointInPolygon, translatePoints){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Polygon',
     /**
      * An array of objects that have x and y values.
      * @type {Array}
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @default
      */
     points: [],
 
     /**
-     * Draws the PolygonEntity at a given scale
+     * Draws the Polygon at a given scale
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -7792,7 +8366,7 @@ define("frozen/box2d/PolygonEntity", [
     /**
      * Scale this shape
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -7805,7 +8379,7 @@ define("frozen/box2d/PolygonEntity", [
     /**
      * Checks if a given point is contained within this Polygon.
      * @function
-     * @memberOf PolygonEntity#
+     * @memberOf Polygon#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */
@@ -7921,30 +8495,30 @@ define("frozen/utils/translatePoints", function(){
 
 });
 },
-'frozen/box2d/MultiPolygonEntity':function(){
+'frozen/box2d/entities/MultiPolygon':function(){
 /**
  * This Entity is for building complex and possibly concave shapes
- * @name MultiPolygonEntity
- * @constructor MultiPolygonEntity
+ * @name MultiPolygon
+ * @constructor MultiPolygon
  * @extends Entity
  */
 
-define("frozen/box2d/MultiPolygonEntity", [
+define("frozen/box2d/entities/MultiPolygon", [
   'dcl',
-  'dcl/bases/Mixer',
   './Entity',
-  '../utils/scalePoints',
-  '../utils/pointInPolygon',
-  '../utils/translatePoints'
-], function(dcl, Mixer, Entity, scalePoints, pointInPolygon, translatePoints){
+  '../../utils/scalePoints',
+  '../../utils/pointInPolygon',
+  '../../utils/translatePoints'
+], function(dcl, Entity, scalePoints, pointInPolygon, translatePoints){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/MultiPolygon',
     /**
      * An array of polygons
      * @type {Array}
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @default
      */
     polys: [],
@@ -7952,7 +8526,7 @@ define("frozen/box2d/MultiPolygonEntity", [
     /**
      * Draws each polygon in the entity
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {2dContext} ctx the HTML5 2d drawing context
      * @param {Number} scale the scale to draw the entity at
      */
@@ -7989,7 +8563,7 @@ define("frozen/box2d/MultiPolygonEntity", [
     /**
      * Scale this shape
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -8002,7 +8576,7 @@ define("frozen/box2d/MultiPolygonEntity", [
     /**
      * Checks if a given point is contained within this MultiPolygon.
      * @function
-     * @memberOf MultiPolygonEntity#
+     * @memberOf MultiPolygon#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */
@@ -8018,42 +8592,42 @@ define("frozen/box2d/MultiPolygonEntity", [
 
 });
 },
-'frozen/box2d/RectangleEntity':function(){
+'frozen/box2d/entities/Rectangle':function(){
 /**
  * This Entity represents a Rectangle
- * @name RectangleEntity
- * @constructor RectangleEntity
+ * @name Rectangle
+ * @constructor Rectangle
  * @extends Entity
  */
 
-define("frozen/box2d/RectangleEntity", [
+define("frozen/box2d/entities/Rectangle", [
   'dcl',
-  'dcl/bases/Mixer',
   './Entity'
-], function(dcl, Mixer, Entity){
+], function(dcl, Entity){
 
   'use strict';
 
-  return dcl([Mixer, Entity], {
+  return dcl(Entity, {
+    declaredClass: 'frozen/box2d/entities/Rectangle',
     /**
      * Half of the Rectangle's total width
      * @type {Number}
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @default
      */
     halfWidth: 1,
     /**
      * Half of the Rectangle's total width
      * @type {Number}
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @default
      */
     halfHeight: 1,
 
     /**
-     * Draws the RectangleEntity at a given scale
+     * Draws the Rectangle at a given scale
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Context} ctx The drawing context
      * @param {Number} scale The scale at which to draw
      */
@@ -8089,7 +8663,7 @@ define("frozen/box2d/RectangleEntity", [
     /**
      * Scale this shape
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Number} scale The amount the shape should scale
      */
     scaleShape: dcl.superCall(function(sup){
@@ -8103,7 +8677,7 @@ define("frozen/box2d/RectangleEntity", [
     /**
      * Checks if a given point is contained within this Rectangle.
      * @function
-     * @memberOf RectangleEntity#
+     * @memberOf Rectangle#
      * @param {Object} point An object with x and y values.
      * @return {Boolean} True if point is in shape else false
      */
@@ -8129,6 +8703,13 @@ define("frozen/box2d/joints/Joint", [
   'use strict';
 
   return dcl(Mixer, {
+    /**
+     * The declared class - used for debugging in dcl
+     * @type {String}
+     * @memberOf Joint#
+     * @default
+     */
+    declaredClass: 'frozen/box2d/joints/Joint',
     /**
      * The id of the first entity that will be attached to this joint
      * @type {String}
@@ -8187,10 +8768,9 @@ define("frozen/box2d/joints/Joint", [
 
 define("frozen/box2d/joints/Revolute", [
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -8198,8 +8778,8 @@ define("frozen/box2d/joints/Revolute", [
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
-  return dcl([Mixer, Joint], {
-
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Revolute',
     /**
      * Creates and adds this joint in the Box2d world.
      * @function
@@ -8244,10 +8824,9 @@ define("frozen/box2d/joints/Revolute", [
 
 define("frozen/box2d/joints/Distance", [
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -8255,7 +8834,8 @@ define("frozen/box2d/joints/Distance", [
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
 
-  return dcl([Mixer, Joint], {
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Distance',
     /**
      * A point on the second entity where the joint will be attached. If no point is specified, the second body will be attached at its center point.
      * @type {Object}
@@ -8328,10 +8908,9 @@ define("frozen/box2d/joints/Distance", [
 
 define("frozen/box2d/joints/Prismatic", [
   'dcl',
-  'dcl/bases/Mixer',
   'dojo/_base/lang',
   './Joint'
-], function(dcl, Mixer, lang, Joint){
+], function(dcl, lang, Joint){
 
   'use strict';
 
@@ -8339,7 +8918,8 @@ define("frozen/box2d/joints/Prismatic", [
   var B2Vec2 = Box2D.Common.Math.b2Vec2;
   var B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
-  return dcl([Mixer, Joint], {
+  return dcl(Joint, {
+    declaredClass: 'frozen/box2d/joints/Prismatic',
     /**
      * An object with x and y numeric components representing the line in which the entities can move relative to each other
      * @type {Object}
@@ -8607,6 +9187,13 @@ define("frozen/Sprite", [
      */
     dy: 0.0,
     /**
+     * The max speed a sprite can move in either direction
+     * @type {Number}
+     * @memberOf Sprite#
+     * @default
+     */
+    maxSpeed: 0.0,
+    /**
      * The name of this Sprite
      * @type {String}
      * @memberOf Sprite#
@@ -8634,112 +9221,6 @@ define("frozen/Sprite", [
     },
 
     /**
-     * Retrieves the X value
-     * @memberOf Sprite#
-     * @return {Number} The X value
-     * @deprecated This method is deprecated because the x property is available on Sprite and it will be removed in the future
-     */
-    getX: function(){
-      return this.x;
-    },
-
-    /**
-     * Retrieves the Y value
-     * @memberOf Sprite#
-     * @return {Number} The Y value
-     * @deprecated This method is deprecated because the y property is available on Sprite and it will be removed in the future
-     */
-    getY: function(){
-      return this.y;
-    },
-
-    /**
-     * Sets the X value
-     * @memberOf Sprite#
-     * @param {Number} x The new X value
-     * @deprecated This method is deprecated because the x property is available on Sprite and it will be removed in the future
-     */
-    setX: function(x){
-      this.x = x;
-    },
-
-    /**
-     * Sets the Y value
-     * @memberOf Sprite#
-     * @param {Number} y The new Y value
-     * @deprecated This method is deprecated because the y property is available on Sprite and it will be removed in the future
-     */
-    setY: function(y){
-      this.y = y;
-    },
-
-    /**
-     * Gets this Sprite's width, based on the size of the current image.
-     * @function
-     * @memberOf Sprite#
-     * @return {Number} Width of the animation image
-     * @deprecated This method is deprecated because the anim property is available on Sprite and it will be removed in the future
-     */
-    getWidth: function(){
-      return this.anim.width;
-    },
-
-    /**
-     * Gets this Sprite's height, based on the size of the current image.
-     * @function
-     * @memberOf Sprite#
-     * @return {Number} Height of the animation image
-     * @deprecated This method is deprecated because the anim property is available on Sprite and it will be removed in the future
-     */
-    getHeight: function(){
-      return this.anim.height;
-    },
-
-    /**
-     * Gets the horizontal velocity of this Sprite in pixels per millisecond.
-     * @function
-     * @memberOf Sprite#
-     * @return {Number} The dx value
-     * @deprecated This method is deprecated because the dx property is available on Sprite and it will be removed in the future
-     */
-    getVelocityX: function(){
-      return this.dx;
-    },
-
-    /**
-     * Gets the vertical velocity of this Sprite in pixels per millisecond.
-     * @function
-     * @memberOf Sprite#
-     * @return {Number} The dy value
-     * @deprecated This method is deprecated because the dy property is available on Sprite and it will be removed in the future
-     */
-    getVelocityY: function(){
-      return this.dy;
-    },
-
-    /**
-     * Sets the horizontal velocity of this Sprite in pixels per millisecond.
-     * @function
-     * @memberOf Sprite#
-     * @param {Number} dx The x velocity in pixels per millisecond
-     * @deprecated This method is deprecated because the dx property is available on Sprite and it will be removed in the future
-     */
-    setVelocityX: function(dx){
-      this.dx = this.limitSpeed(dx);
-    },
-
-    /**
-     * Sets the vertical velocity of this Sprite in pixels per millisecond.
-     * @function
-     * @memberOf Sprite#
-     * @param {Number} dy the y velocity in pixels per millisecond
-     * @deprecated This method is deprecated because the dy property is available on Sprite and it will be removed in the future
-     */
-    setVelocityY: function(dy) {
-      this.dy = this.limitSpeed(dy);
-    },
-
-    /**
      * Returns the maxSpeed up to the speed limit
      * @function
      * @memberOf Sprite#
@@ -8747,12 +9228,12 @@ define("frozen/Sprite", [
      * @return {Number} maxSpeed up to speed limit
      */
     limitSpeed: function(v){
-      if(this.getMaxSpeed()){
-        if(Math.abs(v) > this.getMaxSpeed()){
+      if(this.maxSpeed){
+        if(Math.abs(v) > this.maxSpeed){
           if(v > 0){
-            return this.getMaxSpeed();
+            return this.maxSpeed;
           }else if(v < 0){
-            return this.getMaxSpeed();
+            return this.maxSpeed;
           }else{
             return  0;
           }
@@ -8765,17 +9246,6 @@ define("frozen/Sprite", [
     },
 
     /**
-     * Retrieves the maxSpeed
-     * @function
-     * @memberOf Sprite#
-     * @return {Number} The maxSpeed
-     * @deprecated This method is deprecated because the maxSpeed property is available on Sprite and it will be removed in the future
-     */
-    getMaxSpeed: function(){
-      return this.maxSpeed;
-    },
-
-    /**
      * Gets this Sprite's current animation frame.
      * @function
      * @memberOf Sprite#
@@ -8785,18 +9255,6 @@ define("frozen/Sprite", [
       if(this.anim){
         return this.anim.getCurrentFrame();
       }
-    },
-
-    /**
-     * Deprecated drawing function
-     * @function
-     * @memberOf Sprite#
-     * @param {2dContext} context The HTML5 drawing context
-     * @deprecated This method is deprecated because it was replaced by draw() and it will be removed in the future
-     */
-    drawCurrentFrame: function(context){
-      var cf = this.anim.getCurrentFrame();
-      context.drawImage(this.anim.image, cf.imgSlotX * this.anim.width, cf.imgSlotY * this.anim.height, this.anim.width, this.anim.height, this.x,this.y, this.anim.width, this.anim.height);
     },
 
     /**
@@ -8912,23 +9370,6 @@ define("frozen/Animation", [
      * @param  {Number} frameCount Number of frames in the animation
      * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
      * @param  {Image} img Image sheet to create animation from
-     * @param  {Number} h Height of each tile in pixels
-     * @param  {Number} w Width of each tile in pixels
-     * @param  {Number} ySlot Slot on Y axis to start creating tiles
-     * @return {Animation} Animation generated using parameters
-     * @deprecated This method has been renamed createFromSheet and will be removed in the future
-     */
-    createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
-      return this.createFromSheet(frameCount, frameTimes, img, w, h, ySlot);
-    },
-
-    /**
-     * Used to create an animation from a sheet of tiles
-     * @function
-     * @memberOf Animation#
-     * @param  {Number} frameCount Number of frames in the animation
-     * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
-     * @param  {Image} img Image sheet to create animation from
      * @param  {Number} w Width of each tile in pixels
      * @param  {Number} h Height of each tile in pixels
      * @param  {Number} ySlot Slot on Y axis to start creating tiles
@@ -9019,33 +9460,10 @@ define("frozen/Animation", [
           this.currFrameIndex = 0;
         }
 
-        while (this.animTime > this.getFrame(this.currFrameIndex).endTime) {
+        while (this.animTime > this.frames[this.currFrameIndex].endTime) {
           this.currFrameIndex++;
         }
       }
-    },
-
-    /**
-     * Retrieves the image used to create the animation
-     * @function
-     * @memberOf Animation#
-     * @return {Image} The image used to create the animation
-     * @deprecated This method is deprecated because the image is available on the instance and will be removed in the future
-     */
-    getImage: function(){
-      return this.image;
-    },
-
-    /**
-     * Retrieves the frame at the given index
-     * @function
-     * @memberOf Animation#
-     * @param  {Number} i Index to retrieve frame at
-     * @return {AnimationFrame} The animation frame at the given index
-     * @deprecated This method is deprecated because the frames are available on the instance and will be removed in the future
-     */
-    getFrame: function(i){
-      return this.frames[i];
     },
 
     /**
@@ -9058,7 +9476,7 @@ define("frozen/Animation", [
       if (this.frames.length === 0) {
         return null;
       } else {
-        return this.getFrame(this.currFrameIndex);
+        return this.frames[this.currFrameIndex];
       }
     },
 
@@ -9353,299 +9771,6 @@ define("frozen/utils/radiansFromCenter", function(){
 
 });
 },
-'frozen/utils/parseString':function(){
-define("frozen/utils/parseString", function(){
-
-  'use strict';
-
-  return function parseString(resource){
-    if(resource.indexOf('{') === 0 && resource.lastIndexOf('}') === resource.length - 1){
-      resource = JSON.parse(resource.replace(/,/g, '","').replace(/:(?!\/\/)/g, '":"').replace(/\{/, '{"').replace(/\}/, '"}'));
-    } else if(resource.indexOf('[') === 0 && resource.lastIndexOf(']') === resource.length - 1){
-      resource = JSON.parse(resource.replace(/,/g, '","').replace(/\[/g, '["').replace(/\]/g, '"]'));
-    }
-
-    return resource;
-  };
-
-});
-},
-'frozen/sounds/WebAudio':function(){
-/**
- * A Sound object that abstracts WebAudio into a generic API that can also be used with HTML5 Audio
- * @name WebAudio
- * @constructor WebAudio
- */
-
-define("frozen/sounds/WebAudio", [
-  'dcl',
-  'dojo/on',
-  'dojo/_base/lang'
-], function(dcl, on, lang){
-
-  'use strict';
-
-  var audioContext = null;
-  if(window.AudioContext){
-    audioContext = new window.AudioContext();
-  } else {
-    0 && console.log('WebAudio not supported');
-  }
-
-  return dcl(null, {
-    /**
-     * The declared class - used for debugging in dcl
-     * @type {String}
-     * @memberOf WebAudio#
-     * @default
-     */
-    declaredClass: 'frozen/sounds/WebAudio',
-    /**
-     * The name of the Sound object - typically the filename
-     * @type {String}
-     * @memberOf WebAudio#
-     * @default
-     */
-    name: null,
-    /**
-     * Signals if the Sound object has completed loading
-     * @type {Boolean}
-     * @memberOf WebAudio#
-     * @default
-     */
-    complete: false,
-    /**
-     * The WebAudio AudioContext - used to perform operations on a sound
-     * @type {AudioContext}
-     * @memberOf WebAudio#
-     * @default
-     */
-    audioContext: audioContext,
-    /**
-     * The sound buffer
-     * @type {Buffer}
-     * @memberOf WebAudio#
-     * @default
-     */
-    buffer: null,
-
-    constructor: function(filename){
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-    },
-
-    /**
-     * Load the sound by filename
-     * @function
-     * @memberOf WebAudio#
-     * @param  {String} filename The filename of the file to load
-     */
-    load: function(filename){
-      this.name = filename;
-
-      var decodeAudioData = lang.partial(function(self, evt){
-        // Decode asynchronously
-        self.audioContext.decodeAudioData(this.response,
-          function(buffer){
-            self.buffer = buffer;
-            self.complete = true;
-          },
-          function(err){
-            0 && console.info('error loading sound', err);
-          }
-        );
-      }, this);
-
-      //if the browser AudioContext, it's new enough for XMLHttpRequest
-      var request = new XMLHttpRequest();
-      request.open('GET', filename, true);
-      request.responseType = 'arraybuffer';
-
-      on(request, 'load', decodeAudioData);
-      request.send();
-    },
-
-    /**
-     * Loop the sound at a certain volume
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume Value of volume - between 0 and 1
-     */
-    loop: function(volume){
-      var audio = this._initAudio(volume, true);
-      audio.noteOn(0);
-    },
-
-    /**
-     * Play the sound at a certain volume and start time
-     * @function
-     * @memberOf WebAudio#
-     * @param  {Number} volume    Value of volume - between 0 and 1
-     * @param  {Number} startTime Value of milliseconds into the track to start
-     */
-    play: function(volume, startTime){
-      startTime = startTime || 0;
-
-      var audio = this._initAudio(volume, false);
-      audio.noteOn(startTime);
-    },
-
-    /**
-     * Method used to construct Audio objects internally
-     * @function
-     * @memberOf WebAudio#
-     * @private
-     * @param  {Number} volume Value of volume - between 0 and 1
-     * @param  {Boolean} loop Whether or not to loop audio
-     * @return {Audio} Audio object that was constructed
-     */
-    _initAudio: function(volume, loop){
-      loop = typeof loop === 'boolean' ? loop : false;
-
-      var source = this.audioContext.createBufferSource();
-      source.buffer = this.buffer;
-      source.loop = loop;
-      if(volume){
-        var gainNode = this.audioContext.createGainNode();
-        gainNode.gain.value = volume;
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-      } else {
-        source.connect(this.audioContext.destination);
-      }
-      return source;
-    }
-  });
-
-});
-},
-'frozen/sounds/HTML5Audio':function(){
-/**
- * A Sound object that abstracts HTML5 Audio into a generic API that can also be used with WebAudio
- * @name HTML5Audio
- * @constructor HTML5Audio
- */
-
-define("frozen/sounds/HTML5Audio", [
-  'dcl',
-  'dojo/on',
-  'dojo/_base/lang'
-], function(dcl, on, lang){
-
-  'use strict';
-
-  return dcl(null, {
-    /**
-     * The declared class - used for debugging in dcl
-     * @type {String}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    declaredClass: 'frozen/sounds/HTML5Audio',
-    /**
-     * The name of the Sound object - typically the filename
-     * @type {String}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    name: null,
-    /**
-     * Signals if the Sound object has completed loading
-     * @type {Boolean}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    complete: false,
-    /**
-     * The initial Audio object - used to load the sound prior to playing
-     * @type {Audio}
-     * @memberOf HTML5Audio#
-     * @default
-     */
-    audio: null,
-
-    constructor: function(filename){
-      this.audio = new Audio();
-      if(typeof filename === 'string'){
-        this.load(filename);
-      }
-    },
-
-    /**
-     * Load the sound by filename
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {String} filename The filename of the file to load
-     */
-    load: function(filename){
-      this.name = filename;
-      this.audio.pause();
-      this.audio.preload = 'auto';
-      this.audio.src = filename;
-      on(this.audio, 'loadeddata', lang.hitch(this, function(e){
-        this.complete = true;
-      }));
-    },
-
-    /**
-     * Loop the sound at a certain volume
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {Number} volume Value of volume - between 0 and 1
-     */
-    loop: function(volume){
-      var audio = this._initAudio(volume, true);
-      on(audio, 'loadeddata', function(e){
-        audio.play();
-      });
-    },
-
-    /**
-     * Play the sound at a certain volume and start time
-     * @function
-     * @memberOf HTML5Audio#
-     * @param  {Number} volume    Value of volume - between 0 and 1
-     * @param  {Number} startTime Value of milliseconds into the track to start
-     */
-    play: function(volume, startTime){
-      startTime = startTime || 0;
-
-      var audio = this._initAudio(volume, false);
-      on(audio, 'loadeddata', function(e){
-        audio.currentTime = startTime / 1000;
-        audio.play();
-      });
-    },
-
-    /**
-     * Method used to construct Audio objects internally
-     * @function
-     * @memberOf HTML5Audio#
-     * @private
-     * @param  {Number} volume Value of volume - between 0 and 1
-     * @param  {Boolean} loop Whether or not to loop audio
-     * @return {Audio} Audio object that was constructed
-     */
-    _initAudio: function(volume, loop){
-      loop = typeof loop === 'boolean' ? loop : false;
-
-      var audio = new Audio();
-      audio.pause();
-      audio.volume = volume || 1;
-      audio.loop = loop;
-      audio.preload = 'auto';
-      if(audio.mozLoadFrom){
-        audio.mozLoadFrom(this.audio);
-      } else {
-        audio.src = this.name;
-      }
-      return audio;
-    }
-  });
-
-});
-},
 'frozen/plugins/loadImage':function(){
 /**
  * AMD Plugin for loading Images
@@ -9672,10 +9797,34 @@ define([
   return {
     load: function(resource, req, callback, config){
       resource = parseString(resource);
+      if(typeof resource !== 'string'){
+        Object.keys(resource).forEach(function(key){
+          resource[key] = req.toUrl(resource[key]);
+        });
+      } else {
+        resource = req.toUrl(resource);
+      }
       var res = rm.loadImage(resource);
       callback(res);
     }
   };
+});
+},
+'frozen/utils/parseString':function(){
+define("frozen/utils/parseString", function(){
+
+  'use strict';
+
+  return function parseString(resource){
+    if(resource.indexOf('{') === 0 && resource.lastIndexOf('}') === resource.length - 1){
+      resource = JSON.parse(resource.replace(/,/g, '","').replace(/:(?!\/\/)/g, '":"').replace(/\{/, '{"').replace(/\}/, '"}'));
+    } else if(resource.indexOf('[') === 0 && resource.lastIndexOf(']') === resource.length - 1){
+      resource = JSON.parse(resource.replace(/,/g, '","').replace(/\[/g, '["').replace(/\]/g, '"]'));
+    }
+
+    return resource;
+  };
+
 });
 },
 'frozen/plugins/loadSound':function(){
@@ -9705,6 +9854,13 @@ define([
   return {
     load: function(resource, req, callback, config){
       resource = parseString(resource);
+      if(typeof resource !== 'string'){
+        Object.keys(resource).forEach(function(key){
+          resource[key] = req.toUrl(resource[key]);
+        });
+      } else {
+        resource = req.toUrl(resource);
+      }
       var res = rm.loadSound(resource);
       callback(res);
     }

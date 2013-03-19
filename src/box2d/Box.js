@@ -227,6 +227,8 @@ define([
      * @param {Entity} entity Any Entity object
      */
     addBody: function(entity) {
+      /*jshint eqnull:true */
+
       if(!entity.alreadyScaled){
         entity.scaleShape(1 / this.scale);
         entity.scale = this.scale;
@@ -241,13 +243,13 @@ define([
 
 
       //these three props are for custom collision filtering
-      if(entity.hasOwnProperty('maskBits')){
+      if(entity.maskBits != null){
         fixDef.filter.maskBits = entity.maskBits;
       }
-      if(entity.hasOwnProperty('categoryBits')){
+      if(entity.categoryBits != null){
         fixDef.filter.categoryBits = entity.categoryBits;
       }
-      if(entity.hasOwnProperty('groupIndex')){
+      if(entity.groupIndex != null){
         fixDef.filter.groupIndex = entity.groupIndex;
       }
 
@@ -347,6 +349,21 @@ define([
     setLinearVelocity: function(bodyId, x, y){
       var body = this.bodiesMap[bodyId];
       body.SetLinearVelocity(new B2Vec2(x, y));
+    },
+
+    /**
+     * Set the angular velocity of an entity.
+     *
+     * This must be done outside of the update() iteration!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} bodyId The id of the Entity/Body
+     * @param {Number} velocity The angular velocity for the body
+     */
+    setAngularVelocity: function(bodyId, velocity){
+      var body = this.bodiesMap[bodyId];
+      body.SetAngularVelocity(velocity);
     },
 
     /**
@@ -533,8 +550,22 @@ define([
      * @function
      * @memberOf Box#
      * @param {Number} jointId The id of joint to be destroyed.
+     * @deprecated This method is deprecated in favor of removeJoint
      */
-    destroyJoint: function(jointId) {
+    destroyJoint: function(jointId){
+      this.removeJoint(jointId);
+    },
+
+    /**
+     * Remove a joint from the world.
+     *
+     * This must be done outside of the update() iteration, and BEFORE any bodies connected to the joint are removed!
+     *
+     * @function
+     * @memberOf Box#
+     * @param {Number} jointId The id of joint to be destroyed.
+     */
+    removeJoint: function(jointId) {
       if(this.jointsMap[jointId]){
         this.b2World.DestroyJoint(this.jointsMap[jointId]);
         delete this.jointsMap[jointId];

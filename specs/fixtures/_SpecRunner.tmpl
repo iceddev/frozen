@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner</title>
+
+  <% with (scripts) { %>
+  <% [].concat(jasmine, vendor, helpers).forEach(function(script){ %>
+  <script src="<%= script %>"></script>
+  <% }) %>
+  <% }; %>
+
+  <% css.forEach(function(style){ %>
+  <link rel="stylesheet" type="text/css" href="<%= style %>">
+  <% }) %>
+  <script>
+    require(['<%= [].concat(scripts.specs,scripts.reporters).join("','") %>'], function(){
+      require(['<%= scripts.start.join("','") %>'], function(){
+        // good to go! Our tests should already be running.
+      })
+    })
+  </script>
+</head>
+<body>
+</body>
+</html>

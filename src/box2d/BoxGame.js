@@ -8,13 +8,12 @@
  define([
   '../GameCore',
   './Box',
-  'dcl',
-  'dcl/bases/Mixer'
-], function(GameCore, Box, dcl, Mixer){
+  'dcl'
+], function(GameCore, Box, dcl){
 
   'use strict';
 
-  return dcl([GameCore, Mixer], {
+  return dcl(GameCore, {
     /**
      * The instance of Box used for this game.
      * @type {Box}
@@ -30,12 +29,19 @@
      */
     boxUpdating: true,
     /**
-     * A map of Entity objects that have are added to the Box
+     * A map of Entity objects that are added to the Box
      * @type {Object}
      * @memberOf BoxGame#
      * @default
      */
     entities: null,
+    /**
+     * A map of Joint objects that are added to the Box
+     * @type {Object}
+     * @memberOf BoxGame#
+     * @default
+     */
+    joints: null,
 
     constructor: function(){
       if(!this.box){
@@ -44,6 +50,10 @@
 
       if(!this.entities){
         this.entities = {};
+      }
+
+      if(!this.joints){
+        this.joints = {};
       }
     },
 
@@ -58,6 +68,50 @@
         this.box.update(millis);
         this.box.updateExternalState(this.entities);
       }
+    },
+
+    /**
+     * Adds an Entity to entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Entity} entity Entity to add
+     */
+    addBody: function(entity){
+      this.entities[entity.id] = entity;
+      this.box.addBody(entity);
+    },
+
+    /**
+     * Removes an Entity from entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param  {Entity} entity Entity to remove
+     */
+    removeBody: function(entity){
+      this.box.removeBody(entity.id);
+      delete this.entities[entity.id];
+    },
+
+    /**
+     * Adds a Joint to joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Joint} joint Joint to add
+     */
+    addJoint: function(joint){
+      this.joints[joint.id] = joint;
+      this.box.addJoint(joint);
+    },
+
+    /**
+     * Removes a Joint from joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param  {Joint} joint Joint to remove
+     */
+    removeJoint: function(joint){
+      this.box.removeJoint(joint.id);
+      delete this.joints[joint.id];
     }
   });
 
