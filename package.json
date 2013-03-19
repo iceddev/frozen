@@ -1,5 +1,6 @@
 {
   "name": "frozen",
+  "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
   "version": "0.3.0",
   "devDependencies": {
     "volo": "~0.2.9",
