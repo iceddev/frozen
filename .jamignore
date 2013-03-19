@@ -6,5 +6,6 @@ _SpecRunner.html
 node_modules/
 libs/
 deps/
+jam/
 specs/
 examples/

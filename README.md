@@ -16,7 +16,8 @@ Our goal is to apply techniques used in building modern webapps to game developm
 
 * Frozen Source (individual modules - bring your own loader or use Dojo)<br>
 Use `volo add iceddev/frozen` to add it to your project<br>
-or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)
+or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)<br>
+_Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only_
 
 * Or just use the boilerplate!<br>
 Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffold out a new project for you and install all dependencies
