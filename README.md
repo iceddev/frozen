@@ -122,6 +122,7 @@ __New Features__
 * Tests added for Sounds, BoxGame, and Sprite
 * Added `frozen/box2d/entities` which returns a map of entity types
 * Added `frozen/box2d/joints` which returns a map of joint types
+* `BoxGame.addBody`, `BoxGame.removeBody`, `BoxGame.addJoint`, `BoxGame.removeJoint` methods added for convenience
 
 __Non-Breaking Changes__
 
