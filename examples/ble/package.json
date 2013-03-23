@@ -1,0 +1,7 @@
+{
+  "volo": {
+    "dependencies": {
+      "engine.io-client": "github:LearnBoost/engine.io-client/0.5.0"
+    }
+  }
+}
