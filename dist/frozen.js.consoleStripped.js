@@ -6196,7 +6196,7 @@ define(["require", "./_base/kernel", "./has"], function(aspect, dojo, has){
 
 },
 'dojo/dom-style':function(){
-define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
+define(["./sniff", "./dom"], function(has, dom){
 	// module:
 	//		dojo/dom-style
 
@@ -6505,7 +6505,7 @@ define("dojo/dom-style", ["./sniff", "./dom"], function(has, dom){
 
 },
 'dojo/dom-geometry':function(){
-define("dojo/dom-geometry", ["./sniff", "./_base/window","./dom", "./dom-style"],
+define(["./sniff", "./_base/window","./dom", "./dom-style"],
 		function(has, win, dom, style){
 	// module:
 	//		dojo/dom-geometry
@@ -9868,7 +9868,7 @@ define([
 });
 },
 'dojo/keys':function(){
-define("dojo/keys", ["./_base/kernel", "./sniff"], function(dojo, has){
+define(["./_base/kernel", "./sniff"], function(dojo, has){
 
 	// module:
 	//		dojo/keys

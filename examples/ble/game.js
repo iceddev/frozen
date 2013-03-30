@@ -54,7 +54,7 @@ require([
   console.log(game);
 
 
-  var socket = eio('ws://localhost:8080');
+  var socket = eio('ws://' + window.location.hostname + ':8080');
   socket.on('open', function(){
     socket.on('message', function(data){
       console.log(data);
