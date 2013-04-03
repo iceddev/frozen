@@ -1,4 +1,5 @@
-<img src="https://rawgithub.com/iceddev/frozen/docs/jsdoc/template/static/images/frozen.png" style="width: 190px; float: right;" />
+![FrozenJS](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
+>>>>>>> master
 Frozen <sup>v0.3.0</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
