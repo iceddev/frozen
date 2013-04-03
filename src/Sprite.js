@@ -115,7 +115,7 @@ define([
      * Draws the sprite
      * @function
      * @memberOf Sprite#
-     * @param {2dContext} context The HTML5 drawing context
+     * @param {Context} context The HTML5 drawing context
      */
     draw: function(context){
       if(this.anim){

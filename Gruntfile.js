@@ -1,4 +1,4 @@
-/*global module:false*/
+/*global module:false, process:false*/
 module.exports = function(grunt) {
 
   'use strict';
@@ -84,10 +84,12 @@ module.exports = function(grunt) {
     },
     jsdoc: {
       all: {
-        src: ['src/**/*.js', 'README.md'],
+        src: ['src/**/*.js', 'package.json', 'README.md'],
         dest: 'docs',
         options: {
-          config: 'jsdoc_config.json'
+          configure: 'jsdoc_config.json',
+          'private': false,
+          template: process.cwd() + '/node_modules/frozen-jsdoc-template'
         }
       }
     },

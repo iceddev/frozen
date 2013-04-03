@@ -111,7 +111,7 @@ define([
      * @function
      * @memberOf ResourceManager#
      * @param {String|Array|Object} filename Filename of the sound relative the Game's HTML page.
-     * @returns {Sound Object|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
+     * @returns {Sound|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
      */
     loadSound: function(files){
       var singleFile = false;

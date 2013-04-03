@@ -29,7 +29,7 @@ define([
      * Draws each polygon in the entity
      * @function
      * @memberOf MultiPolygon#
-     * @param {2dContext} ctx the HTML5 2d drawing context
+     * @param {Context} ctx the HTML5 2d drawing context
      * @param {Number} scale the scale to draw the entity at
      */
     draw: dcl.superCall(function(sup){

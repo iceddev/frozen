@@ -195,7 +195,7 @@ define([
      * Draws the current frame into a 2d context.
      * @function
      * @memberOf Animation#
-     * @param {2dContext} context The HTML5 drawing canvas
+     * @param {Context} context The HTML5 drawing canvas
      * @param {Number} x The x coordinate in the graphics context
      * @param {Number} y The y coordinate in the graphics context
      */

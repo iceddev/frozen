@@ -1,3 +1,4 @@
+![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
 Frozen <sup>v0.3.0</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
@@ -20,7 +21,7 @@ or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/maste
 _Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only_
 
 * Or just use the boilerplate!<br>
-Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffold out a new project for you and install all dependencies
+Use `volo create your_project frozenjs/boilerplate` which will scaffold out a new project for you and install all dependencies
 
 ## Documentation
 
