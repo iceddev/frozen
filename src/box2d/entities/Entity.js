@@ -175,7 +175,7 @@ define([
      * Draws the Entity at a given scale
      * @function
      * @memberOf Entity#
-     * @param {2dContext} ctx The HTML5 2d drawing context
+     * @param {Context} ctx The HTML5 2d drawing context
      * @param {Number} scale The scale to draw the entity at
      */
     draw: function(ctx, scale){
