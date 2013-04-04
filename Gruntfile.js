@@ -16,13 +16,15 @@ module.exports = function(grunt) {
       examples: [
         'src/**/*.js',
         'specs/**/*.js',
-        'examples/**/*.js'
+        'examples/**/*.js',
+        '!examples/scripts/**/*.js'
       ],
       all: [
         'Gruntfile.js',
         'src/**/*.js',
         'specs/**/*.js',
-        'examples/**/*.js'
+        'examples/**/*.js',
+        '!examples/scripts/**/*.js'
       ],
       options: {
         jshintrc: '.jshintrc'
