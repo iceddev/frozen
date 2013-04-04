@@ -11,11 +11,12 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
       ga('create', 'UA-27771989-2', 'frozenjs.com');
-      ga('send', 'pageview');
+      ga('send', 'pageview', {
+        hitCallback: function() {
+          window.location.href = 'docs/'
+        }
+      });
 
-    </script>
-    <script>
-      window.location.href = 'docs/'
     </script>
   </head>
   <body>
