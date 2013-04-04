@@ -61,7 +61,7 @@ module.exports = function(grunt) {
       },
       docs: {
         files: '<%= jshint.docs %>',
-        tasks: ['jshint:docs', 'jsdoc:all']
+        tasks: ['jshint:docs', 'jsdoc:all', 'copy:docs']
       },
       examples: {
         files: '<%= jshint.examples %>',
@@ -93,6 +93,14 @@ module.exports = function(grunt) {
         }
       }
     },
+    copy: {
+      docs: {
+        files: [
+          { dest: 'examples/index.html', src: 'docs/examples.html' },
+          { expand: true, cwd: 'docs/', dest: 'examples/', src: ['styles/*.css', 'scripts/*.js'] }
+        ]
+      }
+    },
     jasmine: {
       all: {
         options: {
@@ -115,6 +123,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-dojo');
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
@@ -125,7 +134,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', ['jshint:all', 'connect:test', 'jasmine:all', 'jsdoc:all', 'dojo']);
   grunt.registerTask('test', ['jshint:test', 'connect:test', 'jasmine:all', 'jasmine:all:build', 'open:test', 'watch:test']);
-  grunt.registerTask('docs', ['jshint:docs', 'jsdoc:all', 'connect:docs', 'open:docs', 'watch:docs']);
+  grunt.registerTask('docs', ['jshint:docs', 'jsdoc:all', 'copy:docs', 'connect:docs', 'open:docs', 'watch:docs']);
   grunt.registerTask('examples', ['jshint:examples', 'dojo', 'connect:examples', 'open:examples', 'watch:examples']);
 
 };
