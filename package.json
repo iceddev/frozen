@@ -8,6 +8,7 @@
     "grunt-dojo": "~0.2.0",
     "grunt-open": "~0.2.0",
     "grunt-jsdoc": "git+https://github.com/phated/grunt-jsdoc-plugin.git",
+    "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-watch": "~0.3.0",
     "grunt-contrib-jshint": "~0.3.0",
     "grunt-contrib-jasmine": "~0.4.1",
