@@ -181,6 +181,11 @@ dd {
   }
 }
 
+.examplepage .header,
+.examplepage .main {
+  width: 100%;
+}
+
 .sidebar ul {
   font-size: 100%;
   line-height: 17px;
@@ -345,6 +350,15 @@ footer {
 
 .disabled {
   color: #454545;
+}
+
+.example {
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+.example a {
+  font-size: 125%;
 }
 
 /* PRISM overrides */
