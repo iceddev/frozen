@@ -1,0 +1,30 @@
+{
+  "name": "frozen",
+  "version": "0.4.0",
+  "main": "src/GameCore.js",
+  "ignore": [
+    ".gitignore",
+    ".jamignore",
+    ".jshintrc",
+    ".travis.yml",
+    "**/.*",
+    "node_modules",
+    "deps",
+    "libs",
+    "docs",
+    "specs",
+    "examples",
+    "_SpecRunner.html",
+    "jsdoc_config.json",
+    "Gruntfile.js",
+    "frozen.profile.js",
+    "dojoConfig.js"
+  ],
+  "dependencies": {
+    "dojo": "1.8.3",
+    "util": "dojo/util#1.8.3",
+    "dcl": "uhop/dcl#1.0.2",
+    "Box2d": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
+    "lodash": "1.1.1"
+  }
+}
