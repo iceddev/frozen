@@ -1,15 +1,14 @@
-define(function(){
+define([
+  'lodash'
+], function(_){
 
   'use strict';
 
   function scalePoints(points, scale){
     if(Array.isArray(points)){
-      var newPoints = [];
-      // TODO: move this to a faster forEach, possibly lo-dash's
-      points.forEach(function(point){
-        newPoints.push(scalePoints(point, scale));
+      points = _.map(points, function(point){
+        return scalePoints(point, scale);
       });
-      points = newPoints;
     } else if(typeof scale === 'object'){
       points = {
         x: points.x * scale.x,

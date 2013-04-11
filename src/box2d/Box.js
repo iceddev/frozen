@@ -6,9 +6,8 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
-  'dojo/_base/lang'
-], function(dcl, Mixer, lang){
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
   'use strict';
 

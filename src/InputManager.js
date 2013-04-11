@@ -13,9 +13,9 @@ define([
   'dcl/mixins/Cleanup',
   'dojo/has',
   'dojo/on',
-  'dojo/_base/lang',
+  'lodash',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, lang){
+], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _){
 
   'use strict';
 
@@ -117,21 +117,23 @@ define([
         handler.remove();
       }
 
+      _.bindAll(this);
+
       if(this.handleKeys){
-        this.pushCleanup(on(document, 'keydown', lang.hitch(this, "keyDown")), cleanup);
-        this.pushCleanup(on(document, 'keyup', lang.hitch(this, "keyReleased")), cleanup);
+        this.pushCleanup(on(document, 'keydown', this.keyDown), cleanup);
+        this.pushCleanup(on(document, 'keyup', this.keyReleased), cleanup);
       }
 
       if(this.handleMouse && !has('touch')){
-        this.pushCleanup(on(document, 'mousedown', lang.hitch(this, "mouseDown")), cleanup);
-        this.pushCleanup(on(document, 'mousemove', lang.hitch(this, "mouseMove")), cleanup);
-        this.pushCleanup(on(document, 'mouseup', lang.hitch(this, "mouseUp")), cleanup);
+        this.pushCleanup(on(document, 'mousedown', this.mouseDown), cleanup);
+        this.pushCleanup(on(document, 'mousemove', this.mouseMove), cleanup);
+        this.pushCleanup(on(document, 'mouseup', this.mouseUp), cleanup);
       }
 
       if(this.handleTouch && has('touch')){
-        this.pushCleanup(on(document, 'touchstart', lang.hitch(this, "touchStart")), cleanup);
-        this.pushCleanup(on(document, 'touchmove', lang.hitch(this, "touchMove")), cleanup);
-        this.pushCleanup(on(document, 'touchend', lang.hitch(this, "touchEnd")), cleanup);
+        this.pushCleanup(on(document, 'touchstart', this.touchStart), cleanup);
+        this.pushCleanup(on(document, 'touchmove', this.touchMove), cleanup);
+        this.pushCleanup(on(document, 'touchend', this.touchEnd), cleanup);
       }
 
       if(!this.mouseAction){
@@ -143,8 +145,8 @@ define([
       }
 
       if(this.gameArea && this.canvasPercentage){
-        this.pushCleanup(on(window, 'resize', lang.hitch(this, "resize")), cleanup);
-        this.pushCleanup(on(window, 'orientationchange', lang.hitch(this, "resize")), cleanup);
+        this.pushCleanup(on(window, 'resize', this.resize), cleanup);
+        this.pushCleanup(on(window, 'orientationchange', this.resize), cleanup);
       }
     },
 

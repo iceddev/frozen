@@ -7,8 +7,8 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'dojo/_base/lang'
-], function(dcl, Mixer, lang){
+  'lodash'
+], function(dcl, Mixer, _){
 
   'use strict';
 
@@ -168,7 +168,7 @@ define([
      * @param {Object} state State to merge with this object
      */
     update: function(state){
-      lang.mixin(this, state);
+      _.assign(this, state);
     },
 
     /**

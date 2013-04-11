@@ -12,15 +12,13 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
-  'dojo/_base/lang',
   '../Sprite',
   '../Animation'
-], function(dcl, Mixer, lang, Sprite, Animation){
+], function(dcl, Sprite, Animation){
 
   'use strict';
 
-  return dcl([Mixer, Sprite], {
+  return dcl(Sprite, {
     /**
     * A map of static constants for internal use
     * @type {Object}
@@ -148,7 +146,7 @@ define([
      */
     createAnimations: function(frameCount, frameTimes, img, h, w, ySlot){
       var anims = [];
-      var isFTArray = lang.isArray(frameTimes);
+      var isFTArray = Array.isArray(frameTimes);
       var currentFrameTime = 1;
       if(!ySlot){
         ySlot = 0;
