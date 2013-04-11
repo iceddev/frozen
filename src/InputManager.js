@@ -13,13 +13,39 @@ define([
   'dcl/mixins/Cleanup',
   'dojo/has',
   'dojo/on',
-  'dojo/dom-style',
-  'dojo/dom-geometry',
   'dojo/_base/lang',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, domStyle, domGeom, lang){
+], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, lang){
 
   'use strict';
+
+  function position(node){
+    var boundingRect = node.getBoundingClientRect();
+    return {
+      x: boundingRect.left,
+      y: boundingRect.top
+    };
+  }
+
+  function getComputedStyle(node){
+    return window.getComputedStyle(node, null) || {};
+  }
+
+  function toPixel(value){
+    return parseFloat(value) || 0;
+  }
+
+  function getMarginExtents(node){
+    var style = getComputedStyle(node);
+    var l = toPixel(style.marginLeft);
+    var t = toPixel(style.marginTop);
+    var r = toPixel(style.marginRight);
+    var b = toPixel(style.marginBottom);
+    return {
+      w: l + r,
+      h: t + b
+    };
+  }
 
   return dcl([Mixer, Cleanup], {
     /**
@@ -301,7 +327,7 @@ define([
      * @return {Point} Normalized point
      */
     getMouseLoc: function(evt){
-      var coordsM = domGeom.position(this.canvas);
+      var coordsM = position(this.canvas);
       if(this.zoomRatio){
         return {
           x: Math.round((evt.clientX - coordsM.x) / this.zoomRatio),
@@ -325,7 +351,7 @@ define([
         var canvasWidth = this.canvas.width;
         var canvasHeight = this.canvas.height;
 
-        var bodyMargins = domGeom.getMarginExtents(document.body);
+        var bodyMargins = getMarginExtents(document.body);
 
         var newWidth = window.innerWidth - bodyMargins.w;
         var newHeight = window.innerHeight - bodyMargins.h;
@@ -346,19 +372,15 @@ define([
 
         this.zoomRatio = newWidth / canvasWidth * this.canvasPercentage;
 
-        domStyle.set(this.gameArea, {
-          width: newWidthStyle,
-          height: newHeightStyle
-        });
+        this.gameArea.style.width = newWidthStyle;
+        this.gameArea.style.height = newHeightStyle;
 
         var canvasPercentageStyle = Math.floor(this.canvasPercentage * 100) + '%';
-        domStyle.set(this.canvas, {
-          width: canvasPercentageStyle,
-          height: canvasPercentageStyle,
-          display: 'block',
-          marginLeft: 'auto',
-          marginRight: 'auto'
-        });
+        this.canvas.style.width = canvasPercentageStyle;
+        this.canvas.style.height = canvasPercentageStyle;
+        this.canvas.style.display = 'block';
+        this.canvas.style.marginLeft = 'auto';
+        this.canvas.style.marginRight = 'auto';
       }
     }
   });

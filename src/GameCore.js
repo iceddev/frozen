@@ -21,11 +21,10 @@ define([
   'dcl',
   'dcl/bases/Mixer',
   'dojo/_base/lang',
-  'dojo/dom',
   './InputManager',
   './ResourceManager',
   './shims/RAF'
-], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+], function(dcl, Mixer, lang, InputManager, ResourceManager){
 
   'use strict';
 
@@ -184,7 +183,7 @@ define([
      */
     init: function() {
       if(!this.canvas){
-        this.canvas = dom.byId(this.canvasId);
+        this.canvas = document.getElementById(this.canvasId);
       }
       if(!this.canvas){
         alert('Sorry, your browser does not support canvas.  I recommend any browser but Internet Explorer');
@@ -206,7 +205,7 @@ define([
         if(this.gameAreaId && this.canvasPercentage){
           this.inputManager = new InputManager({
             canvas: this.canvas,
-            gameArea: dom.byId(this.gameAreaId),
+            gameArea: document.getElementById(this.gameAreaId),
             canvasPercentage: this.canvasPercentage
           });
         }else{
