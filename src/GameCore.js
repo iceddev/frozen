@@ -20,11 +20,11 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'dojo/_base/lang',
+  'lodash',
   './InputManager',
   './ResourceManager',
   './shims/RAF'
-], function(dcl, Mixer, lang, InputManager, ResourceManager){
+], function(dcl, Mixer, _, InputManager, ResourceManager){
 
   'use strict';
 
@@ -282,7 +282,7 @@ define([
       this.prevTime = startTime;
 
       //need to keep the context defined here so the game loop has access to it
-      this.loopRunner = lang.hitch(this, this.loopRunner);
+      this.loopRunner = _.bind(this.loopRunner, this);
       window.requestAnimationFrame(this.loopRunner);
     },
 

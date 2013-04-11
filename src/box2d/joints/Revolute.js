@@ -8,9 +8,9 @@
 
 define([
   'dcl',
-  'dojo/_base/lang',
+  'lodash',
   './Joint'
-], function(dcl, lang, Joint){
+], function(dcl, _, Joint){
 
   'use strict';
 
@@ -42,7 +42,7 @@ define([
           joint.Initialize(body1, body2, vec1, axis);
 
           if (this.jointAttributes) {
-            lang.mixin(joint, this.jointAttributes);
+            _.assign(joint, this.jointAttributes);
           }
           return box.b2World.CreateJoint(joint);
         }

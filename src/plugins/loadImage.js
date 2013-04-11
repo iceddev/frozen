@@ -12,9 +12,10 @@
  */
 
 define([
+  'lodash',
   '../ResourceManager',
   '../utils/parseString'
-], function(ResourceManager, parseString){
+], function(_, ResourceManager, parseString){
 
   'use strict';
 
@@ -24,8 +25,8 @@ define([
     load: function(resource, req, callback, config){
       resource = parseString(resource);
       if(typeof resource !== 'string'){
-        Object.keys(resource).forEach(function(key){
-          resource[key] = req.toUrl(resource[key]);
+        _.forEach(resource, function(res){
+          res = req.toUrl(res);
         });
       } else {
         resource = req.toUrl(resource);
