@@ -8,9 +8,9 @@ define([
   './plugins/sound!',
   'dcl',
   'dcl/bases/Mixer',
-  'dojo/_base/lang',
+  'lodash',
   'dojo/on'
-], function(Sound, dcl, Mixer, lang, on){
+], function(Sound, dcl, Mixer, _, on){
 
   'use strict';
 
@@ -93,7 +93,7 @@ define([
           complete: false
         };
 
-        var imageComplete = lang.partial(function(imgWrapper, evt){
+        var imageComplete = _.partial(function(imgWrapper, evt){
           imgWrapper.complete = true;
         }, imgWrapper);
         on(img, 'load', imageComplete);

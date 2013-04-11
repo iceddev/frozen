@@ -7,13 +7,12 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
   './GameAction'
-], function(dcl, Mixer, GameAction){
+], function(dcl, GameAction){
 
   'use strict';
 
-  return dcl([Mixer, GameAction], {
+  return dcl(GameAction, {
     /**
      * Position where mousedown happened
      * @type {Point}

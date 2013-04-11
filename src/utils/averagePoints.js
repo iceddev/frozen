@@ -1,11 +1,12 @@
-define(function(){
+define([
+  'lodash'
+], function(_){
 
   'use strict';
 
   function averagePoints(points){
     var retVal = {x: 0, y: 0};
-    //TODO use lodash forEach
-    points.forEach(function(point){
+    _.forEach(points, function(point){
       retVal.x+= point.x;
       retVal.y+= point.y;
     });
