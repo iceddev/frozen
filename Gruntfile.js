@@ -20,7 +20,12 @@ module.exports = function(grunt) {
         '!examples/scripts/**/*.js'
       ],
       all: [
+        'jsdoc_config.json',
+        'bower.json',
+        'package.json',
         'Gruntfile.js',
+        'dojoConfig.js',
+        'frozen.profile.js',
         'src/**/*.js',
         'specs/**/*.js',
         'examples/**/*.js',
