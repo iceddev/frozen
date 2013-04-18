@@ -7,6 +7,8 @@ require([
   'frozen/plugins/loadImage!images/nyan.png'
 ], function(GameCore, keys, backImg, nyan){
 
+  'use strict';
+
   var x = 100;
   var y = 100;
   var speed = 2.5;

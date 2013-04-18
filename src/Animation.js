@@ -81,23 +81,6 @@ define([
      * @param  {Number} frameCount Number of frames in the animation
      * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
      * @param  {Image} img Image sheet to create animation from
-     * @param  {Number} h Height of each tile in pixels
-     * @param  {Number} w Width of each tile in pixels
-     * @param  {Number} ySlot Slot on Y axis to start creating tiles
-     * @return {Animation} Animation generated using parameters
-     * @deprecated This method has been renamed createFromSheet and will be removed in the future
-     */
-    createFromTile: function(frameCount, frameTimes, img, h, w, ySlot){
-      return this.createFromSheet(frameCount, frameTimes, img, w, h, ySlot);
-    },
-
-    /**
-     * Used to create an animation from a sheet of tiles
-     * @function
-     * @memberOf Animation#
-     * @param  {Number} frameCount Number of frames in the animation
-     * @param  {Number|Array} frameTimes Value or array of values corresponding to amount of time per frame
-     * @param  {Image} img Image sheet to create animation from
      * @param  {Number} w Width of each tile in pixels
      * @param  {Number} h Height of each tile in pixels
      * @param  {Number} ySlot Slot on Y axis to start creating tiles
@@ -188,33 +171,10 @@ define([
           this.currFrameIndex = 0;
         }
 
-        while (this.animTime > this.getFrame(this.currFrameIndex).endTime) {
+        while (this.animTime > this.frames[this.currFrameIndex].endTime) {
           this.currFrameIndex++;
         }
       }
-    },
-
-    /**
-     * Retrieves the image used to create the animation
-     * @function
-     * @memberOf Animation#
-     * @return {Image} The image used to create the animation
-     * @deprecated This method is deprecated because the image is available on the instance and will be removed in the future
-     */
-    getImage: function(){
-      return this.image;
-    },
-
-    /**
-     * Retrieves the frame at the given index
-     * @function
-     * @memberOf Animation#
-     * @param  {Number} i Index to retrieve frame at
-     * @return {AnimationFrame} The animation frame at the given index
-     * @deprecated This method is deprecated because the frames are available on the instance and will be removed in the future
-     */
-    getFrame: function(i){
-      return this.frames[i];
     },
 
     /**
@@ -227,7 +187,7 @@ define([
       if (this.frames.length === 0) {
         return null;
       } else {
-        return this.getFrame(this.currFrameIndex);
+        return this.frames[this.currFrameIndex];
       }
     },
 
@@ -235,7 +195,7 @@ define([
      * Draws the current frame into a 2d context.
      * @function
      * @memberOf Animation#
-     * @param {2dContext} context The HTML5 drawing canvas
+     * @param {Context} context The HTML5 drawing canvas
      * @param {Number} x The x coordinate in the graphics context
      * @param {Number} y The y coordinate in the graphics context
      */

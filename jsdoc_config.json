@@ -2,5 +2,10 @@
   "plugins": [ "plugins/markdown" ],
   "markdown": {
     "parser": "gfm"
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": true
+    }
   }
 }

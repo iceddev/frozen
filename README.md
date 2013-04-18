@@ -1,4 +1,5 @@
-Frozen <sup>v0.2.1</sup>
+![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
+Frozen <sup>v0.3.0</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
@@ -16,14 +17,15 @@ Our goal is to apply techniques used in building modern webapps to game developm
 
 * Frozen Source (individual modules - bring your own loader or use Dojo)<br>
 Use `volo add iceddev/frozen` to add it to your project<br>
-or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)
+or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)<br>
+_Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only_
 
 * Or just use the boilerplate!<br>
-Use `volo create your_project iceddev/frozen-dev-boilerplate` which will scaffold out a new project for you and install all dependencies
+Use `volo create your_project frozenjs/boilerplate` which will scaffold out a new project for you and install all dependencies
 
 ## Documentation
 
-Documentation is available at http://frozenjs.com/doc/
+Documentation is available at http://frozenjs.com/docs/
 
 ## Examples
 
@@ -38,11 +40,11 @@ Source available on github: https://github.com/iceddev/frozen
 
 We have tested in:
 
-* Chrome 24 & 26-dev
-* Firefox 18 & 19
-* IE10 (limited sound support)
-* Chrome for Android 18 & 24 (limited sound support)
-* Firefox for Android 18-19 & 20a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
+* Chrome 25 & 27-dev
+* Firefox 19.0.2
+* IE10 (sound with supported codecs)
+* Chrome for Android 25 & Beta 26 (limited sound support)
+* Firefox for Android 19.0.2, Beta 20 & 21.0a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
 * PhantomJS 1.8.1
 
 __Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
@@ -79,25 +81,67 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 
 ### Building the dist/frozen layer
 
-`grunt dojo` to start the dojo build
+`grunt build` to lint, test, doc, and run dojo build process to build the single layer
 
 ### Generating the docs
 
-`grunt jsdoc` will generate docs
+`grunt docs` will lint and generate docs
 
 ### Running the tests
 
-`grunt jasmine` to run tests in PhantomJS or `grunt jasmine-server` to run tests in the browser
+`grunt test` to lint, run tests in PhantomJS and open your default browser at the test URL
 
-### Linting the source
+### Linting the project
 
-`grunt lint` to lint the source
+`grunt jshint:all` to lint the project
 
-### Linting and running tests when files change
+### Building when files change
 
-`grunt watch` to watch the source and specs and run lint and jasmine when a file changes
+`grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.3.0</sup>
+
+__Breaking Changes__
+
+* Removed previously deprecated methods and properties
+* Removed Node 0.6 support for the build process
+* `frozen/sounds/Sound` was a plugin, but is now the base object of other Sounds and `frozen/sounds/AudioBase` was removed
+* `frozen/sounds/Sound` plugin was moved to `frozen/plugins/sound`
+* `frozen/box2d/Entity` moved to `frozen/box2d/entities/Entity`
+* `frozen/box2d/RectangleEntity` moved to `frozen/box2d/entities/Rectangle`
+* `frozen/box2d/CircleEntity` moved to `frozen/box2d/entities/Circle`
+* `frozen/box2d/PolygonEntity` moved to `frozen/box2d/entities/Polygon`
+* `frozen/box2d/MultiPolygonEntity` moved to `frozen/box2d/entities/MultiPolygon`
+
+__New Features__
+
+* Auto-selection of Audio extension if no extension is specified
+* `loadSound` and `loadImage` plugins now use `require.toUrl()` to generate a path to your resources
+* Added `.jamignore` file
+* `Box.setAngularVelocity` function added to set the angular velocity on an entity
+* Tests added for Sounds, BoxGame, and Sprite
+* Added `frozen/box2d/entities` which returns a map of entity types
+* Added `frozen/box2d/joints` which returns a map of joint types
+* `BoxGame.addBody`, `BoxGame.removeBody`, `BoxGame.addJoint`, `BoxGame.removeJoint` methods added for convenience
+
+__Non-Breaking Changes__
+
+* Made all the examples adhere to the linting rules of the rest of the project
+* Move linting declarations to .jshintrc to allow for JSHint being run in the directory standalone
+* Update Grunt to `~0.4.1` and add/update all the dependencies in `package.json`
+* Modified the Gruntfile to work with new plugins and define more tasks for convenience
+* Removed Node 0.6 from tested environments
+* Updated examples that were using deprecated methods
+* Cleanup event handler usage on Audio implementations
+* Rearranged the `specs/` file structure to match `src/`
+* Implement the dcl Cleanup API for InputManager to remove event handlers on destruction
+* Add declaredClass to entities and joints
+
+__Deprecations__
+
+* `Box.destroyJoint` has been deprecated in favor of `Box.removeJoint`
 
 ### <sup>v0.2.1</sup>
 

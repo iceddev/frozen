@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>
+    Source: GameCore.js
+    
+      
+        - frozen: v0.3.0
+      
+    
+      
+    
+  </title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href='http://fonts.googleapis.com/css?family=Bowlby+One+SC' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link type="text/css" rel="stylesheet" href="styles/normalize.css">
+  <link type="text/css" rel="stylesheet" href="styles/prism.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-27771989-2', 'frozenjs.com');
+    ga('send', 'pageview');
+
+  </script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body class="language-javascript ">
+  <header class="header">
+    
+      
+        <h1 class="logo">frozen <sup>v0.3.0</sup></h1>
+      
+    
+      
+    
+
+    <nav class="mainnav">
+      <a href="/index.html">Home</a>
+      <a href="/docs/">Docs</a>
+      <a href="/examples/">Examples</a>
+      <!-- <a href="/games.html">Games</a> -->
+    </nav>
+  </header>
+
+  
+    <nav class="sidebar">
+      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+    </nav>
+  
+
+  <div class="main">
+    
+
+
+    
+
+
+
+
+
+
+
+
+    
+    <section>
+        <article>
+            <pre id="source" class="source"><code>/**
+ * The GameCore class provides the base to build games on.
+ * @name GameCore
+ * @constructor GameCore
+ * @example
+ * var myGame = new GameCore({
+ *   canvasId: 'myCanvas',
+ *   update: function(millis){
+ *     // do updating of game state
+ *   },
+ *   draw: function(context){
+ *     // do drawing of the game
+ *   }
+ * });
+ *
+ * //start the game
+ * myGame.run();
+ */
+
+define([
+  'dcl',
+  'dcl/bases/Mixer',
+  'dojo/_base/lang',
+  'dojo/dom',
+  './InputManager',
+  './ResourceManager',
+  './shims/RAF'
+], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+
+  'use strict';
+
+  return dcl(Mixer, {
+    /**
+     * A map of static constants for internal use
+     * @type {Object}
+     * @memberOf GameCore#
+     * @property {Number} FONT_SIZE Default font size used in default draw functions
+     */
+    statics: {
+      FONT_SIZE: 24
+    },
+    /**
+     * Whether or not the game should be running its loop
+     * @type {Boolean}
+     * @memberOf GameCore#
+     * @default
+     */
+    isRunning: false,
+    /**
+     * The id of the canvas element to use render the game on
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
+    canvasId: null,
+    /**
+     * Max number of milliseconds between updates. (in case user switches tabs and requestAnimationFrame pauses)
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    maxStep: 40,
+    /**
+     * The type of context to request from the canvas.  2d or 3d
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
+    contextType: '2d',
+    /**
+     * The height of the Game and canvas
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    height: 0,
+    /**
+     * The width of the Game and canvas
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    width: 0,
+    /**
+     * The ResourceManager to be used for game
+     * @type {ResourceManager}
+     * @memberOf GameCore#
+     * @default
+     */
+    resourceManager: null,
+    /**
+     * The InputManager to be used for game
+     * @type {InputManager}
+     * @memberOf GameCore#
+     * @default
+     */
+    inputManager: null,
+    /**
+     * The style to be used for the foreground while game resources are loading
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
+    loadingForeground: '#00F',
+    /**
+     * The style to be used for the background while game resources are loading
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
+    loadingBackground: '#FFF',
+    /**
+     * The ID of a DOM element that contains the game's canvas
+     * @type {String}
+     * @memberOf GameCore#
+     * @default
+     */
+    gameAreaId: null,
+    /**
+     * The percentage (0 to 1.0) of the height and width the canvas should use to fill in its container DOM element
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    canvasPercentage: 0,
+
+    /**
+     * Sets the height on your GameCore instance and on your canvas reference
+     * @function
+     * @memberOf GameCore#
+     * @param {Number} newHeight The new height desired
+     */
+    setHeight: function(newHeight){
+      this.height = newHeight;
+      this.canvas.height = newHeight;
+    },
+
+    /**
+     * Sets the width on your GameCore instance and on your canvas reference
+     * @function
+     * @memberOf GameCore#
+     * @param {Number} newWidth The new width desired
+     */
+    setWidth: function(newWidth){
+      this.width = newWidth;
+      this.canvas.width = newWidth;
+    },
+
+    /**
+     * Signals the game loop that it's time to quit
+     * @function
+     * @memberOf GameCore#
+     */
+    stop: function() {
+      this.isRunning = false;
+    },
+
+    /**
+     * Launches the game.
+     * @function
+     * @memberOf GameCore#
+     */
+    run: function() {
+      if(!this.isRunning){
+        this.init();
+        this.loadResources(this.resourceManager);
+        this.initInput(this.inputManager);
+        this.launchLoop();
+      }
+    },
+
+    /**
+     * Can be overidden in GameCore subclasses to load images and sounds
+     * @function
+     * @memberOf GameCore#
+     * @param {ResourceManager} resourceManager
+     */
+    loadResources: function(resourceManager){},
+
+    /**
+     * Sets the screen mode and initiates and objects.
+     * @function
+     * @memberOf GameCore#
+     */
+    init: function() {
+      if(!this.canvas){
+        this.canvas = dom.byId(this.canvasId);
+      }
+      if(!this.canvas){
+        alert('Sorry, your browser does not support canvas.  I recommend any browser but Internet Explorer');
+        return;
+      }
+      if(!this.context){
+        this.context = this.canvas.getContext(this.contextType);
+      }
+      if(!this.context){
+        alert('Sorry, your browser does not support a ' + this.contextType + ' drawing surface on canvas.  I recommend any browser but Internet Explorer');
+        return;
+      }
+
+      this.setHeight(this.height || this.canvas.height);
+      this.setWidth(this.width || this.canvas.width);
+
+      if(!this.inputManager){
+        //handle resizing if gameArea and canvasPercentage are specified
+        if(this.gameAreaId && this.canvasPercentage){
+          this.inputManager = new InputManager({
+            canvas: this.canvas,
+            gameArea: dom.byId(this.gameAreaId),
+            canvasPercentage: this.canvasPercentage
+          });
+        }else{
+          this.inputManager = new InputManager({
+            canvas: this.canvas
+          });
+        }
+      }
+
+      this.inputManager.resize();
+
+      if(!this.resourceManager){
+        this.resourceManager = new ResourceManager();
+      }
+      this.loadResources(this.resourceManager);
+
+      this.isRunning = true;
+    },
+
+    /**
+     * Can be overidden in the subclasses to map user input to actions
+     * @function
+     * @memberOf GameCore#
+     * @param {InputManager} inputManager
+     */
+    initInput: function(inputManager) {},
+
+    /**
+     * Can be overidden in the subclasses to deal with user input before updating the game state
+     * @function
+     * @memberOf GameCore#
+     * @param {InputManager} inputManager
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+    handleInput: function(inputManager,elapsedTime) {},
+
+    /**
+     * Runs through the game loop until stop() is called.
+     * @function
+     * @memberOf GameCore#
+     */
+    gameLoop: function() {
+      this.currTime = new Date().getTime();
+      this.elapsedTime = Math.min(this.currTime - this.prevTime, this.maxStep);
+      this.prevTime = this.currTime;
+
+      //it's using a resource manager, but resources haven't finished
+      if(this.resourceManager && !this.resourceManager.resourcesReady()){
+        this.updateLoadingScreen(this.elapsedTime);
+        this.drawLoadingScreen(this.context);
+      } else {
+        this.handleInput(this.inputManager,this.elapsedTime);
+        if(!this.paused){
+          // update
+          this.preUpdate(this.elapsedTime);
+          this.update(this.elapsedTime);
+        }
+        // draw the screen
+        this.context.save();
+        this.draw(this.context);
+        this.context.restore();
+      }
+    },
+
+    /**
+     * Launches the game loop.
+     * @function
+     * @memberOf GameCore#
+     */
+    launchLoop: function(){
+      this.elapsedTime = 0;
+      var startTime = Date.now();
+      this.currTime = startTime;
+      this.prevTime = startTime;
+
+      //need to keep the context defined here so the game loop has access to it
+      this.loopRunner = lang.hitch(this, this.loopRunner);
+      window.requestAnimationFrame(this.loopRunner);
+    },
+
+    loopRunner: function(){
+      this.gameLoop();
+      window.requestAnimationFrame(this.loopRunner);
+    },
+
+    /**
+     * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
+     * @function
+     * @memberOf GameCore#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+    preUpdate: function(elapsedTime) {},
+
+    /**
+     * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.
+     * @function
+     * @memberOf GameCore#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+    update: function(elapsedTime) {},
+
+    /**
+     * Can be overridden to update the state of the game/animation while a custom loading screen is displayed.
+     * @function
+     * @memberOf GameCore#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+    updateLoadingScreen: function(elapsedTime) {},
+
+    /**
+     * Draws to the screen. Subclasses or instances must override this method to paint items to the screen.
+     * @function
+     * @memberOf GameCore#
+     * @param {Context} context An HTML5 canvas drawing context.
+     */
+    draw: function(context){
+      if(this.contextType === '2d'){
+        context.font = "14px sans-serif";
+        context.fillText("This game does not have its own draw function!", 10, 50);
+      }
+    },
+
+    /**
+     * Draws the progress of the resource manger to the screen while loading.
+     * Subclasses or instances may override for custom loading animations.
+     * @function
+     * @memberOf GameCore#
+     * @param {Context} context An HTML5 canvas drawing context.
+     */
+    drawLoadingScreen: function(context){
+      if(this.resourceManager && (this.contextType === '2d')){
+        context.fillStyle = this.loadingBackground;
+        context.fillRect(0,0, this.width,this.height);
+
+        context.fillStyle = this.loadingForeground;
+        context.strokeStyle = this.loadingForeground;
+
+        var textPxSize = Math.floor(this.height/12);
+
+        context.font = "bold " + textPxSize + "px sans-serif";
+
+        context.fillText("Loading... " + this.resourceManager.getPercentComplete() + "%", this.width * 0.1, this.height * 0.55);
+
+        context.strokeRect(this.width * 0.1, this.height * 0.7, this.width * 0.8, this.height * 0.1);
+        context.fillRect(this.width * 0.1, this.height * 0.7, (this.width * 0.8) * this.resourceManager.getPercentComplete()/100, this.height * 0.1);
+
+        context.lineWidth = 4;
+      }
+    }
+  });
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+  </div>
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Apr 03 2013 19:34:12 GMT-0700 (MST)
+  </footer>
+
+  <script src="scripts/prism.js"> </script>
+</body>
+</html>
