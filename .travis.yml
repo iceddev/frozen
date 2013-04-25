@@ -7,3 +7,5 @@ notifications:
       - info@iceddev.com
     on_success: always
     on_failure: always
+before_install:
+  - "npm install -g volo"
