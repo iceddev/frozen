@@ -17,6 +17,7 @@ body {
 h1 {
   font-family: 'Bowlby One SC', cursive;
   font-size: 200%;
+  line-height: 130%;
   font-weight: bold;
   letter-spacing: -0.01em;
   margin: 0;
@@ -359,6 +360,45 @@ footer {
 
 .example a {
   font-size: 125%;
+}
+
+/* Blog styles */
+.post {
+  margin-bottom: 60px;
+}
+
+.post-date {
+  text-transform: capitalize;
+}
+
+.post-navigation {
+  margin: 15px 0;
+}
+
+.post-navigation:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.newer,
+.older {
+  background-color: #10B7FB;
+  padding: 5px;
+  -webkit-border-radius: 5px;
+          border-radius: 5px;
+  background-clip: padding-box;
+}
+
+.older {
+  float: right;
+}
+
+.newer a,
+.older a {
+  color: #FFF;
+  text-decoration: none;
+  font-size: 120%;
 }
 
 /* PRISM overrides */
