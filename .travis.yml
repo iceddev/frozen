@@ -9,4 +9,4 @@ notifications:
     on_success: always
     on_failure: always
 before_install:
-  - "npm install -g volo"
+  - "npm install -g volo grunt-cli"
