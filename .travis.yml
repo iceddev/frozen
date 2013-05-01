@@ -10,3 +10,4 @@ notifications:
     on_failure: always
 before_install:
   - "npm install -g volo grunt-cli"
+  - "volo add"
