@@ -1,9 +1,13 @@
 language: node_js
 node_js:
   - "0.8"
+  - "0.10"
 notifications:
   email:
     recipients:
       - info@iceddev.com
     on_success: always
     on_failure: always
+before_install:
+  - "npm install -g volo grunt-cli"
+  - "volo add"
