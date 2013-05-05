@@ -1,30 +1,45 @@
 define([
   'frozen/InputManager',
   'frozen/MouseAction',
+  'frozen/TouchAction',
   'frozen/GameAction',
   'frozen/utils/insideCanvas'
-], function(InputManager, MouseAction, GameAction, insideCanvas){
+], function(InputManager, MouseAction, TouchAction, GameAction, insideCanvas){
 
   'use strict';
 
   describe('InputManager', function(){
     var im;
     var gameAction;
+    var mockKeyPress;
     var mockEvent;
+    var canvas;
 
     beforeEach(function(){
-      im = new InputManager();
+      canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      im = new InputManager({
+        canvas: canvas
+      });
       gameAction = new GameAction();
 
-      mockEvent = {
-        changedTouches: [],
-        preventDefault: jasmine.createSpy('preventDefault'),
-        keyCode: 'b',
-        clientX: 12,
-        clientY: 12
+      mockKeyPress = {
+        keyCode: 'b'
       };
 
-      spyOn(im, 'getMouseLoc').andReturn({
+      mockEvent = {
+        preventDefault: jasmine.createSpy('preventDefault'),
+        gesture: {
+          touches: [
+            {
+              clientX: 12,
+              clientY: 12
+            }
+          ]
+        }
+      };
+
+      spyOn(im, 'normalizePoint').andReturn({
         x: 12,
         y: 12
       });
@@ -32,6 +47,7 @@ define([
 
     afterEach(function(){
       im.destroy();
+      document.body.removeChild(canvas);
     });
 
     it('should default to empty array of keyActions', function(){
@@ -40,15 +56,22 @@ define([
       expect(im.keyActions.length).toBe(0);
     });
 
-    it('should instantiate a MouseAction as mouseAction upon newing up', function(){
+    it('should instantiate a MouseAction as mouseAction when emulateMouse is true', function(){
+      expect(im.emulateMouse).toBe(true);
       expect(im.mouseAction instanceof MouseAction).toBe(true);
     });
 
-    it('should instantiate a MouseAction as touchAction upon newing up', function(){
-      expect(im.touchAction instanceof MouseAction).toBe(true);
+    it('should instantiate a TouchAction as touchAction when emulateMouse is false', function(){
+      im = new InputManager({
+        canvas: canvas,
+        emulateMouse: false
+      });
+      expect(im.emulateMouse).toBe(false);
+      expect(im.touchAction instanceof TouchAction).toBe(true);
     });
 
     it('should not have a canvas as default', function(){
+      im = new InputManager();
       expect(im.canvas).toBeNull();
     });
 
@@ -151,7 +174,7 @@ define([
     describe('InputManager.mouseUp()', function(){
 
       beforeEach(function(){
-        spyOn(im.mouseAction, 'release');
+        spyOn(im.mouseAction, 'release').andCallThrough();
 
         im.mouseUp(mockEvent);
       });
@@ -160,12 +183,12 @@ define([
         expect(im.mouseAction.release).toHaveBeenCalled();
       });
 
-      it('should call getMouseLoc with event object passed in', function(){
-        expect(im.getMouseLoc).toHaveBeenCalled();
-        expect(im.getMouseLoc).toHaveBeenCalledWith(mockEvent);
+      it('should call normalizePoint with event object passed in', function(){
+        expect(im.normalizePoint).toHaveBeenCalled();
+        expect(im.normalizePoint).toHaveBeenCalledWith(mockEvent.gesture.touches[0]);
       });
 
-      it('should assign the value returned by getMouseLoc to mouseAction.endPosition', function(){
+      it('should assign the value returned by normalizePoint to mouseAction.endPosition', function(){
         expect(im.mouseAction.endPosition).toEqual({
           x: 12,
           y: 12
@@ -183,15 +206,15 @@ define([
           width: 400
         };
 
-        spyOn(im.mouseAction, 'press');
-        currentPoint = im.getMouseLoc(mockEvent);
+        spyOn(im.mouseAction, 'press').andCallThrough();
+        currentPoint = im.normalizePoint(mockEvent.gesture.touches[0]);
 
         im.mouseDown(mockEvent);
       });
 
-      it('should call getMouseLoc with event object passed in', function(){
-        expect(im.getMouseLoc).toHaveBeenCalled();
-        expect(im.getMouseLoc).toHaveBeenCalledWith(mockEvent);
+      it('should call normalizePoint with event object passed in', function(){
+        expect(im.normalizePoint).toHaveBeenCalled();
+        expect(im.normalizePoint).toHaveBeenCalledWith(mockEvent.gesture.touches[0]);
       });
 
       it('should set mouseAction.endPosition to null', function(){
@@ -208,24 +231,25 @@ define([
         expect(im.mouseAction.press).toHaveBeenCalled();
       });
 
-      it('should set the mouseAction.startPosition to the result of getMouseLoc if point is inside canvas', function(){
+      it('should set the mouseAction.startPosition to the result of normalizePoint if point is inside canvas', function(){
         expect(im.mouseAction.startPosition).toEqual(currentPoint);
       });
 
-      it('should set the mouseAction.position to the result of getMouseLoc if point is inside canvas', function(){
+      it('should set the mouseAction.position to the result of normalizePoint if point is inside canvas', function(){
         expect(im.mouseAction.position).toEqual(currentPoint);
       });
 
-      it('should set the mouseAction.startPosition to null if point is outside canvas', function(){
-        im.getMouseLoc.andReturn({
-          x: -12,
-          y: -12
-        });
+      // TODO: evaulate if this is the right way to handle things
+      // it('should set the mouseAction.startPosition to null if point is outside canvas', function(){
+      //   im.normalizePoint.andReturn({
+      //     x: -12,
+      //     y: -12
+      //   });
 
-        im.mouseDown(mockEvent);
+      //   im.mouseDown(mockEvent);
 
-        expect(im.mouseAction.startPosition).toBeNull();
-      });
+      //   expect(im.mouseAction.startPosition).toBeNull();
+      // });
 
     });
 
@@ -233,12 +257,12 @@ define([
       var currentPoint;
 
       beforeEach(function(){
-        currentPoint = im.getMouseLoc(mockEvent);
+        currentPoint = im.normalizePoint(mockEvent);
 
         im.mouseMove(mockEvent);
       });
 
-      it('should set mouseAction.position to the result of getMouseLoc', function(){
+      it('should set mouseAction.position to the result of normalizePoint', function(){
         expect(im.mouseAction.position).toEqual(currentPoint);
       });
 
@@ -248,27 +272,29 @@ define([
       var currentPoint;
 
       beforeEach(function(){
-        im.canvas = {
-          height: 400,
-          width: 400
-        };
+        im = new InputManager({
+          canvas: canvas,
+          emulateMouse: false
+        });
+        spyOn(im.touchAction, 'press').andCallThrough();
+        currentPoint = im.normalizePoint(mockEvent.gesture.touches[0]);
 
-        spyOn(im.touchAction, 'press');
-        currentPoint = im.getMouseLoc(mockEvent);
-
+        spyOn(im, 'normalizePoint').andCallThrough();
         im.touchStart(mockEvent);
       });
 
-      it('should call getMouseLoc with event object passed in', function(){
-        expect(im.getMouseLoc).toHaveBeenCalled();
-        expect(im.getMouseLoc).toHaveBeenCalledWith(mockEvent);
+      it('should call normalizePoint with event object passed in', function(){
+        expect(im.normalizePoint).toHaveBeenCalled();
+        mockEvent.gesture.touches.forEach(function(evt, idx, col){
+          expect(im.normalizePoint).toHaveBeenCalledWith(evt, idx, col);
+        });
       });
 
-      it('should set touchAction.endPosition to null', function(){
-        expect(im.touchAction.endPosition).toBeNull();
+      it('should set touchAction.endPositions to null', function(){
+        expect(im.touchAction.endPositions).toBeNull();
       });
 
-      it('should assign the result of insideCanvas to touchAction.insideCanvas', function(){
+      it('should assign the result of insideCanvas to touchAction.insideCanvas if any points are inside canvas', function(){
         var result = insideCanvas(currentPoint, im.canvas);
 
         expect(im.touchAction.insideCanvas).toBe(result);
@@ -278,49 +304,60 @@ define([
         expect(im.touchAction.press).toHaveBeenCalled();
       });
 
-      it('should set the touchAction.startPosition to the result of getMouseLoc if point is inside canvas', function(){
-        expect(im.touchAction.startPosition).toEqual(currentPoint);
+      it('should set the touchAction.startPositions to the result of normalizePoint if point is inside canvas', function(){
+        expect(im.touchAction.startPositions).toEqual([currentPoint]);
       });
 
-      it('should set the touchAction.position to the result of getMouseLoc if point is inside canvas', function(){
-        expect(im.touchAction.position).toEqual(currentPoint);
+      it('should set the touchAction.position to the result of normalizePoint if point is inside canvas', function(){
+        expect(im.touchAction.positions).toEqual([currentPoint]);
       });
 
-      it('should set the touchAction.startPosition to null if point is outside canvas', function(){
-        im.getMouseLoc.andReturn({
-          x: -12,
-          y: -12
-        });
+      // TODO: evaulate if this is the right way to handle things
+      // it('should set the touchAction.startPosition to null if point is outside canvas', function(){
+      //   im.normalizePoint.andReturn({
+      //     x: -12,
+      //     y: -12
+      //   });
 
-        im.touchStart(mockEvent);
+      //   im.touchStart(mockEvent);
 
-        expect(im.touchAction.startPosition).toBeNull();
-      });
+      //   expect(im.touchAction.startPosition).toBeNull();
+      // });
 
     });
 
     describe('InputManager.touchEnd()', function(){
 
       beforeEach(function(){
-        spyOn(im.touchAction, 'release');
+        im = new InputManager({
+          canvas: canvas,
+          emulateMouse: false
+        });
+        spyOn(im.touchAction, 'release').andCallThrough();
+        spyOn(im, 'normalizePoint').andReturn({
+          x: 12,
+          y: 12
+        });
 
         im.touchEnd(mockEvent);
       });
 
-      it('should call mouseActon.release', function(){
+      it('should call touchAction.release', function(){
         expect(im.touchAction.release).toHaveBeenCalled();
       });
 
-      it('should call getMouseLoc with event object passed in', function(){
-        expect(im.getMouseLoc).toHaveBeenCalled();
-        expect(im.getMouseLoc).toHaveBeenCalledWith(mockEvent.changedTouches[0]);
+      it('should call normalizePoint with event object passed in', function(){
+        expect(im.normalizePoint).toHaveBeenCalled();
+        mockEvent.gesture.touches.forEach(function(evt, idx, col){
+          expect(im.normalizePoint).toHaveBeenCalledWith(evt, idx, col);
+        });
       });
 
-      it('should assign the value returned by getMouseLoc to touchAction.endPosition', function(){
-        expect(im.touchAction.endPosition).toEqual({
+      it('should assign the values returned by normalizePoint to touchAction.endPositions', function(){
+        expect(im.touchAction.endPositions).toEqual([{
           x: 12,
           y: 12
-        });
+        }]);
       });
 
     });
@@ -329,25 +366,24 @@ define([
       var currentPoint;
 
       beforeEach(function(){
-        im.canvas = {
-          height: 400,
-          width: 400
-        };
-
-        currentPoint = im.getMouseLoc(mockEvent);
+        im = new InputManager({
+          canvas: canvas,
+          emulateMouse: false
+        });
+        currentPoint = im.normalizePoint(mockEvent.gesture.touches[0]);
 
         im.touchMove(mockEvent);
       });
 
-      it('should set touchAction.position to the result of getMouseLoc', function(){
-        expect(im.touchAction.position).toEqual(currentPoint);
+      it('should set touchAction.positions to the result of getMouseLoc', function(){
+        expect(im.touchAction.positions).toEqual([currentPoint]);
       });
 
-      it('should not call preventDefault on the event if touchAction.startPosition is not set', function(){
+      it('should not call preventDefault on the event if touchAction.startPositions is not set', function(){
         expect(mockEvent.preventDefault).not.toHaveBeenCalled();
       });
 
-      it('should call preventDefault on the event if touchAction.startPosition is set', function(){
+      it('should call preventDefault on the event if touchAction.startPositions is set', function(){
         im.touchStart(mockEvent);
 
         im.touchMove(mockEvent);
@@ -365,7 +401,7 @@ define([
         gameAction = new GameAction();
         im.keyActions.b = gameAction;
 
-        keyAction = im.getKeyAction(mockEvent);
+        keyAction = im.getKeyAction(mockKeyPress);
       });
 
       it('should return the GameAction associated to the keyCode on the event', function(){
@@ -375,7 +411,7 @@ define([
       it('should return null if there are no GameActions mapped to keyActions', function(){
         im.keyActions = [];
 
-        keyAction = im.getKeyAction(mockEvent);
+        keyAction = im.getKeyAction(mockKeyPress);
 
         expect(keyAction).toBeNull();
       });
@@ -391,7 +427,7 @@ define([
 
         spyOn(gameAction, 'press');
 
-        im.keyPressed(mockEvent);
+        im.keyPressed(mockKeyPress);
       });
 
       it('should call press on the GameAction associated with the keyCode', function(){
@@ -409,7 +445,7 @@ define([
 
         spyOn(gameAction, 'press');
 
-        im.keyDown(mockEvent);
+        im.keyDown(mockKeyPress);
       });
 
       it('should call press on the GameAction associated with the keyCode', function(){
@@ -427,7 +463,7 @@ define([
 
         spyOn(gameAction, 'release');
 
-        im.keyReleased(mockEvent);
+        im.keyReleased(mockKeyPress);
       });
 
       it('should call release on the GameAction associated with the keyCode', function(){
@@ -437,6 +473,19 @@ define([
     });
 
     describe('InputManager.getMouseLoc()', function(){
+
+      beforeEach(function(){
+        im.getMouseLoc(mockEvent.gesture.touches[0]);
+      });
+
+      it('should pass event object through to normalizePoint', function(){
+        expect(im.normalizePoint).toHaveBeenCalled();
+        expect(im.normalizePoint).toHaveBeenCalledWith(mockEvent.gesture.touches[0]);
+      });
+
+    });
+
+    describe('InputManager.normalizePoint()', function(){
       var mouseLoc;
 
       beforeEach(function(){
@@ -448,9 +497,9 @@ define([
 
         document.body.appendChild(im.canvas);
 
-        im.getMouseLoc.andCallThrough();
+        im.normalizePoint.andCallThrough();
 
-        mouseLoc = im.getMouseLoc(mockEvent);
+        mouseLoc = im.normalizePoint(mockEvent.gesture.touches[0]);
       });
 
       afterEach(function(){
@@ -467,7 +516,7 @@ define([
       it('should return the position of the event over the canvas divided by the zoomRatio', function(){
         im.zoomRatio = 2;
 
-        mouseLoc = im.getMouseLoc(mockEvent);
+        mouseLoc = im.normalizePoint(mockEvent.gesture.touches[0]);
 
         expect(mouseLoc).toEqual({
           x: 6,

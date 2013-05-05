@@ -7,6 +7,7 @@
 define([
   './GameAction',
   './MouseAction',
+  './TouchAction',
   './utils/insideCanvas',
   'dcl',
   'dcl/bases/Mixer',
@@ -14,8 +15,9 @@ define([
   'dojo/has',
   'dojo/on',
   'lodash',
+  'hammer',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _){
+], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _, hammer){
 
   'use strict';
 
@@ -111,37 +113,60 @@ define([
      * @default
      */
     canvasPercentage: null,
+    /**
+     * Emulate mouse events when using touch
+     * @type {Boolean}
+     * @memberOf InputManager#
+     * @default
+     */
+    emulateMouse: true,
 
     constructor: function(){
+      _.bindAll(this);
+
+      insideCanvas = _.partialRight(insideCanvas, this.canvas);
+
+      var pushCleanup = this.pushCleanup;
+      var h = hammer(document, {
+        prevent_default: true,
+        drag_max_touches: 0,
+        // hold_timeout: 0
+        hold: false
+      });
+
       function cleanup(handler){
         handler.remove();
       }
 
-      _.bindAll(this);
+      function hammerOff(args){
+        h.off.apply(h, args);
+      }
+
+      function hammerOn(gesture, handler){
+        var args = [gesture, handler];
+        h.on.apply(h, args);
+        pushCleanup(args, hammerOff);
+      }
 
       if(this.handleKeys){
         this.pushCleanup(on(document, 'keydown', this.keyDown), cleanup);
         this.pushCleanup(on(document, 'keyup', this.keyReleased), cleanup);
       }
 
-      if(this.handleMouse && !has('touch')){
-        this.pushCleanup(on(document, 'mousedown', this.mouseDown), cleanup);
-        this.pushCleanup(on(document, 'mousemove', this.mouseMove), cleanup);
-        this.pushCleanup(on(document, 'mouseup', this.mouseUp), cleanup);
-      }
-
-      if(this.handleTouch && has('touch')){
-        this.pushCleanup(on(document, 'touchstart', this.touchStart), cleanup);
-        this.pushCleanup(on(document, 'touchmove', this.touchMove), cleanup);
-        this.pushCleanup(on(document, 'touchend', this.touchEnd), cleanup);
-      }
-
-      if(!this.mouseAction){
-        this.mouseAction = new MouseAction();
-      }
-
-      if(!this.touchAction){
-        this.touchAction = new MouseAction();
+      if(this.emulateMouse){
+        hammerOn('touch', this.mouseDown);
+        hammerOn('drag', this.mouseMove);
+        hammerOn('release', this.mouseUp);
+        if(!this.mouseAction){
+          this.mouseAction = new MouseAction();
+        }
+      } else {
+        hammerOn('touch', this.touchStart);
+        hammerOn('drag', this.touchMove);
+        hammerOn('release', this.touchEnd);
+        if(!this.touchAction){
+          this.touchAction = new TouchAction();
+        }
       }
 
       if(this.gameArea && this.canvasPercentage){
@@ -191,8 +216,7 @@ define([
      * @param  {Event} e Event object
      */
     mouseUp: function(e) {
-      this.mouseAction.release();
-      this.mouseAction.endPosition = this.getMouseLoc(e);
+      this.mouseAction.release(this.normalizePoint(e.gesture.touches[0]));
     },
 
     /**
@@ -202,16 +226,17 @@ define([
      * @param  {Event} e Event object
      */
     mouseDown: function(e){
-      var currentPoint = this.getMouseLoc(e);
-      this.mouseAction.endPosition = null;
-      this.mouseAction.insideCanvas = insideCanvas(currentPoint, this.canvas);
-      if(this.mouseAction.insideCanvas){
-        this.mouseAction.press();
-        this.mouseAction.startPosition = currentPoint;
-        this.mouseAction.position = currentPoint;
-      } else {
-        this.mouseAction.startPosition = null;
-      }
+      // Ensure mouse has been released
+      this.mouseAction.release(null);
+      var currentPoint = this.normalizePoint(e.gesture.touches[0]);
+      this.mouseAction.insideCanvas = insideCanvas(currentPoint);
+      // TODO: Not sure if we should be making this decision - investigate in regards to pool or minigolf
+      // if(this.mouseAction.insideCanvas){
+      //   this.mouseAction.press(currentPoint);
+      // } else {
+      //   this.mouseAction.startPosition = null;
+      // }
+      this.mouseAction.press(currentPoint);
     },
 
     /**
@@ -221,7 +246,7 @@ define([
      * @param  {Event} e Event object
      */
     mouseMove: function(e){
-      this.mouseAction.position = this.getMouseLoc(e);
+      this.mouseAction.position = this.normalizePoint(e.gesture.touches[0]);
     },
 
     /**
@@ -231,16 +256,20 @@ define([
      * @param  {Event} e Event object
      */
     touchStart: function(e){
-      var currentPoint = this.getMouseLoc(e.changedTouches[0]);
-      this.touchAction.endPosition = null;
-      this.touchAction.insideCanvas = insideCanvas(currentPoint, this.canvas);
-      if(this.touchAction.insideCanvas){
-        this.touchAction.press();
-        this.touchAction.startPosition = currentPoint;
-        this.touchAction.position = currentPoint;
-      } else {
-        this.touchAction.startPosition = null;
-      }
+      // Ensure touch has been released
+      this.touchAction.release(null);
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.insideCanvas = _.some(currentPoints, insideCanvas);
+      // TODO: Not sure if we should be making this decision - investigate in regards to pool or minigolf
+      // this.touchAction.insideCanvas = insideCanvas(currentPoint, this.canvas);
+      // if(this.touchAction.insideCanvas){
+      //   this.touchAction.press();
+      //   this.touchAction.startPosition = currentPoint;
+      //   this.touchAction.position = currentPoint;
+      // } else {
+      //   this.touchAction.startPosition = null;
+      // }
+      this.touchAction.press(currentPoints);
     },
 
     /**
@@ -250,8 +279,8 @@ define([
      * @param  {Event} e Event object
      */
     touchEnd: function(e){
-      this.touchAction.release();
-      this.touchAction.endPosition = this.getMouseLoc(e.changedTouches[0]);
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.release(currentPoints);
     },
 
     /**
@@ -261,8 +290,9 @@ define([
      * @param  {Event} e Event object
      */
     touchMove: function(e){
-      this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
-      if(this.touchAction.startPosition){
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.positions = currentPoints;
+      if(this.touchAction.startPositions){
         e.preventDefault();
       }
     },
@@ -327,8 +357,20 @@ define([
      * @memberOf InputManager#
      * @param  {Event} evt Event object
      * @return {Point} Normalized point
+     * @deprecated Deprecated in favor of normalizePoint function (Same functionality, different name)
      */
     getMouseLoc: function(evt){
+      return this.normalizePoint(evt);
+    },
+
+    /**
+     * Used to get a normalized point out of an Event object
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} evt Event object
+     * @return {Point} Normalized point
+     */
+    normalizePoint: function(evt){
       var coordsM = position(this.canvas);
       if(this.zoomRatio){
         return {

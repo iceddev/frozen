@@ -22,7 +22,8 @@
       "util": "github:dojo/util/1.8.3",
       "dcl": "github:uhop/dcl/1.0.2",
       "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
-      "lodash/lodash": "github:bestiejs/lodash/v1.1.1"
+      "lodash/lodash": "github:bestiejs/lodash/v1.2.1",
+      "hammer/hammer": "github:phated/hammer.js/master"
     }
   },
   "jam": {
