@@ -111,6 +111,7 @@ define([
       expect(im.keyDown).toBeDefined();
       expect(im.keyReleased).toBeDefined();
       expect(im.getMouseLoc).toBeDefined();
+      expect(im.normalizePoint).toBeDefined();
       expect(im.resize).toBeDefined();
     });
 
@@ -375,7 +376,7 @@ define([
         im.touchMove(mockEvent);
       });
 
-      it('should set touchAction.positions to the result of getMouseLoc', function(){
+      it('should set touchAction.positions to the result of normalizePoint', function(){
         expect(im.touchAction.positions).toEqual([currentPoint]);
       });
 
