@@ -8,6 +8,10 @@ define([
 
   describe('MouseAction', function(){
     var mouseAction;
+    var point = {
+      x: 12,
+      y: 12
+    };
 
     beforeEach(function(){
       mouseAction = new MouseAction();
@@ -27,6 +31,17 @@ define([
 
     it('should not have a position by default', function(){
       expect(mouseAction.position).toBeNull();
+    });
+
+    it('should set startPosition and position when press is called', function(){
+      mouseAction.press(point);
+      expect(mouseAction.startPosition).toBe(point);
+      expect(mouseAction.position).toBe(point);
+    });
+
+    it('should set endPosition when release is called', function(){
+      mouseAction.release(point);
+      expect(mouseAction.endPosition).toBe(point);
     });
 
   });

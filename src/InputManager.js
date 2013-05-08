@@ -51,12 +51,12 @@ define([
 
   return dcl([Mixer, Cleanup], {
     /**
-     * An array of keyActions being listened for
+     * Object of keyActions being listened for
      * @type {Array}
      * @memberOf InputManager#
      * @default
      */
-    keyActions: [],
+    keyActions: null,
     /**
      * The MouseAction to keep track of the mouse's state
      * @type {MouseAction}
@@ -167,6 +167,10 @@ define([
         });
       }
 
+      if(!this.keyActions){
+        this.keyActions = {};
+      }
+
       function cleanup(handler){
         handler.remove();
       }
@@ -215,10 +219,7 @@ define([
      * @param {GameAction} gameAction the GameAction to map
      * @param {Object} keyCode dojo.keys key code, or character
      */
-    mapToKey: function(gameAction, keyCode) {
-      if(!this.keyActions){
-        this.keyActions = [];
-      }
+    mapToKey: function(gameAction, keyCode){
       this.keyActions[keyCode] = gameAction;
     },
 
@@ -231,7 +232,6 @@ define([
      * @return {GameAction} GameAction that is mapped to keyCode
      */
     addKeyAction: function(keyCode, initialPressOnly){
-      // TODO: Remove dependency on GameAction
       var ga = new GameAction();
       if(initialPressOnly){
         ga.behavior = ga.statics.DETECT_INITAL_PRESS_ONLY;
@@ -388,7 +388,7 @@ define([
      * @return {GameAction|null} The GameAction associated with the keyCode else null
      */
     getKeyAction: function(e) {
-      if (this.keyActions.length) {
+      if (this.keyActions) {
         return this.keyActions[e.keyCode] || this.keyActions[String.fromCharCode(e.keyCode)];
       } else {
         return null;
