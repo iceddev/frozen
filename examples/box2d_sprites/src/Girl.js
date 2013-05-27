@@ -10,7 +10,7 @@ define([
     x: 60,
     y: 40,
     img: img,
-    girl: true
+    id: 'girl'
   });
 
 });
