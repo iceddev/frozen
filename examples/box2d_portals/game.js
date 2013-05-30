@@ -2,7 +2,6 @@
 require([
   'dojo/keys',
   'frozen/Animation',
-  'frozen/InputManager',
   'frozen/box2d/Box',
   'frozen/box2d/BoxGame',
   'frozen/box2d/entities/Rectangle',
@@ -16,7 +15,7 @@ require([
   'frozen/plugins/loadSound!sounds/hit.wav',
   'frozen/plugins/loadSound!sounds/whoosh.wav',
   'frozen/plugins/loadSound!sounds/backWhoosh.wav'
-], function(keys, Animation, InputManager, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
+], function(keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
 
   'use strict';
 
@@ -39,12 +38,6 @@ require([
   //setup a GameCore instance
   var game = new BoxGame({
     canvasId: 'canvas',
-    inputManager: new InputManager({
-      // emulateMouse: false,
-      canvas: document.getElementById('canvas'),
-      gameArea: document.getElementById('container'),
-      canvasPercentage: 0.95
-    }),
     box: new Box({resolveCollisions: true}),
     initInput: function(im){
       //tells the input manager to listen for key events
@@ -66,10 +59,7 @@ require([
         this.box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
-      if(im.touchAction && im.touchAction.isPressed()){ //mobile first :)
-        this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.touchAction.positions[0]), speed / 2);
-      }
-      else if(im.mouseAction && im.mouseAction.isPressed()){
+      if(im.mouseAction && im.mouseAction.isPressed()){
         this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.mouseAction.position), speed / 2);
       }
     },
