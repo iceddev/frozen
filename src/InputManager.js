@@ -7,6 +7,7 @@
 define([
   './GameAction',
   './MouseAction',
+  './TouchAction',
   './utils/insideCanvas',
   'dcl',
   'dcl/bases/Mixer',
@@ -14,8 +15,9 @@ define([
   'dojo/has',
   'dojo/on',
   'lodash',
+  'hammer',
   'dojo/domReady!'
-], function(GameAction, MouseAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _){
+], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _, hammer){
 
   'use strict';
 
@@ -49,12 +51,12 @@ define([
 
   return dcl([Mixer, Cleanup], {
     /**
-     * An array of keyActions being listened for
+     * Object of keyActions being listened for
      * @type {Array}
      * @memberOf InputManager#
      * @default
      */
-    keyActions: [],
+    keyActions: null,
     /**
      * The MouseAction to keep track of the mouse's state
      * @type {MouseAction}
@@ -63,8 +65,8 @@ define([
      */
     mouseAction: null,
     /**
-     * The MouseAction to keep track of touch events
-     * @type {MouseAction}
+     * The TouchAction to keep track of touch events
+     * @type {TouchAction}
      * @memberOf InputManager#
      * @default
      */
@@ -81,6 +83,7 @@ define([
      * @type {Boolean}
      * @memberOf InputManager#
      * @default
+     * @deprecated Mouse is always handled, use emulateMouse to specify how to handle it
      */
     handleMouse: true,
     /**
@@ -88,6 +91,7 @@ define([
      * @type {Boolean}
      * @memberOf InputManager#
      * @default
+     * @deprecated Touch is always handled, use emulateMouse to specify how to handle it
      */
     handleTouch: true,
     /**
@@ -111,43 +115,100 @@ define([
      * @default
      */
     canvasPercentage: null,
+    /**
+     * Emulate mouse events when using touch
+     * @type {Boolean}
+     * @memberOf InputManager#
+     * @default
+     */
+    emulateMouse: true,
+
+    /**
+     * Instance of Hammer.js - You can pass in a Hammer() constructor with options to customize your Hammer instance
+     * @type {Object}
+     * @default Hammer instance, bound to document, with prevent_default: true, drag_max_touches: 0, and hold: false
+     */
+    hammer: null,
+
+    /**
+     * Allows you to bind other Hammer.js events (such as Swipe or Doubletap);
+     * Warning: Only set flags or variables in this handler, otherwise your game might become slow
+     * @param  {String} gesture The gesture to bind
+     * @param  {Function} handler Event handler callback
+     * @return {Object} Object containing the remove function for removing the event.
+     */
+    on: function(gesture, handler){
+      var hammer = this.hammer;
+      var removeCleanup = this.removeCleanup;
+
+      hammer.on(gesture, handler);
+      var cleanup = this.pushCleanup([gesture, handler], function(args){
+        hammer.off.apply(hammer, args);
+      });
+
+      return {
+        remove: function(){
+          removeCleanup(cleanup);
+          cleanup();
+        }
+      };
+    },
 
     constructor: function(){
+      _.bindAll(this);
+
+      if(!this.hammer){
+        this.hammer = hammer(document, {
+          prevent_default: true,
+          drag_max_touches: 0,
+          // Hold uses setTimeout which is very bad for performance
+          // TODO: Do we want to allow this to be overridden?
+          hold: false
+        });
+      }
+
+      if(!this.keyActions){
+        this.keyActions = {};
+      }
+
       function cleanup(handler){
         handler.remove();
       }
 
-      _.bindAll(this);
-
       if(this.handleKeys){
-        this.pushCleanup(on(document, 'keydown', this.keyDown), cleanup);
-        this.pushCleanup(on(document, 'keyup', this.keyReleased), cleanup);
+        this.pushCleanup(on(document, 'keydown', this.keydown), cleanup);
+        this.pushCleanup(on(document, 'keyup', this.keyup), cleanup);
       }
 
-      if(this.handleMouse && !has('touch')){
-        this.pushCleanup(on(document, 'mousedown', this.mouseDown), cleanup);
-        this.pushCleanup(on(document, 'mousemove', this.mouseMove), cleanup);
-        this.pushCleanup(on(document, 'mouseup', this.mouseUp), cleanup);
-      }
-
-      if(this.handleTouch && has('touch')){
-        this.pushCleanup(on(document, 'touchstart', this.touchStart), cleanup);
-        this.pushCleanup(on(document, 'touchmove', this.touchMove), cleanup);
-        this.pushCleanup(on(document, 'touchend', this.touchEnd), cleanup);
-      }
-
-      if(!this.mouseAction){
-        this.mouseAction = new MouseAction();
-      }
-
-      if(!this.touchAction){
-        this.touchAction = new MouseAction();
+      if(this.emulateMouse){
+        this.on('touch', this.mousedown);
+        this.on('drag', this.mousemove);
+        this.on('release', this.mouseup);
+        if(!this.mouseAction){
+          this.mouseAction = new MouseAction();
+        }
+      } else {
+        this.on('touch', this.touchstart);
+        this.on('drag', this.touchmove);
+        this.on('release', this.touchend);
+        if(!this.touchAction){
+          this.touchAction = new TouchAction();
+        }
       }
 
       if(this.gameArea && this.canvasPercentage){
         this.pushCleanup(on(window, 'resize', this.resize), cleanup);
         this.pushCleanup(on(window, 'orientationchange', this.resize), cleanup);
       }
+    },
+
+    /**
+     * Determine whether a point is within the InputManager's canvas
+     * @param  {Point} point Point to test
+     * @return {Boolean} Whether or not the point is inside this InputManager's canvas
+     */
+    insideCanvas: function(point){
+      return insideCanvas(point, this.canvas);
     },
 
     /**
@@ -158,10 +219,7 @@ define([
      * @param {GameAction} gameAction the GameAction to map
      * @param {Object} keyCode dojo.keys key code, or character
      */
-    mapToKey: function(gameAction, keyCode) {
-      if(!this.keyActions){
-        this.keyActions = [];
-      }
+    mapToKey: function(gameAction, keyCode){
       this.keyActions[keyCode] = gameAction;
     },
 
@@ -174,7 +232,6 @@ define([
      * @return {GameAction} GameAction that is mapped to keyCode
      */
     addKeyAction: function(keyCode, initialPressOnly){
-      // TODO: Remove dependency on GameAction
       var ga = new GameAction();
       if(initialPressOnly){
         ga.behavior = ga.statics.DETECT_INITAL_PRESS_ONLY;
@@ -189,10 +246,31 @@ define([
      * @function
      * @memberOf InputManager#
      * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
      */
     mouseUp: function(e) {
-      this.mouseAction.release();
-      this.mouseAction.endPosition = this.getMouseLoc(e);
+      this.mouseup(e);
+    },
+
+    /**
+     * Called upon mouseup event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
+    mouseup: function(e){
+      this.mouseAction.release(this.normalizePoint(e.gesture.touches[0]));
+    },
+
+    /**
+     * Called upon mousedown event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    mouseDown: function(e){
+      this.mousedown(e);
     },
 
     /**
@@ -201,17 +279,23 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    mouseDown: function(e){
-      var currentPoint = this.getMouseLoc(e);
-      this.mouseAction.endPosition = null;
-      this.mouseAction.insideCanvas = insideCanvas(currentPoint, this.canvas);
-      if(this.mouseAction.insideCanvas){
-        this.mouseAction.press();
-        this.mouseAction.startPosition = currentPoint;
-        this.mouseAction.position = currentPoint;
-      } else {
-        this.mouseAction.startPosition = null;
-      }
+    mousedown: function(e){
+      // Ensure mouse has been released
+      this.mouseAction.release(null);
+      var currentPoint = this.normalizePoint(e.gesture.touches[0]);
+      this.mouseAction.insideCanvas = this.insideCanvas(currentPoint);
+      this.mouseAction.press(currentPoint);
+    },
+
+    /**
+     * Called upon mousemove event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    mouseMove: function(e){
+      this.mousemove(e);
     },
 
     /**
@@ -220,8 +304,19 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    mouseMove: function(e){
-      this.mouseAction.position = this.getMouseLoc(e);
+    mousemove: function(e){
+      this.mouseAction.position = this.normalizePoint(e.gesture.touches[0]);
+    },
+
+    /**
+     * Called upon touchstart event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    touchStart: function(e){
+      this.touchstart(e);
     },
 
     /**
@@ -230,17 +325,23 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    touchStart: function(e){
-      var currentPoint = this.getMouseLoc(e.changedTouches[0]);
-      this.touchAction.endPosition = null;
-      this.touchAction.insideCanvas = insideCanvas(currentPoint, this.canvas);
-      if(this.touchAction.insideCanvas){
-        this.touchAction.press();
-        this.touchAction.startPosition = currentPoint;
-        this.touchAction.position = currentPoint;
-      } else {
-        this.touchAction.startPosition = null;
-      }
+    touchstart: function(e){
+      // Ensure touch has been released
+      this.touchAction.release(null);
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.insideCanvas = _.some(currentPoints, this.insideCanvas);
+      this.touchAction.press(currentPoints);
+    },
+
+    /**
+     * Called upon touchend event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    touchEnd: function(e){
+      this.touchend(e);
     },
 
     /**
@@ -249,9 +350,20 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    touchEnd: function(e){
-      this.touchAction.release();
-      this.touchAction.endPosition = this.getMouseLoc(e.changedTouches[0]);
+    touchend: function(e){
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.release(currentPoints);
+    },
+
+    /**
+     * Called upon touchmove event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    touchMove: function(e){
+      this.touchmove(e);
     },
 
     /**
@@ -260,9 +372,10 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    touchMove: function(e){
-      this.touchAction.position = this.getMouseLoc(e.changedTouches[0]);
-      if(this.touchAction.startPosition){
+    touchmove: function(e){
+      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.positions = currentPoints;
+      if(this.touchAction.startPositions){
         e.preventDefault();
       }
     },
@@ -275,7 +388,7 @@ define([
      * @return {GameAction|null} The GameAction associated with the keyCode else null
      */
     getKeyAction: function(e) {
-      if (this.keyActions.length) {
+      if (this.keyActions) {
         return this.keyActions[e.keyCode] || this.keyActions[String.fromCharCode(e.keyCode)];
       } else {
         return null;
@@ -287,12 +400,21 @@ define([
      * @function
      * @memberOf InputManager#
      * @param  {Event} e Event object
+     * @deprecated Use keydown instead - same syntax as normal event handling
      */
     keyPressed: function(e) {
-      var gameAction = this.getKeyAction(e);
-      if (gameAction && !gameAction.isPressed()) {
-        gameAction.press();
-      }
+      this.keydown(e);
+    },
+
+    /**
+     * Called upon keydown event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     * @deprecated Use the lowercase name instead - same syntax as normal event handling
+     */
+    keyDown: function(e){
+      this.keydown(e);
     },
 
     /**
@@ -301,7 +423,7 @@ define([
      * @memberOf InputManager#
      * @param  {Event} e Event object
      */
-    keyDown: function(e) {
+    keydown: function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction && !gameAction.isPressed()) {
         gameAction.press();
@@ -313,8 +435,19 @@ define([
      * @function
      * @memberOf InputManager#
      * @param  {Event} e Event object
+     * @deprecated Use keyup instead - same syntax as normal event handling
      */
-    keyReleased : function(e) {
+    keyReleased: function(e){
+      this.keyup(e);
+    },
+
+    /**
+     * Called upon keyup event
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} e Event object
+     */
+    keyup: function(e) {
       var gameAction = this.getKeyAction(e);
       if (gameAction) {
         gameAction.release();
@@ -327,8 +460,20 @@ define([
      * @memberOf InputManager#
      * @param  {Event} evt Event object
      * @return {Point} Normalized point
+     * @deprecated Deprecated in favor of normalizePoint function (Same functionality, different name)
      */
     getMouseLoc: function(evt){
+      return this.normalizePoint(evt);
+    },
+
+    /**
+     * Used to get a normalized point out of an Event object
+     * @function
+     * @memberOf InputManager#
+     * @param  {Event} evt Event object
+     * @return {Point} Normalized point
+     */
+    normalizePoint: function(evt){
       var coordsM = position(this.canvas);
       if(this.zoomRatio){
         return {
