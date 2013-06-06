@@ -175,6 +175,13 @@ define([
       return singleFile ? files[0] : files;
     },
 
+    /**
+     * Flips an image using the logic in a flip function passed and attaches to resource manager with name
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @param  {Function} flipFn Function containing logic to flip image
+     * @return {Image} Flipped image
+     */
     flipImage: function(name, image, flipFn){
       this.allLoaded = false;
 
@@ -199,10 +206,22 @@ define([
       return wrapper.img;
     },
 
+    /**
+     * Flip image along x-axis using default flip logic
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @return {Image} Flipped image
+     */
     flipImageX: function(name, image){
       return this.flipImage(name, image, flipX);
     },
 
+    /**
+     * Flip image along the y-axis using default flip logic
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @return {Image} Flipped image
+     */
     flipImageY: function(name, image){
       return this.flipImage(name, image, flipY);
     },
