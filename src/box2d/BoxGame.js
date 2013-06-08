@@ -14,7 +14,7 @@
 
   'use strict';
 
-  return dcl(GameCore, {
+  var BoxGame = dcl(GameCore, {
     /**
      * The instance of Box used for this game.
      * @type {Box}
@@ -60,11 +60,19 @@
 
     /**
      * Updates the Box before update() is called
+     * @function preUpdate
+     * @memberOf BoxGame#
+     * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
+     * @deprecated Deprecated in favor of beforeUpdate
+     */
+
+    /**
+     * Updates the Box before update() is called
      * @function
      * @memberOf BoxGame#
      * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
      */
-    preUpdate: function(millis){
+    beforeUpdate: function(millis){
       if(this.boxUpdating){
         this.box.update(millis);
         this.box.updateExternalState(this.entities);
@@ -175,5 +183,7 @@
       });
     }
   });
+
+  return BoxGame;
 
 });
