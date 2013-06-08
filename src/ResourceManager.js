@@ -177,6 +177,8 @@ define([
 
     /**
      * Flips an image using the logic in a flip function passed and attaches to resource manager with name
+     * @function
+     * @memberOf ResourceManager#
      * @param  {String|Number} name Name for caching flipped image
      * @param  {Image} image Image to be flipped
      * @param  {Function} flipFn Function containing logic to flip image
@@ -208,6 +210,8 @@ define([
 
     /**
      * Flip image along x-axis using default flip logic
+     * @function
+     * @memberOf ResourceManager#
      * @param  {String|Number} name Name for caching flipped image
      * @param  {Image} image Image to be flipped
      * @return {Image} Flipped image
@@ -218,6 +222,8 @@ define([
 
     /**
      * Flip image along the y-axis using default flip logic
+     * @function
+     * @memberOf ResourceManager#
      * @param  {String|Number} name Name for caching flipped image
      * @param  {Image} image Image to be flipped
      * @return {Image} Flipped image
