@@ -7,9 +7,8 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'lodash',
   './listeners/Contact'
-], function(dcl, Mixer, _, Contact){
+], function(dcl, Mixer, Contact){
 
   'use strict';
 
