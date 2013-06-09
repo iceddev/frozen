@@ -38,8 +38,6 @@ require([
   //setup a GameCore instance
   var game = new BoxGame({
     canvasId: 'canvas',
-    gameAreaId: 'container',
-    canvasPercentage: 0.95,
     box: new Box({resolveCollisions: true}),
     initInput: function(im){
       //tells the input manager to listen for key events
@@ -61,10 +59,7 @@ require([
         this.box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
-      if(im.touchAction.isPressed()){ //mobile first :)
-        this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.touchAction.position), speed / 2);
-      }
-      else if(im.mouseAction.isPressed()){
+      if(im.mouseAction && im.mouseAction.isPressed()){
         this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.mouseAction.position), speed / 2);
       }
     },

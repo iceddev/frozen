@@ -3,7 +3,7 @@
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
   "version": "0.3.0",
   "devDependencies": {
-    "volo": "~0.2.9",
+    "volo": "~0.3.0",
     "grunt": "~0.4.1",
     "grunt-dojo": "~0.2.0",
     "grunt-open": "~0.2.0",
@@ -22,7 +22,8 @@
       "util": "github:dojo/util/1.8.3",
       "dcl": "github:uhop/dcl/1.0.2",
       "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
-      "lodash/lodash": "github:bestiejs/lodash/v1.1.1"
+      "lodash": "github:bestiejs/lodash/master",
+      "hammer/hammer": "github:phated/hammer.js/frozen"
     }
   },
   "jam": {

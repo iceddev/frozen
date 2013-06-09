@@ -6,8 +6,10 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer'
-], function(dcl, Mixer){
+  'dcl/bases/Mixer',
+  'lodash',
+  './listeners/Contact'
+], function(dcl, Mixer, _, Contact){
 
   'use strict';
 
@@ -93,7 +95,7 @@ define([
      * @memberOf Box#
      * @default
      */
-    resolveCollisions: false,
+    resolveCollisions: true,
     /**
      * A contact listener for callbacks on collision events. Default is this box itself.
      * @type {Object}
@@ -127,7 +129,8 @@ define([
       this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
 
       if(this.resolveCollisions){
-        this.addContactListener(this.contactListener || this);
+        this.contactListener = this.contactListener || new Contact({box: this});
+        this.addContactListener(this.contactListener);
       }
     },
 
@@ -141,8 +144,8 @@ define([
     update: function(millis) {
       // TODO: use window.performance.now()???
 
-      if(this.resolveCollisions){
-        this.collisions = {};
+      if(this.contactListener && this.contactListener.update){
+        this.contactListener.update(millis);
       }
 
       var start = Date.now();
@@ -179,8 +182,8 @@ define([
             linearVelocity: b.m_linearVelocity,
             angularVelocity: b.m_angularVelocity
           };
-          if(this.resolveCollisions){
-            state[b.GetUserData()].collisions = this.collisions[b.GetUserData()] || null;
+          if(this.contactListener && this.contactListener.collisions){
+            state[b.GetUserData()].collisions = this.contactListener.collisions[b.GetUserData()] || null;
           }
         }
       }
@@ -513,30 +516,21 @@ define([
      * Add a contactListener to the b2World
      * @function
      * @memberOf Box#
-     * @param {Object} callbacks Object containing a beginContant, endContact and/or postSolve keys and callbacks
+     * @param {Object} callbacks Object containing a beginContant, endContact and/or preSolve/postSolve keys and callbacks
      */
-    addContactListener: function(callbacks) {
+    addContactListener: function(contactListener) {
       var listener = new Box2D.Dynamics.b2ContactListener();
-      if (callbacks.beginContact) {
-        listener.BeginContact = function(contact) {
-          callbacks.beginContact(contact.GetFixtureA().GetBody().GetUserData(),
-                                 contact.GetFixtureB().GetBody().GetUserData());
-          };
+      if (contactListener.beginContact) {
+        listener.BeginContact = _.bind(contactListener.beginContact, contactListener);
       }
-      if (callbacks.endContact){
-
-        listener.endContact = function(contact) {
-          callbacks.endContact(contact.GetFixtureA().GetBody().GetUserData(),
-                               contact.GetFixtureB().GetBody().GetUserData());
-        };
+      if (contactListener.endContact){
+        listener.EndContact = _.bind(contactListener.endContact, contactListener);
       }
-      if (callbacks.postSolve){
-
-        listener.PostSolve = function(contact, impulse) {
-          callbacks.postSolve(contact.GetFixtureA().GetBody().GetUserData(),
-                               contact.GetFixtureB().GetBody().GetUserData(),
-                               impulse.normalImpulses[0]);
-        };
+      if(contactListener.preSolve){
+        listener.PreSolve = _.bind(contactListener.preSolve, contactListener);
+      }
+      if (contactListener.postSolve){
+        listener.PostSolve = _.bind(contactListener.postSolve, contactListener);
       }
       this.b2World.SetContactListener(listener);
     },
@@ -595,18 +589,7 @@ define([
       }
     },
 
-    beginContact: function(idA, idB){
 
-    },
-    endContact: function(idA, idB){
-
-    },
-    postSolve: function(idA, idB, impulse){
-      this.collisions[idA] = this.collisions[idA] || [];
-      this.collisions[idA].push({id: idB, impulse: impulse});
-      this.collisions[idB] = this.collisions[idB] || [];
-      this.collisions[idB].push({id: idA, impulse: impulse});
-    }
   });
 
 });
