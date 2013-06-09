@@ -19,10 +19,6 @@ define([
     return !!global.Audio;
   });
 
-  has.add('shittySound', function(){
-    return !!((has('android') || has('ios')) && has('webkit'));
-  });
-
   return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl
