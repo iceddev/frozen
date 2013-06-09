@@ -6,9 +6,8 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer',
-  'lodash'
-], function(dcl, Mixer, _){
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
   'use strict';
 
@@ -20,16 +19,9 @@ define([
      * @default
      */
     declaredClass: 'frozen/box2d/listeners/Contact',
-    constructor: function(args){
+    constructor: function(){
       this.collisions = this.collisions || {};
     },
-    /**
-     * The the Box instance that contains the bodies that collide with each other.
-     * @type {Box}
-     * @memberOf Contact#
-     * @default
-     */
-    box: null,
 
     /**
      * A map of collision objects
@@ -38,57 +30,59 @@ define([
      * @default
      */
     collisions: null,
+
     /**
-     * updates the state of the contact listener per iteration of the box world calculations.
+     * Resets the state of the contact listener per iteration of the box world calculations.
      * @function
      * @memberOf Contact#
-     * @param {Number} millis The number of milliseconds since the last update.
      */
-    update: function(millis){
+    reset: function(){
       this.collisions = {};
     },
+
     /**
      * Called when a box2d collison begins
-     * @function
+     * @function beginContact
      * @memberOf Contact#
-     * @param {Object} b2Contact The box2d contact object.
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {b2Contacnt} contact The box2d contact object.
      */
-    beginContact: function(b2Contact){
 
-    },
     /**
      * Called when a box2d collison ends
-     * @function
+     * @function endContact
      * @memberOf Contact#
-     * @param {Object} b2Contact The box2d contact object.
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {b2Contact} contact The box2d contact object.
     */
-    endContact: function(b2Contact){
 
-    },
     /**
      * Called before a box2d collison is resolved
-     * @function
+     * @function preSolve
      * @memberOf Contact#
-     * @param {Object} b2Contact The box2d contact object.
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {Object} oldManifold Old manifold object passed into preSolve listener
+     * @param {b2Contact} contact The box2d contact object.
     */
-    preSolve: function(b2Contact){
 
-    },
     /**
      * Called after a box2d collison is resolved
      * @function
      * @memberOf Contact#
-     * @param {Object} b2Contact The box2d contact object.
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {Object} impulse Impulse object passed into postSolve listener
+     * @param {b2Contact} contact The box2d contact object.
     */
-    postSolve: function(b2Contact, impulse){
-      var idA = b2Contact.GetFixtureA().GetBody().GetUserData();
-      var idB = b2Contact.GetFixtureB().GetBody().GetUserData();
+    postSolve: function(idA, idB, impulse, contact){
       this.collisions[idA] = this.collisions[idA] || [];
       this.collisions[idA].push({id: idB, impulse: impulse.normalImpulses[0]});
       this.collisions[idB] = this.collisions[idB] || [];
       this.collisions[idB].push({id: idA, impulse: impulse.normalImpulses[0]});
     }
-
   });
 
 });
