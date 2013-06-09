@@ -24,6 +24,16 @@ define([
       expect(box.gravityY).toBe(9.8);
     });
 
+    it('check the collision defaults', function(){
+      expect(box.resolveCollisions).toBe(false);
+      expect(box.contactListener).toBe(null);
+    });
+
+    it('should have add a contactListener if resolveCollisions is true', function(){
+      box = new Box({ resolveCollisions: true });
+      expect(box.contactListener).toBeDefined();
+    });
+
     it('check the scale default', function(){
       expect(box.scale).toBe(30);
     });
@@ -131,6 +141,24 @@ define([
       box.addJoint(joint);
       box.destroyJoint(joint.id);
       expect(box.jointsMap[joint.id]).not.toBeDefined();
+    });
+
+    it('check if a collision occured', function(){
+      box = new Box({ resolveCollisions: true });
+      var rect2 = new Rectangle({id: 'b', halfHeight: 5, halfWidth: 20, staticBody: true, x: -10, y: 50});
+      extMap.b = rect2;
+      box.addBody(rect);
+      box.addBody(rect2);
+      var collided = false;
+      //simulate 3 seconds at approx 60 frames/sec
+      for(var i = 0; i < 180; i++){
+        box.update(16);
+        box.updateExternalState(extMap);
+        if(rect.collisions){
+          collided = true;
+        }
+      }
+      expect(collided).toBe(true);
     });
 
   });
