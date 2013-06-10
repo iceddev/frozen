@@ -6,8 +6,9 @@
 
 define([
   'dcl',
-  'dcl/bases/Mixer'
-], function(dcl, Mixer){
+  'dcl/bases/Mixer',
+  './listeners/Contact'
+], function(dcl, Mixer, Contact){
 
   'use strict';
 
@@ -127,7 +128,11 @@ define([
       this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
 
       if(this.resolveCollisions){
-        this.addContactListener(this.contactListener || this);
+        this.contactListener = new Contact();
+      }
+
+      if(this.contactListener){
+        this.addContactListener(this.contactListener);
       }
     },
 
@@ -141,8 +146,8 @@ define([
     update: function(millis) {
       // TODO: use window.performance.now()???
 
-      if(this.resolveCollisions){
-        this.collisions = {};
+      if(this.contactListener && this.contactListener.reset){
+        this.contactListener.reset();
       }
 
       var start = Date.now();
@@ -179,8 +184,8 @@ define([
             linearVelocity: b.m_linearVelocity,
             angularVelocity: b.m_angularVelocity
           };
-          if(this.resolveCollisions){
-            state[b.GetUserData()].collisions = this.collisions[b.GetUserData()] || null;
+          if(this.contactListener && this.contactListener.collisions){
+            state[b.GetUserData()].collisions = this.contactListener.collisions[b.GetUserData()] || null;
           }
         }
       }
@@ -513,29 +518,28 @@ define([
      * Add a contactListener to the b2World
      * @function
      * @memberOf Box#
-     * @param {Object} callbacks Object containing a beginContant, endContact and/or postSolve keys and callbacks
+     * @param {Object} callbacks Object containing a beginContant, endContact and/or preSolve/postSolve keys and callbacks
      */
-    addContactListener: function(callbacks) {
+    addContactListener: function(contactListener){
       var listener = new Box2D.Dynamics.b2ContactListener();
-      if (callbacks.beginContact) {
-        listener.BeginContact = function(contact) {
-          callbacks.beginContact(contact.GetFixtureA().GetBody().GetUserData(),
-                                 contact.GetFixtureB().GetBody().GetUserData());
-          };
-      }
-      if (callbacks.endContact){
-
-        listener.endContact = function(contact) {
-          callbacks.endContact(contact.GetFixtureA().GetBody().GetUserData(),
-                               contact.GetFixtureB().GetBody().GetUserData());
+      if(contactListener.beginContact){
+        listener.BeginContact = function(contact){
+          contactListener.beginContact(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, contact);
         };
       }
-      if (callbacks.postSolve){
-
-        listener.PostSolve = function(contact, impulse) {
-          callbacks.postSolve(contact.GetFixtureA().GetBody().GetUserData(),
-                               contact.GetFixtureB().GetBody().GetUserData(),
-                               impulse.normalImpulses[0]);
+      if(contactListener.endContact){
+        listener.EndContact = function(contact){
+          contactListener.endContact(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, contact);
+        };
+      }
+      if(contactListener.preSolve){
+        listener.PreSolve = function(contact, oldManifold){
+          contactListener.preSolve(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, oldManifold, contact);
+        };
+      }
+      if (contactListener.postSolve){
+        listener.PostSolve = function(contact, impulse){
+          contactListener.postSolve(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, impulse, contact);
         };
       }
       this.b2World.SetContactListener(listener);
@@ -593,19 +597,6 @@ define([
           this.jointsMap[joint.id] = b2Joint;
         }
       }
-    },
-
-    beginContact: function(idA, idB){
-
-    },
-    endContact: function(idA, idB){
-
-    },
-    postSolve: function(idA, idB, impulse){
-      this.collisions[idA] = this.collisions[idA] || [];
-      this.collisions[idA].push({id: idB, impulse: impulse});
-      this.collisions[idB] = this.collisions[idB] || [];
-      this.collisions[idB].push({id: idA, impulse: impulse});
     }
   });
 
