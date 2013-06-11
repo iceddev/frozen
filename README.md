@@ -71,13 +71,12 @@ These technologies include:
 
 ## Development
 
-__Warning: don't run `npm install` unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D__
-
 ### Dependencies
 
 All development tasks depend on having dependencies installed.
 
-Use `npm install` to get all the NPM dependencies and start the `volo add`
+Use `npm install` to get all the build process dependencies
+Use `volo add` to get all the library dependencies
 
 ### Building the dist/frozen layer
 
