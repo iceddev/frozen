@@ -5,10 +5,15 @@
  */
 
 define([
-  'dcl'
-], function(dcl){
+  'dcl',
+  'dojo/has'
+], function(dcl, has){
 
   'use strict';
+
+  has.add('shittySound', function(){
+    return !!((has('android') || has('ios')) && has('webkit'));
+  });
 
   return dcl(null, {
     /**
