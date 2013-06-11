@@ -14,7 +14,9 @@ define([
     });
 
     afterEach(function(){
-      delete rm.resourceList;
+      for(var res in rm.resourceList){
+        delete rm.resourceList[res];
+      }
     });
 
     it('should default to allLoaded as false', function(){
@@ -38,6 +40,9 @@ define([
     it('should have functions defined', function(){
       expect(rm.loadImage).toBeDefined();
       expect(rm.loadSound).toBeDefined();
+      expect(rm.flipImage).toBeDefined();
+      expect(rm.flipImageX).toBeDefined();
+      expect(rm.flipImageY).toBeDefined();
       expect(rm.resourcesReady).toBeDefined();
       expect(rm.getPercentComplete).toBeDefined();
     });
@@ -215,6 +220,162 @@ define([
         }, 'should have complete downloading and flagged as complete', 500); // TODO: might need to change timeout if image loads slow
       });
 
+    });
+
+    describe('ResourceManager.flipImage()', function(){
+      var image;
+      var imgUrl = 'specs/fixtures/flipXY.png';
+      var canvas;
+      var ctx;
+      var flipped;
+
+      function customFlip(image){
+        var offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.height = image.height;
+        offscreenCanvas.width = image.width;
+        var ctx = offscreenCanvas.getContext('2d');
+
+        ctx.translate(offscreenCanvas.width, offscreenCanvas.height);
+        ctx.scale(-1, -1);
+        ctx.drawImage(image, 0, 0);
+        return offscreenCanvas.toDataURL();
+      }
+
+      beforeEach(function(){
+        image = rm.loadImage(imgUrl);
+        canvas = document.createElement('canvas');
+        ctx = canvas.getContext('2d');
+        flipped = rm.flipImage('flippedXY', image, customFlip);
+      });
+
+      afterEach(function(){
+        canvas = null;
+      });
+
+      it('should cache the flipped image in the resourceList with the named passed in', function(){
+        expect(rm.resourceList.flippedXY).toBeDefined();
+      });
+
+      it('should mark the flipped image as complete when finished flipping', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedXY.complete;
+        }, 'should have flipped the image', 500);
+      });
+
+      it('should take a custom function and return the flipped image', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedXY.complete;
+        }, 'should have flipped the image', 500);
+
+        runs(function(){
+          ctx.drawImage(flipped, 0, 0);
+          var pixel = ctx.getImageData(0, 0, 1, 1);
+          var r = pixel.data[0];
+          var g = pixel.data[1];
+          var b = pixel.data[2];
+          var a = pixel.data[3];
+          expect(r).toBe(0);
+          expect(g).toBe(0);
+          expect(b).toBe(0);
+          expect(a).toBe(255);
+        });
+      });
+    });
+
+    describe('ResourceManager.flipImageX()', function(){
+      var image;
+      var imgUrl = 'specs/fixtures/flipX.png';
+      var canvas;
+      var ctx;
+      var flipped;
+
+      beforeEach(function(){
+        image = rm.loadImage(imgUrl);
+        canvas = document.createElement('canvas');
+        ctx = canvas.getContext('2d');
+        flipped = rm.flipImageX('flippedX', image);
+      });
+
+      afterEach(function(){
+        canvas = null;
+      });
+
+      it('should cache the flipped image in the resourceList with the named passed in', function(){
+        expect(rm.resourceList.flippedX).toBeDefined();
+      });
+
+      it('should mark the flipped image as complete when finished flipping', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedX.complete;
+        }, 'should have flipped the image', 500);
+      });
+
+      it('should take a custom function and return the flipped image', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedX.complete;
+        }, 'should have flipped the image', 500);
+
+        runs(function(){
+          ctx.drawImage(flipped, 0, 0);
+          var pixel = ctx.getImageData(0, 0, 1, 1);
+          var r = pixel.data[0];
+          var g = pixel.data[1];
+          var b = pixel.data[2];
+          var a = pixel.data[3];
+          expect(r).toBe(0);
+          expect(g).toBe(0);
+          expect(b).toBe(0);
+          expect(a).toBe(255);
+        });
+      });
+    });
+
+    describe('ResourceManager.flipImageY()', function(){
+      var image;
+      var imgUrl = 'specs/fixtures/flipY.png';
+      var canvas;
+      var ctx;
+      var flipped;
+
+      beforeEach(function(){
+        image = rm.loadImage(imgUrl);
+        canvas = document.createElement('canvas');
+        ctx = canvas.getContext('2d');
+        flipped = rm.flipImageY('flippedY', image);
+      });
+
+      afterEach(function(){
+        canvas = null;
+      });
+
+      it('should cache the flipped image in the resourceList with the named passed in', function(){
+        expect(rm.resourceList.flippedY).toBeDefined();
+      });
+
+      it('should mark the flipped image as complete when finished flipping', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedY.complete;
+        }, 'should have flipped the image', 500);
+      });
+
+      it('should take a custom function and return the flipped image', function(){
+        waitsFor(function(){
+          return rm.resourceList.flippedY.complete;
+        }, 'should have flipped the image', 500);
+
+        runs(function(){
+          ctx.drawImage(flipped, 0, 0);
+          var pixel = ctx.getImageData(0, 0, 1, 1);
+          var r = pixel.data[0];
+          var g = pixel.data[1];
+          var b = pixel.data[2];
+          var a = pixel.data[3];
+          expect(r).toBe(0);
+          expect(g).toBe(0);
+          expect(b).toBe(0);
+          expect(a).toBe(255);
+        });
+      });
     });
 
     describe('ResourceManager.resourcesReady()', function(){
