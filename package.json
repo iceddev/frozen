@@ -3,7 +3,6 @@
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
   "version": "0.3.0",
   "devDependencies": {
-    "volo": "~0.3.0",
     "grunt": "~0.4.1",
     "grunt-dojo": "~0.2.0",
     "grunt-open": "~0.2.0",
@@ -34,7 +33,6 @@
     }
   },
   "scripts": {
-    "install": "volo add",
     "test": "grunt"
   },
   "dojoBuild": "frozen.profile.js"

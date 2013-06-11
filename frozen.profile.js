@@ -71,11 +71,13 @@ var profile = (function(){
         include: [
           'frozen/box2d/Box',
           'frozen/box2d/BoxGame',
+          'frozen/box2d/entities',
           'frozen/box2d/entities/Circle',
           'frozen/box2d/entities/Entity',
           'frozen/box2d/entities/Polygon',
           'frozen/box2d/entities/MultiPolygon',
           'frozen/box2d/entities/Rectangle',
+          'frozen/box2d/joints',
           'frozen/box2d/joints/Joint',
           'frozen/box2d/joints/Revolute',
           'frozen/box2d/joints/Distance',

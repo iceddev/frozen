@@ -19,10 +19,6 @@ define([
     return !!global.Audio;
   });
 
-  has.add('shittySound', function(){
-    return !!((has('android') || has('ios')) && has('webkit'));
-  });
-
   return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl
@@ -53,7 +49,11 @@ define([
 
       if(has('shittySound')){
         on.once(document, 'touchstart', function(e){
-          self.audio.load();
+          var vol = self.audio.volume;
+          self.audio.volume = 0;
+          self.audio.play();
+          self.audio.pause();
+          self.audio.volume = vol;
         });
         this._updateCurrentTime = null;
         on.once(this.audio, 'progress', function(){

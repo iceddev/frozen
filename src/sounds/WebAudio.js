@@ -25,6 +25,16 @@ define([
     audioContext = new window.AudioContext();
   }
 
+  if(has('shittySound')){
+    // Similar strategy to https://github.com/CreateJS/SoundJS
+    on.once(document, 'touchstart', function(){
+      var source = audioContext.createBufferSource();
+      source.buffer = audioContext.createBuffer(1, 1, 22050);
+      source.connect(audioContext.destination);
+      source.noteOn(0);
+    });
+  }
+
   return dcl(Sound, {
     /**
      * The declared class - used for debugging in dcl

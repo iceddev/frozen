@@ -7,9 +7,8 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'lodash',
   './listeners/Contact'
-], function(dcl, Mixer, _, Contact){
+], function(dcl, Mixer, Contact){
 
   'use strict';
 
@@ -95,7 +94,7 @@ define([
      * @memberOf Box#
      * @default
      */
-    resolveCollisions: true,
+    resolveCollisions: false,
     /**
      * A contact listener for callbacks on collision events. Default is this box itself.
      * @type {Object}
@@ -129,7 +128,10 @@ define([
       this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
 
       if(this.resolveCollisions){
-        this.contactListener = this.contactListener || new Contact({box: this});
+        this.contactListener = new Contact();
+      }
+
+      if(this.contactListener){
         this.addContactListener(this.contactListener);
       }
     },
@@ -144,8 +146,8 @@ define([
     update: function(millis) {
       // TODO: use window.performance.now()???
 
-      if(this.contactListener && this.contactListener.update){
-        this.contactListener.update(millis);
+      if(this.contactListener && this.contactListener.reset){
+        this.contactListener.reset();
       }
 
       var start = Date.now();
@@ -518,19 +520,27 @@ define([
      * @memberOf Box#
      * @param {Object} callbacks Object containing a beginContant, endContact and/or preSolve/postSolve keys and callbacks
      */
-    addContactListener: function(contactListener) {
+    addContactListener: function(contactListener){
       var listener = new Box2D.Dynamics.b2ContactListener();
-      if (contactListener.beginContact) {
-        listener.BeginContact = _.bind(contactListener.beginContact, contactListener);
+      if(contactListener.beginContact){
+        listener.BeginContact = function(contact){
+          contactListener.beginContact(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, contact);
+        };
       }
-      if (contactListener.endContact){
-        listener.EndContact = _.bind(contactListener.endContact, contactListener);
+      if(contactListener.endContact){
+        listener.EndContact = function(contact){
+          contactListener.endContact(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, contact);
+        };
       }
       if(contactListener.preSolve){
-        listener.PreSolve = _.bind(contactListener.preSolve, contactListener);
+        listener.PreSolve = function(contact, oldManifold){
+          contactListener.preSolve(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, oldManifold, contact);
+        };
       }
       if (contactListener.postSolve){
-        listener.PostSolve = _.bind(contactListener.postSolve, contactListener);
+        listener.PostSolve = function(contact, impulse){
+          contactListener.postSolve(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, impulse, contact);
+        };
       }
       this.b2World.SetContactListener(listener);
     },
@@ -587,9 +597,7 @@ define([
           this.jointsMap[joint.id] = b2Joint;
         }
       }
-    },
-
-
+    }
   });
 
 });

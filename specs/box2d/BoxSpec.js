@@ -25,7 +25,12 @@ define([
     });
 
     it('check the collision defaults', function(){
-      expect(box.resolveCollisions).toBe(true);
+      expect(box.resolveCollisions).toBe(false);
+      expect(box.contactListener).toBe(null);
+    });
+
+    it('should have add a contactListener if resolveCollisions is true', function(){
+      box = new Box({ resolveCollisions: true });
       expect(box.contactListener).toBeDefined();
     });
 
@@ -139,6 +144,7 @@ define([
     });
 
     it('check if a collision occured', function(){
+      box = new Box({ resolveCollisions: true });
       var rect2 = new Rectangle({id: 'b', halfHeight: 5, halfWidth: 20, staticBody: true, x: -10, y: 50});
       extMap.b = rect2;
       box.addBody(rect);
