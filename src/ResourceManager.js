@@ -14,13 +14,46 @@ define([
 
   'use strict';
 
-  // TODO: move this to its own module for unit testing?
+  // TODO: move these to its own module for unit testing?
   function normalizePath(baseDir, path){
     var joinedPath = path;
     if(baseDir){
       joinedPath = [baseDir, path].join('/');
     }
     return joinedPath.replace(/\/{2,}/g, '/');
+  }
+
+  function flipX(image){
+    var offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.height = image.height;
+    offscreenCanvas.width = image.width;
+    var ctx = offscreenCanvas.getContext('2d');
+
+    ctx.translate(offscreenCanvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(image, 0, 0);
+    return offscreenCanvas.toDataURL();
+  }
+
+  function flipY(image){
+    var offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.height = image.height;
+    offscreenCanvas.width = image.width;
+    var ctx = offscreenCanvas.getContext('2d');
+
+    ctx.translate(0, offscreenCanvas.height);
+    ctx.scale(1, -1);
+    ctx.drawImage(image, 0, 0);
+    return offscreenCanvas.toDataURL();
+  }
+
+  // TODO: make this a dcl constructor
+  function imageWrapper(filename){
+    return {
+      name: filename,
+      img: new Image(),
+      complete: false
+    };
   }
 
   return dcl(Mixer, {
@@ -86,21 +119,16 @@ define([
 
         this.allLoaded = false;
 
-        var img = new Image();
-        var imgWrapper = {
-          name: filename,
-          img: img,
-          complete: false
-        };
+        var wrapper = imageWrapper(filename);
 
-        var imageComplete = _.partial(function(imgWrapper, evt){
-          imgWrapper.complete = true;
-        }, imgWrapper);
-        on(img, 'load', imageComplete);
-        img.src = filename;
+        var imageComplete = _.partial(function(wrapper, evt){
+          wrapper.complete = true;
+        }, wrapper);
+        on.once(wrapper.img, 'load', imageComplete);
+        wrapper.img.src = filename;
 
-        this.resourceList[filename] = imgWrapper;
-        files[key] = img;
+        this.resourceList[filename] = wrapper;
+        files[key] = wrapper.img;
       }
 
       return singleFile ? files[0] : files;
@@ -148,6 +176,63 @@ define([
     },
 
     /**
+     * Flips an image using the logic in a flip function passed and attaches to resource manager with name
+     * @function
+     * @memberOf ResourceManager#
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @param  {Function} flipFn Function containing logic to flip image
+     * @return {Image} Flipped image
+     */
+    flipImage: function(name, image, flipFn){
+      this.allLoaded = false;
+
+      var wrapper = imageWrapper(name);
+      this.resourceList[name] = wrapper;
+
+      on.once(wrapper.img, 'load', function(){
+        wrapper.complete = true;
+      });
+
+      on.once(image, 'load', function(){
+        wrapper.img.src = flipFn(image);
+      });
+
+      _.any(this.resourceList, function(resource){
+        if(resource.img === image && resource.complete){
+          wrapper.img.src = flipFn(image);
+          return true;
+        }
+      });
+
+      return wrapper.img;
+    },
+
+    /**
+     * Flip image along x-axis using default flip logic
+     * @function
+     * @memberOf ResourceManager#
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @return {Image} Flipped image
+     */
+    flipImageX: function(name, image){
+      return this.flipImage(name, image, flipX);
+    },
+
+    /**
+     * Flip image along the y-axis using default flip logic
+     * @function
+     * @memberOf ResourceManager#
+     * @param  {String|Number} name Name for caching flipped image
+     * @param  {Image} image Image to be flipped
+     * @return {Image} Flipped image
+     */
+    flipImageY: function(name, image){
+      return this.flipImage(name, image, flipY);
+    },
+
+    /**
      * Checks whether the resources have finished loading
      * @function
      * @memberOf ResourceManager#
@@ -155,7 +240,7 @@ define([
     resourcesReady: function(){
       if(this.allLoaded){
         return true;
-      }else{
+      } else {
         for(var filename in this.resourceList){
           var resource = this.resourceList[filename];
           if(!resource.complete){
@@ -185,7 +270,7 @@ define([
       }
       if(length === 0){
         return 0;
-      }else{
+      } else {
         return Math.round((numComplete / length) * 100.0);
       }
     }
