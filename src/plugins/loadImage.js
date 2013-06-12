@@ -24,13 +24,6 @@ define([
   return {
     load: function(resource, req, callback, config){
       resource = parseString(resource);
-      if(typeof resource !== 'string'){
-        _.forEach(resource, function(res){
-          res = req.toUrl(res);
-        });
-      } else {
-        resource = req.toUrl(resource);
-      }
       var res = rm.loadImage(resource);
       callback(res);
     }
