@@ -5,12 +5,13 @@
  */
 
 define([
+  'require',
   './plugins/sound!',
   'dcl',
   'dcl/bases/Mixer',
   'lodash',
   'dojo/on'
-], function(Sound, dcl, Mixer, _, on){
+], function(req, Sound, dcl, Mixer, _, on){
 
   'use strict';
 
@@ -58,9 +59,10 @@ define([
       on.once(self.img, 'load', function(){
         self.complete = true;
       });
+      this.load();
     },
     load: function(){
-      this.img.src = this.name;
+      this.img.src = req.toUrl(this.name);
     }
   });
 
@@ -126,7 +128,6 @@ define([
         self.allLoaded = false;
 
         var wrapper = new ImageWrapper(filename);
-        wrapper.load();
         self.resourceList[filename] = wrapper;
         result[key] = wrapper.img;
       });
