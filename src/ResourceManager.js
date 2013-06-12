@@ -47,14 +47,22 @@ define([
     return offscreenCanvas.toDataURL();
   }
 
-  // TODO: make this a dcl constructor
-  function imageWrapper(filename){
-    return {
-      name: filename,
-      img: new Image(),
-      complete: false
-    };
-  }
+  var ImageWrapper = dcl(null, {
+    name: '',
+    img: null,
+    complete: false,
+    constructor: function(filename){
+      var self = this;
+      self.name = filename;
+      self.img = new Image();
+      on.once(self.img, 'load', function(){
+        self.complete = true;
+      });
+    },
+    load: function(){
+      this.img.src = this.name;
+    }
+  });
 
   return dcl(Mixer, {
     /**
@@ -96,42 +104,34 @@ define([
     loadImage: function(files){
       var singleFile = false;
       // Normalize arguments
-      if(!Array.isArray(files)){
+      if(typeof files !== 'object'){
         if(typeof files === 'string'){
           singleFile = true;
           files = [files];
-        } else if(typeof files !== 'object'){
+        } else {
           return;
         }
       }
 
-      for(var key in files){
-        if(!files.hasOwnProperty(key)){
-          continue;
-        }
-        var filename = normalizePath(this.imageDir, files[key]);
+      var self = this;
+
+      var fileList = _.transform(files, function(result, file, key){
+        var filename = normalizePath(self.imageDir, file);
 
         //if we already have the image, just return it
-        if(this.resourceList[filename]){
-          files[key] = this.resourceList[filename].img;
-          continue;
+        if(self.resourceList[filename]){
+          return result[key] = self.resourceList[filename].img;
         }
 
-        this.allLoaded = false;
+        self.allLoaded = false;
 
-        var wrapper = imageWrapper(filename);
+        var wrapper = new ImageWrapper(filename);
+        wrapper.load();
+        self.resourceList[filename] = wrapper;
+        result[key] = wrapper.img;
+      });
 
-        var imageComplete = _.partial(function(wrapper, evt){
-          wrapper.complete = true;
-        }, wrapper);
-        on.once(wrapper.img, 'load', imageComplete);
-        wrapper.img.src = filename;
-
-        this.resourceList[filename] = wrapper;
-        files[key] = wrapper.img;
-      }
-
-      return singleFile ? files[0] : files;
+      return singleFile ? fileList[0] : fileList;
     },
 
     /**
@@ -144,35 +144,33 @@ define([
     loadSound: function(files){
       var singleFile = false;
       // Normalize arguments
-      if(!Array.isArray(files)){
+      if(typeof files !== 'object'){
         if(typeof files === 'string'){
           singleFile = true;
           files = [files];
-        } else if(typeof files !== 'object'){
+        } else {
           return;
         }
       }
 
-      for(var key in files){
-        if(!files.hasOwnProperty(key)){
-          continue;
-        }
-        var filename = normalizePath(this.soundDir, files[key]);
+      var self = this;
+
+      var fileList = _.transform(files, function(result, file, key){
+        var filename = normalizePath(self.soundDir, file);
 
         //if we already have the sound, just return it
-        if(this.resourceList[filename]){
-          files[key] = this.resourceList[filename];
-          continue;
+        if(self.resourceList[filename]){
+          return result[key] = self.resourceList[filename];
         }
 
-        this.allLoaded = false;
+        self.allLoaded = false;
 
         var sound = new Sound(filename);
-        this.resourceList[filename] = sound;
+        self.resourceList[filename] = sound;
+        result[key] = sound;
+      });
 
-        files[key] = sound;
-      }
-      return singleFile ? files[0] : files;
+      return singleFile ? fileList[0] : fileList;
     },
 
     /**
@@ -187,12 +185,8 @@ define([
     flipImage: function(name, image, flipFn){
       this.allLoaded = false;
 
-      var wrapper = imageWrapper(name);
+      var wrapper = new ImageWrapper(name);
       this.resourceList[name] = wrapper;
-
-      on.once(wrapper.img, 'load', function(){
-        wrapper.complete = true;
-      });
 
       on.once(image, 'load', function(){
         wrapper.img.src = flipFn(image);
