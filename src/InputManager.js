@@ -305,7 +305,8 @@ define([
      * @param  {Event} e Event object
      */
     mousemove: function(e){
-      this.mouseAction.position = this.normalizePoint(e.gesture.touches[0]);
+      var evt = e.gesture ? e.gesture.touches[0] : e;
+      this.mouseAction.position = this.normalizePoint(evt);
     },
 
     /**
