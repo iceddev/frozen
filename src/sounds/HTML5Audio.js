@@ -6,12 +6,13 @@
  */
 
 define([
+  'require',
   './Sound',
   '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has'
-], function(Sound, removeExtension, dcl, on, has){
+], function(req, Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -46,6 +47,7 @@ define([
       if(basename === filename){
         filename = basename + this._chooseFormat();
       }
+      filename = req.toUrl(filename);
 
       if(has('shittySound')){
         on.once(document, 'touchstart', function(e){
