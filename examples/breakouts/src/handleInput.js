@@ -25,6 +25,7 @@ define([
         }
         if(this.state.launchMillis <= 0){
           this.box.setPosition(paddle.id, xPos, paddle.y);
+          this.box.setAngularVelocity(paddle.id, 0);
         } else {
           paddle.x = xPos; //force update to render paddle movement during countdown
         }
