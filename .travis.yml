@@ -8,6 +8,8 @@ notifications:
       - info@iceddev.com
     on_success: always
     on_failure: always
+git:
+  depth: 1
 before_install:
   - "npm install -g bower grunt-cli"
   - "bower install --production"
