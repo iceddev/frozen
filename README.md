@@ -108,6 +108,9 @@ __Breaking Changes__
 
 __New Features__
 
+* Touch/Mouse/Pointer event normalization with Hammer.js
+* Gesture support with Hammer.js
+
 __Non-Breaking Changes__
 
 __Deprecations__
