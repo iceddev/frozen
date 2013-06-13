@@ -9,6 +9,7 @@
     ".travis.yml",
     "**/.*",
     "node_modules",
+    "jam",
     "deps",
     "libs",
     "docs",
