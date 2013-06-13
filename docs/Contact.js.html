@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>
-    Source: sounds/HTML5Audio.js
+    Source: box2d/listeners/Contact.js
     
       
         - frozen: v0.3.0
@@ -78,139 +78,94 @@
     <section>
         <article>
             <pre id="source" class="source"><code>/**
- * An Audio object that implements HTML5 Audio into a generic API
- * @name HTML5Audio
- * @constructor HTML5Audio
- * @extends Sound
+ * This contact listener for the Box2d world assigns collision objects to entities when they collide.
+ * @name Contact
+ * @constructor Contact
  */
 
 define([
-  'require',
-  './Sound',
-  '../utils/removeExtension',
   'dcl',
-  'dojo/on',
-  'dojo/has'
-], function(req, Sound, removeExtension, dcl, on, has){
+  'dcl/bases/Mixer'
+], function(dcl, Mixer){
 
   'use strict';
 
-  has.add('HTML5Audio', function(global){
-    return !!global.Audio;
-  });
-
-  return dcl(Sound, {
+  return dcl(Mixer, {
     /**
      * The declared class - used for debugging in dcl
      * @type {String}
-     * @memberOf HTML5Audio#
+     * @memberOf Contact#
      * @default
      */
-    declaredClass: 'frozen/sounds/HTML5Audio',
+    declaredClass: 'frozen/box2d/listeners/Contact',
+    constructor: function(){
+      this.collisions = this.collisions || {};
+    },
+
     /**
-     * The initial Audio object - used to load the sound prior to playing
-     * @type {Audio}
-     * @memberOf HTML5Audio#
+     * A map of collision objects
+     * @type {Array}
+     * @memberOf Contact#
      * @default
      */
-    audio: null,
+    collisions: null,
 
-    load: function(filename){
-      this.audio = new Audio();
-
-      var self = this;
-
-      this.name = filename;
-
-      var basename = removeExtension(filename);
-      if(basename === filename){
-        filename = basename + this._chooseFormat();
-      }
-      filename = req.toUrl(filename);
-
-      if(has('shittySound')){
-        on.once(document, 'touchstart', function(e){
-          var vol = self.audio.volume;
-          self.audio.volume = 0;
-          self.audio.play();
-          self.audio.pause();
-          self.audio.volume = vol;
-        });
-        this._updateCurrentTime = null;
-        on.once(this.audio, 'progress', function(){
-          if(self._updateCurrentTime !== null){
-            self._updateCurrentTime();
-          }
-        });
-      }
-
-      this.audio.pause();
-      this.audio.preload = 'auto';
-      on.once(this.audio, 'error', function(){
-        var format = self._nextFormat();
-        if(format){
-          self.load(self.name);
-        } else {
-          self.audio.src = null;
-          self.complete = true;
-        }
-      });
-      on.once(this.audio, 'loadeddata', function(e){
-        self.complete = true;
-      });
-      this.audio.src = filename;
+    /**
+     * Resets the state of the contact listener per iteration of the box world calculations.
+     * @function
+     * @memberOf Contact#
+     */
+    reset: function(){
+      this.collisions = {};
     },
 
-    loop: function(volume){
-      var audio = this._initAudio(volume, true);
-      on.once(audio, 'loadeddata', function(e){
-        audio.play();
-      });
-    },
+    /**
+     * Called when a box2d collison begins
+     * @function beginContact
+     * @memberOf Contact#
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {b2Contacnt} contact The box2d contact object.
+     */
 
-    play: function(volume, startTime){
-      startTime = startTime || 0;
+    /**
+     * Called when a box2d collison ends
+     * @function endContact
+     * @memberOf Contact#
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {b2Contact} contact The box2d contact object.
+    */
 
-      if(has('shittySound')){
-        try {
-          this.audio.currentTime = startTime / 1000;
-          return this.audio.play();
-        } catch(err){
-          this._updateCurrentTime = function(){
-            this._updateCurrentTime = null;
-            this.audio.currentTime = startTime / 1000;
-            return this.audio.play();
-          };
-          return this.audio.play();
-        }
-      }
+    /**
+     * Called before a box2d collison is resolved
+     * @function preSolve
+     * @memberOf Contact#
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {Object} oldManifold Old manifold object passed into preSolve listener
+     * @param {b2Contact} contact The box2d contact object.
+    */
 
-      var audio = this._initAudio(volume, false);
-      on.once(audio, 'loadeddata', function(e){
-        audio.currentTime = startTime / 1000;
-        audio.play();
-      });
-    },
-
-    _initAudio: function(volume, loop){
-      loop = typeof loop === 'boolean' ? loop : false;
-
-      var audio = new Audio();
-      audio.pause();
-      audio.volume = volume || 1;
-      audio.loop = loop;
-      audio.preload = 'auto';
-      // TODO: investigate if this.audio.currentSrc shares buffer and ditch mozLoadFrom if it does
-      if(audio.mozLoadFrom){
-        audio.mozLoadFrom(this.audio);
-      } else {
-        audio.src = this.audio.currentSrc;
-      }
-      return audio;
+    /**
+     * Called after a box2d collison is resolved
+     * @function
+     * @memberOf Contact#
+     * @param {String} idA Id of body A
+     * @param {String} idB Id of body B
+     * @param {Object} impulse Impulse object passed into postSolve listener
+     * @param {b2Contact} contact The box2d contact object.
+    */
+    postSolve: function(idA, idB, impulse, contact){
+      this.collisions[idA] = this.collisions[idA] || [];
+      this.collisions[idA].push({id: idB, impulse: impulse.normalImpulses[0]});
+      this.collisions[idB] = this.collisions[idB] || [];
+      this.collisions[idB].push({id: idA, impulse: impulse.normalImpulses[0]});
     }
   });
 
-});</code></pre>
+});
+</code></pre>
         </article>
     </section>
 
