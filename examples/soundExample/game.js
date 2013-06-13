@@ -49,7 +49,7 @@ require([
       }
 
       //.play sounds with the space bar !
-      if(im.keyActions[keys.SPACE].getAmount() || im.touchAction.isPressed()){
+      if(im.keyActions[keys.SPACE].getAmount()){
         yipee.play();
       }
 
@@ -57,11 +57,6 @@ require([
       if(im.mouseAction.isPressed()){
         x = im.mouseAction.position.x;
         y = im.mouseAction.position.y;
-      }
-
-      if(im.touchAction.isPressed()){
-        x = im.touchAction.position.x;
-        y = im.touchAction.position.y;
       }
     },
     update: function(millis){
