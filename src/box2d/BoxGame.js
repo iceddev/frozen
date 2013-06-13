@@ -8,8 +8,9 @@
  define([
   '../GameCore',
   './Box',
+  'lodash',
   'dcl'
-], function(GameCore, Box, dcl){
+], function(GameCore, Box, _, dcl){
 
   'use strict';
 
@@ -71,7 +72,7 @@
     },
 
     /**
-     * Adds an Entity to entities and box
+     * Adds an Entity object to entities and box
      * @function
      * @memberOf BoxGame#
      * @param {Entity} entity Entity to add
@@ -82,7 +83,22 @@
     },
 
     /**
-     * Removes an Entity from entities and box
+     * Adds a series of Entity objects to entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
+     */
+    addBodies: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var entities = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(entities, function(entity){
+        self.addBody(entity);
+      });
+    },
+
+    /**
+     * Removes an Entity object from entities and box
      * @function
      * @memberOf BoxGame#
      * @param  {Entity} entity Entity to remove
@@ -90,6 +106,21 @@
     removeBody: function(entity){
       this.box.removeBody(entity.id);
       delete this.entities[entity.id];
+    },
+
+    /**
+     * Removes a series of Entity objects from entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
+     */
+    removeBodies: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var entities = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(entities, function(entity){
+        self.removeBody(entity);
+      });
     },
 
     /**
@@ -104,6 +135,21 @@
     },
 
     /**
+     * Adds a series of Joint objects to joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
+     */
+    addJoints: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var joints = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(joints, function(entity){
+        self.addJoint(entity);
+      });
+    },
+
+    /**
      * Removes a Joint from joints and box
      * @function
      * @memberOf BoxGame#
@@ -112,6 +158,21 @@
     removeJoint: function(joint){
       this.box.removeJoint(joint.id);
       delete this.joints[joint.id];
+    },
+
+    /**
+     * Removes a series of Joint objects from joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
+     */
+    removeJoints: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var joints = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(joints, function(entity){
+        self.removeJoint(entity);
+      });
     }
   });
 

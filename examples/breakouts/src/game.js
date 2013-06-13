@@ -44,20 +44,6 @@ define([
       prevLaunchMillis: 3001 //to calc if should beep on countdown time change
     },
     initInput: initInput,
-    addBodies: function(){
-      var args = _.toArray(arguments);
-      var entities = _.flatten(args, true);
-      _.forEach(entities, function(entity){
-        this.addBody(entity);
-      }, this);
-    },
-    removeBodies: function(){
-      var args = _.toArray(arguments);
-      var entities = _.flatten(args, true);
-      _.forEach(entities, function(entity){
-        this.removeBody(entity);
-      }, this);
-    },
     newBall: function(){
       var newBall = new Ball();
       this.state.balls.push(newBall);
