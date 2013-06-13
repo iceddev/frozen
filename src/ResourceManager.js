@@ -59,7 +59,6 @@ define([
       on.once(self.img, 'load', function(){
         self.complete = true;
       });
-      this.load();
     },
     load: function(){
       this.img.src = req.toUrl(this.name);
@@ -128,6 +127,10 @@ define([
         self.allLoaded = false;
 
         var wrapper = new ImageWrapper(filename);
+        // Need to explicitly call load because flipImage also uses this object
+        // which is probably a bad idea and should change in future
+        // TODO: different objects for flipped image and regular image
+        wrapper.load();
         self.resourceList[filename] = wrapper;
         result[key] = wrapper.img;
       });
