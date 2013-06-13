@@ -126,6 +126,7 @@ define([
     /**
      * Instance of Hammer.js - You can pass in a Hammer() constructor with options to customize your Hammer instance
      * @type {Object}
+     * @memberOf InputManager#
      * @default Hammer instance, bound to document, with prevent_default: true, drag_max_touches: 0, and hold: false
      */
     hammer: null,
@@ -133,6 +134,8 @@ define([
     /**
      * Allows you to bind other Hammer.js events (such as Swipe or Doubletap);
      * Warning: Only set flags or variables in this handler, otherwise your game might become slow
+     * @function
+     * @memberOf InputManager#
      * @param  {String} gesture The gesture to bind
      * @param  {Function} handler Event handler callback
      * @return {Object} Object containing the remove function for removing the event.
@@ -204,6 +207,8 @@ define([
 
     /**
      * Determine whether a point is within the InputManager's canvas
+     * @function
+     * @memberOf InputManager#
      * @param  {Point} point Point to test
      * @return {Boolean} Whether or not the point is inside this InputManager's canvas
      */

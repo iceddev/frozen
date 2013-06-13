@@ -1,5 +1,5 @@
 /**
- * AMD Plugin for loading Images
+ * AMD Plugin for loading Sounds
  * @module plugins/loadSound
  * @example
  * define([
