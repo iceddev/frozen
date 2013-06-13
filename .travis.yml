@@ -9,5 +9,5 @@ notifications:
     on_success: always
     on_failure: always
 before_install:
-  - "npm install -g volo grunt-cli"
-  - "volo add"
+  - "npm install -g bower grunt-cli"
+  - "bower install --production"
