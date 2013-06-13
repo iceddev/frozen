@@ -62,9 +62,11 @@ These technologies include:
 * [Node.js](http://nodejs.org/) and [npm](https://npmjs.org/) - used for dependecy mangement for our build process and development workflow
 * [Grunt](http://gruntjs.com/) - task runner for our development workflow, and allows for a single entry point into development configuration
 * [Volo](http://volojs.org/) - clientside dependency management and project scaffolding tool
-* [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
+* [Lo-Dash](http://lodash.com/) - low-level utility library used inside the library
+* [Hammer.js](http://eightmedia.github.io/hammer.js/) - multi-touch library used for mouse/touch/pointer event normalization and gestures
 * [dcl](http://www.dcljs.org/) - used for generating constructors and supplying AOP convenience methods
 * [Box2d](https://box2dweb.googlecode.com/) - used for physics calculations in games
+* [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
 * [JSDoc](http://usejsdoc.org/) - generates documentation for code
 * [Jasmine](http://pivotal.github.com/jasmine/) - tests all use Jasmine
 * [AMD](http://requirejs.org/docs/whyamd.html) - all modules are written with AMD and the single layer includes an AMD module loader
@@ -99,6 +101,16 @@ Use `volo add` to get all the library dependencies
 `grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.4.0</sup>
+
+__Breaking Changes__
+
+__New Features__
+
+__Non-Breaking Changes__
+
+__Deprecations__
 
 ### <sup>v0.3.0</sup>
 
