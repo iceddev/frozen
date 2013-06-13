@@ -1,7 +1,8 @@
 {
-  "name": "frozenjs-breakouts",
+  "name": "Breakouts",
   "description": "Breakouts implementation with FrozenJS",
   "version": "0.1.0",
+  "position": 11,
   "devDependencies": {
     "volo": "~0.2.9",
     "volo-grunt": "0.1.2",
