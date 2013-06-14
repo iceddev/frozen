@@ -88,12 +88,12 @@ define([
       this.direction = this.statics.EAST;
     },
     /**
-     * Updates this creature's current image (frame), and changes which animation it should be using if neccesary.
+     * Updates this creature's current direction (frame), and changes which animation it should be using if neccesary.
      * @function
      * @memberOf Creature#
      * @param {Number} elapsedTime Elapsed time in milliseconds
      */
-    update: function(elapsedTime){
+    updateDirection: function(elapsedTime){
       this.x += this.dx * elapsedTime;
       this.y += this.dy * elapsedTime;
 
@@ -122,7 +122,15 @@ define([
           this.state = this.statics.STATE_WALKING;
         }
       }
+    },
 
+    /**
+     * Updates this creature's current animation.
+     * @function
+     * @memberOf Creature#
+     * @param {Number} elapsedTime Elapsed time in milliseconds
+     */
+    updateAnimations: function(elapsedTime){
       if(this.state === this.statics.STATE_WALKING){
         this.anim = this.walkingAnims[this.direction];
       } else if(this.state === this.statics.STATE_DYING){
@@ -132,6 +140,7 @@ define([
       }
       this.anim.update(elapsedTime);
     },
+
     /**
      * Used to create animations from a sheet of tiles
      * @function
