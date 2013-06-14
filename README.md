@@ -106,6 +106,8 @@ Use `volo add` to get all the library dependencies
 
 __Breaking Changes__
 
+* Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
+
 __New Features__
 
 * Touch/Mouse/Pointer event normalization with Hammer.js
