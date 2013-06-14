@@ -1,4 +1,4 @@
-//swap this out for JSON from editor at http://phated.github.com/frozen-editor
+// swap this out for JSON from editor at http://phated.github.com/frozen-editor
 define({
   "entities": [
     {

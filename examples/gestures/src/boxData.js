@@ -1,4 +1,4 @@
-//swap this out for JSON from editor at http://phated.github.com/frozen-editor
+// swap this out for JSON from editor at http://phated.github.com/frozen-editor
 define({
   "entities": [
     {
@@ -9,8 +9,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Rectangle",
-      "id": 3,
-      "restitution": 0
+      "id": 3
     },
     {
       "x": 428,
@@ -20,8 +19,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Rectangle",
-      "id": 4,
-      "restitution": 0
+      "id": 4
     },
     {
       "x": 830.5,
@@ -31,8 +29,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Rectangle",
-      "id": 5,
-      "restitution": 0
+      "id": 5
     },
     {
       "x": 423.5,
@@ -42,8 +39,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Rectangle",
-      "id": 6,
-      "restitution": 0
+      "id": 6
     },
     {
       "points": [
@@ -73,8 +69,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Polygon",
-      "id": 7,
-      "restitution": 0
+      "id": 7
     },
     {
       "points": [
@@ -104,8 +99,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Polygon",
-      "id": 8,
-      "restitution": 0
+      "id": 8
     },
     {
       "points": [
@@ -135,8 +129,7 @@ define({
       "staticBody": true,
       "zone": false,
       "type": "Polygon",
-      "id": 9,
-      "restitution": 0
+      "id": 9
     }
   ],
   "joints": [],

@@ -1,27 +1,14 @@
 define([
   'dcl',
   'frozen/box2d/entities/Circle',
+  'frozen/reiner/Creature',
   'frozen/Animation',
   'frozen/utils/degreesFromCenter'
-], function(dcl, Circle, Animation, degreesFromCenter){
+], function(dcl, Circle, Creature, Animation, degreesFromCenter){
 
   'use strict';
 
-  var statics = {
-    EAST: 0,
-    NORTH: 1,
-    NORTHEAST: 2,
-    NORTHWEST: 3,
-    SOUTH: 4,
-    SOUTHEAST: 5,
-    SOUTHWEST: 6,
-    WEST: 7,
-    STATE_WALKING: 0,
-    STATE_DYING: 1,
-    STATE_IDLE: 2
-  };
-
-  return dcl(Circle, {
+  return dcl([Creature, Circle], {
     radius: 15,
     restitution: 1,
     linearDamping: 0,
@@ -54,28 +41,28 @@ define([
         var degrees = degreesFromCenter(null, this.linearVelocity);
 
         if(degrees >= 22.5 && degrees < 67.5){
-          this.direction = statics.NORTHEAST;
+          this.direction = this.statics.NORTHEAST;
         }
         else if(degrees >= 67.5 && degrees < 112.5){
-          this.direction = statics.EAST;
+          this.direction = this.statics.EAST;
         }
         else if(degrees >= 112.5 && degrees < 157.5){
-          this.direction = statics.SOUTHEAST;
+          this.direction = this.statics.SOUTHEAST;
         }
         else if(degrees >= 157.5 && degrees < 202.5){
-          this.direction = statics.SOUTH;
+          this.direction = this.statics.SOUTH;
         }
         else if(degrees >= 202.5 && degrees < 247.5){
-          this.direction = statics.SOUTHWEST;
+          this.direction = this.statics.SOUTHWEST;
         }
         else if(degrees >= 247.5 && degrees < 292.5){
-          this.direction = statics.WEST;
+          this.direction = this.statics.WEST;
         }
         else if(degrees >= 292.5 && degrees < 337.5){
-          this.direction = statics.NORTHWEST;
+          this.direction = this.statics.NORTHWEST;
         }
         else{
-          this.direction = statics.NORTH;
+          this.direction = this.statics.NORTH;
         }
       }
     }

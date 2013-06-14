@@ -1,11 +1,12 @@
 define([
+  'lodash',
   'frozen/plugins/loadImage!images/background.png'
-], function(background){
+], function(_, background){
 
   'use strict';
 
   function sortY(a, b){
-    return a.y-b.y;
+    return a.y - b.y;
   }
 
   return function(ctx){
@@ -13,10 +14,11 @@ define([
 
     this.drawables.sort(sortY);
 
-    //draw all of the box entities
-    for(var i = 0; i < this.drawables.length; i++){
-      this.drawables[i].draw(ctx, this.box.scale);
-    }
+    // draw all of the box entities
+    var scale = this.box.scale;
+    _.forEach(this.drawables, function(drawable){
+      drawable.draw(ctx, scale);
+    });
   };
 
 });

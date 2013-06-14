@@ -1,24 +1,25 @@
 define([
+  'lodash',
   'frozen/utils/degreesFromCenter',
   'frozen/utils/scalePoints'
-], function(degreesFromCenter, scalePoints){
+], function(_, degreesFromCenter, scalePoints){
 
   'use strict';
 
-  var i;
   var speed = 10;
 
   return function(im, millis){
+    var box = this.box;
     if(im.mouseAction.isPressed()){
-      var scaledPosition = scalePoints(im.mouseAction.position, 1 / this.box.scale);
+      var scaledPosition = scalePoints(im.mouseAction.position, 1 / box.scale);
       if(scaledPosition){
-        for (i = 0; i < this.creatures.length; i++) {
-          if(this.creatures[i].id === 'girl'){
-            this.box.applyForceDegrees(this.creatures[i].id, degreesFromCenter(scaledPosition, this.creatures[i]), speed * millis / 50);
+        _.forEach(this.creatures, function(creature){
+          if(creature.girl){
+            box.applyForceDegrees(creature.id, degreesFromCenter(scaledPosition, creature), speed * millis / 50);
           } else {
-            this.box.applyForceDegrees(this.creatures[i].id, degreesFromCenter(this.creatures[i], scaledPosition), speed * millis / 100);
+            box.applyForceDegrees(creature.id, degreesFromCenter(creature, scaledPosition), speed * millis / 100);
           }
-        }
+        });
       }
     }
   };
