@@ -553,20 +553,6 @@ define([
      * @function
      * @memberOf Box#
      * @param {Number} jointId The id of joint to be destroyed.
-     * @deprecated This method is deprecated in favor of removeJoint
-     */
-    destroyJoint: function(jointId){
-      this.removeJoint(jointId);
-    },
-
-    /**
-     * Remove a joint from the world.
-     *
-     * This must be done outside of the update() iteration, and BEFORE any bodies connected to the joint are removed!
-     *
-     * @function
-     * @memberOf Box#
-     * @param {Number} jointId The id of joint to be destroyed.
      */
     removeJoint: function(jointId) {
       if(this.jointsMap[jointId]){
