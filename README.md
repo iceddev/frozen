@@ -107,15 +107,46 @@ Use `volo add` to get all the library dependencies
 __Breaking Changes__
 
 * Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
+* `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
+* Remove `dojo/dom`, `dojo/dom-geometry` and `dojo/dom-style` modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)
+* `InputManager.handleTouch` and `InputManager.handleMouse` removed, replaced with `InputManager.emulateMouse` which determines if MouseAction or TouchAction should be used
+* Either `InputManager.mouseAction` or `InputManager.touchAction` will be active at one time (depending on state of `InputManager.emulateMouse`)
+* Removed `Box.destroyJoint` because it was deprecated in last release
 
 __New Features__
 
+* Add bower support
+* Add dependencies on Lo-Dash and Hammer.js
 * Touch/Mouse/Pointer event normalization with Hammer.js
 * Gesture support with Hammer.js
+* New methods for adding or removing multiple bodies or joints in `frozen/BoxGame`: `addBodies`, `removeBodies`, `addJoints`, `removeJoints`
+* New methods for flipping images in `frozen/ResourceManager`: `flipImage`, `flipImageX`, `flipImageY`
+* Added `preSolve` to contact listener
+* Added box2d sprite, gesture, ragdoll physics, and breakouts examples
 
 __Non-Breaking Changes__
 
+* Update Examples to use features of 0.3.0/0.4.0
+* `frozen/utils/removeExtension` now uses a regex for removing the extensions, limited to 4 characters after the `.`
+* `require.toUrl(filename)` is now used inside the `loadSound` and `loadImage` functions, instead of the plugins
+* Fix for WebAudio on iOS
+* On mobile which requires touch, interally switch to `Audio.play()` instead of `Audio.load()` to avoid double loading
+* Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic
+
 __Deprecations__
+
+* `InputManager.handleMouse` (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it
+* `InputManager.handleTouch` (already removed) - Touch is always handled, use emulateMouse to specify how to handle it
+* `InputManager.mouseUp` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.mouseDown` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.mouseMove` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchStart` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchEnd` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchMove` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyPressed` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyDown` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
+* `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
 
 ### <sup>v0.3.0</sup>
 
