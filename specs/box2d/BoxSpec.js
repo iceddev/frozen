@@ -139,7 +139,7 @@ define([
       box.addBody(rect2);
       var joint = new Revolute({id: 'j1', bodyId1: rect.id, bodyId2: rect2.id});
       box.addJoint(joint);
-      box.destroyJoint(joint.id);
+      box.removeJoint(joint.id);
       expect(box.jointsMap[joint.id]).not.toBeDefined();
     });
 
