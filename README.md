@@ -106,19 +106,26 @@ Use `volo add` to get all the library dependencies
 
 __Breaking Changes__
 
-* Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
-* `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
-* Remove `dojo/dom`, `dojo/dom-geometry` and `dojo/dom-style` modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)
+* Due to performance reasons, `InputManager.mousemove` only fires during `mousedown` or `touchstart` - see [breakouts example](examples/breakouts/src/initInput.js) for workaround
+* Added `frozen/TouchAction` instead of using `frozen/MouseAction` - used when `InputManager.emulateMouse` is `false`
 * `InputManager.handleTouch` and `InputManager.handleMouse` removed, replaced with `InputManager.emulateMouse` which determines if MouseAction or TouchAction should be used
 * Either `InputManager.mouseAction` or `InputManager.touchAction` will be active at one time (depending on state of `InputManager.emulateMouse`)
+* `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
 * Removed `Box.destroyJoint` because it was deprecated in last release
+* Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic - move custom contact handlers to this object
+* Remove `dojo/dom`, `dojo/dom-geometry` and `dojo/dom-style` modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)
+* Remove `dojo/_base/lang` in favor of Lo-Dash (module will be missing from built layer)
+* Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
 
 __New Features__
 
-* Add bower support
+* Add Bower support
 * Add dependencies on Lo-Dash and Hammer.js
 * Touch/Mouse/Pointer event normalization with Hammer.js
 * Gesture support with Hammer.js
+* `InputManager.hammer` is an instance of Hammer.js
+* `InputManager.on` can be used for binding new events
+* `InputManager.insideCanvas` can be used to check a point against the `InputManager`'s `canvas`
 * New methods for adding or removing multiple bodies or joints in `frozen/BoxGame`: `addBodies`, `removeBodies`, `addJoints`, `removeJoints`
 * New methods for flipping images in `frozen/ResourceManager`: `flipImage`, `flipImageX`, `flipImageY`
 * Added `preSolve` to contact listener
@@ -131,7 +138,6 @@ __Non-Breaking Changes__
 * `require.toUrl(filename)` is now used inside the `loadSound` and `loadImage` functions, instead of the plugins
 * Fix for WebAudio on iOS
 * On mobile which requires touch, interally switch to `Audio.play()` instead of `Audio.load()` to avoid double loading
-* Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic
 
 __Deprecations__
 
@@ -143,7 +149,7 @@ __Deprecations__
 * `InputManager.touchStart` - Use the lowercase name instead - same syntax as normal event handling
 * `InputManager.touchEnd` - Use the lowercase name instead - same syntax as normal event handling
 * `InputManager.touchMove` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.keyPressed` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyPressed` - Use keydown instead - same syntax as normal event handling
 * `InputManager.keyDown` - Use the lowercase name instead - same syntax as normal event handling
 * `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
 * `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
