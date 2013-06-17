@@ -52,7 +52,6 @@ define([
     });
 
     it('should have functions defined', function(){
-      expect(game.preUpdate).toBeDefined();
       expect(game.addBody).toBeDefined();
       expect(game.removeBody).toBeDefined();
       expect(game.addJoint).toBeDefined();
