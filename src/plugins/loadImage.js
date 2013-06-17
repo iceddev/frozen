@@ -12,10 +12,9 @@
  */
 
 define([
-  'lodash',
   '../ResourceManager',
   '../utils/parseString'
-], function(_, ResourceManager, parseString){
+], function(ResourceManager, parseString){
 
   'use strict';
 
