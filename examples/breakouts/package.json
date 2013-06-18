@@ -19,7 +19,7 @@
   "volo": {
     "baseUrl": "deps",
     "dependencies": {
-      "frozen": "github:iceddev/frozen/0.3.0",
+      "frozen": "github:iceddev/frozen/0.4.0",
       "dojo": "github:dojo/dojo/1.8.3",
       "util": "github:dojo/util/1.8.3",
       "dcl": "github:uhop/dcl/1.0.2",
