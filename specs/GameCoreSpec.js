@@ -465,7 +465,7 @@ define([
           game.run();
           setTimeout(function(){
             flag = true;
-          }, 400); // TODO: might need to adjust this timeout if test errors
+          }, 250); // TODO: might need to adjust this timeout if test errors
         });
 
         waitsFor(function(){
