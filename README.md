@@ -200,69 +200,6 @@ __Deprecations__
 
 * `Box.destroyJoint` has been deprecated in favor of `Box.removeJoint`
 
-### <sup>v0.2.1</sup>
-
-__Breaking Changes__
-
-* None! This is a bug fix release
-
-__New Features__
-
-* None! This is a bug fix release
-
-__Non-Breaking Changes__
-
-* Scaling issues in IE10 were fixed
-* Fixed issue where ResourceManager was hanging when Audio loading errored
-* Made collision masking check against null or undefined instead of hasOwnProperty
-* Partial Chrome for Android sound support
-
-__Deprecations__
-
-* Sound plugin will be moved to plugins 0.3.0
-* AudioBase will be renamed Sound in 0.3.0
-
-### <sup>v0.2.0</sup>
-
-__Breaking Changes__
-
-* Default Box#gravityY to 9.8 instead of 10
-* Auto-scaling on Box (Will cause problems if you are already scaling and don't account for auto-scaling)P
-* Remove dojo/_base/declare from single layer - switch to dcl
-* Change color to fillStyle and strokeColor to strokeStyle to stay consistent with canvas API
-
-__New Features__
-
-* Added Joints (Distance, Prismatic, Revolute) - Box gained methods related to Joints
-* Added GameCore#setHeight and GameCore#setWidth to set the game's and canvas' height or width
-* Entities gained pointInShape function to determine if a point is within shape
-* Collision filtering inside Box and properties on Entities
-* Added insideCanvas utility and an insideCanvas property flag on mouse or touch events
-* HTML5 Audio Support - with plugin that auto-detects which audio type to use
-* Default lineWidth on Entities - used inside default draw
-* AMD Plugins for loadImage and loadSound
-* BoxGame added for easy creation of Box2d games - added preUpdate to GameCore to support this
-* Jasmine tests for the library
-
-__Non-Breaking Changes__
-
-* loadSound and loadImage now accept a String, Array of Strings, or Object of Strings and return the same type
-* Dojo/on is used to listen for Image loading - allows for other event listeners to be added without breaking things
-* Removed width and height from Box
-* Cleaned up InputManager#resize
-* Rewrote pointInPolygon module
-* Fix some InputManager bugs
-* Add more documentation
-* Update examples
-
-__Deprecations__
-
-* Any method that is just a getter or setter that did nothing else - No reason to continue the Java paradigms
-* Animation#createFromTile
-* ResourceManager#imageCount, ResourceManager#loadedImages, ResourceManager#playSound
-* Sprite#drawCurrentFrame
-* Entity#hidden
-
 Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
 
 ## License
