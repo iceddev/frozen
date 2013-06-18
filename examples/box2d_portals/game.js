@@ -13,9 +13,9 @@ require([
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadImage!images/portal_orange_sheet_small.png',
   'frozen/plugins/loadImage!images/portal_blue_sheet_small.png',
-  'frozen/plugins/loadSound!sounds/hit.wav',
-  'frozen/plugins/loadSound!sounds/whoosh.wav',
-  'frozen/plugins/loadSound!sounds/backWhoosh.wav'
+  'frozen/plugins/loadSound!sounds/hit',
+  'frozen/plugins/loadSound!sounds/whoosh',
+  'frozen/plugins/loadSound!sounds/backWhoosh'
 ], function(_, keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
 
   'use strict';

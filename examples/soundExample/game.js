@@ -4,7 +4,7 @@ require([
   'dojo/keys',
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
-  'frozen/plugins/loadSound!sounds/yipee.wav'
+  'frozen/plugins/loadSound!sounds/yipee'
 ], function(GameCore, keys, backImg, nyan, yipee){
 
   'use strict';
