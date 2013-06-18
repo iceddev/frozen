@@ -1,0 +1,21 @@
+'use strict';
+
+var gruntCommand;
+
+try {
+  gruntCommand = require('volo-grunt');
+} catch(err){
+  // NPM install hasn't been run yet
+  gruntCommand = {
+    summary: 'Need to run `npm install` (directly or `volo onCreate`/`volo grunt`)',
+    run: 'n.npm install'
+  };
+}
+
+module.exports = {
+  grunt: gruntCommand,
+  onCreate: {
+    summary: 'Called upon creation of a new project - runs `npm install`',
+    run: 'n.npm install'
+  }
+};

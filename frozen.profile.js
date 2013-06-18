@@ -69,35 +69,17 @@ var profile = (function(){
       },
       "dist/frozen": {
         include: [
-          'frozen/box2d/Box',
+          // box2d
           'frozen/box2d/BoxGame',
-          'frozen/box2d/entities/Circle',
-          'frozen/box2d/entities/Entity',
-          'frozen/box2d/entities/Polygon',
-          'frozen/box2d/entities/MultiPolygon',
-          'frozen/box2d/entities/Rectangle',
-          'frozen/box2d/joints/Joint',
-          'frozen/box2d/joints/Revolute',
-          'frozen/box2d/joints/Distance',
-          'frozen/box2d/joints/Prismatic',
-          'frozen/reiner/Creature',
-          'frozen/AnimFrame',
-          'frozen/Animation',
-          'frozen/GameAction',
-          'frozen/MouseAction',
-          'frozen/GameCore',
-          'frozen/InputManager',
-          'frozen/ResourceManager',
-          'frozen/shims/AudioContext',
-          'frozen/shims/RAF',
-          'frozen/Sprite',
-          'frozen/utils',
-          'frozen/sounds/Sound',
-          'frozen/sounds/WebAudio',
-          'frozen/sounds/HTML5Audio',
-          'frozen/plugins/sound',
+          'frozen/box2d/entities',
+          'frozen/box2d/joints',
+          // plugins
           'frozen/plugins/loadImage',
           'frozen/plugins/loadSound',
+          // reiner
+          'frozen/reiner/Creature',
+          // utils
+          'frozen/utils',
           'dojo/keys'
         ],
         customBase: true,

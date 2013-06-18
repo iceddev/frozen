@@ -7,7 +7,7 @@
     Class: GameCore
     
       
-        - frozen: v0.3.0
+        - frozen: v0.4.0
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.3.0</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.0</sup></h1>
       
     
       
@@ -57,7 +57,7 @@
 
   
     <nav class="sidebar">
-      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Contact.html">Contact</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="TouchAction.html">TouchAction</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
     </nav>
   
 
@@ -957,6 +957,121 @@ myGame.run();</code></pre>
         <dl>
             
 <dt>
+    <h4 class="name" id="beforeUpdate">beforeUpdate<span class="signature">(elapsedTime)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>elapsedTime</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Elapsed time in milliseconds</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Deprecated in favor of beforeUpdate</li><ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GameCore.js.html">GameCore.js</a>, line 129
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="draw">draw<span class="signature">(context)</span><span class="type-signature"></span></h4>
     
     
@@ -1046,7 +1161,7 @@ myGame.run();</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 325
+        <a href="GameCore.js.html">GameCore.js</a>, line 337
     </li></ul></dd>
     
 
@@ -1160,7 +1275,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 339
+        <a href="GameCore.js.html">GameCore.js</a>, line 351
     </li></ul></dd>
     
 
@@ -1225,7 +1340,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 251
+        <a href="GameCore.js.html">GameCore.js</a>, line 272
     </li></ul></dd>
     
 
@@ -1361,7 +1476,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 244
+        <a href="GameCore.js.html">GameCore.js</a>, line 265
     </li></ul></dd>
     
 
@@ -1426,7 +1541,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 185
+        <a href="GameCore.js.html">GameCore.js</a>, line 206
     </li></ul></dd>
     
 
@@ -1539,7 +1654,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 235
+        <a href="GameCore.js.html">GameCore.js</a>, line 256
     </li></ul></dd>
     
 
@@ -1604,7 +1719,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 279
+        <a href="GameCore.js.html">GameCore.js</a>, line 299
     </li></ul></dd>
     
 
@@ -1717,7 +1832,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 178
+        <a href="GameCore.js.html">GameCore.js</a>, line 199
     </li></ul></dd>
     
 
@@ -1818,6 +1933,8 @@ Subclasses or instances may override for custom loading animations.</p>
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Deprecated in favor of beforeUpdate</li><ul></dd>
+    
 
     
 
@@ -1830,7 +1947,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 301
+        <a href="GameCore.js.html">GameCore.js</a>, line 128
     </li></ul></dd>
     
 
@@ -1895,7 +2012,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 163
+        <a href="GameCore.js.html">GameCore.js</a>, line 184
     </li></ul></dd>
     
 
@@ -2008,7 +2125,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 133
+        <a href="GameCore.js.html">GameCore.js</a>, line 154
     </li></ul></dd>
     
 
@@ -2121,7 +2238,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 144
+        <a href="GameCore.js.html">GameCore.js</a>, line 165
     </li></ul></dd>
     
 
@@ -2186,7 +2303,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 154
+        <a href="GameCore.js.html">GameCore.js</a>, line 175
     </li></ul></dd>
     
 
@@ -2299,7 +2416,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 309
+        <a href="GameCore.js.html">GameCore.js</a>, line 321
     </li></ul></dd>
     
 
@@ -2412,7 +2529,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 317
+        <a href="GameCore.js.html">GameCore.js</a>, line 329
     </li></ul></dd>
     
 
@@ -2448,7 +2565,7 @@ Subclasses or instances may override for custom loading animations.</p>
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Apr 25 2013 12:49:51 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Jun 17 2013 19:05:19 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>

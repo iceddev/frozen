@@ -7,7 +7,7 @@
     Class: BoxGame
     
       
-        - frozen: v0.3.0
+        - frozen: v0.4.0
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.3.0</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.0</sup></h1>
       
     
       
@@ -57,7 +57,7 @@
 
   
     <nav class="sidebar">
-      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Contact.html">Contact</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="TouchAction.html">TouchAction</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
     </nav>
   
 
@@ -215,7 +215,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 23
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 24
     </li></ul></dd>
     
 
@@ -270,7 +270,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 30
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 31
     </li></ul></dd>
     
 
@@ -505,7 +505,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 37
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 38
     </li></ul></dd>
     
 
@@ -800,7 +800,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 44
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 45
     </li></ul></dd>
     
 
@@ -1232,6 +1232,122 @@
         <dl>
             
 <dt>
+    <h4 class="name" id="addBodies">addBodies<span class="signature">(entities)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Adds a series of Entity objects to entities and box</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>entities</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type"><a href="Entity.html">Entity</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Can take an array of Entity objects or any number of Entity objects</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 99
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="addBody">addBody<span class="signature">(entity)</span><span class="type-signature"></span></h4>
     
     
@@ -1240,7 +1356,7 @@
     
     
     <div class="description">
-        <p>Adds an Entity to entities and box</p>
+        <p>Adds an Entity object to entities and box</p>
     </div>
     
 
@@ -1321,7 +1437,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 79
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 88
     </li></ul></dd>
     
 
@@ -1434,7 +1550,236 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 101
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 140
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addJoints">addJoints<span class="signature">(joints)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Adds a series of Joint objects to joints and box</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>joints</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type"><a href="Joint.html">Joint</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Can take an array of Joint objects or any number of Joint objects</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 151
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="beforeUpdate">beforeUpdate<span class="signature">(millis)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Updates the Box before update() is called</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>millis</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The milliseconds that have passed since last iteration of gameLoop</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 75
     </li></ul></dd>
     
 
@@ -1552,7 +1897,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 325
+        <a href="GameCore.js.html">GameCore.js</a>, line 337
     </li></ul></dd>
     
 
@@ -1671,7 +2016,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 339
+        <a href="GameCore.js.html">GameCore.js</a>, line 351
     </li></ul></dd>
     
 
@@ -1741,7 +2086,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 251
+        <a href="GameCore.js.html">GameCore.js</a>, line 272
     </li></ul></dd>
     
 
@@ -1882,7 +2227,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 244
+        <a href="GameCore.js.html">GameCore.js</a>, line 265
     </li></ul></dd>
     
 
@@ -1952,7 +2297,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 185
+        <a href="GameCore.js.html">GameCore.js</a>, line 206
     </li></ul></dd>
     
 
@@ -2070,7 +2415,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 235
+        <a href="GameCore.js.html">GameCore.js</a>, line 256
     </li></ul></dd>
     
 
@@ -2140,7 +2485,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 279
+        <a href="GameCore.js.html">GameCore.js</a>, line 299
     </li></ul></dd>
     
 
@@ -2258,7 +2603,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 178
+        <a href="GameCore.js.html">GameCore.js</a>, line 199
     </li></ul></dd>
     
 
@@ -2359,6 +2704,8 @@ Subclasses or instances may override for custom loading animations.</p>
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Deprecated in favor of beforeUpdate</li><ul></dd>
+    
 
     
 
@@ -2371,7 +2718,123 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 66
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 61
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeBodies">removeBodies<span class="signature">(entities)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Removes a series of Entity objects from entities and box</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>entities</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type"><a href="Entity.html">Entity</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Can take an array of Entity objects or any number of Entity objects</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 125
     </li></ul></dd>
     
 
@@ -2403,7 +2866,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     
     <div class="description">
-        <p>Removes an Entity from entities and box</p>
+        <p>Removes an Entity object from entities and box</p>
     </div>
     
 
@@ -2484,7 +2947,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 90
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 114
     </li></ul></dd>
     
 
@@ -2597,7 +3060,123 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 112
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 166
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeJoints">removeJoints<span class="signature">(joints)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Removes a series of Joint objects from joints and box</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>joints</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type"><a href="Joint.html">Joint</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Can take an array of Joint objects or any number of Joint objects</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="BoxGame.js.html">box2d/BoxGame.js</a>, line 177
     </li></ul></dd>
     
 
@@ -2667,7 +3246,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 163
+        <a href="GameCore.js.html">GameCore.js</a>, line 184
     </li></ul></dd>
     
 
@@ -2785,7 +3364,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 133
+        <a href="GameCore.js.html">GameCore.js</a>, line 154
     </li></ul></dd>
     
 
@@ -2903,7 +3482,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 144
+        <a href="GameCore.js.html">GameCore.js</a>, line 165
     </li></ul></dd>
     
 
@@ -2973,7 +3552,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 154
+        <a href="GameCore.js.html">GameCore.js</a>, line 175
     </li></ul></dd>
     
 
@@ -3091,7 +3670,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 309
+        <a href="GameCore.js.html">GameCore.js</a>, line 321
     </li></ul></dd>
     
 
@@ -3209,7 +3788,7 @@ Subclasses or instances may override for custom loading animations.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GameCore.js.html">GameCore.js</a>, line 317
+        <a href="GameCore.js.html">GameCore.js</a>, line 329
     </li></ul></dd>
     
 
@@ -3245,7 +3824,7 @@ Subclasses or instances may override for custom loading animations.</p>
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Apr 25 2013 12:49:50 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Jun 17 2013 19:05:18 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>

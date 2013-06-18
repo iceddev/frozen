@@ -1,5 +1,5 @@
 ![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
-Frozen <sup>v0.3.0</sup>
+Frozen <sup>v0.4.0</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
@@ -40,14 +40,15 @@ Source available on github: https://github.com/iceddev/frozen
 
 We have tested in:
 
-* Chrome 25 & 27-dev
-* Firefox 19.0.2
+* Chrome 27 & 29-canary
+* Firefox 21, Aurora 23.0a2 & Nightly 24.0a1
 * IE10 (sound with supported codecs)
-* Chrome for Android 25 & Beta 26 (limited sound support)
-* Firefox for Android 19.0.2, Beta 20 & 21.0a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
-* PhantomJS 1.8.1
+* Safari 6.0.3
+* Chrome for Android 27 & Beta 28 (limited sound support) - Suggestion: in `chrome://flags`, turn on "Disable gesture requirement for media playback" & "Enable WebAudio"
+* Firefox for Android 21, Beta 22, Aurora 23.0a2 & Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)
+* PhantomJS 1.9.1
 
-__Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
+__Most modern browsers should support this game engine if they support requestAnimationFrame or canvas, but YMMV with sounds__
 
 ## Rapid Development Through Tooling
 
@@ -62,22 +63,23 @@ These technologies include:
 * [Node.js](http://nodejs.org/) and [npm](https://npmjs.org/) - used for dependecy mangement for our build process and development workflow
 * [Grunt](http://gruntjs.com/) - task runner for our development workflow, and allows for a single entry point into development configuration
 * [Volo](http://volojs.org/) - clientside dependency management and project scaffolding tool
-* [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
+* [Lo-Dash](http://lodash.com/) - low-level utility library used inside the library
+* [Hammer.js](http://eightmedia.github.io/hammer.js/) - multi-touch library used for mouse/touch/pointer event normalization and gestures
 * [dcl](http://www.dcljs.org/) - used for generating constructors and supplying AOP convenience methods
 * [Box2d](https://box2dweb.googlecode.com/) - used for physics calculations in games
+* [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
 * [JSDoc](http://usejsdoc.org/) - generates documentation for code
 * [Jasmine](http://pivotal.github.com/jasmine/) - tests all use Jasmine
 * [AMD](http://requirejs.org/docs/whyamd.html) - all modules are written with AMD and the single layer includes an AMD module loader
 
 ## Development
 
-__Warning: don't run `npm install` unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D__
-
 ### Dependencies
 
 All development tasks depend on having dependencies installed.
 
-Use `npm install` to get all the NPM dependencies and start the `volo add`
+Use `npm install` to get all the build process dependencies
+Use `volo add` to get all the library dependencies
 
 ### Building the dist/frozen layer
 
@@ -100,6 +102,61 @@ Use `npm install` to get all the NPM dependencies and start the `volo add`
 `grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.4.0</sup>
+
+__Breaking Changes__
+
+* Due to performance reasons, `InputManager.mousemove` only fires during `mousedown` or `touchstart` - see [breakouts example](examples/breakouts/src/initInput.js) for workaround
+* Added `frozen/TouchAction` instead of using `frozen/MouseAction` - used when `InputManager.emulateMouse` is `false`
+* `InputManager.handleTouch` and `InputManager.handleMouse` removed, replaced with `InputManager.emulateMouse` which determines if MouseAction or TouchAction should be used
+* Either `InputManager.mouseAction` or `InputManager.touchAction` will be active at one time (depending on state of `InputManager.emulateMouse`)
+* `InputManager` event handling methods no longer check if a point is inside canvas
+* `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
+* Removed `Box.destroyJoint` because it was deprecated in last release
+* Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic - move custom contact handlers to this object
+* Remove `dojo/dom`, `dojo/dom-geometry` and `dojo/dom-style` modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)
+* Remove `dojo/_base/lang` in favor of Lo-Dash (module will be missing from built layer)
+* Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
+
+__New Features__
+
+* Add Bower support
+* Add dependencies on Lo-Dash and Hammer.js
+* Touch/Mouse/Pointer event normalization with Hammer.js
+* Gesture support with Hammer.js
+* `InputManager.hammer` is an instance of Hammer.js
+* `InputManager.on` can be used for binding new events
+* `InputManager.insideCanvas` can be used to check a point against the `InputManager`'s `canvas`
+* New methods for adding or removing multiple bodies or joints in `frozen/BoxGame`: `addBodies`, `removeBodies`, `addJoints`, `removeJoints`
+* New methods for flipping images in `frozen/ResourceManager`: `flipImage`, `flipImageX`, `flipImageY`
+* Added `preSolve` to contact listener
+* Added box2d sprite, gesture, ragdoll physics, and breakouts examples
+
+__Non-Breaking Changes__
+
+* Update Examples to use features of 0.3.0/0.4.0
+* `frozen/utils/removeExtension` now uses a regex for removing the extensions, limited to 4 characters after the `.`
+* `require.toUrl(filename)` is now used inside the `loadSound` and `loadImage` functions, instead of the plugins
+* Fix for WebAudio on iOS
+* On mobile which requires touch, interally switch to `Audio.play()` instead of `Audio.load()` to avoid double loading
+* Use `dcl`'s `advice.before` to wire up `GameCore.beforeUpdate`
+
+__Deprecations__
+
+* `GameCore.preUpdate` - Deprecated in favor of beforeUpdate
+* `InputManager.handleMouse` (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it
+* `InputManager.handleTouch` (already removed) - Touch is always handled, use emulateMouse to specify how to handle it
+* `InputManager.mouseUp` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.mouseDown` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.mouseMove` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchStart` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchEnd` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.touchMove` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyPressed` - Use keydown instead - same syntax as normal event handling
+* `InputManager.keyDown` - Use the lowercase name instead - same syntax as normal event handling
+* `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
+* `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
 
 ### <sup>v0.3.0</sup>
 
@@ -142,69 +199,6 @@ __Non-Breaking Changes__
 __Deprecations__
 
 * `Box.destroyJoint` has been deprecated in favor of `Box.removeJoint`
-
-### <sup>v0.2.1</sup>
-
-__Breaking Changes__
-
-* None! This is a bug fix release
-
-__New Features__
-
-* None! This is a bug fix release
-
-__Non-Breaking Changes__
-
-* Scaling issues in IE10 were fixed
-* Fixed issue where ResourceManager was hanging when Audio loading errored
-* Made collision masking check against null or undefined instead of hasOwnProperty
-* Partial Chrome for Android sound support
-
-__Deprecations__
-
-* Sound plugin will be moved to plugins 0.3.0
-* AudioBase will be renamed Sound in 0.3.0
-
-### <sup>v0.2.0</sup>
-
-__Breaking Changes__
-
-* Default Box#gravityY to 9.8 instead of 10
-* Auto-scaling on Box (Will cause problems if you are already scaling and don't account for auto-scaling)P
-* Remove dojo/_base/declare from single layer - switch to dcl
-* Change color to fillStyle and strokeColor to strokeStyle to stay consistent with canvas API
-
-__New Features__
-
-* Added Joints (Distance, Prismatic, Revolute) - Box gained methods related to Joints
-* Added GameCore#setHeight and GameCore#setWidth to set the game's and canvas' height or width
-* Entities gained pointInShape function to determine if a point is within shape
-* Collision filtering inside Box and properties on Entities
-* Added insideCanvas utility and an insideCanvas property flag on mouse or touch events
-* HTML5 Audio Support - with plugin that auto-detects which audio type to use
-* Default lineWidth on Entities - used inside default draw
-* AMD Plugins for loadImage and loadSound
-* BoxGame added for easy creation of Box2d games - added preUpdate to GameCore to support this
-* Jasmine tests for the library
-
-__Non-Breaking Changes__
-
-* loadSound and loadImage now accept a String, Array of Strings, or Object of Strings and return the same type
-* Dojo/on is used to listen for Image loading - allows for other event listeners to be added without breaking things
-* Removed width and height from Box
-* Cleaned up InputManager#resize
-* Rewrote pointInPolygon module
-* Fix some InputManager bugs
-* Add more documentation
-* Update examples
-
-__Deprecations__
-
-* Any method that is just a getter or setter that did nothing else - No reason to continue the Java paradigms
-* Animation#createFromTile
-* ResourceManager#imageCount, ResourceManager#loadedImages, ResourceManager#playSound
-* Sprite#drawCurrentFrame
-* Entity#hidden
 
 Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
 

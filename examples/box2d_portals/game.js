@@ -1,5 +1,6 @@
 //load the AMD modules we need
 require([
+  'lodash',
   'dojo/keys',
   'frozen/Animation',
   'frozen/box2d/Box',
@@ -12,12 +13,78 @@ require([
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadImage!images/portal_orange_sheet_small.png',
   'frozen/plugins/loadImage!images/portal_blue_sheet_small.png',
-  'frozen/plugins/loadSound!sounds/hit.wav',
-  'frozen/plugins/loadSound!sounds/whoosh.wav',
-  'frozen/plugins/loadSound!sounds/backWhoosh.wav'
-], function(keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
+  'frozen/plugins/loadSound!sounds/hit',
+  'frozen/plugins/loadSound!sounds/whoosh',
+  'frozen/plugins/loadSound!sounds/backWhoosh'
+], function(_, keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
 
   'use strict';
+
+  // create each of the shapes
+  var ground = new Rectangle({
+    id: _.uniqueId(), // objects in box2d need an id
+    x: 385,
+    y: 480,
+    halfWidth: 1000,
+    halfHeight: 40,
+    staticBody: true
+  });
+
+  var ceiling = new Rectangle({
+    id: _.uniqueId(), // objects in box2d need an id
+    x: 385,
+    y: -200,
+    halfWidth: 1000,
+    halfHeight: 40,
+    staticBody: true
+  });
+
+  var leftWall = new Rectangle({
+    id: _.uniqueId(), // objects in box2d need an id
+    x: -80,
+    y: 240,
+    halfWidth: 40,
+    halfHeight: 1000,
+    staticBody: true
+  });
+
+  var rightWall = new Rectangle({
+    id: _.uniqueId(), // objects in box2d need an id
+    x: 850,
+    y: 240,
+    halfWidth: 40,
+    halfHeight: 1000,
+    staticBody: true
+  });
+
+  var pyramid = new Polygon({
+    id: _.uniqueId(), // objects in box2d need an id
+    points: [{x: 320, y: 440}, {x: 446, y: 290}, {x: 565, y: 440}],
+    staticBody: true
+  });
+
+  var nyan = new Rectangle({
+    id: 'nyan',
+    x: 116,
+    y: 360,
+    halfWidth: 40,
+    halfHeight: 28,
+    staticBody: false,
+    draw: function(ctx){ // we want to render the nyan cat with an image
+      // standard 2d canvas stuff
+      ctx.save();
+      ctx.translate(this.x * this.scale, this.y * this.scale); // this.scale because Box2D requires scaled entities
+      ctx.rotate(this.angle); // this angle was given to us by box2d's calculations
+      ctx.translate(-(this.x) * this.scale, -(this.y) * this.scale); // this.scale because Box2D requires scaled entities
+      ctx.fillStyle = this.color;
+      ctx.drawImage(
+        nyanImg,
+        (this.x-this.halfWidth) * this.scale - 10, // this.scale because Box2D requires scaled entities
+        (this.y-this.halfHeight) * this.scale // this.scale because Box2D requires scaled entities
+      );
+      ctx.restore();
+    }
+  });
 
   var speed = 8;
 
@@ -29,20 +96,12 @@ require([
   var bluePortalAnim = Animation.prototype.createFromSheet(12, 100, bluePortalSheet, 80, 120, 0);
   var bluePortal = {x: 600, y: 100, collided: true};
 
-  //objects in box2d need an id
-  var geomId = 1;
-
-  //shapes in the box2 world, locations are their centers
-  var nyan, pyramid, ground, ceiling, leftWall, rightWall;
-
-  //setup a GameCore instance
+  // setup a GameCore instance
   var game = new BoxGame({
     canvasId: 'canvas',
-    gameAreaId: 'container',
-    canvasPercentage: 0.95,
     box: new Box({resolveCollisions: true}),
     initInput: function(im){
-      //tells the input manager to listen for key events
+      // tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
       im.addKeyAction(keys.UP_ARROW);
@@ -61,25 +120,23 @@ require([
         this.box.applyImpulseDegrees(nyan.id, 0, speed);
       }
 
-      if(im.touchAction.isPressed()){ //mobile first :)
-        this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.touchAction.position), speed / 2);
-      }
-      else if(im.mouseAction.isPressed()){
-        this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x:nyan.x * this.box.scale, y:nyan.y * this.box.scale},im.mouseAction.position), speed / 2);
+      if(im.mouseAction && im.mouseAction.isPressed()){
+        this.box.applyImpulse(nyan.id, utils.radiansFromCenter({x: nyan.x * this.box.scale, y: nyan.y * this.box.scale}, im.mouseAction.position), speed / 2);
       }
     },
     update: function(millis){
-      //update the animations
+      // update the animations
       orangePortalAnim.update(millis);
       bluePortalAnim.update(millis);
 
-      //this is for simple distance-based collision detection outside of box2s
+      // this is for simple distance-based collision detection outside of Box2D
       var blueDist = utils.distance({x: nyan.x * this.box.scale, y: nyan.y * this.box.scale}, bluePortal);
       var orangeDist = utils.distance({x: nyan.x * this.box.scale, y: nyan.y * this.box.scale}, orangePortal);
 
       if(blueDist > portalCollisionDistance){
         bluePortal.collided = false;
       }
+
       if(orangeDist > portalCollisionDistance){
         orangePortal.collided = false;
       }
@@ -88,8 +145,7 @@ require([
         bluePortal.collided = true;
         this.box.setPosition(nyan.id, bluePortal.x / this.box.scale, bluePortal.y / this.box.scale);
         whoosh.play();
-      }
-      else if(blueDist < portalCollisionDistance && !bluePortal.collided){
+      } else if(blueDist < portalCollisionDistance && !bluePortal.collided){
         orangePortal.collided = true;
         this.box.setPosition(nyan.id, orangePortal.x / this.box.scale, orangePortal.y / this.box.scale);
         backWhoosh.play();
@@ -97,9 +153,8 @@ require([
 
       // this uses a simple wrapper for box2d's own collision detection
       if(nyan.collisions){
-        nyan.collisions.forEach(function(collision){
+        _.forEach(nyan.collisions, function(collision){
           if(collision.impulse > 10){
-            //console.log('nyan collision impulse:', collision.id , collision.impulse);
             hit.play();
           }
         });
@@ -113,90 +168,11 @@ require([
     }
   });
 
-  //create each of the shapes in the world
-  ground = new Rectangle({
-    id: geomId,
-    x: 385,
-    y: 480,
-    halfWidth: 1000,
-    halfHeight: 40,
-    staticBody: true
-  });
-  game.box.addBody(ground); //add the shape to the box
-  game.entities[geomId] = ground; //keep a reference to the shape for fast lookup
+  game.addBodies(ground, ceiling, leftWall, rightWall, pyramid, nyan); // add the shapes to the box
 
-  ceiling = new Rectangle({
-    id: geomId,
-    x: 385,
-    y: -200,
-    halfWidth: 1000,
-    halfHeight: 40,
-    staticBody: true
-  });
-  game.box.addBody(ceiling);
-  game.entities[geomId] = ceiling;
-
-  leftWall = new Rectangle({
-    id: geomId,
-    x: -80,
-    y: 240,
-    halfWidth: 40,
-    halfHeight: 1000,
-    staticBody: true
-  });
-  game.box.addBody(leftWall);
-  game.entities[geomId] = leftWall;
-
-  rightWall = new Rectangle({
-    id: geomId,
-    x: 850,
-    y: 240,
-    halfWidth: 40,
-    halfHeight: 1000,
-    staticBody: true
-  });
-  game.box.addBody(rightWall);
-  game.entities[geomId] = rightWall;
-
-
-  geomId++;
-  pyramid = new Polygon({
-    id: geomId,
-    points: [{x: 320, y: 440}, {x: 446, y: 290}, {x: 565, y: 440}],
-    staticBody: true
-  });
-  game.box.addBody(pyramid);
-  game.entities[geomId] = pyramid;
-
-  geomId++;
-  nyan = new Rectangle({
-    id: 'nyan',
-    x: 116,
-    y: 360,
-    halfWidth: 40,
-    halfHeight: 28,
-    staticBody: false,
-    draw: function(ctx){ // we want to render the nyan cat with an image
-      ctx.save();
-      ctx.translate(this.x * this.scale, this.y * this.scale);
-      ctx.rotate(this.angle); // this angle was given to us by box2d's calculations
-      ctx.translate(-(this.x) * this.scale, -(this.y) * this.scale);
-      ctx.fillStyle = this.color;
-      ctx.drawImage(
-        nyanImg,
-        (this.x-this.halfWidth) * this.scale - 10, //lets offset it a little to the left
-        (this.y-this.halfHeight) * this.scale
-      );
-      ctx.restore();
-    }
-  });
-  game.box.addBody(nyan);
-  game.entities[nyan.id] = nyan;
-
-
-  //if you want to take a look at the game object in dev tools
+  // if you want to take a look at the game object in dev tools
   console.log(game);
 
-  //launch the game!
+  // launch the game!
   game.run();
 });

@@ -6,13 +6,14 @@
  */
 
 define([
+  'require',
   './Sound',
   '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has',
   '../shims/AudioContext'
-], function(Sound, removeExtension, dcl, on, has){
+], function(req, Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
@@ -23,6 +24,16 @@ define([
   var audioContext = null;
   if(has('WebAudio')){
     audioContext = new window.AudioContext();
+  }
+
+  if(has('shittySound')){
+    // Similar strategy to https://github.com/CreateJS/SoundJS
+    on.once(document, 'touchstart', function(){
+      var source = audioContext.createBufferSource();
+      source.buffer = audioContext.createBuffer(1, 1, 22050);
+      source.connect(audioContext.destination);
+      source.noteOn(0);
+    });
   }
 
   return dcl(Sound, {
@@ -57,6 +68,7 @@ define([
       if(basename === filename){
         filename = basename + this._chooseFormat();
       }
+      filename = req.toUrl(filename);
 
       function decodeAudioData(e){
         // Decode asynchronously

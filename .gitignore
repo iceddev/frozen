@@ -11,4 +11,4 @@ _SpecRunner.html
 
 # During Development of new version, ignore dist/
 # TODO: remove & build before release
-# dist/
+dist/

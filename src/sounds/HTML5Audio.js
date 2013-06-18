@@ -6,21 +6,18 @@
  */
 
 define([
+  'require',
   './Sound',
   '../utils/removeExtension',
   'dcl',
   'dojo/on',
   'dojo/has'
-], function(Sound, removeExtension, dcl, on, has){
+], function(req, Sound, removeExtension, dcl, on, has){
 
   'use strict';
 
   has.add('HTML5Audio', function(global){
     return !!global.Audio;
-  });
-
-  has.add('shittySound', function(){
-    return !!((has('android') || has('ios')) && has('webkit'));
   });
 
   return dcl(Sound, {
@@ -50,10 +47,15 @@ define([
       if(basename === filename){
         filename = basename + this._chooseFormat();
       }
+      filename = req.toUrl(filename);
 
       if(has('shittySound')){
         on.once(document, 'touchstart', function(e){
-          self.audio.load();
+          var vol = self.audio.volume;
+          self.audio.volume = 0;
+          self.audio.play();
+          self.audio.pause();
+          self.audio.volume = vol;
         });
         this._updateCurrentTime = null;
         on.once(this.audio, 'progress', function(){

@@ -19,13 +19,13 @@
 
 define([
   'dcl',
+  'dcl/advise',
   'dcl/bases/Mixer',
-  'dojo/_base/lang',
-  'dojo/dom',
+  'lodash',
   './InputManager',
   './ResourceManager',
   './shims/RAF'
-], function(dcl, Mixer, lang, dom, InputManager, ResourceManager){
+], function(dcl, advise, Mixer, _, InputManager, ResourceManager){
 
   'use strict';
 
@@ -124,6 +124,27 @@ define([
      */
     canvasPercentage: 0,
 
+    constructor: function(){
+      /**
+       * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
+       * @function preUpdate
+       * @memberOf GameCore#
+       * @param {Number} elapsedTime Elapsed time in milliseconds
+       * @deprecated Deprecated in favor of beforeUpdate
+       */
+      /**
+       * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
+       * @function beforeUpdate
+       * @memberOf GameCore#
+       * @param {Number} elapsedTime Elapsed time in milliseconds
+       * @deprecated Deprecated in favor of beforeUpdate
+       */
+      var before = this.preUpdate || this.beforeUpdate;
+      if(before){
+        advise.before(this, 'update', before);
+      }
+    },
+
     /**
      * Sets the height on your GameCore instance and on your canvas reference
      * @function
@@ -184,7 +205,7 @@ define([
      */
     init: function() {
       if(!this.canvas){
-        this.canvas = dom.byId(this.canvasId);
+        this.canvas = document.getElementById(this.canvasId);
       }
       if(!this.canvas){
         alert('Sorry, your browser does not support canvas.  I recommend any browser but Internet Explorer');
@@ -206,7 +227,7 @@ define([
         if(this.gameAreaId && this.canvasPercentage){
           this.inputManager = new InputManager({
             canvas: this.canvas,
-            gameArea: dom.byId(this.gameAreaId),
+            gameArea: document.getElementById(this.gameAreaId),
             canvasPercentage: this.canvasPercentage
           });
         }else{
@@ -261,7 +282,6 @@ define([
         this.handleInput(this.inputManager,this.elapsedTime);
         if(!this.paused){
           // update
-          this.preUpdate(this.elapsedTime);
           this.update(this.elapsedTime);
         }
         // draw the screen
@@ -283,7 +303,7 @@ define([
       this.prevTime = startTime;
 
       //need to keep the context defined here so the game loop has access to it
-      this.loopRunner = lang.hitch(this, this.loopRunner);
+      this.loopRunner = _.bind(this.loopRunner, this);
       window.requestAnimationFrame(this.loopRunner);
     },
 
@@ -291,14 +311,6 @@ define([
       this.gameLoop();
       window.requestAnimationFrame(this.loopRunner);
     },
-
-    /**
-     * Can be overriden to do things before the update is called, used by BoxGame to update Box state before update is called.
-     * @function
-     * @memberOf GameCore#
-     * @param {Number} elapsedTime Elapsed time in milliseconds
-     */
-    preUpdate: function(elapsedTime) {},
 
     /**
      * Should be overridden to update the state of the game/animation based on the amount of elapsed time that has passed.

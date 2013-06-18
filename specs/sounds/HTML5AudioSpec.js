@@ -60,18 +60,15 @@ define([
         });
 
         it('should try another extension if one is not specified on filename passed in and the first one fails', function(){
-          var flag = false;
           spyOn(sound, '_chooseFormat').andReturn('');
-          spyOn(sound, '_nextFormat').andCallFake(function(){
-            flag = true;
-          });
+          spyOn(sound, '_nextFormat');
 
           runs(function(){
             sound.load(filename2);
           });
 
           waitsFor(function(){
-            return flag;
+            return sound._nextFormat.callCount;
           }, '_nextFormat should have been called', 1000);
 
           runs(function(){
