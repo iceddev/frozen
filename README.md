@@ -40,14 +40,15 @@ Source available on github: https://github.com/iceddev/frozen
 
 We have tested in:
 
-* Chrome 25 & 27-dev
-* Firefox 19.0.2
+* Chrome 27 & 29-canary
+* Firefox 21, Aurora 23.0a2 & Nightly 24.0a1
 * IE10 (sound with supported codecs)
-* Chrome for Android 25 & Beta 26 (limited sound support)
-* Firefox for Android 19.0.2, Beta 20 & 21.0a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)
-* PhantomJS 1.8.1
+* Safari 6.0.3
+* Chrome for Android 27 & Beta 28 (limited sound support) - Suggestion: in `chrome://flags`, turn on "Disable gesture requirement for media playback" & "Enable WebAudio"
+* Firefox for Android 21, Beta 22, Aurora 23.0a2 & Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)
+* PhantomJS 1.9.1
 
-__Most modern browsers should support this game engine if they support canvas, but YMMV with sounds__
+__Most modern browsers should support this game engine if they support requestAnimationFrame or canvas, but YMMV with sounds__
 
 ## Rapid Development Through Tooling
 
@@ -110,6 +111,7 @@ __Breaking Changes__
 * Added `frozen/TouchAction` instead of using `frozen/MouseAction` - used when `InputManager.emulateMouse` is `false`
 * `InputManager.handleTouch` and `InputManager.handleMouse` removed, replaced with `InputManager.emulateMouse` which determines if MouseAction or TouchAction should be used
 * Either `InputManager.mouseAction` or `InputManager.touchAction` will be active at one time (depending on state of `InputManager.emulateMouse`)
+* `InputManager` event handling methods no longer check if a point is inside canvas
 * `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
 * Removed `Box.destroyJoint` because it was deprecated in last release
 * Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic - move custom contact handlers to this object
@@ -138,9 +140,11 @@ __Non-Breaking Changes__
 * `require.toUrl(filename)` is now used inside the `loadSound` and `loadImage` functions, instead of the plugins
 * Fix for WebAudio on iOS
 * On mobile which requires touch, interally switch to `Audio.play()` instead of `Audio.load()` to avoid double loading
+* Use `dcl`'s `advice.before` to wire up `GameCore.beforeUpdate`
 
 __Deprecations__
 
+* `GameCore.preUpdate` - Deprecated in favor of beforeUpdate
 * `InputManager.handleMouse` (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it
 * `InputManager.handleTouch` (already removed) - Touch is always handled, use emulateMouse to specify how to handle it
 * `InputManager.mouseUp` - Use the lowercase name instead - same syntax as normal event handling
