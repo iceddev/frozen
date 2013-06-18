@@ -6,8 +6,9 @@
 
 define([
   'dcl',
-  'dojo/has'
-], function(dcl, has){
+  'dojo/has',
+  'dojo/sniff'
+], function(dcl, has, sniff){
 
   'use strict';
 
