@@ -55,7 +55,7 @@ define([
         id: 'j1'
       });
       box.addJoint(joint);
-      box.destroyJoint(joint.id);
+      box.removeJoint(joint.id);
       expect(box.jointsMap[joint.id]).not.toBeDefined();
     });
 

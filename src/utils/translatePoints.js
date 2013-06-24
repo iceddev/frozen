@@ -1,16 +1,15 @@
 /*jshint eqnull:true */
-define(function(){
+define([
+  'lodash'
+], function(_){
 
   'use strict';
 
   function translatePoints(points, translation){
     if(Array.isArray(points)){
-      var newPoints = [];
-      // TODO: move this to a faster forEach, possibly lo-dash's
-      points.forEach(function(point){
-        newPoints.push(translatePoints(point, translation));
+      points = _.map(points, function(point){
+        return translatePoints(point, translation);
       });
-      points = newPoints;
     } else {
       points = {
         x: points.x,

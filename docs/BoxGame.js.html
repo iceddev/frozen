@@ -7,7 +7,7 @@
     Source: box2d/BoxGame.js
     
       
-        - frozen: v0.3.0
+        - frozen: v0.4.0
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.3.0</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.0</sup></h1>
       
     
       
@@ -50,13 +50,14 @@
       <a href="/index.html">Home</a>
       <a href="/docs/">Docs</a>
       <a href="/examples/">Examples</a>
+      <a href="http://blog.frozenjs.com">Blog</a>
       <!-- <a href="/games.html">Games</a> -->
     </nav>
   </header>
 
   
     <nav class="sidebar">
-      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Contact.html">Contact</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="TouchAction.html">TouchAction</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
     </nav>
   
 
@@ -86,12 +87,13 @@
  define([
   '../GameCore',
   './Box',
+  'lodash',
   'dcl'
-], function(GameCore, Box, dcl){
+], function(GameCore, Box, _, dcl){
 
   'use strict';
 
-  return dcl(GameCore, {
+  var BoxGame = dcl(GameCore, {
     /**
      * The instance of Box used for this game.
      * @type {Box}
@@ -137,11 +139,19 @@
 
     /**
      * Updates the Box before update() is called
+     * @function preUpdate
+     * @memberOf BoxGame#
+     * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
+     * @deprecated Deprecated in favor of beforeUpdate
+     */
+
+    /**
+     * Updates the Box before update() is called
      * @function
      * @memberOf BoxGame#
      * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
      */
-    preUpdate: function(millis){
+    beforeUpdate: function(millis){
       if(this.boxUpdating){
         this.box.update(millis);
         this.box.updateExternalState(this.entities);
@@ -149,7 +159,7 @@
     },
 
     /**
-     * Adds an Entity to entities and box
+     * Adds an Entity object to entities and box
      * @function
      * @memberOf BoxGame#
      * @param {Entity} entity Entity to add
@@ -160,7 +170,22 @@
     },
 
     /**
-     * Removes an Entity from entities and box
+     * Adds a series of Entity objects to entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
+     */
+    addBodies: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var entities = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(entities, function(entity){
+        self.addBody(entity);
+      });
+    },
+
+    /**
+     * Removes an Entity object from entities and box
      * @function
      * @memberOf BoxGame#
      * @param  {Entity} entity Entity to remove
@@ -168,6 +193,21 @@
     removeBody: function(entity){
       this.box.removeBody(entity.id);
       delete this.entities[entity.id];
+    },
+
+    /**
+     * Removes a series of Entity objects from entities and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
+     */
+    removeBodies: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var entities = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(entities, function(entity){
+        self.removeBody(entity);
+      });
     },
 
     /**
@@ -182,6 +222,21 @@
     },
 
     /**
+     * Adds a series of Joint objects to joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
+     */
+    addJoints: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var joints = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(joints, function(entity){
+        self.addJoint(entity);
+      });
+    },
+
+    /**
      * Removes a Joint from joints and box
      * @function
      * @memberOf BoxGame#
@@ -190,8 +245,25 @@
     removeJoint: function(joint){
       this.box.removeJoint(joint.id);
       delete this.joints[joint.id];
+    },
+
+    /**
+     * Removes a series of Joint objects from joints and box
+     * @function
+     * @memberOf BoxGame#
+     * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
+     */
+    removeJoints: function(){
+      // allows for passing an array as first arg or a bunch of args
+      var joints = _.flatten(arguments, true);
+      var self = this;
+      _.forEach(joints, function(entity){
+        self.removeJoint(entity);
+      });
     }
   });
+
+  return BoxGame;
 
 });</code></pre>
         </article>
@@ -202,7 +274,7 @@
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Apr 03 2013 19:34:12 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Jun 17 2013 19:05:18 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>

@@ -1,4 +1,4 @@
-//load the AMD modules we need
+// load the AMD modules we need
 require([
   'frozen/GameCore',
   'frozen/Sprite',
@@ -13,7 +13,7 @@ require([
   var speed = 0.5;
 
   //new sprite object maintian position, and velocities
-  var sprite = new Sprite({x:100,y:100, w:96, h: 96, dx:0, dy: 0});
+  var sprite = new Sprite({x:100, y:100, w:96, h: 96, dx:0, dy: 0});
 
   //set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
   sprite.anim = Animation.prototype.createFromSheet(8, 100, spriteImg, 96, 96);
@@ -21,15 +21,14 @@ require([
   //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
-    initInput: function(im){ //im = this.inputManager
-      //tells the input manager to listen for key events
+    initInput: function(im){ // im = this.inputManager
+      // tells the input manager to listen for key events
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
       im.addKeyAction(keys.UP_ARROW);
       im.addKeyAction(keys.DOWN_ARROW);
     },
     handleInput: function(im){
-
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
         sprite.dx = speed * -1;
       }
@@ -60,9 +59,9 @@ require([
     }
   });
 
-  //if you want to take a look at the game object in dev tools
+  // if you want to take a look at the game object in dev tools
   console.log(game);
 
-  //launch the game!
+  // launch the game!
   game.run();
 });

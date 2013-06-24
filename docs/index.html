@@ -7,7 +7,7 @@
     Index
     
       
-        - frozen: v0.3.0
+        - frozen: v0.4.0
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.3.0</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.0</sup></h1>
       
     
       
@@ -50,13 +50,14 @@
       <a href="/index.html">Home</a>
       <a href="/docs/">Docs</a>
       <a href="/examples/">Examples</a>
+      <a href="http://blog.frozenjs.com">Blog</a>
       <!-- <a href="/games.html">Games</a> -->
     </nav>
   </header>
 
   
     <nav class="sidebar">
-      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
+      <h3>Modules</h3><ul><li><a href="loadImage.html">plugins/loadImage</a></li><li><a href="loadSound.html">plugins/loadSound</a></li><li><a href="sound.html">plugins/sound</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="Animation.html">Animation</a></li><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="Box.html">Box</a></li><li><a href="BoxGame.html">BoxGame</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Contact.html">Contact</a></li><li><a href="Creature.html">Creature</a></li><li><a href="Distance.html">Distance</a></li><li><a href="Entity.html">Entity</a></li><li><a href="GameAction.html">GameAction</a></li><li><a href="GameCore.html">GameCore</a></li><li><a href="HTML5Audio.html">HTML5Audio</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Joint.html">Joint</a></li><li><a href="MouseAction.html">MouseAction</a></li><li><a href="MultiPolygon.html">MultiPolygon</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="Prismatic.html">Prismatic</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="Revolute.html">Revolute</a></li><li><a href="Sound_.html">Sound</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="TouchAction.html">TouchAction</a></li><li><a href="WebAudio.html">WebAudio</a></li></ul>
     </nav>
   
 
@@ -79,7 +80,7 @@
     <section>
         <article><p><img src="https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200" alt="FrozenJS Logo" title="" /></p>
 
-<h1>Frozen <sup>v0.3.0</sup></h1>
+<h1>Frozen <sup>v0.4.0</sup></h1>
 
 <p><a href="http://travis-ci.org/iceddev/frozen"><img src="https://secure.travis-ci.org/iceddev/frozen.png?branch=master" alt="build status" title="" /></a></p>
 
@@ -121,15 +122,16 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <p>We have tested in:</p>
 
 <ul>
-<li>Chrome 25 &amp; 27-dev</li>
-<li>Firefox 19.0.2</li>
+<li>Chrome 27 &amp; 29-canary</li>
+<li>Firefox 21, Aurora 23.0a2 &amp; Nightly 24.0a1</li>
 <li>IE10 (sound with supported codecs)</li>
-<li>Chrome for Android 25 &amp; Beta 26 (limited sound support)</li>
-<li>Firefox for Android 19.0.2, Beta 20 &amp; 21.0a2 (There is a bug in Dojo touch event handling that breaks on mobile FF, We are working towards landing a patch)</li>
-<li>PhantomJS 1.8.1</li>
+<li>Safari 6.0.3</li>
+<li>Chrome for Android 27 &amp; Beta 28 (limited sound support) - Suggestion: in <code>chrome://flags</code>, turn on "Disable gesture requirement for media playback" &amp; "Enable WebAudio"</li>
+<li>Firefox for Android 21, Beta 22, Aurora 23.0a2 &amp; Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)</li>
+<li>PhantomJS 1.9.1</li>
 </ul>
 
-<p><strong>Most modern browsers should support this game engine if they support canvas, but YMMV with sounds</strong></p>
+<p><strong>Most modern browsers should support this game engine if they support requestAnimationFrame or canvas, but YMMV with sounds</strong></p>
 
 <h2>Rapid Development Through Tooling</h2>
 
@@ -145,9 +147,11 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <li><a href="http://nodejs.org/">Node.js</a> and <a href="https://npmjs.org/">npm</a> - used for dependecy mangement for our build process and development workflow</li>
 <li><a href="http://gruntjs.com/">Grunt</a> - task runner for our development workflow, and allows for a single entry point into development configuration</li>
 <li><a href="http://volojs.org/">Volo</a> - clientside dependency management and project scaffolding tool</li>
-<li><a href="http://dojotoolkit.org/">Dojo</a> - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file</li>
+<li><a href="http://lodash.com/">Lo-Dash</a> - low-level utility library used inside the library</li>
+<li><a href="http://eightmedia.github.io/hammer.js/">Hammer.js</a> - multi-touch library used for mouse/touch/pointer event normalization and gestures</li>
 <li><a href="http://www.dcljs.org/">dcl</a> - used for generating constructors and supplying AOP convenience methods</li>
 <li><a href="https://box2dweb.googlecode.com/">Box2d</a> - used for physics calculations in games</li>
+<li><a href="http://dojotoolkit.org/">Dojo</a> - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file</li>
 <li><a href="http://usejsdoc.org/">JSDoc</a> - generates documentation for code</li>
 <li><a href="http://pivotal.github.com/jasmine/">Jasmine</a> - tests all use Jasmine</li>
 <li><a href="http://requirejs.org/docs/whyamd.html">AMD</a> - all modules are written with AMD and the single layer includes an AMD module loader</li>
@@ -155,13 +159,12 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 
 <h2>Development</h2>
 
-<p><strong>Warning: don't run <code>npm install</code> unless you need raw source, as this will use volo to install dojo, dojo utils, dcl, and Box2D</strong></p>
-
 <h3>Dependencies</h3>
 
 <p>All development tasks depend on having dependencies installed.</p>
 
-<p>Use <code>npm install</code> to get all the NPM dependencies and start the <code>volo add</code></p>
+<p>Use <code>npm install</code> to get all the build process dependencies
+Use <code>volo add</code> to get all the library dependencies</p>
 
 <h3>Building the dist/frozen layer</h3>
 
@@ -184,6 +187,69 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <p><code>grunt watch:all</code> to execute <code>grunt build</code> whenever a file changes</p>
 
 <h2>Release Notes</h2>
+
+<h3><sup>v0.4.0</sup></h3>
+
+<p><strong>Breaking Changes</strong></p>
+
+<ul>
+<li>Due to performance reasons, <code>InputManager.mousemove</code> only fires during <code>mousedown</code> or <code>touchstart</code> - see <a href="examples/breakouts/src/initInput.js">breakouts example</a> for workaround</li>
+<li>Added <code>frozen/TouchAction</code> instead of using <code>frozen/MouseAction</code> - used when <code>InputManager.emulateMouse</code> is <code>false</code></li>
+<li><code>InputManager.handleTouch</code> and <code>InputManager.handleMouse</code> removed, replaced with <code>InputManager.emulateMouse</code> which determines if MouseAction or TouchAction should be used</li>
+<li>Either <code>InputManager.mouseAction</code> or <code>InputManager.touchAction</code> will be active at one time (depending on state of <code>InputManager.emulateMouse</code>)</li>
+<li><code>InputManager</code> event handling methods no longer check if a point is inside canvas</li>
+<li><code>InputManager.keyActions</code> switched from array to object (only breaking if you iterate over the collection)</li>
+<li>Removed <code>Box.destroyJoint</code> because it was deprecated in last release</li>
+<li>Created a <code>frozen/box2d/listeners/Contact</code> module to contain contact listener callbacks and other logic - move custom contact handlers to this object</li>
+<li>Remove <code>dojo/dom</code>, <code>dojo/dom-geometry</code> and <code>dojo/dom-style</code> modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)</li>
+<li>Remove <code>dojo/_base/lang</code> in favor of Lo-Dash (module will be missing from built layer)</li>
+<li>Removed <code>update</code> function from <code>frozen/reiner/Creature</code> - replaced with <code>updateDirection</code> and <code>updateAnimations</code> functions</li>
+</ul>
+
+<p><strong>New Features</strong></p>
+
+<ul>
+<li>Add Bower support</li>
+<li>Add dependencies on Lo-Dash and Hammer.js</li>
+<li>Touch/Mouse/Pointer event normalization with Hammer.js</li>
+<li>Gesture support with Hammer.js</li>
+<li><code>InputManager.hammer</code> is an instance of Hammer.js</li>
+<li><code>InputManager.on</code> can be used for binding new events</li>
+<li><code>InputManager.insideCanvas</code> can be used to check a point against the <code>InputManager</code>'s <code>canvas</code></li>
+<li>New methods for adding or removing multiple bodies or joints in <code>frozen/BoxGame</code>: <code>addBodies</code>, <code>removeBodies</code>, <code>addJoints</code>, <code>removeJoints</code></li>
+<li>New methods for flipping images in <code>frozen/ResourceManager</code>: <code>flipImage</code>, <code>flipImageX</code>, <code>flipImageY</code></li>
+<li>Added <code>preSolve</code> to contact listener</li>
+<li>Added box2d sprite, gesture, ragdoll physics, and breakouts examples</li>
+</ul>
+
+<p><strong>Non-Breaking Changes</strong></p>
+
+<ul>
+<li>Update Examples to use features of 0.3.0/0.4.0</li>
+<li><code>frozen/utils/removeExtension</code> now uses a regex for removing the extensions, limited to 4 characters after the <code>.</code></li>
+<li><code>require.toUrl(filename)</code> is now used inside the <code>loadSound</code> and <code>loadImage</code> functions, instead of the plugins</li>
+<li>Fix for WebAudio on iOS</li>
+<li>On mobile which requires touch, interally switch to <code>Audio.play()</code> instead of <code>Audio.load()</code> to avoid double loading</li>
+<li>Use <code>dcl</code>'s <code>advice.before</code> to wire up <code>GameCore.beforeUpdate</code></li>
+</ul>
+
+<p><strong>Deprecations</strong></p>
+
+<ul>
+<li><code>GameCore.preUpdate</code> - Deprecated in favor of beforeUpdate</li>
+<li><code>InputManager.handleMouse</code> (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it</li>
+<li><code>InputManager.handleTouch</code> (already removed) - Touch is always handled, use emulateMouse to specify how to handle it</li>
+<li><code>InputManager.mouseUp</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.mouseDown</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.mouseMove</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.touchStart</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.touchEnd</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.touchMove</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.keyPressed</code> - Use keydown instead - same syntax as normal event handling</li>
+<li><code>InputManager.keyDown</code> - Use the lowercase name instead - same syntax as normal event handling</li>
+<li><code>InputManager.keyReleased</code> - Use keyup instead - same syntax as normal event handling</li>
+<li><code>InputManager.getMouseLoc</code> - Deprecated in favor of normalizePoint function (Same functionality, different name)</li>
+</ul>
 
 <h3><sup>v0.3.0</sup></h3>
 
@@ -235,85 +301,6 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <li><code>Box.destroyJoint</code> has been deprecated in favor of <code>Box.removeJoint</code></li>
 </ul>
 
-<h3><sup>v0.2.1</sup></h3>
-
-<p><strong>Breaking Changes</strong></p>
-
-<ul>
-<li>None! This is a bug fix release</li>
-</ul>
-
-<p><strong>New Features</strong></p>
-
-<ul>
-<li>None! This is a bug fix release</li>
-</ul>
-
-<p><strong>Non-Breaking Changes</strong></p>
-
-<ul>
-<li>Scaling issues in IE10 were fixed</li>
-<li>Fixed issue where ResourceManager was hanging when Audio loading errored</li>
-<li>Made collision masking check against null or undefined instead of hasOwnProperty</li>
-<li>Partial Chrome for Android sound support</li>
-</ul>
-
-<p><strong>Deprecations</strong></p>
-
-<ul>
-<li>Sound plugin will be moved to plugins 0.3.0</li>
-<li>AudioBase will be renamed Sound in 0.3.0</li>
-</ul>
-
-<h3><sup>v0.2.0</sup></h3>
-
-<p><strong>Breaking Changes</strong></p>
-
-<ul>
-<li>Default Box#gravityY to 9.8 instead of 10</li>
-<li>Auto-scaling on Box (Will cause problems if you are already scaling and don't account for auto-scaling)P</li>
-<li>Remove dojo/_base/declare from single layer - switch to dcl</li>
-<li>Change color to fillStyle and strokeColor to strokeStyle to stay consistent with canvas API</li>
-</ul>
-
-<p><strong>New Features</strong></p>
-
-<ul>
-<li>Added Joints (Distance, Prismatic, Revolute) - Box gained methods related to Joints</li>
-<li>Added GameCore#setHeight and GameCore#setWidth to set the game's and canvas' height or width</li>
-<li>Entities gained pointInShape function to determine if a point is within shape</li>
-<li>Collision filtering inside Box and properties on Entities</li>
-<li>Added insideCanvas utility and an insideCanvas property flag on mouse or touch events</li>
-<li>HTML5 Audio Support - with plugin that auto-detects which audio type to use</li>
-<li>Default lineWidth on Entities - used inside default draw</li>
-<li>AMD Plugins for loadImage and loadSound</li>
-<li>BoxGame added for easy creation of Box2d games - added preUpdate to GameCore to support this</li>
-<li>Jasmine tests for the library</li>
-</ul>
-
-<p><strong>Non-Breaking Changes</strong></p>
-
-<ul>
-<li>loadSound and loadImage now accept a String, Array of Strings, or Object of Strings and return the same type</li>
-<li>Dojo/on is used to listen for Image loading - allows for other event listeners to be added without breaking things</li>
-<li>Removed width and height from Box</li>
-<li>Cleaned up InputManager#resize</li>
-<li>Rewrote pointInPolygon module</li>
-<li>Fix some InputManager bugs</li>
-<li>Add more documentation</li>
-<li>Update examples</li>
-</ul>
-
-<p><strong>Deprecations</strong></p>
-
-<ul>
-<li>Any method that is just a getter or setter that did nothing else - No reason to continue the Java paradigms</li>
-<li>Animation#createFromTile</li>
-<li>ResourceManager#imageCount, ResourceManager#loadedImages, ResourceManager#playSound</li>
-<li>Sprite#drawCurrentFrame</li>
-<li>Entity#hidden</li>
-</ul>
-
 <p>Full changelog available: <a href="https://github.com/iceddev/frozen/wiki/Changelog">Changelog</a></p>
 
 <h2>License</h2>
@@ -336,7 +323,7 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Apr 03 2013 19:34:12 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Jun 17 2013 19:05:18 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>

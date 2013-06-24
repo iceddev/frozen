@@ -7,7 +7,6 @@
   "noarg": true,
   "undef": true,
   "boss": true,
-  "es5": true,
   "strict": true,
   "trailing": true,
   "loopfunc": true,

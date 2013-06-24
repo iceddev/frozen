@@ -23,13 +23,6 @@ define([
   return {
     load: function(resource, req, callback, config){
       resource = parseString(resource);
-      if(typeof resource !== 'string'){
-        Object.keys(resource).forEach(function(key){
-          resource[key] = req.toUrl(resource[key]);
-        });
-      } else {
-        resource = req.toUrl(resource);
-      }
       var res = rm.loadImage(resource);
       callback(res);
     }

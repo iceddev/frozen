@@ -15,7 +15,8 @@ define([
       canvas = document.createElement('canvas');
       document.body.appendChild(canvas);
       game = new GameCore({
-        canvas: canvas
+        canvas: canvas,
+        beforeUpdate: jasmine.createSpy('beforeUpdate')
       });
     });
 
@@ -89,7 +90,6 @@ define([
       expect(game.gameLoop).toBeDefined();
       expect(game.launchLoop).toBeDefined();
       expect(game.loopRunner).toBeDefined();
-      expect(game.preUpdate).toBeDefined();
       expect(game.update).toBeDefined();
       expect(game.updateLoadingScreen).toBeDefined();
       expect(game.draw).toBeDefined();
@@ -440,18 +440,7 @@ define([
 
     });
 
-    describe('GameCore.preUpdate()', function(){
-      var flag = false;
-
-      beforeEach(function(){
-        spyOn(game, 'preUpdate').andCallFake(function(){
-          flag = true;
-        });
-      });
-
-      afterEach(function(){
-        flag = false;
-      });
+    describe('GameCore.beforeUpdate()', function(){
 
       it('should be called while the game is running', function(){
         runs(function(){
@@ -459,30 +448,32 @@ define([
         });
 
         waitsFor(function(){
-          return flag;
-        }, 'preUpdate should have been called', 500);
+          return game.beforeUpdate.callCount;
+        }, 'beforeUpdate should have been called', 500);
 
         runs(function(){
-          expect(game.preUpdate).toHaveBeenCalled();
-          expect(game.preUpdate).toHaveBeenCalledWith(game.elapsedTime);
+          expect(game.beforeUpdate).toHaveBeenCalled();
+          expect(game.beforeUpdate).toHaveBeenCalledWith(game.elapsedTime);
         });
       });
 
       it('should not be called while game is paused', function(){
+        var flag = false;
+
         runs(function(){
           game.paused = true;
           game.run();
           setTimeout(function(){
             flag = true;
-          }, 499); // TODO: might need to adjust this timeout if test errors
+          }, 250); // TODO: might need to adjust this timeout if test errors
         });
 
         waitsFor(function(){
-          return flag;
-        }, 'preUpdate should not have been called', 500);
+          return flag || game.beforeUpdate.callCount;
+        }, 'beforeUpdate should not have been called', 500);
 
         runs(function(){
-          expect(game.preUpdate).not.toHaveBeenCalled();
+          expect(game.beforeUpdate).not.toHaveBeenCalled();
         });
       });
 
