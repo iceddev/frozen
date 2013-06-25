@@ -244,7 +244,7 @@ define([
       fixDef.restitution = entity.restitution;
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
-
+      fixDef.isSensor = entity.sensor || false;
 
       //these three props are for custom collision filtering
       if(entity.maskBits != null){

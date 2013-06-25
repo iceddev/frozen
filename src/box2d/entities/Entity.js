@@ -160,6 +160,13 @@ define([
      * @default
      */
     groupIndex: null,
+    /**
+     * Whether the entity is a sensor
+     * @type {Boolean}
+     * @memberOf Entity#
+     * @default
+     */
+    sensor: false,
 
     /**
      * Update this entity with the state passed in
