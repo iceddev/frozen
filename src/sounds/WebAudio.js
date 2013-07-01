@@ -24,16 +24,16 @@ define([
   var audioContext = null;
   if(has('WebAudio')){
     audioContext = new window.AudioContext();
-  }
 
-  if(has('shittySound')){
-    // Similar strategy to https://github.com/CreateJS/SoundJS
-    on.once(document, 'touchstart', function(){
-      var source = audioContext.createBufferSource();
-      source.buffer = audioContext.createBuffer(1, 1, 22050);
-      source.connect(audioContext.destination);
-      source.noteOn(0);
-    });
+    if(has('shittySound')){
+      // Similar strategy to https://github.com/CreateJS/SoundJS
+      on.once(document, 'touchstart', function(){
+        var source = audioContext.createBufferSource();
+        source.buffer = audioContext.createBuffer(1, 1, 22050);
+        source.connect(audioContext.destination);
+        source.noteOn(0);
+      });
+    }
   }
 
   return dcl(Sound, {
