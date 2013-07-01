@@ -127,7 +127,7 @@ define([
      * Instance of Hammer.js - You can pass in a Hammer() constructor with options to customize your Hammer instance
      * @type {Object}
      * @memberOf InputManager#
-     * @default Hammer instance, bound to document, with prevent_default: true, drag_max_touches: 0, and hold: false
+     * @default Hammer instance, bound to document, with drag_max_touches: 0 and hold: false
      */
     hammer: null,
 
@@ -162,7 +162,6 @@ define([
 
       if(!this.hammer){
         this.hammer = hammer(document, {
-          prevent_default: true,
           drag_max_touches: 0,
           // Hold uses setTimeout which is very bad for performance
           // TODO: Do we want to allow this to be overridden?
