@@ -205,48 +205,6 @@ __Deprecations__
 * `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
 * `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
 
-### <sup>v0.3.0</sup>
-
-__Breaking Changes__
-
-* Removed previously deprecated methods and properties
-* Removed Node 0.6 support for the build process
-* `frozen/sounds/Sound` was a plugin, but is now the base object of other Sounds and `frozen/sounds/AudioBase` was removed
-* `frozen/sounds/Sound` plugin was moved to `frozen/plugins/sound`
-* `frozen/box2d/Entity` moved to `frozen/box2d/entities/Entity`
-* `frozen/box2d/RectangleEntity` moved to `frozen/box2d/entities/Rectangle`
-* `frozen/box2d/CircleEntity` moved to `frozen/box2d/entities/Circle`
-* `frozen/box2d/PolygonEntity` moved to `frozen/box2d/entities/Polygon`
-* `frozen/box2d/MultiPolygonEntity` moved to `frozen/box2d/entities/MultiPolygon`
-
-__New Features__
-
-* Auto-selection of Audio extension if no extension is specified
-* `loadSound` and `loadImage` plugins now use `require.toUrl()` to generate a path to your resources
-* Added `.jamignore` file
-* `Box.setAngularVelocity` function added to set the angular velocity on an entity
-* Tests added for Sounds, BoxGame, and Sprite
-* Added `frozen/box2d/entities` which returns a map of entity types
-* Added `frozen/box2d/joints` which returns a map of joint types
-* `BoxGame.addBody`, `BoxGame.removeBody`, `BoxGame.addJoint`, `BoxGame.removeJoint` methods added for convenience
-
-__Non-Breaking Changes__
-
-* Made all the examples adhere to the linting rules of the rest of the project
-* Move linting declarations to .jshintrc to allow for JSHint being run in the directory standalone
-* Update Grunt to `~0.4.1` and add/update all the dependencies in `package.json`
-* Modified the Gruntfile to work with new plugins and define more tasks for convenience
-* Removed Node 0.6 from tested environments
-* Updated examples that were using deprecated methods
-* Cleanup event handler usage on Audio implementations
-* Rearranged the `specs/` file structure to match `src/`
-* Implement the dcl Cleanup API for InputManager to remove event handlers on destruction
-* Add declaredClass to entities and joints
-
-__Deprecations__
-
-* `Box.destroyJoint` has been deprecated in favor of `Box.removeJoint`
-
 Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
 
 ## License
