@@ -25,11 +25,10 @@ define([
     if(entity.id === 'car'){
       game.addBody(new Car(entity));
       game.box.setAngle('car', Math.PI * 1.5);
-    }else if(entities[entity.type]){
+    } else if(entities[entity.type]){
       game.addBody(new entities[entity.type](entity));
     }
   });
-
 
   //if you want to take a look at the game object in dev tools
   console.log(game);

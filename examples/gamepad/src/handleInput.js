@@ -7,20 +7,18 @@ define([
   var turnAngle = Math.PI / 180 * 6;
 
   return function handleInput(im, millis){
-
+    // If we have the Gamepad API
     if(navigator.getGamepads){
-
-      //poll the gamepad for values. Sometimes a single controller shows up in the second slot.
+      // Poll the gamepad for values. Sometimes a single controller shows up in the second slot.
       var gamePad = navigator.getGamepads()[0] || navigator.getGamepads()[1];
 
       if(gamePad){
-
         this.message = "Using: " + gamePad.id;
 
         if(gamePad.axes[0] > 0.5){
           //turn right
           this.box.setAngle('car', this.entities.car.angle + turnAngle);
-        }else if(gamePad.axes[0] < -0.5){
+        } else if(gamePad.axes[0] < -0.5){
           //turn left
           this.box.setAngle('car', this.entities.car.angle - turnAngle);
         }
@@ -28,15 +26,14 @@ define([
         if(gamePad.buttons[0] > 0.5){
           //move foreward
           this.box.applyImpulse('car', this.entities.car.angle, speed);
-        }else if(gamePad.buttons[1] > 0.5){
+        } else if(gamePad.buttons[1] > 0.5){
           //move in reverse
           this.box.applyImpulse('car', this.entities.car.angle - Math.PI, speed);
         }
-
-      }else{
+      } else {
         this.message = "No gamepads detected";
       }
-    }else{
+    } else {
       this.message = "Browser does not support game pads. Use arrow keys.";
     }
   };

@@ -1,7 +1,5 @@
 define(
-
 //replace this with JSON from the box2d editor
-
 {
   "entities": [
     {
@@ -897,7 +895,4 @@ define(
   },
   "backImg": null
 }
-
-
-
 );

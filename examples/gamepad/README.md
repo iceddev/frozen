@@ -1,4 +1,4 @@
-# racegame
+# Gamepad API Example
 
 ## Getting started
 
