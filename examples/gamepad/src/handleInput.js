@@ -1,5 +1,5 @@
 define([
-  'frozen/shims/GetGamepads'
+  'frozen/shims/getGamepads'
 ], function(){
 
   'use strict';

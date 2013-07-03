@@ -82,7 +82,7 @@ var profile = (function(){
           'frozen/utils',
           'dojo/keys',
           //shims
-          'frozen/shims/GetGamepads'
+          'frozen/shims/getGamepads'
         ],
         customBase: true,
         boot: true
