@@ -34,7 +34,7 @@ define([
         this.message = "No gamepads detected";
       }
     } else {
-      this.message = "Browser does not support game pads. Use arrow keys.";
+      this.message = "Browser does not support game pads.";
     }
   };
 
