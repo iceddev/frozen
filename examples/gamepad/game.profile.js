@@ -3,11 +3,10 @@ var profile = (function(){
   'use strict';
 
   var miniExcludes = {
-    'frozen/package': 1
+
   };
 
   return {
-    basePath: "./",
     releaseDir: "libs",
     action: "release",
     layerOptimize: "closure",
@@ -67,22 +66,9 @@ var profile = (function(){
         include: [],
         customBase: true
       },
-      "dist/frozen": {
+      "dist/game": {
         include: [
-          // box2d
-          'frozen/box2d/BoxGame',
-          'frozen/box2d/entities',
-          'frozen/box2d/joints',
-          // plugins
-          'frozen/plugins/loadImage',
-          'frozen/plugins/loadSound',
-          // reiner
-          'frozen/reiner/Creature',
-          // utils
-          'frozen/utils',
-          'dojo/keys',
-          //shims
-          'frozen/shims/getGamepads'
+          'game'
         ],
         customBase: true,
         boot: true

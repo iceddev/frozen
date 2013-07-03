@@ -1,7 +1,7 @@
 {
   "name": "Ragdoll Physics",
   "description": "Using ragdoll physics",
-  "position": 10,
+  "position": 11,
   "version": "0.1.1",
   "volo": {
     "baseUrl": "deps",
