@@ -15,13 +15,34 @@ Our goal is to apply techniques used in building modern webapps to game developm
 [Development](https://raw.github.com/iceddev/frozen/master/dist/frozen.js.uncompressed.js) and
 [Production](https://raw.github.com/iceddev/frozen/master/dist/frozen.js)
 
-* Frozen Source (individual modules - bring your own loader or use Dojo)<br>
-Use `volo add iceddev/frozen` to add it to your project<br>
-or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)<br>
+* Package Managers
+	* [bower](http://bower.io/) - `bower install frozen`
+	* [volo](http://volojs.org/) - `volo add iceddev/frozen`
+	* [jam](http://jamjs.org/) - `jam install frozen`
+
 _Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only_
 
-* Or just use the boilerplate!<br>
-Use `volo create your_project frozenjs/boilerplate` which will scaffold out a new project for you and install all dependencies
+* Frozen Source (but don't forget your dependencies)<br>
+Clone it from [github](https://github.com/iceddev/frozen) - `git clone git://github.com/iceddev/frozen`<br>
+or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) <br>
+
+## Getting Started
+
+We provide both a [yeoman](http://yeoman.io/) generator and a [volo](http://volojs.org/#create) project scaffolding
+
+### Yeoman Generator
+
+1. `npm install -g yo grunt-cli bower generator-frozen` - Install yo, grunt-cli, bower, and generator-frozen
+2. `mkdir your_game` - Create a new directory for your game
+3. `cd your_game` - Enter directory for you game
+4. `yo frozen` - Answer a few questions, scaffold a new game and install all dependencies
+5. `grunt` - Starts a static server with live reloading and opens your browser to your game
+
+### Volo Create
+
+1. `npm install -g volo` - Install volo
+2. `volo create your_game frozenjs/boilerplate` - Scaffold a new game and install all dependencies
+3. `volo grunt` - Starts a static server with live reloading and opens your browser to your game
 
 ## Documentation
 
@@ -53,6 +74,10 @@ __Most modern browsers should support this game engine if they support requestAn
 ## Rapid Development Through Tooling
 
 Our Frozen Box2d Editor is available at http://phated.github.com/frozen-editor/
+
+Yeoman generator can be found at https://github.com/frozenjs/generator-frozen
+
+Volo boilerplate can be found at https://github.com/frozenjs/boilerplate
 
 ## Technologies behind Frozen
 
@@ -102,6 +127,28 @@ Use `volo add` to get all the library dependencies
 `grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.4.1</sup>
+
+__Breaking Changes__
+
+* None! This is a bug fix release
+
+__New Features__
+
+* Yeoman generator support!!! See https://github.com/frozenjs/generator-frozen
+* Box now handles sensors! Just add sensor property to your entities and they will start showing up in your collision handlers
+* Added Gamepad API example
+
+__Non-Breaking Changes__
+
+* Fix bug where `GameCore.stop` didn't actually stop a game
+* Disable `prevent_default` option on default Hammer.js configuration inside `InputManager` - it caused problems with click events on DOM elements
+* Fix error on Chrome for Android when there was no WebAudio is available
+
+__Deprecations__
+
+* None! This is a bug fix release
 
 ### <sup>v0.4.0</sup>
 
@@ -157,48 +204,6 @@ __Deprecations__
 * `InputManager.keyDown` - Use the lowercase name instead - same syntax as normal event handling
 * `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
 * `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
-
-### <sup>v0.3.0</sup>
-
-__Breaking Changes__
-
-* Removed previously deprecated methods and properties
-* Removed Node 0.6 support for the build process
-* `frozen/sounds/Sound` was a plugin, but is now the base object of other Sounds and `frozen/sounds/AudioBase` was removed
-* `frozen/sounds/Sound` plugin was moved to `frozen/plugins/sound`
-* `frozen/box2d/Entity` moved to `frozen/box2d/entities/Entity`
-* `frozen/box2d/RectangleEntity` moved to `frozen/box2d/entities/Rectangle`
-* `frozen/box2d/CircleEntity` moved to `frozen/box2d/entities/Circle`
-* `frozen/box2d/PolygonEntity` moved to `frozen/box2d/entities/Polygon`
-* `frozen/box2d/MultiPolygonEntity` moved to `frozen/box2d/entities/MultiPolygon`
-
-__New Features__
-
-* Auto-selection of Audio extension if no extension is specified
-* `loadSound` and `loadImage` plugins now use `require.toUrl()` to generate a path to your resources
-* Added `.jamignore` file
-* `Box.setAngularVelocity` function added to set the angular velocity on an entity
-* Tests added for Sounds, BoxGame, and Sprite
-* Added `frozen/box2d/entities` which returns a map of entity types
-* Added `frozen/box2d/joints` which returns a map of joint types
-* `BoxGame.addBody`, `BoxGame.removeBody`, `BoxGame.addJoint`, `BoxGame.removeJoint` methods added for convenience
-
-__Non-Breaking Changes__
-
-* Made all the examples adhere to the linting rules of the rest of the project
-* Move linting declarations to .jshintrc to allow for JSHint being run in the directory standalone
-* Update Grunt to `~0.4.1` and add/update all the dependencies in `package.json`
-* Modified the Gruntfile to work with new plugins and define more tasks for convenience
-* Removed Node 0.6 from tested environments
-* Updated examples that were using deprecated methods
-* Cleanup event handler usage on Audio implementations
-* Rearranged the `specs/` file structure to match `src/`
-* Implement the dcl Cleanup API for InputManager to remove event handlers on destruction
-* Add declaredClass to entities and joints
-
-__Deprecations__
-
-* `Box.destroyJoint` has been deprecated in favor of `Box.removeJoint`
 
 Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
 
