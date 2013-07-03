@@ -10,7 +10,7 @@ define([
 
     if(navigator.getGamepads){
 
-      //poll the gamepage for values
+      //poll the gamepad for values. Sometimes a single controller shows up in the second slot.
       var gamePad = navigator.getGamepads()[0] || navigator.getGamepads()[1];
 
       if(gamePad){
