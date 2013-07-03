@@ -80,7 +80,9 @@ var profile = (function(){
           'frozen/reiner/Creature',
           // utils
           'frozen/utils',
-          'dojo/keys'
+          'dojo/keys',
+          //shims
+          'frozen/shims/GetGamepads'
         ],
         customBase: true,
         boot: true

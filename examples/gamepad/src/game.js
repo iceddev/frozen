@@ -1,14 +1,13 @@
 define([
-  './update',
   './draw',
   './handleInput',
   './Car',
-  'dojo/keys',
+  'lodash',
   'frozen/box2d/Box',
   'frozen/box2d/BoxGame',
   'frozen/box2d/entities',
   './boxData'
-], function(update, draw, handleInput, Car, keys, Box, BoxGame, entities, boxData){
+], function(draw, handleInput, Car, _, Box, BoxGame, entities, boxData){
 
   'use strict';
 
@@ -18,21 +17,11 @@ define([
     gameAreaId: 'gameArea',
     canvasPercentage: 0.95,
     box: new Box({gravityY: 0}),
-    update: update,
     draw: draw,
-    initInput: function(im){
-      //just check for support, we'll actually handle gamepad in handleInput()
-      this.gamepadSupport = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
-
-      im.addKeyAction(keys.LEFT_ARROW);
-      im.addKeyAction(keys.RIGHT_ARROW);
-      im.addKeyAction(keys.UP_ARROW);
-      im.addKeyAction(keys.DOWN_ARROW);
-    },
     handleInput: handleInput
   });
 
-  boxData.entities.forEach(function(entity){
+  _.forEach(boxData.entities, function(entity){
     if(entity.id === 'car'){
       game.addBody(new Car(entity));
       game.box.setAngle('car', Math.PI * 1.5);

@@ -1,6 +1,6 @@
 define([
-  'dojo/keys'
-], function(keys){
+  'frozen/shims/GetGamepads'
+], function(){
 
   'use strict';
   var speed = 0.4;
@@ -8,12 +8,10 @@ define([
 
   return function handleInput(im, millis){
 
-
-    if(this.gamepadSupport){
+    if(navigator.getGamepads){
 
       //poll the gamepage for values
-      var gamePad = navigator.webkitGetGamepads()[0] || navigator.webkitGetGamepads()[1];
-
+      var gamePad = navigator.getGamepads()[0] || navigator.getGamepads()[1];
 
       if(gamePad){
 
@@ -35,28 +33,11 @@ define([
           this.box.applyImpulse('car', this.entities.car.angle - Math.PI, speed);
         }
 
-
       }else{
         this.message = "No gamepads detected";
       }
     }else{
       this.message = "Browser does not support game pads. Use arrow keys.";
-    }
-
-
-
-    // handle input using arrow keys
-
-    if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-      this.box.setAngle('car', this.entities.car.angle - turnAngle);
-    } else if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-      this.box.setAngle('car', this.entities.car.angle + turnAngle);
-    }
-
-    if(im.keyActions[keys.UP_ARROW].isPressed()){
-      this.box.applyImpulse('car', this.entities.car.angle, speed);
-    }else if(im.keyActions[keys.DOWN_ARROW].isPressed()){
-      this.box.applyImpulse('car', this.entities.car.angle - Math.PI, speed);
     }
   };
 
