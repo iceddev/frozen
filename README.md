@@ -61,12 +61,12 @@ Source available on github: https://github.com/iceddev/frozen
 
 We have tested in:
 
-* Chrome 27 & 29-canary
-* Firefox 21, Aurora 23.0a2 & Nightly 24.0a1
+* Chrome 27 & 30-canary
+* Firefox 21 & 22
 * IE10 (sound with supported codecs)
 * Safari 6.0.3
 * Chrome for Android 27 & Beta 28 (limited sound support) - Suggestion: in `chrome://flags`, turn on "Disable gesture requirement for media playback" & "Enable WebAudio"
-* Firefox for Android 21, Beta 22, Aurora 23.0a2 & Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)
+* Firefox for Android 22 & Beta 23 (Doesn't load some Box2d examples - unsure why)
 * PhantomJS 1.9.1
 
 __Most modern browsers should support this game engine if they support requestAnimationFrame or canvas, but YMMV with sounds__
