@@ -2255,6 +2255,13 @@ define("frozen/GameCore", [
      * @default
      */
     canvasPercentage: 0,
+    /**
+     * Request ID of the most recent animation frame
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    requestId: null,
 
     constructor: function(){
       /**
@@ -2305,6 +2312,8 @@ define("frozen/GameCore", [
      * @memberOf GameCore#
      */
     stop: function() {
+      window.cancelAnimationFrame(this.requestId);
+      this.requestId = null;
       this.isRunning = false;
     },
 
@@ -2436,12 +2445,12 @@ define("frozen/GameCore", [
 
       //need to keep the context defined here so the game loop has access to it
       this.loopRunner = _.bind(this.loopRunner, this);
-      window.requestAnimationFrame(this.loopRunner);
+      this.requestId = window.requestAnimationFrame(this.loopRunner);
     },
 
     loopRunner: function(){
       this.gameLoop();
-      window.requestAnimationFrame(this.loopRunner);
+      this.requestId = window.requestAnimationFrame(this.loopRunner);
     },
 
     /**
@@ -8633,7 +8642,7 @@ define("frozen/InputManager", [
      * Instance of Hammer.js - You can pass in a Hammer() constructor with options to customize your Hammer instance
      * @type {Object}
      * @memberOf InputManager#
-     * @default Hammer instance, bound to document, with prevent_default: true, drag_max_touches: 0, and hold: false
+     * @default Hammer instance, bound to document, with drag_max_touches: 0 and hold: false
      */
     hammer: null,
 
@@ -8668,7 +8677,6 @@ define("frozen/InputManager", [
 
       if(!this.hammer){
         this.hammer = hammer(document, {
-          prevent_default: true,
           drag_max_touches: 0,
           // Hold uses setTimeout which is very bad for performance
           // TODO: Do we want to allow this to be overridden?
@@ -12806,16 +12814,16 @@ define("frozen/sounds/WebAudio", [
   var audioContext = null;
   if(has('WebAudio')){
     audioContext = new window.AudioContext();
-  }
 
-  if(has('shittySound')){
-    // Similar strategy to https://github.com/CreateJS/SoundJS
-    on.once(document, 'touchstart', function(){
-      var source = audioContext.createBufferSource();
-      source.buffer = audioContext.createBuffer(1, 1, 22050);
-      source.connect(audioContext.destination);
-      source.noteOn(0);
-    });
+    if(has('shittySound')){
+      // Similar strategy to https://github.com/CreateJS/SoundJS
+      on.once(document, 'touchstart', function(){
+        var source = audioContext.createBufferSource();
+        source.buffer = audioContext.createBuffer(1, 1, 22050);
+        source.connect(audioContext.destination);
+        source.noteOn(0);
+      });
+    }
   }
 
   return dcl(Sound, {
@@ -13361,7 +13369,7 @@ define("frozen/box2d/Box", [
       fixDef.restitution = entity.restitution;
       fixDef.density = entity.density;
       fixDef.friction = entity.friction;
-
+      fixDef.isSensor = entity.sensor || false;
 
       //these three props are for custom collision filtering
       if(entity.maskBits != null){
@@ -14078,6 +14086,13 @@ define("frozen/box2d/entities/Entity", [
      * @default
      */
     groupIndex: null,
+    /**
+     * Whether the entity is a sensor
+     * @type {Boolean}
+     * @memberOf Entity#
+     * @default
+     */
+    sensor: false,
 
     /**
      * Update this entity with the state passed in
@@ -15812,5 +15827,18 @@ define(["./_base/kernel", "./sniff"], function(dojo, has){
 	};
 });
 
+},
+'frozen/shims/getGamepads':function(){
+define("frozen/shims/getGamepads", function(){
+
+  'use strict';
+
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+  for(var x = 0; x < vendors.length && !navigator.getGamepads; ++x) {
+    navigator.getGamepads = navigator[vendors[x]+'GetGamepads'];
+  }
+
+});
 }}});
 (function(){ require({cache:{}}); require.boot && require.apply(null, require.boot); })();
