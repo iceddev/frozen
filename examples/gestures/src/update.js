@@ -1,5 +1,5 @@
 define([
-  'lodash',
+  'lodash'
 ], function(_){
 
   'use strict';

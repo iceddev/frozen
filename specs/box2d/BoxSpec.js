@@ -1,8 +1,9 @@
 define([
   'frozen/box2d/Box',
   'frozen/box2d/entities/Rectangle',
-  'frozen/box2d/joints/Revolute'
-], function(Box, Rectangle, Revolute){
+  'frozen/box2d/joints/Revolute',
+  'frozen/box2d/listeners/Contact'
+], function(Box, Rectangle, Revolute, Contact){
 
   'use strict';
 
@@ -161,7 +162,37 @@ define([
       expect(collided).toBe(true);
     });
 
-  });
+    it('check if a collision occured with a sensor', function(){
+      var collided = false;
+      box = new Box({
+        contactListener: new Contact({
+          beginContact: function(idA, idB, contact){
+            if(contact.GetFixtureB().IsSensor()){
+              collided = true;
+            }
+          }
+        })
+      });
+      var rect2 = new Rectangle({
+        id: 'b',
+        halfHeight: 5,
+        halfWidth: 20,
+        staticBody: true,
+        x: -10,
+        y: 50,
+        sensor: true
+      });
+      extMap.b = rect2;
+      box.addBody(rect);
+      box.addBody(rect2);
+      //simulate 3 seconds at approx 60 frames/sec
+      for(var i = 0; i < 180; i++){
+        box.update(16);
+        box.updateExternalState(extMap);
+      }
+      expect(collided).toBe(true);
+    });
 
+  });
 
 });

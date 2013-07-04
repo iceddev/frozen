@@ -142,10 +142,15 @@ define([
         game.run();
 
         expect(game.isRunning).toBe(true);
+        expect(game.requestId).not.toBe(null);
 
         game.stop();
 
+        spyOn(game, 'gameLoop');
+
         expect(game.isRunning).toBe(false);
+        expect(game.requestId).toBe(null);
+        expect(game.gameLoop).not.toHaveBeenCalled();
       });
 
     });
@@ -176,6 +181,7 @@ define([
 
       it('should call launchLoop when run is called', function(){
         expect(game.launchLoop).toHaveBeenCalled();
+        expect(game.requestId).not.toBe(null);
       });
 
       it('should be running after run is called', function(){

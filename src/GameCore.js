@@ -123,6 +123,13 @@ define([
      * @default
      */
     canvasPercentage: 0,
+    /**
+     * Request ID of the most recent animation frame
+     * @type {Number}
+     * @memberOf GameCore#
+     * @default
+     */
+    requestId: null,
 
     constructor: function(){
       /**
@@ -173,6 +180,8 @@ define([
      * @memberOf GameCore#
      */
     stop: function() {
+      window.cancelAnimationFrame(this.requestId);
+      this.requestId = null;
       this.isRunning = false;
     },
 
@@ -304,12 +313,12 @@ define([
 
       //need to keep the context defined here so the game loop has access to it
       this.loopRunner = _.bind(this.loopRunner, this);
-      window.requestAnimationFrame(this.loopRunner);
+      this.requestId = window.requestAnimationFrame(this.loopRunner);
     },
 
     loopRunner: function(){
       this.gameLoop();
-      window.requestAnimationFrame(this.loopRunner);
+      this.requestId = window.requestAnimationFrame(this.loopRunner);
     },
 
     /**
