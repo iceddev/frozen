@@ -7,7 +7,7 @@
     Index
     
       
-        - frozen: v0.4.0
+        - frozen: v0.4.1
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.4.0</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.1</sup></h1>
       
     
       
@@ -80,7 +80,7 @@
     <section>
         <article><p><img src="https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200" alt="FrozenJS Logo" title="" /></p>
 
-<h1>Frozen <sup>v0.4.0</sup></h1>
+<h1>Frozen <sup>v0.4.1</sup></h1>
 
 <p><a href="http://travis-ci.org/iceddev/frozen"><img src="https://secure.travis-ci.org/iceddev/frozen.png?branch=master" alt="build status" title="" /></a></p>
 
@@ -96,13 +96,42 @@
 <li><p>Frozen (single file - AMD loader included)<br>
 <a href="https://raw.github.com/iceddev/frozen/master/dist/frozen.js.uncompressed.js">Development</a> and
 <a href="https://raw.github.com/iceddev/frozen/master/dist/frozen.js">Production</a></p></li>
-<li><p>Frozen Source (individual modules - bring your own loader or use Dojo)<br>
-Use <code>volo add iceddev/frozen</code> to add it to your project<br>
-or grab the zip: <a href="https://github.com/iceddev/frozen/archive/master.zip">Frozen Source</a> (but don't forget your dependencies)<br>
-<em>Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only</em></p></li>
-<li><p>Or just use the boilerplate!<br>
-Use <code>volo create your_project frozenjs/boilerplate</code> which will scaffold out a new project for you and install all dependencies</p></li>
+<li><p>Package Managers</p>
+
+<ul><li><a href="http://bower.io/">bower</a> - <code>bower install frozen</code></li>
+<li><a href="http://volojs.org/">volo</a> - <code>volo add iceddev/frozen</code></li>
+<li><a href="http://jamjs.org/">jam</a> - <code>jam install frozen</code></li></ul></li>
 </ul>
+
+<p><em>Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only</em></p>
+
+<ul>
+<li>Frozen Source (but don't forget your dependencies)<br>
+Clone it from <a href="https://github.com/iceddev/frozen">github</a> - <code>git clone git://github.com/iceddev/frozen</code><br>
+or grab the zip: <a href="https://github.com/iceddev/frozen/archive/master.zip">Frozen Source</a> <br></li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p>We provide both a <a href="http://yeoman.io/">yeoman</a> generator and a <a href="http://volojs.org/#create">volo</a> project scaffolding</p>
+
+<h3>Yeoman Generator</h3>
+
+<ol>
+<li><code>npm install -g yo grunt-cli bower generator-frozen</code> - Install yo, grunt-cli, bower, and generator-frozen</li>
+<li><code>mkdir your_game</code> - Create a new directory for your game</li>
+<li><code>cd your_game</code> - Enter directory for you game</li>
+<li><code>yo frozen</code> - Answer a few questions, scaffold a new game and install all dependencies</li>
+<li><code>grunt</code> - Starts a static server with live reloading and opens your browser to your game</li>
+</ol>
+
+<h3>Volo Create</h3>
+
+<ol>
+<li><code>npm install -g volo</code> - Install volo</li>
+<li><code>volo create your_game frozenjs/boilerplate</code> - Scaffold a new game and install all dependencies</li>
+<li><code>volo grunt</code> - Starts a static server with live reloading and opens your browser to your game</li>
+</ol>
 
 <h2>Documentation</h2>
 
@@ -122,12 +151,12 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <p>We have tested in:</p>
 
 <ul>
-<li>Chrome 27 &amp; 29-canary</li>
-<li>Firefox 21, Aurora 23.0a2 &amp; Nightly 24.0a1</li>
+<li>Chrome 27 &amp; 30-canary</li>
+<li>Firefox 21 &amp; 22</li>
 <li>IE10 (sound with supported codecs)</li>
 <li>Safari 6.0.3</li>
 <li>Chrome for Android 27 &amp; Beta 28 (limited sound support) - Suggestion: in <code>chrome://flags</code>, turn on "Disable gesture requirement for media playback" &amp; "Enable WebAudio"</li>
-<li>Firefox for Android 21, Beta 22, Aurora 23.0a2 &amp; Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)</li>
+<li>Firefox for Android 22 &amp; Beta 23 (Doesn't load some Box2d examples - unsure why)</li>
 <li>PhantomJS 1.9.1</li>
 </ul>
 
@@ -136,6 +165,10 @@ Examples source code can be found at <a href='https://github.com/iceddev/frozen/
 <h2>Rapid Development Through Tooling</h2>
 
 <p>Our Frozen Box2d Editor is available at <a href='http://phated.github.com/frozen-editor/'>http://phated.github.com/frozen-editor/</a></p>
+
+<p>Yeoman generator can be found at <a href='https://github.com/frozenjs/generator-frozen'>https://github.com/frozenjs/generator-frozen</a></p>
+
+<p>Volo boilerplate can be found at <a href='https://github.com/frozenjs/boilerplate'>https://github.com/frozenjs/boilerplate</a></p>
 
 <h2>Technologies behind Frozen</h2>
 
@@ -187,6 +220,36 @@ Use <code>volo add</code> to get all the library dependencies</p>
 <p><code>grunt watch:all</code> to execute <code>grunt build</code> whenever a file changes</p>
 
 <h2>Release Notes</h2>
+
+<h3><sup>v0.4.1</sup></h3>
+
+<p><strong>Breaking Changes</strong></p>
+
+<ul>
+<li>None! This is a bug fix release</li>
+</ul>
+
+<p><strong>New Features</strong></p>
+
+<ul>
+<li>Yeoman generator support!!! See <a href='https://github.com/frozenjs/generator-frozen'>https://github.com/frozenjs/generator-frozen</a></li>
+<li>Box now handles sensors! Just add sensor property to your entities and they will start showing up in your collision handlers</li>
+<li>Added Gamepad API example</li>
+</ul>
+
+<p><strong>Non-Breaking Changes</strong></p>
+
+<ul>
+<li>Fix bug where <code>GameCore.stop</code> didn't actually stop a game</li>
+<li>Disable <code>prevent_default</code> option on default Hammer.js configuration inside <code>InputManager</code> - it caused problems with click events on DOM elements</li>
+<li>Fix error on Chrome for Android when there was no WebAudio is available</li>
+</ul>
+
+<p><strong>Deprecations</strong></p>
+
+<ul>
+<li>None! This is a bug fix release</li>
+</ul>
 
 <h3><sup>v0.4.0</sup></h3>
 
@@ -251,56 +314,6 @@ Use <code>volo add</code> to get all the library dependencies</p>
 <li><code>InputManager.getMouseLoc</code> - Deprecated in favor of normalizePoint function (Same functionality, different name)</li>
 </ul>
 
-<h3><sup>v0.3.0</sup></h3>
-
-<p><strong>Breaking Changes</strong></p>
-
-<ul>
-<li>Removed previously deprecated methods and properties</li>
-<li>Removed Node 0.6 support for the build process</li>
-<li><code>frozen/sounds/Sound</code> was a plugin, but is now the base object of other Sounds and <code>frozen/sounds/AudioBase</code> was removed</li>
-<li><code>frozen/sounds/Sound</code> plugin was moved to <code>frozen/plugins/sound</code></li>
-<li><code>frozen/box2d/Entity</code> moved to <code>frozen/box2d/entities/Entity</code></li>
-<li><code>frozen/box2d/RectangleEntity</code> moved to <code>frozen/box2d/entities/Rectangle</code></li>
-<li><code>frozen/box2d/CircleEntity</code> moved to <code>frozen/box2d/entities/Circle</code></li>
-<li><code>frozen/box2d/PolygonEntity</code> moved to <code>frozen/box2d/entities/Polygon</code></li>
-<li><code>frozen/box2d/MultiPolygonEntity</code> moved to <code>frozen/box2d/entities/MultiPolygon</code></li>
-</ul>
-
-<p><strong>New Features</strong></p>
-
-<ul>
-<li>Auto-selection of Audio extension if no extension is specified</li>
-<li><code>loadSound</code> and <code>loadImage</code> plugins now use <code>require.toUrl()</code> to generate a path to your resources</li>
-<li>Added <code>.jamignore</code> file</li>
-<li><code>Box.setAngularVelocity</code> function added to set the angular velocity on an entity</li>
-<li>Tests added for Sounds, BoxGame, and Sprite</li>
-<li>Added <code>frozen/box2d/entities</code> which returns a map of entity types</li>
-<li>Added <code>frozen/box2d/joints</code> which returns a map of joint types</li>
-<li><code>BoxGame.addBody</code>, <code>BoxGame.removeBody</code>, <code>BoxGame.addJoint</code>, <code>BoxGame.removeJoint</code> methods added for convenience</li>
-</ul>
-
-<p><strong>Non-Breaking Changes</strong></p>
-
-<ul>
-<li>Made all the examples adhere to the linting rules of the rest of the project</li>
-<li>Move linting declarations to .jshintrc to allow for JSHint being run in the directory standalone</li>
-<li>Update Grunt to <code>~0.4.1</code> and add/update all the dependencies in <code>package.json</code></li>
-<li>Modified the Gruntfile to work with new plugins and define more tasks for convenience</li>
-<li>Removed Node 0.6 from tested environments</li>
-<li>Updated examples that were using deprecated methods</li>
-<li>Cleanup event handler usage on Audio implementations</li>
-<li>Rearranged the <code>specs/</code> file structure to match <code>src/</code></li>
-<li>Implement the dcl Cleanup API for InputManager to remove event handlers on destruction</li>
-<li>Add declaredClass to entities and joints</li>
-</ul>
-
-<p><strong>Deprecations</strong></p>
-
-<ul>
-<li><code>Box.destroyJoint</code> has been deprecated in favor of <code>Box.removeJoint</code></li>
-</ul>
-
 <p>Full changelog available: <a href="https://github.com/iceddev/frozen/wiki/Changelog">Changelog</a></p>
 
 <h2>License</h2>
@@ -323,7 +336,7 @@ Use <code>volo add</code> to get all the library dependencies</p>
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Jun 17 2013 19:05:18 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Jul 03 2013 17:15:30 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>
