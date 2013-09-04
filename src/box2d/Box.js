@@ -268,9 +268,24 @@ define([
       bodyDef.userData = entity.id;
       bodyDef.angle = entity.angle;
       bodyDef.linearDamping = entity.linearDamping;
-      bodyDef.angularDamping = entity.angularDamping;
+
+      if(entity.fixedRotation === true){
+        bodyDef.fixedRotation = true;
+      } else {
+        bodyDef.angularDamping = entity.angularDamping;
+      }
+
       var body = this.b2World.CreateBody(bodyDef);
 
+      /* Fixed rotation explanation:
+       * b2World throws away the fixedRotation on bodyDef
+       * so I tack it onto the body after it's passed through that.
+       * This is tested.
+       */
+
+      if(entity.fixedRotation === true){
+        body.fixedRotation = true;
+      }
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
