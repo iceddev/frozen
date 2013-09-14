@@ -49,6 +49,13 @@ define([
      */
     scale: null,
     /**
+     * Adds fixedRotation to a Rectangle.
+     * @type {Boolean}
+     * @memberOf Rectangle#
+     * @default
+     */
+    fixedRotation: false,
+    /**
      * The current angle that this entity is rotated at
      * @type {Number}
      * @memberOf Entity#

@@ -20,6 +20,25 @@ define([
       extMap = {'a': rect};
     });
 
+    describe('fixed rotation', function(){
+      var entity;
+
+      beforeEach(function(){
+        entity = new Rectangle();
+      });
+
+      it('box does not have a fixed roatation from an entity', function(){
+        box.addBody(entity);
+        expect(box.bodiesMap[entity.id].fixedRotation).toBeFalsy();
+      });
+
+      it('box has a fixed roatation from an entity', function(){
+        entity = new Rectangle({fixedRotation: true});
+        box.addBody(entity);
+        expect(box.bodiesMap[entity.id].fixedRotation).toBeTruthy();
+      });
+    });
+
     it('check the gravity default', function(){
       expect(box.gravityX).toBe(0);
       expect(box.gravityY).toBe(9.8);
