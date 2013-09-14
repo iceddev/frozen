@@ -2325,7 +2325,6 @@ define("frozen/GameCore", [
     run: function() {
       if(!this.isRunning){
         this.init();
-        this.loadResources(this.resourceManager);
         this.initInput(this.inputManager);
         this.launchLoop();
       }
@@ -13393,9 +13392,14 @@ define("frozen/box2d/Box", [
       bodyDef.userData = entity.id;
       bodyDef.angle = entity.angle;
       bodyDef.linearDamping = entity.linearDamping;
-      bodyDef.angularDamping = entity.angularDamping;
-      var body = this.b2World.CreateBody(bodyDef);
 
+      if(entity.fixedRotation){
+        bodyDef.fixedRotation = true;
+      } else {
+        bodyDef.angularDamping = entity.angularDamping;
+      }
+
+      var body = this.b2World.CreateBody(bodyDef);
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
@@ -13712,6 +13716,7 @@ define("frozen/box2d/Box", [
   });
 
 });
+
 },
 'frozen/box2d/listeners/Contact':function(){
 /**
@@ -13975,6 +13980,13 @@ define("frozen/box2d/entities/Entity", [
      */
     scale: null,
     /**
+     * Fixes the rotation of the entity, no angular damping is applied
+     * @type {Boolean}
+     * @memberOf Rectangle#
+     * @default
+     */
+    fixedRotation: false,
+    /**
      * The current angle that this entity is rotated at
      * @type {Number}
      * @memberOf Entity#
@@ -14149,6 +14161,7 @@ define("frozen/box2d/entities/Entity", [
   });
 
 });
+
 },
 'frozen/utils/distance':function(){
 define("frozen/utils/distance", function(){
@@ -14546,6 +14559,7 @@ define("frozen/box2d/entities/Rectangle", [
   });
 
 });
+
 },
 'frozen/box2d/joints':function(){
 define("frozen/box2d/joints", [
