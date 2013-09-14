@@ -251,7 +251,6 @@ define([
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();
       }
-      this.loadResources(this.resourceManager);
 
       this.isRunning = true;
     },
