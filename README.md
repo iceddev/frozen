@@ -1,5 +1,5 @@
 ![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
-Frozen <sup>v0.4.1</sup>
+Frozen <sup>v0.4.2</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
@@ -128,6 +128,25 @@ Use `volo add` to get all the library dependencies
 
 ## Release Notes
 
+### <sup>v0.4.2</sup>
+
+__Breaking Changes__
+
+* None! This is a bug fix release
+
+__New Features__
+
+* Fixed rotation property on entities
+
+__Non-Breaking Changes__
+
+* Update Lo-Dash dependency location
+* Remove extra call to `loadResources` in `GameCore#run`
+
+__Deprecations__
+
+* None! This is a bug fix release
+
 ### <sup>v0.4.1</sup>
 
 __Breaking Changes__
@@ -149,61 +168,6 @@ __Non-Breaking Changes__
 __Deprecations__
 
 * None! This is a bug fix release
-
-### <sup>v0.4.0</sup>
-
-__Breaking Changes__
-
-* Due to performance reasons, `InputManager.mousemove` only fires during `mousedown` or `touchstart` - see [breakouts example](examples/breakouts/src/initInput.js) for workaround
-* Added `frozen/TouchAction` instead of using `frozen/MouseAction` - used when `InputManager.emulateMouse` is `false`
-* `InputManager.handleTouch` and `InputManager.handleMouse` removed, replaced with `InputManager.emulateMouse` which determines if MouseAction or TouchAction should be used
-* Either `InputManager.mouseAction` or `InputManager.touchAction` will be active at one time (depending on state of `InputManager.emulateMouse`)
-* `InputManager` event handling methods no longer check if a point is inside canvas
-* `InputManager.keyActions` switched from array to object (only breaking if you iterate over the collection)
-* Removed `Box.destroyJoint` because it was deprecated in last release
-* Created a `frozen/box2d/listeners/Contact` module to contain contact listener callbacks and other logic - move custom contact handlers to this object
-* Remove `dojo/dom`, `dojo/dom-geometry` and `dojo/dom-style` modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)
-* Remove `dojo/_base/lang` in favor of Lo-Dash (module will be missing from built layer)
-* Removed `update` function from `frozen/reiner/Creature` - replaced with `updateDirection` and `updateAnimations` functions
-
-__New Features__
-
-* Add Bower support
-* Add dependencies on Lo-Dash and Hammer.js
-* Touch/Mouse/Pointer event normalization with Hammer.js
-* Gesture support with Hammer.js
-* `InputManager.hammer` is an instance of Hammer.js
-* `InputManager.on` can be used for binding new events
-* `InputManager.insideCanvas` can be used to check a point against the `InputManager`'s `canvas`
-* New methods for adding or removing multiple bodies or joints in `frozen/BoxGame`: `addBodies`, `removeBodies`, `addJoints`, `removeJoints`
-* New methods for flipping images in `frozen/ResourceManager`: `flipImage`, `flipImageX`, `flipImageY`
-* Added `preSolve` to contact listener
-* Added box2d sprite, gesture, ragdoll physics, and breakouts examples
-
-__Non-Breaking Changes__
-
-* Update Examples to use features of 0.3.0/0.4.0
-* `frozen/utils/removeExtension` now uses a regex for removing the extensions, limited to 4 characters after the `.`
-* `require.toUrl(filename)` is now used inside the `loadSound` and `loadImage` functions, instead of the plugins
-* Fix for WebAudio on iOS
-* On mobile which requires touch, interally switch to `Audio.play()` instead of `Audio.load()` to avoid double loading
-* Use `dcl`'s `advice.before` to wire up `GameCore.beforeUpdate`
-
-__Deprecations__
-
-* `GameCore.preUpdate` - Deprecated in favor of beforeUpdate
-* `InputManager.handleMouse` (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it
-* `InputManager.handleTouch` (already removed) - Touch is always handled, use emulateMouse to specify how to handle it
-* `InputManager.mouseUp` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.mouseDown` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.mouseMove` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.touchStart` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.touchEnd` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.touchMove` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.keyPressed` - Use keydown instead - same syntax as normal event handling
-* `InputManager.keyDown` - Use the lowercase name instead - same syntax as normal event handling
-* `InputManager.keyReleased` - Use keyup instead - same syntax as normal event handling
-* `InputManager.getMouseLoc` - Deprecated in favor of normalizePoint function (Same functionality, different name)
 
 Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Changelog)
 

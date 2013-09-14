@@ -172,7 +172,7 @@ define([
 
       it('should call loadResources with the resourceManager when run is called', function(){
         expect(game.loadResources).toHaveBeenCalledWith(game.resourceManager);
-        expect(game.loadResources.calls.length).toEqual(2);
+        expect(game.loadResources.calls.length).toEqual(1);
       });
 
       it('should call initInput with the inputManager when run is called', function(){
@@ -200,8 +200,7 @@ define([
         game.run();
 
         expect(game.loadResources).toHaveBeenCalled();
-        // TODO: change this to once
-        expect(game.loadResources.calls.length).toEqual(2);
+        expect(game.loadResources.calls.length).toEqual(1);
         expect(game.loadResources).toHaveBeenCalledWith(game.resourceManager);
       });
 
@@ -209,7 +208,6 @@ define([
         game.init();
 
         expect(game.loadResources).toHaveBeenCalled();
-        // We probably always want this to be 1, so remove the extra call from game.run()????
         expect(game.loadResources.calls.length).toEqual(1);
         expect(game.loadResources).toHaveBeenCalledWith(game.resourceManager);
       });

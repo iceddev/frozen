@@ -49,6 +49,13 @@ define([
      */
     scale: null,
     /**
+     * Fixes the rotation of the entity, no angular damping is applied
+     * @type {Boolean}
+     * @memberOf Rectangle#
+     * @default
+     */
+    fixedRotation: false,
+    /**
      * The current angle that this entity is rotated at
      * @type {Number}
      * @memberOf Entity#

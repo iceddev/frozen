@@ -7,7 +7,7 @@
     Index
     
       
-        - frozen: v0.4.1
+        - frozen: v0.4.2
       
     
       
@@ -40,7 +40,7 @@
   <header class="header">
     
       
-        <h1 class="logo">frozen <sup>v0.4.1</sup></h1>
+        <h1 class="logo">frozen <sup>v0.4.2</sup></h1>
       
     
       
@@ -80,7 +80,7 @@
     <section>
         <article><p><img src="https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200" alt="FrozenJS Logo" title="" /></p>
 
-<h1>Frozen <sup>v0.4.1</sup></h1>
+<h1>Frozen <sup>v0.4.2</sup></h1>
 
 <p><a href="http://travis-ci.org/iceddev/frozen"><img src="https://secure.travis-ci.org/iceddev/frozen.png?branch=master" alt="build status" title="" /></a></p>
 
@@ -221,6 +221,33 @@ Use <code>volo add</code> to get all the library dependencies</p>
 
 <h2>Release Notes</h2>
 
+<h3><sup>v0.4.2</sup></h3>
+
+<p><strong>Breaking Changes</strong></p>
+
+<ul>
+<li>None! This is a bug fix release</li>
+</ul>
+
+<p><strong>New Features</strong></p>
+
+<ul>
+<li>Fixed rotation property on entities</li>
+</ul>
+
+<p><strong>Non-Breaking Changes</strong></p>
+
+<ul>
+<li>Update Lo-Dash dependency location</li>
+<li>Remove extra call to <code>loadResources</code> in <code>GameCore#run</code></li>
+</ul>
+
+<p><strong>Deprecations</strong></p>
+
+<ul>
+<li>None! This is a bug fix release</li>
+</ul>
+
 <h3><sup>v0.4.1</sup></h3>
 
 <p><strong>Breaking Changes</strong></p>
@@ -251,69 +278,6 @@ Use <code>volo add</code> to get all the library dependencies</p>
 <li>None! This is a bug fix release</li>
 </ul>
 
-<h3><sup>v0.4.0</sup></h3>
-
-<p><strong>Breaking Changes</strong></p>
-
-<ul>
-<li>Due to performance reasons, <code>InputManager.mousemove</code> only fires during <code>mousedown</code> or <code>touchstart</code> - see <a href="examples/breakouts/src/initInput.js">breakouts example</a> for workaround</li>
-<li>Added <code>frozen/TouchAction</code> instead of using <code>frozen/MouseAction</code> - used when <code>InputManager.emulateMouse</code> is <code>false</code></li>
-<li><code>InputManager.handleTouch</code> and <code>InputManager.handleMouse</code> removed, replaced with <code>InputManager.emulateMouse</code> which determines if MouseAction or TouchAction should be used</li>
-<li>Either <code>InputManager.mouseAction</code> or <code>InputManager.touchAction</code> will be active at one time (depending on state of <code>InputManager.emulateMouse</code>)</li>
-<li><code>InputManager</code> event handling methods no longer check if a point is inside canvas</li>
-<li><code>InputManager.keyActions</code> switched from array to object (only breaking if you iterate over the collection)</li>
-<li>Removed <code>Box.destroyJoint</code> because it was deprecated in last release</li>
-<li>Created a <code>frozen/box2d/listeners/Contact</code> module to contain contact listener callbacks and other logic - move custom contact handlers to this object</li>
-<li>Remove <code>dojo/dom</code>, <code>dojo/dom-geometry</code> and <code>dojo/dom-style</code> modules from hard dependencies to use straight DOM instead (modules will be missing from built layer)</li>
-<li>Remove <code>dojo/_base/lang</code> in favor of Lo-Dash (module will be missing from built layer)</li>
-<li>Removed <code>update</code> function from <code>frozen/reiner/Creature</code> - replaced with <code>updateDirection</code> and <code>updateAnimations</code> functions</li>
-</ul>
-
-<p><strong>New Features</strong></p>
-
-<ul>
-<li>Add Bower support</li>
-<li>Add dependencies on Lo-Dash and Hammer.js</li>
-<li>Touch/Mouse/Pointer event normalization with Hammer.js</li>
-<li>Gesture support with Hammer.js</li>
-<li><code>InputManager.hammer</code> is an instance of Hammer.js</li>
-<li><code>InputManager.on</code> can be used for binding new events</li>
-<li><code>InputManager.insideCanvas</code> can be used to check a point against the <code>InputManager</code>'s <code>canvas</code></li>
-<li>New methods for adding or removing multiple bodies or joints in <code>frozen/BoxGame</code>: <code>addBodies</code>, <code>removeBodies</code>, <code>addJoints</code>, <code>removeJoints</code></li>
-<li>New methods for flipping images in <code>frozen/ResourceManager</code>: <code>flipImage</code>, <code>flipImageX</code>, <code>flipImageY</code></li>
-<li>Added <code>preSolve</code> to contact listener</li>
-<li>Added box2d sprite, gesture, ragdoll physics, and breakouts examples</li>
-</ul>
-
-<p><strong>Non-Breaking Changes</strong></p>
-
-<ul>
-<li>Update Examples to use features of 0.3.0/0.4.0</li>
-<li><code>frozen/utils/removeExtension</code> now uses a regex for removing the extensions, limited to 4 characters after the <code>.</code></li>
-<li><code>require.toUrl(filename)</code> is now used inside the <code>loadSound</code> and <code>loadImage</code> functions, instead of the plugins</li>
-<li>Fix for WebAudio on iOS</li>
-<li>On mobile which requires touch, interally switch to <code>Audio.play()</code> instead of <code>Audio.load()</code> to avoid double loading</li>
-<li>Use <code>dcl</code>'s <code>advice.before</code> to wire up <code>GameCore.beforeUpdate</code></li>
-</ul>
-
-<p><strong>Deprecations</strong></p>
-
-<ul>
-<li><code>GameCore.preUpdate</code> - Deprecated in favor of beforeUpdate</li>
-<li><code>InputManager.handleMouse</code> (already removed) - Mouse is always handled, use emulateMouse to specify how to handle it</li>
-<li><code>InputManager.handleTouch</code> (already removed) - Touch is always handled, use emulateMouse to specify how to handle it</li>
-<li><code>InputManager.mouseUp</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.mouseDown</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.mouseMove</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.touchStart</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.touchEnd</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.touchMove</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.keyPressed</code> - Use keydown instead - same syntax as normal event handling</li>
-<li><code>InputManager.keyDown</code> - Use the lowercase name instead - same syntax as normal event handling</li>
-<li><code>InputManager.keyReleased</code> - Use keyup instead - same syntax as normal event handling</li>
-<li><code>InputManager.getMouseLoc</code> - Deprecated in favor of normalizePoint function (Same functionality, different name)</li>
-</ul>
-
 <p>Full changelog available: <a href="https://github.com/iceddev/frozen/wiki/Changelog">Changelog</a></p>
 
 <h2>License</h2>
@@ -336,7 +300,7 @@ Use <code>volo add</code> to get all the library dependencies</p>
 
   </div>
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Jul 03 2013 17:15:30 GMT-0700 (MST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sat Sep 14 2013 02:09:23 GMT-0700 (MST)
   </footer>
 
   <script src="scripts/prism.js"> </script>

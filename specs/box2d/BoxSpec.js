@@ -193,6 +193,24 @@ define([
       expect(collided).toBe(true);
     });
 
+    describe('fixed rotation', function(){
+      var entity;
+
+      it('box does not have a fixed roatation from an entity', function(){
+        entity = new Rectangle();
+        box.addBody(entity);
+        expect(box.bodiesMap[entity.id].IsFixedRotation()).toBe(false);
+      });
+
+      it('box has a fixed roatation from an entity', function(){
+        entity = new Rectangle({
+          fixedRotation: true
+        });
+        box.addBody(entity);
+        expect(box.bodiesMap[entity.id].IsFixedRotation()).toBe(true);
+      });
+    });
+
   });
 
 });

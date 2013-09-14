@@ -268,9 +268,14 @@ define([
       bodyDef.userData = entity.id;
       bodyDef.angle = entity.angle;
       bodyDef.linearDamping = entity.linearDamping;
-      bodyDef.angularDamping = entity.angularDamping;
-      var body = this.b2World.CreateBody(bodyDef);
 
+      if(entity.fixedRotation){
+        bodyDef.fixedRotation = true;
+      } else {
+        bodyDef.angularDamping = entity.angularDamping;
+      }
+
+      var body = this.b2World.CreateBody(bodyDef);
 
       if (entity.radius) { //circle
         fixDef.shape = new B2CircleShape(entity.radius);
