@@ -1,11 +1,6 @@
 define([
-  'frozen/box2d/Box',
-  'frozen/box2d/entities',
-  'frozen/box2d/entities/Circle',
-  'frozen/box2d/entities/Rectangle',
-  'frozen/box2d/entities/Polygon',
-  'frozen/box2d/entities/MultiPolygon'
-], function(Box, entities, Circle, Rectangle, Polygon, MultiPolygon){
+  'frozen/box2d/entities'
+], function(entities){
 
   'use strict';
 
