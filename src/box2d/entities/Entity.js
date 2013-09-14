@@ -51,7 +51,7 @@ define([
     /**
      * Fixes the rotation of the entity, no angular damping is applied
      * @type {Boolean}
-     * @memberOf Rectangle#
+     * @memberOf Entity#
      * @default
      */
     fixedRotation: false,
