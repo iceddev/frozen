@@ -1,7 +1,7 @@
 {
   "name": "frozen",
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-dojo": "~0.2.3",
