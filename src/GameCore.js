@@ -193,7 +193,6 @@ define([
     run: function() {
       if(!this.isRunning){
         this.init();
-        this.loadResources(this.resourceManager);
         this.initInput(this.inputManager);
         this.launchLoop();
       }
@@ -251,6 +250,7 @@ define([
       if(!this.resourceManager){
         this.resourceManager = new ResourceManager();
       }
+      this.loadResources(this.resourceManager);
 
       this.isRunning = true;
     },
