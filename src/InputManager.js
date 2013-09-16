@@ -14,10 +14,12 @@ define([
   'dcl/mixins/Cleanup',
   'dojo/has',
   'dojo/on',
-  'lodash',
+  'lodash/functions/bindAll',
+  'lodash/collections/map',
+  'lodash/collections/some',
   'hammer',
   'dojo/domReady!'
-], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, has, on, _, hammer){
+], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, has, on, bindAll, map, some, hammer){
 
   'use strict';
 
@@ -158,7 +160,7 @@ define([
     },
 
     constructor: function(){
-      _.bindAll(this);
+      bindAll(this);
 
       if(!this.hammer){
         this.hammer = hammer(document, {
@@ -333,8 +335,8 @@ define([
     touchstart: function(e){
       // Ensure touch has been released
       this.touchAction.release(null);
-      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
-      this.touchAction.insideCanvas = _.some(currentPoints, this.insideCanvas);
+      var currentPoints = map(e.gesture.touches, this.normalizePoint);
+      this.touchAction.insideCanvas = some(currentPoints, this.insideCanvas);
       this.touchAction.press(currentPoints);
     },
 
@@ -356,7 +358,7 @@ define([
      * @param  {Event} e Event object
      */
     touchend: function(e){
-      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      var currentPoints = map(e.gesture.touches, this.normalizePoint);
       this.touchAction.release(currentPoints);
     },
 
@@ -378,7 +380,7 @@ define([
      * @param  {Event} e Event object
      */
     touchmove: function(e){
-      var currentPoints = _.map(e.gesture.touches, this.normalizePoint);
+      var currentPoints = map(e.gesture.touches, this.normalizePoint);
       this.touchAction.positions = currentPoints;
       if(this.touchAction.startPositions){
         e.preventDefault();

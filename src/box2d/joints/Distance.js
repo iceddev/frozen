@@ -8,9 +8,9 @@
 
 define([
   'dcl',
-  'lodash',
+  'lodash/objects/assign',
   './Joint'
-], function(dcl, _, Joint){
+], function(dcl, assign, Joint){
 
   'use strict';
 
@@ -70,7 +70,7 @@ define([
           joint.Initialize(body1, body2, vec1, vec2);
 
           if (this.jointAttributes) {
-            _.assign(joint, this.jointAttributes);
+            assign(joint, this.jointAttributes);
           }
           return box.b2World.CreateJoint(joint);
         }
