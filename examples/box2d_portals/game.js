@@ -1,6 +1,6 @@
 //load the AMD modules we need
 require([
-  'lodash',
+  'lodash/collections/forEach',
   'dojo/keys',
   'frozen/Animation',
   'frozen/box2d/Box',
@@ -16,13 +16,12 @@ require([
   'frozen/plugins/loadSound!sounds/hit',
   'frozen/plugins/loadSound!sounds/whoosh',
   'frozen/plugins/loadSound!sounds/backWhoosh'
-], function(_, keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
+], function(forEach, keys, Animation, Box, BoxGame, Rectangle, Polygon, Circle, utils, backImg, nyanImg, orangePortalSheet, bluePortalSheet, hit, whoosh, backWhoosh){
 
   'use strict';
 
   // create each of the shapes
   var ground = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 385,
     y: 480,
     halfWidth: 1000,
@@ -31,7 +30,6 @@ require([
   });
 
   var ceiling = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 385,
     y: -200,
     halfWidth: 1000,
@@ -40,7 +38,6 @@ require([
   });
 
   var leftWall = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: -80,
     y: 240,
     halfWidth: 40,
@@ -49,7 +46,6 @@ require([
   });
 
   var rightWall = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 850,
     y: 240,
     halfWidth: 40,
@@ -58,7 +54,6 @@ require([
   });
 
   var pyramid = new Polygon({
-    id: _.uniqueId(), // objects in box2d need an id
     points: [{x: 320, y: 440}, {x: 446, y: 290}, {x: 565, y: 440}],
     staticBody: true
   });
@@ -153,7 +148,7 @@ require([
 
       // this uses a simple wrapper for box2d's own collision detection
       if(nyan.collisions){
-        _.forEach(nyan.collisions, function(collision){
+        forEach(nyan.collisions, function(collision){
           if(collision.impulse > 10){
             hit.play();
           }

@@ -1,8 +1,10 @@
 define([
   './Brick',
   './levels',
-  'lodash'
-], function(Brick, levels, _){
+  'lodash/collections/forEach',
+  'lodash/collections/shuffle',
+  'lodash/utilities/times'
+], function(Brick, levels, forEach, shuffle, times){
 
   'use strict';
 
@@ -15,8 +17,8 @@ define([
     this.removeBodies(this.state.currentBricks);
     this.state.currentBricks = [];
 
-    _.forEach(level.bricks, function(row, i){
-      _.forEach(row, function(brickType, j){
+    forEach(level.bricks, function(row, i){
+      forEach(row, function(brickType, j){
         if(brickType !== null){
           var brick = new Brick({
             brickType: brickType,
@@ -30,12 +32,12 @@ define([
     }, this);
 
     //shuffle the bricks to randomly assign powerUps and powerDowns to them
-    var shuffled = _.shuffle(this.state.currentBricks);
-    _.times(level.powerUps, function(){
+    var shuffled = shuffle(this.state.currentBricks);
+    times(level.powerUps, function(){
       shuffled[powerCounter].powerUpBrick = true;
       powerCounter++;
     });
-    _.times(level.powerDowns, function(){
+    times(level.powerDowns, function(){
       shuffled[powerCounter].powerDownBrick = true;
       powerCounter++;
     });

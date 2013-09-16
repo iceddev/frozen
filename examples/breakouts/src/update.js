@@ -5,7 +5,9 @@ define([
   './levels',
   './PowerUp',
   './PowerDown',
-  'lodash',
+  'lodash/collections/forEach',
+  'lodash/collections/filter',
+  'lodash/collections/reject',
   /*
    * sounds/ is aliased in dojoConfig - plugins use require.toUrl to determine path
    * not specifying an extension let's frozen auto-select one that works for the current browser
@@ -15,7 +17,7 @@ define([
   'frozen/plugins/loadSound!sounds/powerup',
   'frozen/plugins/loadSound!sounds/powerdown',
   'frozen/plugins/loadSound!sounds/recover'
-], function(Ball, Paddle, PaddleJoint, levels, PowerUp, PowerDown, _, brickDeath, countdownBlip, powerupSound, powerdownSound, recover){
+], function(Ball, Paddle, PaddleJoint, levels, PowerUp, PowerDown, forEach, filter, reject, brickDeath, countdownBlip, powerupSound, powerdownSound, recover){
 
   'use strict';
 
@@ -37,7 +39,7 @@ define([
 
     //check if the level cleared
     var aliveBricks = false;
-    _.forEach(this.state.currentBricks, function(brick){
+    forEach(this.state.currentBricks, function(brick){
       if(!brick.dead){
         brick.updateAnimation(millis); //update animation here for effeciency
         aliveBricks = true;
@@ -69,7 +71,7 @@ define([
 
       this.boxUpdating = true;
 
-      this.state.balls = _.filter(this.state.balls, function(ball){
+      this.state.balls = filter(this.state.balls, function(ball){
         if(ball.y < this.height / this.box.scale){
           ball.updateAnimation(millis);
           return true;
@@ -80,7 +82,7 @@ define([
       }, this);
 
       if(paddle && paddle.collisions){
-        _.forEach(paddle.collisions, function(collision){
+        forEach(paddle.collisions, function(collision){
           var colObj = this.entities[collision.id];
           if(colObj.ball && colObj.y < paddle.y){
             var distance = colObj.x - paddle.x;
@@ -92,12 +94,12 @@ define([
             this.box.applyImpulseDegrees(colObj.id, angle, colObj.impulse);
           } else if(colObj.powerUp){
             this.removeBody(colObj);
-            this.state.powerUps = _.reject(this.state.powerUps, { id: colObj.id });
+            this.state.powerUps = reject(this.state.powerUps, { id: colObj.id });
             this.newBall();
             powerupSound.play();
           } else if(colObj.powerDown){
             this.removeBody(colObj);
-            this.state.powerDowns = _.reject(this.state.powerDowns, { id: colObj.id });
+            this.state.powerDowns = reject(this.state.powerDowns, { id: colObj.id });
             if(paddle.smallMillis > 0){ //just start the count over
               paddle.smallMillis = paddle.smallMillisStart;
             } else { //create a new small sized paddle
@@ -136,9 +138,9 @@ define([
       }
 
       //handle ball collisions
-      _.forEach(this.state.balls, function(ball, idx){
+      forEach(this.state.balls, function(ball, idx){
         if(ball.collisions){
-          _.forEach(ball.collisions, function(collision){
+          forEach(ball.collisions, function(collision){
             var colObj = this.entities[collision.id];
             if(colObj && colObj.brick){
               colObj.dying = true;

@@ -1,11 +1,11 @@
 define([
-  'lodash'
-], function(_){
+  'lodash/collections/forEach'
+], function(forEach){
 
   'use strict';
 
   return function(millis){
-    _.forEach(this.drawables, function(drawable){
+    forEach(this.drawables, function(drawable){
       if(drawable.updateAnimations){
         drawable.updateAnimations(millis);
       }

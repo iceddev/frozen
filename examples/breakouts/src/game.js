@@ -8,12 +8,12 @@ define([
   './PaddleJoint',
   './Ball',
   './loadLevel',
-  'lodash',
+  'lodash/collections/forEach',
   'dojo/has',
   'frozen/box2d/BoxGame',
   'frozen/box2d/Box',
   'frozen/box2d/entities/Rectangle'
-], function(initInput, handleInput, update, draw, walls, Paddle, PaddleJoint, Ball, loadLevel, _, has, BoxGame, Box, Rectangle){
+], function(initInput, handleInput, update, draw, walls, Paddle, PaddleJoint, Ball, loadLevel, forEach, has, BoxGame, Box, Rectangle){
 
   'use strict';
 
@@ -53,7 +53,7 @@ define([
   });
 
   //add walls and paddle and joint to the box
-  _.forEach(walls.entities, function(rect){
+  forEach(walls.entities, function(rect){
     game.addBody(new Rectangle(rect));
   });
   game.addBody(new Paddle());

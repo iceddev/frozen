@@ -1,5 +1,6 @@
 define([
-  'lodash',
+  'lodash/collections/forEach',
+  'lodash/utilities/times',
   './update',
   './draw',
   './handleInput',
@@ -11,7 +12,7 @@ define([
   'frozen/box2d/BoxGame',
   'frozen/box2d/Box',
   'frozen/box2d/entities'
-], function(_, update, draw, handleInput, boxData, Lighthouse, Tavern, Zombie, Girl, BoxGame, Box, entities){
+], function(forEach, times, update, draw, handleInput, boxData, Lighthouse, Tavern, Zombie, Girl, BoxGame, Box, entities){
 
   'use strict';
 
@@ -19,7 +20,6 @@ define([
   var yZombies = 3;
   var zombiesStartX = 400;
   var zombiesStartY = 400;
-  var i, j;
 
   // setup a GameCore instance
   var game = new BoxGame({
@@ -35,7 +35,7 @@ define([
   });
 
   // add everything to box from the boxData
-  _.forEach(boxData.entities, function(props){
+  forEach(boxData.entities, function(props){
     var Entity = entities[props.type];
 
     if(Entity){
@@ -49,8 +49,8 @@ define([
   game.drawables.push(game.entities.tavern);
   game.drawables.push(game.entities.girl);
 
-  _.times(yZombies, function(i){
-    _.times(xZombies, function(j){
+  times(yZombies, function(i){
+    times(xZombies, function(j){
       var zombie = new Zombie({
         x: zombiesStartX + (j * 40),
         y: zombiesStartY + (i * 40),

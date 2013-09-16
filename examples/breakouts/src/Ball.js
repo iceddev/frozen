@@ -1,10 +1,9 @@
 define([
-  'lodash',
   'dcl',
   'frozen/box2d/entities/Circle',
   'frozen/Animation',
   'frozen/plugins/loadImage!resources/tiles.png'
-], function(_, dcl, Circle, Animation, tile){
+], function(dcl, Circle, Animation, tile){
 
   'use strict';
 
@@ -22,9 +21,6 @@ define([
     aliveTime: 0,
     groupIndex: -1,
     constructor: function(){
-      if(!this.id){
-        this.id = _.uniqueId();
-      }
       this.anim = Animation.prototype.createFromSheet(5, 200, this.img, 16, 16);
       this.anim.offsetX = 48;
       this.anim.offsetY = 64;
