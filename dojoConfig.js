@@ -3,8 +3,7 @@ var dojoConfig = {
   packages: [
     { name: 'dojo', location: 'deps/dojo' },
     { name: 'dcl', location: 'deps/dcl', main: 'dcl' },
-    // TODO: switch to modern
-    { name: 'lodash', location: 'deps/lodash/compat', main: 'lodash' },
+    { name: 'lodash', location: 'deps/lodash/modern' },
     { name: 'hammer', location: 'deps/hammer', main: 'hammer' },
     { name: 'frozen', location: './src', main: 'GameCore' }
   ],
