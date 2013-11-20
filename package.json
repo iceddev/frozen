@@ -23,7 +23,7 @@
       "dcl": "github:uhop/dcl/1.0.2",
       "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
       "hammer/hammer": "github:phated/hammer.js/frozen",
-      "lodash": "github:lodash/lodash-amd/2.1.0"
+      "lodash": "github:lodash/lodash-amd/2.3.0"
     }
   },
   "jam": {
