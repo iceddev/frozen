@@ -178,7 +178,6 @@ define([
 
     constructor: function(opts){
       /* jshint eqnull: true */
-      // TODO: test this
       if(this.id == null){
         this.id = uniqueId();
       }
