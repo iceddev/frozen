@@ -20,7 +20,7 @@ define([
       var sound;
       var filename = 'specs/fixtures/yipee.wav';
       var filename2 = 'specs/fixtures/yipee';
-      var noteOn = jasmine.createSpy('noteOn');
+      var start = jasmine.createSpy('start');
 
       beforeEach(function(){
         sound = new WebAudio();
@@ -147,7 +147,7 @@ define([
 
         beforeEach(function(){
           spyOn(sound, '_initAudio').andReturn({
-            noteOn: noteOn
+            start: start
           });
 
           runs(function(){
@@ -183,11 +183,11 @@ define([
           });
         });
 
-        it('should call noteOn with startTime of 0', function(){
+        it('should call start with startTime of 0', function(){
           runs(function(){
             sound.loop();
-            expect(noteOn).toHaveBeenCalled();
-            expect(noteOn).toHaveBeenCalledWith(0);
+            expect(start).toHaveBeenCalled();
+            expect(start).toHaveBeenCalledWith(0);
           });
         });
 
@@ -197,7 +197,7 @@ define([
 
         beforeEach(function(){
           spyOn(sound, '_initAudio').andReturn({
-            noteOn: noteOn
+            start: start
           });
 
           runs(function(){
@@ -233,19 +233,19 @@ define([
           });
         });
 
-        it('should call noteOn with startTime of 0 if startTime not passed in', function(){
+        it('should call start with startTime of 0 if startTime not passed in', function(){
           runs(function(){
             sound.play();
-            expect(noteOn).toHaveBeenCalled();
-            expect(noteOn).toHaveBeenCalledWith(0);
+            expect(start).toHaveBeenCalled();
+            expect(start).toHaveBeenCalledWith(0);
           });
         });
 
-        it('should call noteOn with startTime passed in', function(){
+        it('should call start with startTime passed in', function(){
           runs(function(){
             sound.play(1, 100);
-            expect(noteOn).toHaveBeenCalled();
-            expect(noteOn).toHaveBeenCalledWith(100);
+            expect(start).toHaveBeenCalled();
+            expect(start).toHaveBeenCalledWith(100);
           });
         });
 
@@ -266,6 +266,8 @@ define([
         it('should return a source', function(){
           runs(function(){
             expect(sound._initAudio()).toBeDefined();
+            expect(sound._initAudio(1)).toBeDefined();
+            expect(sound._initAudio(1, true)).toBeDefined();
           });
         });
 
