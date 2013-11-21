@@ -9,31 +9,23 @@ define([
   'require',
   './Sound',
   '../utils/removeExtension',
+  '../support',
   'dcl',
-  'dojo/on',
-  'dojo/has',
-  '../shims/AudioContext'
-], function(req, Sound, removeExtension, dcl, on, has){
+  'on'
+], function(req, Sound, removeExtension, support, dcl, on){
 
   'use strict';
 
-  has.add('WebAudio', function(global){
-    return !!global.AudioContext;
-  });
-
   var audioContext = null;
-  if(has('WebAudio')){
+  if(support['web-audio']){
     audioContext = new window.AudioContext();
 
-    if(has('shittySound')){
-      // Similar strategy to https://github.com/CreateJS/SoundJS
-      on.once(document, 'touchstart', function(){
-        var source = audioContext.createBufferSource();
-        source.buffer = audioContext.createBuffer(1, 1, 22050);
-        source.connect(audioContext.destination);
-        source.start(0);
-      });
-    }
+    on.once(document, 'touchstart', function(){
+      var source = audioContext.createBufferSource();
+      source.buffer = audioContext.createBuffer(1, 1, 22050);
+      source.connect(audioContext.destination);
+      source.start(0);
+    });
   }
 
   return dcl(Sound, {

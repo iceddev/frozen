@@ -9,16 +9,12 @@ define([
   'require',
   './Sound',
   '../utils/removeExtension',
+  '../support',
   'dcl',
-  'dojo/on',
-  'dojo/has'
-], function(req, Sound, removeExtension, dcl, on, has){
+  'on',
+], function(req, Sound, removeExtension, support, dcl, on){
 
   'use strict';
-
-  has.add('HTML5Audio', function(global){
-    return !!global.Audio;
-  });
 
   return dcl(Sound, {
     /**
@@ -49,7 +45,7 @@ define([
       }
       filename = req.toUrl(filename);
 
-      if(has('shittySound')){
+      if(support['shitty-sound']){
         on.once(document, 'touchstart', function(e){
           var vol = self.audio.volume;
           self.audio.volume = 0;
@@ -92,7 +88,7 @@ define([
     play: function(volume, startTime){
       startTime = startTime || 0;
 
-      if(has('shittySound')){
+      if(support['shitty-sound']){
         try {
           this.audio.currentTime = startTime / 1000;
           return this.audio.play();

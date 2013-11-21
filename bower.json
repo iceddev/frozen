@@ -26,7 +26,8 @@
     "dcl": "uhop/dcl#1.0.2",
     "Box2d": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
     "lodash": "lodash/lodash-amd#2.3.0",
-    "hammer": "phated/hammer.js#1.0.6-dev"
+    "hammer": "phated/hammer.js#1.0.6-dev",
+    "frozen-on": "~0.2.0"
   },
   "devDependencies": {
     "util": "dojo/util#1.8.3"

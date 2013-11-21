@@ -1,21 +1,21 @@
 define([
   'frozen/sounds/WebAudio',
   'frozen/sounds/Sound',
-  'dcl',
-  'dojo/has'
-], function(WebAudio, Sound, dcl, has){
+  'frozen/support',
+  'dcl'
+], function(WebAudio, Sound, support, dcl){
 
   'use strict';
 
-  describe('WebAudio', function(){
+  describe('support', function(){
 
-    it('should add a has test for WebAudio', function(){
-      expect(has('WebAudio')).toBeDefined();
+    it('should test for web-audio support', function(){
+      expect(support['web-audio']).toBeDefined();
     });
 
   });
 
-  if(has('WebAudio')){
+  if(support['web-audio']){
     describe('WebAudio', function(){
       var sound;
       var filename = 'specs/fixtures/yipee.wav';
