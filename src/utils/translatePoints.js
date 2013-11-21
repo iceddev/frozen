@@ -1,13 +1,13 @@
-/*jshint eqnull:true */
 define([
-  'lodash'
-], function(_){
+  'lodash/collections/map'
+], function(map){
 
   'use strict';
 
   function translatePoints(points, translation){
+    /*jshint eqnull:true */
     if(Array.isArray(points)){
-      points = _.map(points, function(point){
+      points = map(points, function(point){
         return translatePoints(point, translation);
       });
     } else {

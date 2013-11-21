@@ -1,8 +1,8 @@
 define([
-  'lodash',
+  'lodash/collections/forEach',
   'frozen/utils/degreesFromCenter',
   'frozen/utils/scalePoints'
-], function(_, degreesFromCenter, scalePoints){
+], function(forEach, degreesFromCenter, scalePoints){
 
   'use strict';
 
@@ -13,7 +13,7 @@ define([
     if(im.mouseAction.isPressed()){
       var scaledPosition = scalePoints(im.mouseAction.position, 1 / box.scale);
       if(scaledPosition){
-        _.forEach(this.creatures, function(creature){
+        forEach(this.creatures, function(creature){
           if(creature.girl){
             box.applyForceDegrees(creature.id, degreesFromCenter(scaledPosition, creature), speed * millis / 50);
           } else {

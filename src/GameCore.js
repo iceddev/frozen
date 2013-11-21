@@ -21,11 +21,11 @@ define([
   'dcl',
   'dcl/advise',
   'dcl/bases/Mixer',
-  'lodash',
+  'lodash/functions/bind',
   './InputManager',
   './ResourceManager',
   './shims/RAF'
-], function(dcl, advise, Mixer, _, InputManager, ResourceManager){
+], function(dcl, advise, Mixer, bind, InputManager, ResourceManager){
 
   'use strict';
 
@@ -311,7 +311,7 @@ define([
       this.prevTime = startTime;
 
       //need to keep the context defined here so the game loop has access to it
-      this.loopRunner = _.bind(this.loopRunner, this);
+      this.loopRunner = bind(this.loopRunner, this);
       this.requestId = window.requestAnimationFrame(this.loopRunner);
     },
 

@@ -7,8 +7,9 @@
 define([
   'dcl',
   'dcl/bases/Mixer',
-  'lodash'
-], function(dcl, Mixer, _){
+  'lodash/objects/assign',
+  'lodash/utilities/uniqueId'
+], function(dcl, Mixer, assign, uniqueId){
 
   'use strict';
 
@@ -26,7 +27,7 @@ define([
      * @memberOf Entity#
      * @default
      */
-    id: 0,
+    id: null,
     /**
      * The x component of the entity's location
      * @type {Number}
@@ -175,6 +176,13 @@ define([
      */
     sensor: false,
 
+    constructor: function(opts){
+      /* jshint eqnull: true */
+      if(this.id == null){
+        this.id = uniqueId();
+      }
+    },
+
     /**
      * Update this entity with the state passed in
      * @function
@@ -182,7 +190,7 @@ define([
      * @param {Object} state State to merge with this object
      */
     update: function(state){
-      _.assign(this, state);
+      assign(this, state);
     },
 
     /**

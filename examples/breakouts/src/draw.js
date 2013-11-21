@@ -1,9 +1,9 @@
 define([
-  'lodash',
+  'lodash/collections/forEach',
   'frozen/plugins/loadImage!resources/bg_prerendered.png',
   'frozen/plugins/loadImage!resources/logo.png',
   'frozen/plugins/loadImage!resources/tiles.png'
-], function(_, background, logo, tiles){
+], function(forEach, background, logo, tiles){
 
   'use strict';
 
@@ -18,7 +18,7 @@ define([
       this.entities.paddle.draw(ctx);
 
       var entities = this.state.balls.concat(this.state.currentBricks, this.state.powerUps, this.state.powerDowns);
-      _.forEach(entities, function(entity){
+      forEach(entities, function(entity){
         entity.draw(ctx);
       });
 

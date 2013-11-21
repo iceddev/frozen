@@ -1,6 +1,5 @@
 //load the AMD modules we need
 require([
-  'lodash',
   'dojo/keys',
   'frozen/box2d/BoxGame',
   'frozen/box2d/entities/Rectangle',
@@ -9,13 +8,12 @@ require([
   'frozen/plugins/loadImage!images/background.png',
   'frozen/plugins/loadImage!images/nyan.png',
   'frozen/plugins/loadImage!images/yarn.png'
-], function(_, keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg){
+], function(keys, BoxGame, Rectangle, Polygon, Circle, backImg, nyanImg, yarnImg){
 
   'use strict';
 
   // create each of the shapes
   var ground = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 385,
     y: 480,
     halfWidth: 1000,
@@ -24,7 +22,6 @@ require([
   });
 
   var ceiling = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 385,
     y: -200,
     halfWidth: 1000,
@@ -33,7 +30,6 @@ require([
   });
 
   var leftWall = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: -80,
     y: 240,
     halfWidth: 40,
@@ -42,7 +38,6 @@ require([
   });
 
   var rightWall = new Rectangle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 850,
     y: 240,
     halfWidth: 40,
@@ -51,7 +46,6 @@ require([
   });
 
   var moon = new Circle({
-    id: _.uniqueId(), // objects in box2d need an id
     x: 626,
     y: 120,
     radius: 63,
@@ -59,7 +53,6 @@ require([
   });
 
   var pyramid = new Polygon({
-    id: _.uniqueId(), // objects in box2d need an id
     points: [{x: 320, y: 440}, {x: 446, y: 290}, {x: 565, y: 440}],
     staticBody: true
   });
