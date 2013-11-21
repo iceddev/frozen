@@ -15,18 +15,18 @@ define([
   '../sounds/Sound',
   '../sounds/WebAudio',
   '../sounds/HTML5Audio',
-  'dojo/has'
-], function(Sound, WebAudio, HTML5Audio, has){
+  '../support'
+], function(Sound, WebAudio, HTML5Audio, support){
 
   'use strict';
 
   return {
     load: function(id, parentRequire, loaded, config){
-      if(has('WebAudio')){
+      if(support['web-audio']){
         return loaded(WebAudio);
       }
 
-      if(has('HTML5Audio')){
+      if(support['html5-audio']){
         return loaded(HTML5Audio);
       }
 

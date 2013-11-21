@@ -12,14 +12,13 @@ define([
   'dcl',
   'dcl/bases/Mixer',
   'dcl/mixins/Cleanup',
-  'dojo/has',
-  'dojo/on',
+  'on',
   'lodash/functions/bindAll',
   'lodash/collections/map',
   'lodash/collections/some',
   'hammer',
   'dojo/domReady!'
-], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, has, on, bindAll, map, some, hammer){
+], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, on, bindAll, map, some, hammer){
 
   'use strict';
 

@@ -11,7 +11,7 @@ define([
   'dcl/bases/Mixer',
   'lodash/objects/transform',
   'lodash/collections/some',
-  'dojo/on'
+  'on'
 ], function(req, Sound, dcl, Mixer, transform, some, on){
 
   'use strict';
