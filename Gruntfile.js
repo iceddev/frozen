@@ -115,11 +115,10 @@ module.exports = function(grunt) {
         }
       },
       options: {
-        src: 'src/**/*.js',
         helpers: [
           'deps/Box2d.min.js',
-          'dojoConfig.js',
-          'deps/dojo/dojo.js'
+          'deps/require.js',
+          'require-config.js'
         ],
         host: 'http://127.0.0.1:8000/',
         template: 'specs/fixtures/_SpecRunner.tmpl'

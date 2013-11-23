@@ -9,11 +9,11 @@ define([
   './Ball',
   './loadLevel',
   'lodash/collections/forEach',
-  'dojo/has',
+  'on/support',
   'frozen/box2d/BoxGame',
   'frozen/box2d/Box',
   'frozen/box2d/entities/Rectangle'
-], function(initInput, handleInput, update, draw, walls, Paddle, PaddleJoint, Ball, loadLevel, forEach, has, BoxGame, Box, Rectangle){
+], function(initInput, handleInput, update, draw, walls, Paddle, PaddleJoint, Ball, loadLevel, forEach, support, BoxGame, Box, Rectangle){
 
   'use strict';
 
@@ -24,9 +24,9 @@ define([
     box: new Box({resolveCollisions: true, gravityY: 0}),
     boxUpdating: false, //don't start off doing physics calculations
     canvasId: 'canvas',
-    gameAreaId: has('touch') ? 'gameArea' : null,
-    canvasPercentage: has('touch') ? 0.98 : null,
-    mobile: has('touch') ? true : false,
+    gameAreaId: support.touch ? 'gameArea' : null,
+    canvasPercentage: support.touch ? 0.98 : null,
+    mobile: support.touch ? true : false,
     handleInput: handleInput,
     update: update,
     draw: draw,

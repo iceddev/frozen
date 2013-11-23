@@ -22,14 +22,12 @@
     "dojoConfig.js"
   ],
   "dependencies": {
-    "dojo": "1.8.3",
-    "dcl": "uhop/dcl#1.0.2",
+    "dcl": "uhop/dcl#1.1.1",
     "Box2d": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
     "lodash": "lodash/lodash-amd#2.3.0",
-    "hammer": "phated/hammer.js#1.0.6-dev",
-    "frozen-on": "~0.2.0"
+    "hammer": "EightMedia/hammer.js#master",
+    "on": "frozenjs/on#0.2.0",
+    "domready": "requirejs/domReady#2.0.1"
   },
-  "devDependencies": {
-    "util": "dojo/util#1.8.3"
-  }
+  "devDependencies": {}
 }

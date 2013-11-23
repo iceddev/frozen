@@ -17,7 +17,7 @@ define([
   'lodash/collections/map',
   'lodash/collections/some',
   'hammer',
-  'dojo/domReady!'
+  'domReady!'
 ], function(GameAction, MouseAction, TouchAction, insideCanvas, dcl, Mixer, Cleanup, on, bindAll, map, some, hammer){
 
   'use strict';

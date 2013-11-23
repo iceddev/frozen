@@ -11,7 +11,7 @@ define([
   '../utils/removeExtension',
   '../support',
   'dcl',
-  'on',
+  'on'
 ], function(req, Sound, removeExtension, support, dcl, on){
 
   'use strict';

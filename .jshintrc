@@ -16,6 +16,7 @@
   "globals": {
     "define": true,
     "require": true,
+    "requirejs": true,
     "Box2D": true,
     "expect": true,
     "describe": true,

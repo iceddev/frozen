@@ -1,4 +1,4 @@
-(function(global, doc, define){
+(function(global, define){
   'use strict';
 
   define(function(require){
@@ -42,9 +42,8 @@
   });
 
 }(
-  /* jshint eqeqeq: false, strict: false */
+  /* jshint strict: false, eqeqeq: false */
   typeof global == 'object' ? global : this.window || this.global,
-  typeof document == 'object' && document,
   typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
   // Boilerplate for AMD and Node
 ));
