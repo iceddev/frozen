@@ -9,9 +9,10 @@ define([
   './plugins/sound!',
   'dcl',
   'dcl/bases/Mixer',
-  'lodash',
-  'dojo/on'
-], function(req, Sound, dcl, Mixer, _, on){
+  'lodash/objects/transform',
+  'lodash/collections/some',
+  'on'
+], function(req, Sound, dcl, Mixer, transform, some, on){
 
   'use strict';
 
@@ -116,7 +117,7 @@ define([
 
       var self = this;
 
-      var fileList = _.transform(files, function(result, file, key){
+      var fileList = transform(files, function(result, file, key){
         var filename = normalizePath(self.imageDir, file);
 
         //if we already have the image, just return it
@@ -159,7 +160,7 @@ define([
 
       var self = this;
 
-      var fileList = _.transform(files, function(result, file, key){
+      var fileList = transform(files, function(result, file, key){
         var filename = normalizePath(self.soundDir, file);
 
         //if we already have the sound, just return it
@@ -196,7 +197,7 @@ define([
         wrapper.img.src = flipFn(image);
       });
 
-      _.any(this.resourceList, function(resource){
+      some(this.resourceList, function(resource){
         if(resource.img === image && resource.complete){
           wrapper.img.src = flipFn(image);
           return true;

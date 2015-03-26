@@ -2,14 +2,14 @@ define([
   './draw',
   './Head',
   './entities',
-  'lodash',
+  'lodash/collections/forEach',
   'dojo/keys',
   'frozen/utils/radiansFromCenter',
   'frozen/utils/scalePoints',
   'frozen/box2d/BoxGame',
   'frozen/box2d/entities',
   'frozen/box2d/joints/Revolute'
-], function(draw, Head, boxData, _, keys, radiansFromCenter, scalePoints, BoxGame, entities, Revolute){
+], function(draw, Head, boxData, forEach, keys, radiansFromCenter, scalePoints, BoxGame, entities, Revolute){
 
   'use strict';
 
@@ -59,8 +59,8 @@ define([
     }
   });
 
-   //add everything to box from the boxData
-  _.forEach(boxData.entities, function(props){
+  //add everything to box from the boxData
+  forEach(boxData.entities, function(props){
     if(props.id === 'head'){
       game.addBody(new Head(props));
     } else {
@@ -72,7 +72,7 @@ define([
     }
   });
 
-  _.forEach(boxData.joints, function(props){
+  forEach(boxData.joints, function(props){
     var joint;
     if(props.type === 'Revolute'){
       joint = new Revolute(props);

@@ -1,28 +1,28 @@
 define([
   'frozen/sounds/HTML5Audio',
   'frozen/sounds/Sound',
-  'dcl',
-  'dojo/has'
-], function(HTML5Audio, Sound, dcl, has){
+  'frozen/support',
+  'dcl'
+], function(HTML5Audio, Sound, support, dcl){
 
   'use strict';
 
-  describe('HTML5Audio', function(){
+  describe('support', function(){
 
-    it('should add a has test for HTML5Audio', function(){
-      expect(has('HTML5Audio')).toBeDefined();
+    it('should test for html5-audio support', function(){
+      expect(support['html5-audio']).toBeDefined();
     });
 
-    it('should add a has test for shittySound (mobile)', function(){
-      expect(has('shittySound')).toBeDefined();
+    it('should test for shitty-sound (mobile) support', function(){
+      expect(support['shitty-sound']).toBeDefined();
     });
 
   });
 
-  if(has('HTML5Audio') && !has('shittySound')){
+  if(support['html5-audio'] && !support['shitty-sound']){
     describe('HTML5Audio', function(){
       var sound;
-      var filename = has('ie') ? 'specs/fixtures/yipee.mp3' : 'specs/fixtures/yipee.wav';
+      var filename = (new Audio()).canPlayType('audio/mpeg') ? 'specs/fixtures/yipee.mp3' : 'specs/fixtures/yipee.wav';
       var filename2 = 'specs/fixtures/yipee';
 
       beforeEach(function(){
@@ -308,7 +308,7 @@ define([
     });
   }
 
-  if(has('shittySound')){
+  if(support['shitty-sound']){
     // TODO: figure out a way to run tests that require input on mobile devices
   }
 

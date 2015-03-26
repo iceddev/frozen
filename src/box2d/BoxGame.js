@@ -8,9 +8,10 @@
  define([
   '../GameCore',
   './Box',
-  'lodash',
+  'lodash/collections/forEach',
+  'lodash/arrays/flatten',
   'dcl'
-], function(GameCore, Box, _, dcl){
+], function(GameCore, Box, forEach, flatten, dcl){
 
   'use strict';
 
@@ -98,9 +99,9 @@
      */
     addBodies: function(){
       // allows for passing an array as first arg or a bunch of args
-      var entities = _.flatten(arguments, true);
+      var entities = flatten(arguments, true);
       var self = this;
-      _.forEach(entities, function(entity){
+      forEach(entities, function(entity){
         self.addBody(entity);
       });
     },
@@ -124,9 +125,9 @@
      */
     removeBodies: function(){
       // allows for passing an array as first arg or a bunch of args
-      var entities = _.flatten(arguments, true);
+      var entities = flatten(arguments, true);
       var self = this;
-      _.forEach(entities, function(entity){
+      forEach(entities, function(entity){
         self.removeBody(entity);
       });
     },
@@ -150,9 +151,9 @@
      */
     addJoints: function(){
       // allows for passing an array as first arg or a bunch of args
-      var joints = _.flatten(arguments, true);
+      var joints = flatten(arguments, true);
       var self = this;
-      _.forEach(joints, function(entity){
+      forEach(joints, function(entity){
         self.addJoint(entity);
       });
     },
@@ -176,9 +177,9 @@
      */
     removeJoints: function(){
       // allows for passing an array as first arg or a bunch of args
-      var joints = _.flatten(arguments, true);
+      var joints = flatten(arguments, true);
       var self = this;
-      _.forEach(joints, function(entity){
+      forEach(joints, function(entity){
         self.removeJoint(entity);
       });
     }

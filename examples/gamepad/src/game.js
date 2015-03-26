@@ -2,12 +2,12 @@ define([
   './draw',
   './handleInput',
   './Car',
-  'lodash',
+  'lodash/collections/forEach',
   'frozen/box2d/Box',
   'frozen/box2d/BoxGame',
   'frozen/box2d/entities',
   './boxData'
-], function(draw, handleInput, Car, _, Box, BoxGame, entities, boxData){
+], function(draw, handleInput, Car, forEach, Box, BoxGame, entities, boxData){
 
   'use strict';
 
@@ -21,7 +21,7 @@ define([
     handleInput: handleInput
   });
 
-  _.forEach(boxData.entities, function(entity){
+  forEach(boxData.entities, function(entity){
     if(entity.id === 'car'){
       game.addBody(new Car(entity));
       game.box.setAngle('car', Math.PI * 1.5);

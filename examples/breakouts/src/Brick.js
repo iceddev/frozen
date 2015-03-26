@@ -1,11 +1,10 @@
 define([
-  'lodash',
   'dcl',
   'frozen/box2d/entities/Rectangle',
   'frozen/Animation',
   'frozen/ResourceManager',
   'frozen/plugins/loadImage!resources/tiles.png'
-], function(_, dcl, Rectangle, Animation, ResourceManager, tiles){
+], function(dcl, Rectangle, Animation, ResourceManager, tiles){
 
   'use strict';
 
@@ -32,11 +31,6 @@ define([
     powerDownBrick: false,
     brick: true,
     brickType: 0, // 0 - 3 for the differs colors
-    constructor: function(){
-      if(!this.id){
-        this.id = _.uniqueId();
-      }
-    },
     getBirthingAnim: function(){
       //lazy load to wait for flipped image creation
       if(!this.birthingAnim){

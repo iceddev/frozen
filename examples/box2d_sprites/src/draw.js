@@ -1,7 +1,7 @@
 define([
-  'lodash',
+  'lodash/collections/forEach',
   'frozen/plugins/loadImage!images/background.png'
-], function(_, background){
+], function(forEach, background){
 
   'use strict';
 
@@ -16,7 +16,7 @@ define([
 
     // draw all of the box entities
     var scale = this.box.scale;
-    _.forEach(this.drawables, function(drawable){
+    forEach(this.drawables, function(drawable){
       drawable.draw(ctx, scale);
     });
   };

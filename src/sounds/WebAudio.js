@@ -9,31 +9,23 @@ define([
   'require',
   './Sound',
   '../utils/removeExtension',
+  '../support',
   'dcl',
-  'dojo/on',
-  'dojo/has',
-  '../shims/AudioContext'
-], function(req, Sound, removeExtension, dcl, on, has){
+  'on'
+], function(req, Sound, removeExtension, support, dcl, on){
 
   'use strict';
 
-  has.add('WebAudio', function(global){
-    return !!global.AudioContext;
-  });
-
   var audioContext = null;
-  if(has('WebAudio')){
+  if(support['web-audio']){
     audioContext = new window.AudioContext();
 
-    if(has('shittySound')){
-      // Similar strategy to https://github.com/CreateJS/SoundJS
-      on.once(document, 'touchstart', function(){
-        var source = audioContext.createBufferSource();
-        source.buffer = audioContext.createBuffer(1, 1, 22050);
-        source.connect(audioContext.destination);
-        source.noteOn(0);
-      });
-    }
+    on.once(document, 'touchstart', function(){
+      var source = audioContext.createBufferSource();
+      source.buffer = audioContext.createBuffer(1, 1, 22050);
+      source.connect(audioContext.destination);
+      source.start(0);
+    });
   }
 
   return dcl(Sound, {
@@ -104,7 +96,7 @@ define([
       }
 
       var audio = this._initAudio(volume, true);
-      audio.noteOn(0);
+      audio.start(0);
     },
 
     play: function(volume, startTime){
@@ -116,7 +108,7 @@ define([
       startTime = startTime || 0;
 
       var audio = this._initAudio(volume, false);
-      audio.noteOn(startTime);
+      audio.start(startTime);
     },
 
     _initAudio: function(volume, loop){
@@ -126,10 +118,10 @@ define([
       source.buffer = this.buffer;
       source.loop = loop;
       if(volume){
-        var gainNode = this.audioContext.createGainNode();
-        gainNode.gain.value = volume;
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
+        var gain = this.audioContext.createGain();
+        gain.gain.value = volume;
+        source.connect(gain);
+        gain.connect(this.audioContext.destination);
       } else {
         source.connect(this.audioContext.destination);
       }

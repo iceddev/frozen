@@ -1,12 +1,12 @@
 define([
-  'lodash'
-], function(_){
+  'lodash/collections/map'
+], function(map){
 
   'use strict';
 
   function scalePoints(points, scale){
     if(Array.isArray(points)){
-      points = _.map(points, function(point){
+      points = map(points, function(point){
         return scalePoints(point, scale);
       });
     } else if(typeof scale === 'object'){
