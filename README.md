@@ -1,5 +1,5 @@
 ![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
-Frozen <sup>v0.4.2</sup>
+Frozen <sup>v0.4.3</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
@@ -127,6 +127,12 @@ Use `volo add` to get all the library dependencies
 `grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.4.3</sup>
+
+__Bug Fixes__
+
+* Updated to the newest WebAudio spec
 
 ### <sup>v0.4.2</sup>
 
