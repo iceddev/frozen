@@ -31,7 +31,7 @@ define([
         var source = audioContext.createBufferSource();
         source.buffer = audioContext.createBuffer(1, 1, 22050);
         source.connect(audioContext.destination);
-        source.noteOn(0);
+        source.start(0);
       });
     }
   }
@@ -104,7 +104,7 @@ define([
       }
 
       var audio = this._initAudio(volume, true);
-      audio.noteOn(0);
+      audio.start(0);
     },
 
     play: function(volume, startTime){
@@ -116,7 +116,7 @@ define([
       startTime = startTime || 0;
 
       var audio = this._initAudio(volume, false);
-      audio.noteOn(startTime);
+      audio.start(startTime);
     },
 
     _initAudio: function(volume, loop){
@@ -126,10 +126,10 @@ define([
       source.buffer = this.buffer;
       source.loop = loop;
       if(volume){
-        var gainNode = this.audioContext.createGainNode();
-        gainNode.gain.value = volume;
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
+        var gain = this.audioContext.createGain();
+        gain.gain.value = volume;
+        source.connect(gain);
+        gain.connect(this.audioContext.destination);
       } else {
         source.connect(this.audioContext.destination);
       }
