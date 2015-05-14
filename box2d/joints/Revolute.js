@@ -11,16 +11,19 @@
 const _ = require('lodash');
 const Joint = require('./Joint');
 
-// box2d globals
-const B2Vec2 = Box2D.Common.Math.b2Vec2;
-const B2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
+var B2Vec2, B2RevoluteJointDef;
+
+if(global.Box2D){
+  B2Vec2 = Box2D.b2Vec2;
+  B2RevoluteJointDef = Box2D.b2RevoluteJointDef;
+}
 
 class Revolute extends Joint {
   constructor(options){
     options = options || {};
+    super(options);
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

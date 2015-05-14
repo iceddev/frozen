@@ -49,6 +49,7 @@ const STATE_IDLE = 2;
 class Creature extends Sprite {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
     * The current state of the creature. Will be a value from the static constants.

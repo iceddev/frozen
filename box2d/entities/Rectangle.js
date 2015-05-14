@@ -13,6 +13,7 @@ const Entity = require('./Entity');
 class Rectangle extends Entity {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * Half of the Rectangle's total width
@@ -30,7 +31,6 @@ class Rectangle extends Entity {
     this.halfHeight = 1;
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

@@ -181,6 +181,7 @@ class Entity {
    * @param {Object} state State to merge with this object
    */
   update(state){
+    console.log('udpate', state);
     _.assign(this, state);
   }
 

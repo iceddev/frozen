@@ -31,6 +31,7 @@ if(has('shittySound')){
 class WebAudio extends Sound {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * The WebAudio AudioContext - used to perform operations on a sound
@@ -49,7 +50,6 @@ class WebAudio extends Sound {
     this.buffer = null;
 
     _.assign(this, options);
-    super(options);
   }
 
   load(filename){

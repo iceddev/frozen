@@ -14,6 +14,7 @@ const distance = require('../../utils/distance');
 class Circle extends Entity{
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * The radius of this circle.
@@ -24,7 +25,6 @@ class Circle extends Entity{
     this.radius = 1;
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

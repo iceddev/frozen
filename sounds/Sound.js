@@ -41,11 +41,6 @@ const formats = {
 };
 
 
-//TODO need replacement for has
-// has.add('shittySound', function(){
-//   return !!((has('android') || has('ios')) && has('webkit'));
-// });
-
 
 class Sound {
   constructor(options){
@@ -84,6 +79,8 @@ class Sound {
     this.maybe = [];
 
     _.assign(this, options);
+
+    this.formats = formats;
 
     if(typeof options === 'string'){
       this.load(options);

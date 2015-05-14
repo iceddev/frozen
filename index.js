@@ -17,15 +17,13 @@ var frozen = {
   sounds : {
     HTML5Audio : require('./sounds/HTML5Audio'),
     WebAudio : require('./sounds/WebAudio')
+  },
+  box2d : {
+    entities : require('./box2d/entities'),
+    joints: require('./box2d/joints'),
+    Box : require('./box2d/Box'),
+    BoxGame : require('./box2d/BoxGame')
   }
-
-  // box2d : {
-  //   entities : require('./box2d/entities'),
-  //   joints: require('./box2d/joints'),
-  //   Box : require('./box2d/Box'),
-  //   BoxGame : require('./box2d/BoxGame')
-  // }
-
 
 };
 

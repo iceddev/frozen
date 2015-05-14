@@ -7,6 +7,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const GameAction = require('./GameAction');
 
 class MouseAction extends GameAction {

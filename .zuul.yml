@@ -1,0 +1,5 @@
+ui: mocha-bdd
+browserify:
+  - transform: babelify
+scripts:
+  - "https://rawgit.com/kripken/box2d.js/master/build/Box2D_v2.3.1_min.js"

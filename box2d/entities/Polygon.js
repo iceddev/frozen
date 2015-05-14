@@ -16,6 +16,7 @@ const translatePoints = require('../../utils/translatePoints');
 class Polygon extends Entity {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * An array of objects that have x and y values.
@@ -26,7 +27,6 @@ class Polygon extends Entity {
     this.points = [];
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

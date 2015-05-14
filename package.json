@@ -10,9 +10,21 @@
     "lodash.bind": "^3.1.0"
   },
   "devDependencies": {
-    "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git"
+    "babel": "^5.2.17",
+    "babel-core": "^5.2.17",
+    "babel-loader": "^5.0.0",
+    "babel-runtime": "^5.2.17",
+    "babelify": "^6.1.0",
+    "expect": "^1.6.0",
+    "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git",
+    "node-libs-browser": "^0.5.0",
+    "phantomjs": "^1.9.16",
+    "webpack": "^1.9.4",
+    "zuul": "^3.0.0"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "zuul test/*.js test/**/*.js --no-coverage --local --open",
+    "ci": "zuul test/*.js --phantom",
+    "build": "gulp"
   }
 }

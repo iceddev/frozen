@@ -16,6 +16,7 @@ const translatePoints = require('../../utils/translatePoints');
 class MultiPolygon extends Entity {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * An array of polygons
@@ -26,7 +27,6 @@ class MultiPolygon extends Entity {
     this.polys = [];
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

@@ -10,18 +10,16 @@
 const _ = require('lodash');
 const Sound = require('./Sound');
 const removeExtension = require('../utils/removeExtension');
+const has = require('../has');
+const on = require('frozen-on');
 
 
 //TODO: has replacement
-// has.add('HTML5Audio', function(global){
-//   return !!global.Audio;
-// });
-
-
 
 class HTML5Audio extends Sound {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * The initial Audio object - used to load the sound prior to playing
@@ -32,7 +30,6 @@ class HTML5Audio extends Sound {
     this.audio = null;
 
     _.assign(this, options);
-    super(options);
   }
 
   load(filename){
@@ -46,7 +43,9 @@ class HTML5Audio extends Sound {
     if(basename === filename){
       filename = basename + this._chooseFormat();
     }
-    filename = req.toUrl(filename);
+
+    //TODO this was an AMD gimme
+    //filename = req.toUrl(filename);
 
     if(has('shittySound')){
       on.once(document, 'touchstart', function(e){

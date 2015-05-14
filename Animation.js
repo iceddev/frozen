@@ -78,6 +78,8 @@ class Animation {
      */
     this.offsetY = 0;
 
+    this.frames = undefined;
+
 
     _.assign(this, options);
 

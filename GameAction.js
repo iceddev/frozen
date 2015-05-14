@@ -22,7 +22,6 @@ const _ = require('lodash');
 const statics = {
   NORMAL: 0,
   DETECT_INITAL_PRESS_ONLY: 1,
-
   STATE_RELEASED: 0,
   STATE_PRESSED: 1,
   STATE_WAITING_FOR_RELEASE: 2,
@@ -63,6 +62,8 @@ class GameAction {
      * @default
      */
     this.state = 0;
+
+    this.statics = statics;
 
     _.assign(this, options);
 

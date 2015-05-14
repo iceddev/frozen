@@ -11,13 +11,17 @@
 const _ = require('lodash');
 const Joint = require('./Joint');
 
-// box2d globals
-const B2Vec2 = Box2D.Common.Math.b2Vec2;
-const B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
+var B2Vec2, B2PrismaticJointDef;
+
+if(global.Box2D){
+  B2Vec2 = Box2D.b2Vec2;
+  B2PrismaticJointDef = Box2D.b2PrismaticJointDef;
+}
 
 class Prismatic extends Joint {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * An object with x and y numeric components representing the line in which the entities can move relative to each other
@@ -28,7 +32,6 @@ class Prismatic extends Joint {
     this.axisScale = null;
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

@@ -14,6 +14,7 @@ const Box = require('./Box');
 class BoxGame extends GameCore {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * The instance of Box used for this game.
@@ -61,7 +62,6 @@ class BoxGame extends GameCore {
       this.joints = {};
     }
 
-    super(options);
   }
 
   /**

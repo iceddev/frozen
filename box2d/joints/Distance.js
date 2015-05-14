@@ -11,13 +11,18 @@
 const _ = require('lodash');
 const Joint = require('./Joint');
 
-// box2d globals
-const B2Vec2 = Box2D.Common.Math.b2Vec2;
-const B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
+
+var B2Vec2, B2DistanceJointDef;
+
+if(global.Box2D){
+  B2Vec2 = Box2D.b2Vec2;
+  B2DistanceJointDef = Box2D.b2DistanceJoint;
+}
 
 class Distance extends Joint {
   constructor(options){
     options = options || {};
+    super(options);
 
     /**
      * A point on the second entity where the joint will be attached. If no point is specified, the second body will be attached at its center point.
@@ -28,7 +33,6 @@ class Distance extends Joint {
     this.bodyPoint2 = null;
 
     _.assign(this, options);
-    super(options);
   }
 
   /**

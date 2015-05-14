@@ -583,7 +583,7 @@ class InputManager {
   }
 
   pushCleanup(a, b){
-    console.log('pushCleanup', a, b);
+    // console.log('pushCleanup', a, b);
   }
 
 }

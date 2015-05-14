@@ -12,6 +12,8 @@ const Sound = require('./sounds/Sound');
 const WebAudio = require('./sounds/WebAudio');
 const HTML5Audio = require('./sounds/HTML5Audio');
 
+var resourceList = {};
+
 //TODO: move these to its own module for unit testing?
 function normalizePath(baseDir, path){
   var joinedPath = path;
@@ -97,7 +99,7 @@ class ResourceManager {
      * @memberOf ResourceManager#
      * @default
      */
-    this.resourceList = {};
+    this.resourceList = resourceList;
 
     _.assign(this, options);
 
@@ -292,7 +294,6 @@ class ResourceManager {
       return Math.round((numComplete / length) * 100.0);
     }
   }
-
 
 }
 
