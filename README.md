@@ -94,7 +94,7 @@ These technologies include:
 * [Box2d](https://box2dweb.googlecode.com/) - used for physics calculations in games
 * [Dojo](http://dojotoolkit.org/) - used for AMD loader and some utility modules inside the library, Dojo build process is used to build a single JS file
 * [JSDoc](http://usejsdoc.org/) - generates documentation for code
-* [Jasmine](http://pivotal.github.com/jasmine/) - tests all use Jasmine
+* [Jasmine](https://jasmine.github.io/) - tests all use Jasmine
 * [AMD](http://requirejs.org/docs/whyamd.html) - all modules are written with AMD and the single layer includes an AMD module loader
 
 ## Development
