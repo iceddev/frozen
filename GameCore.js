@@ -17,19 +17,12 @@
  * myGame.run();
  */
 
-
-
-'use strict';
-
-const _ = require('lodash');
-
 const InputManager = require('./InputManager');
 const ResourceManager = require('./ResourceManager');
 
 class GameCore {
 
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * Whether or not the game should be running its loop
@@ -127,7 +120,7 @@ class GameCore {
      */
     this.canvasPercentage = 0;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**
@@ -195,6 +188,7 @@ class GameCore {
       this.canvas = document.getElementById(this.canvasId);
     }
     if(!this.canvas){
+      
       alert('Sorry, your browser does not support canvas.  I recommend any browser but Internet Explorer');
       return;
     }
@@ -229,7 +223,7 @@ class GameCore {
     if(!this.resourceManager){
       this.resourceManager = new ResourceManager();
     }
-    this.loadResources(this.resourceManager);
+    // this.loadResources(this.resourceManager);
 
     this.isRunning = true;
   }
@@ -294,7 +288,7 @@ class GameCore {
     this.prevTime = startTime;
 
     //need to keep the context defined here so the game loop has access to it
-    this.loopRunner = _.bind(this.loopRunner, this);
+    this.loopRunner = this.loopRunner.bind(this);
     window.requestAnimationFrame(this.loopRunner);
   }
 

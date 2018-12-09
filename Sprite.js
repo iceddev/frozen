@@ -4,13 +4,8 @@
  * @constructor Sprite
  */
 
-'use strict';
-
-const _ = require('lodash');
-
 class Sprite {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The x position of the sprite in pixels
@@ -68,7 +63,7 @@ class Sprite {
      */
     this.collisionRadius = 40;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

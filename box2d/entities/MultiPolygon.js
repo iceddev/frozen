@@ -5,17 +5,13 @@
  * @extends Entity
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Entity = require('./Entity');
 const scalePoints = require('../../utils/scalePoints');
 const pointInPolygon = require('../../utils/pointInPolygon');
 const translatePoints = require('../../utils/translatePoints');
 
 class MultiPolygon extends Entity {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -26,7 +22,7 @@ class MultiPolygon extends Entity {
      */
     this.polys = [];
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

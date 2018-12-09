@@ -1,10 +1,7 @@
-'use strict';
-
-const _ = require('lodash');
 
 function scalePoints(points, scale){
   if(Array.isArray(points)){
-    points = _.map(points, function(point){
+    points = points.map(function(point){
       return scalePoints(point, scale);
     });
   } else if(typeof scale === 'object'){

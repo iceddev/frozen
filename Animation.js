@@ -4,15 +4,11 @@
  * @constructor Animation
  */
 
-'use strict';
-
 const AnimFrame = require('./AnimFrame');
-const _ = require('lodash');
 
 
 class Animation {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The index of the current frame being used to render this Animation
@@ -81,7 +77,7 @@ class Animation {
     this.frames = undefined;
 
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     this.start();
   }

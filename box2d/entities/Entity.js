@@ -1,15 +1,15 @@
+function genId() {
+  return Math.random() + '_' + Date.now();
+}
+
 /**
  * This represents a body and shape in a Box2d world using positions and sizes relative to the Box2d world instance.
  * @name Entity
  * @constructor Entity
  */
-'use strict';
-
-const _ = require('lodash');
 
 class Entity {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The id in which to reference this object. Also the userData property for box2d bodies.
@@ -17,7 +17,7 @@ class Entity {
      * @memberOf Entity#
      * @default
      */
-     this.id = 0;
+     this.id = options.id || genId();
 
     /**
      * The x component of the entity's location
@@ -171,7 +171,7 @@ class Entity {
      */
      this.groupIndex = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**
@@ -181,8 +181,7 @@ class Entity {
    * @param {Object} state State to merge with this object
    */
   update(state){
-    console.log('udpate', state);
-    _.assign(this, state);
+    Object.assign(this, state);
   }
 
   /**

@@ -5,14 +5,10 @@
  * @extends {GameAction}
  */
 
-'use strict';
-
-const _ = require('lodash');
 const GameAction = require('./GameAction');
 
 class MouseAction extends GameAction {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -47,7 +43,7 @@ class MouseAction extends GameAction {
      */
     this.insideCanvas = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
   }
 

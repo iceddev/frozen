@@ -1,20 +1,13 @@
 {
-  "name": "frozen",
+  "name": "frozenjs",
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
   "version": "0.5.0",
   "dependencies": {
     "frozen-on": "^0.2.0",
-    "hammerjs": "^2.0.4",
-    "lodash": "^3.8.0",
-    "lodash.assign": "^3.1.0",
-    "lodash.bind": "^3.1.0"
+    "hammerjs": "^2.0.8"
   },
+  "main": "index.js",
   "devDependencies": {
-    "babel": "^5.2.17",
-    "babel-core": "^5.2.17",
-    "babel-loader": "^5.0.0",
-    "babel-runtime": "^5.2.17",
-    "babelify": "^6.1.0",
     "expect": "^1.6.0",
     "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git",
     "node-libs-browser": "^0.5.0",

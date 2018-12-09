@@ -5,17 +5,13 @@
  * @extends GameCore
  */
 
-'use strict';
-
-const _ = require('lodash');
 const GameCore = require('../GameCore');
 const Box = require('./Box');
 
 class BoxGame extends GameCore {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
-
+    console.log('boxgame options', options);
     /**
      * The instance of Box used for this game.
      * @type {Box}
@@ -48,10 +44,10 @@ class BoxGame extends GameCore {
      */
     this.joints = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     if(!this.box){
-      this.box = new Box();
+      this.box = new Box(options.boxOptions);
     }
 
     if(!this.entities){
@@ -102,12 +98,13 @@ class BoxGame extends GameCore {
    * @memberOf BoxGame#
    * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
    */
-  addBodies(){
-    // allows for passing an array as first arg or a bunch of args
-    var entities = _.flatten(arguments, true);
+  addBodies(entities){
+    if(!Array.isArray(entities)) {
+      entities = [entities];
+    }
     var self = this;
-    _.forEach(entities, function(entity){
-      self.addBody(entity);
+    entities.forEach((entity) => {
+      this.addBody(entity);
     });
   }
 
@@ -128,12 +125,12 @@ class BoxGame extends GameCore {
    * @memberOf BoxGame#
    * @param {Array|Entity} entities Can take an array of Entity objects or any number of Entity objects
    */
-  removeBodies(){
-    // allows for passing an array as first arg or a bunch of args
-    var entities = _.flatten(arguments, true);
-    var self = this;
-    _.forEach(entities, function(entity){
-      self.removeBody(entity);
+  removeBodies(entities){
+    if(!Array.isArray(entities)) {
+      entities = [entities];
+    }
+    entities.forEach((entity) => {
+      this.removeBody(entity);
     });
   }
 
@@ -154,12 +151,12 @@ class BoxGame extends GameCore {
    * @memberOf BoxGame#
    * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
    */
-  addJoints(){
-    // allows for passing an array as first arg or a bunch of args
-    var joints = _.flatten(arguments, true);
-    var self = this;
-    _.forEach(joints, function(entity){
-      self.addJoint(entity);
+  addJoints(joints){
+    if(!Array.isArray(joints)) {
+      joints = [joints];
+    }
+    joints.forEach((entity) => {
+      this.addJoint(entity);
     });
   }
 
@@ -180,12 +177,12 @@ class BoxGame extends GameCore {
    * @memberOf BoxGame#
    * @param {Array|Joint} joints Can take an array of Joint objects or any number of Joint objects
    */
-  removeJoints(){
-    // allows for passing an array as first arg or a bunch of args
-    var joints = _.flatten(arguments, true);
-    var self = this;
-    _.forEach(joints, function(entity){
-      self.removeJoint(entity);
+  removeJoints(joints){
+    if(!Array.isArray(joints)) {
+      joints = [joints];
+    }
+    joints.forEach((entity) => {
+      this.removeJoint(entity);
     });
   }
 }

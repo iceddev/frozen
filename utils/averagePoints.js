@@ -1,10 +1,7 @@
-'use strict';
-
-const _ = require('lodash');
 
 function averagePoints(points){
   var retVal = {x: 0, y: 0};
-  _.forEach(points, function(point){
+  points.forEach(points, function(point){
     retVal.x+= point.x;
     retVal.y+= point.y;
   });

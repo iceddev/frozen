@@ -4,9 +4,6 @@
  * @constructor InputManager
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Hammer = require('hammerjs');
 
 const GameAction = require('./GameAction');
@@ -45,8 +42,7 @@ function getMarginExtents(node){
 }
 
 class InputManager {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * Object of keyActions being listened for
@@ -138,7 +134,7 @@ class InputManager {
      */
     this.hammer = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     if(!this.hammer){
       this.hammer = new Hammer(document.body, {
@@ -210,7 +206,8 @@ class InputManager {
       this.pushCleanup(on(window, 'orientationchange', handler), cleanup);
     }
 
-    //this.normalizePoint = this.normalizePoint.bind(this);
+    this.normalizePoint = this.normalizePoint.bind(this);
+    this.insideCanvas = this.insideCanvas.bind(this);
   }
 
   /**
@@ -368,8 +365,8 @@ class InputManager {
   touchstart(e){
     // Ensure touch has been released
     this.touchAction.release(null);
-    var currentPoints = _.map(e.touches, this.normalizePoint, this);
-    this.touchAction.insideCanvas = _.some(currentPoints, this.insideCanvas, this);
+    const currentPoints = e.touches.map(this.normalizePoint);
+    this.touchAction.insideCanvas = currentPoints.some(this.insideCanvas);
     this.touchAction.press(currentPoints);
     if(this.emulateMouse){
       this.mousedown(e.touches[0]);
@@ -394,7 +391,7 @@ class InputManager {
    * @param  {Event} e Event object
    */
   touchend(e){
-    var currentPoints = _.map(e.touches, this.normalizePoint, this);
+    const currentPoints = e.touches.map(this.normalizePoint);
     this.touchAction.release(currentPoints);
     if(this.emulateMouse){
       this.mouseUp(e.touches[0]);
@@ -419,7 +416,7 @@ class InputManager {
    * @param  {Event} e Event object
    */
   touchmove(e){
-    var currentPoints = _.map(e.touches, this.normalizePoint, this);
+    const currentPoints = e.touches.map(this.normalizePoint);
     this.touchAction.positions = currentPoints;
     if(this.touchAction.startPositions){
       e.preventDefault();

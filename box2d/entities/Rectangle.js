@@ -5,14 +5,10 @@
  * @extends Entity
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Entity = require('./Entity');
 
 class Rectangle extends Entity {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -30,7 +26,7 @@ class Rectangle extends Entity {
      */
     this.halfHeight = 1;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

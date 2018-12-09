@@ -1,11 +1,7 @@
-/*jshint eqnull:true */
-'use strict';
-
-const _ = require('lodash');
 
 function translatePoints(points, translation){
   if(Array.isArray(points)){
-    points = _.map(points, function(point){
+    points = points.map(function(point){
       return translatePoints(point, translation);
     });
   } else {

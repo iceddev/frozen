@@ -5,7 +5,6 @@
  * @extends Sound
  */
 
-const _ = require('lodash');
 const Sound = require('./Sound');
 const removeExtension = require('../utils/removeExtension');
 const has = require('../has');
@@ -29,8 +28,7 @@ if(has('shittySound')){
 }
 
 class WebAudio extends Sound {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -49,7 +47,7 @@ class WebAudio extends Sound {
      */
     this.buffer = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   load(filename){
@@ -61,7 +59,7 @@ class WebAudio extends Sound {
     if(basename === filename){
       filename = basename + this._chooseFormat();
     }
-    filename = req.toUrl(filename);
+    // filename = req.toUrl(filename);
 
     function decodeAudioData(e){
       // Decode asynchronously

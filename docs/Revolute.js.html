@@ -121,7 +121,7 @@ define([
           joint.Initialize(body1, body2, vec1, axis);
 
           if (this.jointAttributes) {
-            _.assign(joint, this.jointAttributes);
+            Object.assign(joint, this.jointAttributes);
           }
           return box.b2World.CreateJoint(joint);
         }

@@ -5,13 +5,8 @@
  * @param {Object} mixin Object containing properties to mixin
  */
 
-'use strict';
-
-const _ = require('lodash');
-
 class AnimFrame {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The ending time in milliseconds of this frame relative to its Animation
@@ -45,7 +40,7 @@ class AnimFrame {
      */
     this.image = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
 }

@@ -5,15 +5,11 @@
  * @extends Entity
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Entity = require('./Entity');
 const distance = require('../../utils/distance');
 
 class Circle extends Entity{
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -24,7 +20,7 @@ class Circle extends Entity{
      */
     this.radius = 1;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

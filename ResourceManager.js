@@ -6,7 +6,6 @@
 
  'use strict';
 
-const _ = require('lodash');
 const has = require('./has');
 const Sound = require('./sounds/Sound');
 const WebAudio = require('./sounds/WebAudio');
@@ -66,8 +65,7 @@ class ImageWrapper {
 
 class ResourceManager {
 
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * Whether all the resources have been loaded
@@ -101,7 +99,7 @@ class ResourceManager {
      */
     this.resourceList = resourceList;
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     // TODO not sure a better way
     if(!this.Sound){
@@ -121,40 +119,31 @@ class ResourceManager {
    * Loads an image (or a collection of images), and tracks if it has finished loading
    * @function
    * @memberOf ResourceManager#
-   * @param {String|Array|Object} files Filename of the image relative the Game's HTML page.
-   * @returns {Image|Array|Object} Return type based on argument: Image if String, Array of Images if Array, or Object of key-Image pairs if Object
+   * @param {String|Array} files Filename of the image relative the Game's HTML page.
+   * @returns {Image|Array} Return type based on argument: Image if String or Array of Images if Array
    */
   loadImage(files){
-    var singleFile = false;
-    // Normalize arguments
-    if(typeof files !== 'object'){
-      if(typeof files === 'string'){
-        singleFile = true;
-        files = [files];
-      } else {
-        return;
-      }
+    let singleFile = false;
+    if(!Array.isArray(files)) {
+      singleFile = true;
+      files = [files];
     }
 
-    var self = this;
-
-    var fileList = _.transform(files, function(result, file, key){
-      var filename = normalizePath(self.imageDir, file);
-
+    const fileList = files.map((file) => {
+      const filename = normalizePath(this.imageDir, file);
       //if we already have the image, just return it
-      if(self.resourceList[filename]){
-        return result[key] = self.resourceList[filename].img;
+      if(this.resourceList[filename]){
+        return this.resourceList[filename].img;
       }
+      this.allLoaded = false;
 
-      self.allLoaded = false;
-
-      var wrapper = new ImageWrapper(filename);
+      const wrapper = new ImageWrapper(filename);
       // Need to explicitly call load because flipImage also uses this object
       // which is probably a bad idea and should change in future
       // TODO: different objects for flipped image and regular image
       wrapper.load();
-      self.resourceList[filename] = wrapper;
-      result[key] = wrapper.img;
+      this.resourceList[filename] = wrapper;
+      return wrapper.img;
     });
 
     return singleFile ? fileList[0] : fileList;
@@ -164,36 +153,27 @@ class ResourceManager {
    * Loads a sound file (or a collection of sound files), and tracks if it has finished loading
    * @function
    * @memberOf ResourceManager#
-   * @param {String|Array|Object} filename Filename of the sound relative the Game's HTML page.
-   * @returns {Sound|Array|Object} Return type based on argument: Sound Object if String, Array of Sound Objects if Array, or Object of key-Sound Object pairs if Object
+   * @param {String|Array} filename Filename of the sound relative the Game's HTML page.
+   * @returns {Sound|Array} Return type based on argument: Sound Object if String or Array of Sound Objects if Array
    */
   loadSound(files){
-    var singleFile = false;
-    // Normalize arguments
-    if(typeof files !== 'object'){
-      if(typeof files === 'string'){
-        singleFile = true;
-        files = [files];
-      } else {
-        return;
-      }
+    let singleFile = false;
+    if(!Array.isArray(files)) {
+      singleFile = true;
+      files = [files];
     }
 
-    var self = this;
-
-    var fileList = _.transform(files, function(result, file, key){
-      var filename = normalizePath(self.soundDir, file);
-
+    const fileList = files.map((file) => {
+      const filename = normalizePath(this.soundDir, file);
       //if we already have the sound, just return it
-      if(self.resourceList[filename]){
-        return result[key] = self.resourceList[filename];
+      if(this.resourceList[filename]){
+        return this.resourceList[filename];
       }
+      this.allLoaded = false;
 
-      self.allLoaded = false;
-
-      var sound = new this.Sound(filename);
-      self.resourceList[filename] = sound;
-      result[key] = sound;
+      const sound = new this.Sound(filename);
+      this.resourceList[filename] = sound;
+      return sound;
     });
 
     return singleFile ? fileList[0] : fileList;
@@ -218,10 +198,10 @@ class ResourceManager {
       wrapper.img.src = flipFn(image);
     });
 
-    _.any(this.resourceList, function(resource){
+    Object.keys(this.resourceList).forEach((key) => {
+      const resource = this.resourceList[key];
       if(resource.img === image && resource.complete){
         wrapper.img.src = flipFn(image);
-        return true;
       }
     });
 

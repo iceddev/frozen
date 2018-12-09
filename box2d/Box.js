@@ -4,38 +4,25 @@
  * @constructor Box
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Contact = require('./listeners/Contact');
 
-var B2Vec2, B2Body, B2BodyDef, B2FixtureDef, B2Fixture, B2World, B2MassData, B2PolygonShape, B2CircleShape, B2ContactListener;
 
-if(global.Box2D){
-  B2Vec2 = Box2D.b2Vec2;
-  B2BodyDef = Box2D.b2BodyDef;
-  B2Body = Box2D.b2Body;
-  B2FixtureDef = Box2D.b2FixtureDef;
-  B2Fixture = Box2D.b2Fixture;
-  B2World = Box2D.b2World;
-  B2PolygonShape = Box2D.b2PolygonShape;
-  B2CircleShape = Box2D.b2CircleShape;
-  B2ContactListener = Box2D.JSContactListener;
-}
+console.log(Box2D, 'Box2D', global, window);
 
 // box2d globals
-// var B2Vec2 = Box2D.Common.Math.b2Vec2;
-// var B2BodyDef = Box2D.Dynamics.b2BodyDef;
-// var B2Body = Box2D.Dynamics.b2Body;
-// var B2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-// var B2Fixture = Box2D.Dynamics.b2Fixture;
-// var B2World = Box2D.Dynamics.b2World;
-// var B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-// var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+var B2Vec2 = Box2D.Common.Math.b2Vec2;
+var B2BodyDef = Box2D.Dynamics.b2BodyDef;
+var B2Body = Box2D.Dynamics.b2Body;
+var B2FixtureDef = Box2D.Dynamics.b2FixtureDef;
+var B2Fixture = Box2D.Dynamics.b2Fixture;
+var B2World = Box2D.Dynamics.b2World;
+var B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
 
 class Box {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
+
+    console.log('box', options);
 
     /**
      * The number of cycles per second expected in update calcuations
@@ -144,9 +131,10 @@ class Box {
     this.bodiesMap = {};
     this.fixturesMap = {};
     this.jointsMap = {};
-    this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
+    console.log('firing up b2world', B2World);
+    Object.assign(this, options);
 
-    _.assign(this, options);
+    this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
 
     if(this.intervalRate){
       this.intervalRate = parseInt(this.intervalRate, 10);
@@ -171,7 +159,7 @@ class Box {
    * @return {Number} The amount of milliseconds the update took
    */
   update(millis) {
-    // TODO: use window.performance.now()???
+    // console.log('update millis', millis);
 
     if(this.contactListener && this.contactListener.reset){
       this.contactListener.reset();
@@ -198,35 +186,25 @@ class Box {
    */
   getState() {
     var state = {};
-    var blist = this.b2World.GetBodyList();
-    console.log('this.b2World.GetBodyList()', blist, 'next', blist.GetNext());
-    var items = 0;
-    while(Box2D.getPointer(blist)){
-        items++;
-        blist = blist.GetNext();
-        console.log('blist', blist);
-    }
-
-    for (var b = this.b2World.GetBodyList(); b; b = b.m_next) {
-      console.log('getState', b);
-      if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() !== null) {
-        state[b.GetUserData()] = {
-          x: b.GetPosition().x,
-          y: b.GetPosition().y,
-          angle: b.GetAngle(),
-          center: {
-            x: b.GetWorldCenter().x,
-            y: b.GetWorldCenter().y
-          },
-          linearVelocity: b.m_linearVelocity,
-          angularVelocity: b.m_angularVelocity
-        };
-        if(this.contactListener && this.contactListener.collisions){
-          state[b.GetUserData()].collisions = this.contactListener.collisions[b.GetUserData()] || null;
+      for (var b = this.b2World.GetBodyList(); b; b = b.m_next) {
+        if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() !== null) {
+          state[b.GetUserData()] = {
+            x: b.GetPosition().x,
+            y: b.GetPosition().y,
+            angle: b.GetAngle(),
+            center: {
+              x: b.GetWorldCenter().x,
+              y: b.GetWorldCenter().y
+            },
+            linearVelocity: b.m_linearVelocity,
+            angularVelocity: b.m_angularVelocity
+          };
+          if(this.contactListener && this.contactListener.collisions){
+            state[b.GetUserData()].collisions = this.contactListener.collisions[b.GetUserData()] || null;
+          }
         }
       }
-    }
-    return state;
+      return state;
   }
 
   /**
@@ -300,21 +278,12 @@ class Box {
       bodyDef.type = B2Body.b2_dynamicBody;
     }
 
-
-    // bodyDef.position.x = entity.x;
-    // bodyDef.position.y = entity.y;
-    bodyDef.set_position(new B2Vec2(entity.x, entity.y));
+    bodyDef.position.x = entity.x;
+    bodyDef.position.y = entity.y;
     bodyDef.userData = entity.id;
-
-    // bodyDef.angle = entity.angle;
-    bodyDef.set_angle(entity.angle);
-
-    // bodyDef.linearDamping = entity.linearDamping;
-    bodyDef.set_linearDamping(entity.linearDamping);
-
-    // bodyDef.angularDamping = entity.angularDamping;
-    bodyDef.set_angularDamping(entity.angularDamping);
-
+    bodyDef.angle = entity.angle;
+    bodyDef.linearDamping = entity.linearDamping;
+    bodyDef.angularDamping = entity.angularDamping;
     var body = this.b2World.CreateBody(bodyDef);
 
 
@@ -346,10 +315,8 @@ class Box {
         }
     } else { //rectangle
       fixDef.shape = new B2PolygonShape();
-      console.log('fixDef.shape 2', fixDef.shape );
       fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
-      body.CreateFixture(fixDef.shape);
-
+      body.CreateFixture(fixDef);
     }
 
 
@@ -369,8 +336,7 @@ class Box {
    */
   setPosition(bodyId, x, y){
     var body = this.bodiesMap[bodyId];
-    console.log('setPosition', body);
-    body.SetTransform(new B2Vec2(x, y), body.GetAngle());
+    body.SetPosition(new B2Vec2(x, y));
   }
 
   /**
@@ -385,7 +351,7 @@ class Box {
    */
   setAngle(bodyId, angle){
     var body = this.bodiesMap[bodyId];
-    body.set_angle(angle);
+    body.setAngle(angle);
   }
 
   /**
@@ -570,7 +536,7 @@ class Box {
    * @param {Object} callbacks Object containing a beginContant, endContact and/or preSolve/postSolve keys and callbacks
    */
   addContactListener(contactListener){
-    var listener = new B2ContactListener();
+    var listener = new Box2D.Dynamics.b2ContactListener();
     if(contactListener.beginContact){
       listener.BeginContact = function(contact){
         contactListener.beginContact(contact.m_fixtureA.m_body.m_userData, contact.m_fixtureB.m_body.m_userData, contact);

@@ -4,9 +4,6 @@
  * @constructor Sound
  */
 
-'use strict';
-
-const _ = require('lodash');
 
 /**
  * Map of audio types and codecs used in fallback loading of sounds <br>
@@ -43,8 +40,7 @@ const formats = {
 
 
 class Sound {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The name of the Audio object - typically the filename
@@ -78,7 +74,7 @@ class Sound {
      */
     this.maybe = [];
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     this.formats = formats;
 

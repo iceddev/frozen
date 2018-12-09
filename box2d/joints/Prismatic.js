@@ -6,9 +6,6 @@
  * @extends Joint
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Joint = require('./Joint');
 
 var B2Vec2, B2PrismaticJointDef;
@@ -19,8 +16,7 @@ if(global.Box2D){
 }
 
 class Prismatic extends Joint {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -31,7 +27,7 @@ class Prismatic extends Joint {
      */
     this.axisScale = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**
@@ -61,7 +57,7 @@ class Prismatic extends Joint {
         joint.Initialize(body1, body2, vec1, axis);
 
         if (this.jointAttributes) {
-          _.assign(joint, this.jointAttributes);
+          Object.assign(joint, this.jointAttributes);
         }
         return box.b2World.CreateJoint(joint);
       }

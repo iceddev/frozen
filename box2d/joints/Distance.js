@@ -6,9 +6,6 @@
  * @extends Joint
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Joint = require('./Joint');
 
 
@@ -20,8 +17,7 @@ if(global.Box2D){
 }
 
 class Distance extends Joint {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -32,7 +28,7 @@ class Distance extends Joint {
      */
     this.bodyPoint2 = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**
@@ -75,7 +71,7 @@ class Distance extends Joint {
         joint.Initialize(body1, body2, vec1, vec2);
 
         if (this.jointAttributes) {
-          _.assign(joint, this.jointAttributes);
+          Object.assign(joint, this.jointAttributes);
         }
         return box.b2World.CreateJoint(joint);
       }

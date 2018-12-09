@@ -4,10 +4,6 @@
  * @constructor GameAction
  */
 
-'use strict';
-
-const _ = require('lodash');
-
 /**
  * A map of static constants for internal use
  * @type {Object}
@@ -29,8 +25,7 @@ const statics = {
 };
 
 class GameAction {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     /**
      * A name to reference the GameAction with
      * @type {String}
@@ -65,7 +60,7 @@ class GameAction {
 
     this.statics = statics;
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     this.reset();
   }

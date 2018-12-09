@@ -4,15 +4,10 @@
  * @constructor Contact
  */
 
-'use strict';
-
-const _ = require('lodash');
-
 class Contact {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
-    _.assign(this, options);
+    Object.assign(this, options);
 
     this.collisions = this.collisions || {};
   }

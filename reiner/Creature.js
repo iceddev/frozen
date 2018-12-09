@@ -10,9 +10,6 @@
  * @extends Sprite
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Sprite = require('../Sprite');
 const Animation = require('../Animation');
 
@@ -47,8 +44,7 @@ const STATE_IDLE = 2;
 
 
 class Creature extends Sprite {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -91,7 +87,7 @@ class Creature extends Sprite {
     */
     this.direction = EAST;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

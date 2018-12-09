@@ -4,13 +4,9 @@
  * @constructor Joint
  */
 
-'use strict';
-
-const _ = require('lodash');
 
 class Joint {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
 
     /**
      * The id of the first entity that will be attached to this joint
@@ -44,7 +40,7 @@ class Joint {
      */
     this.jointAttributes = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   /**

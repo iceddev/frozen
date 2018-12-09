@@ -5,9 +5,6 @@
  * @extends Sound
  */
 
-'use strict';
-
-const _ = require('lodash');
 const Sound = require('./Sound');
 const removeExtension = require('../utils/removeExtension');
 const has = require('../has');
@@ -17,8 +14,7 @@ const on = require('frozen-on');
 //TODO: has replacement
 
 class HTML5Audio extends Sound {
-  constructor(options){
-    options = options || {};
+  constructor(options = {}){
     super(options);
 
     /**
@@ -29,7 +25,7 @@ class HTML5Audio extends Sound {
      */
     this.audio = null;
 
-    _.assign(this, options);
+    Object.assign(this, options);
   }
 
   load(filename){

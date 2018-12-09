@@ -2,6 +2,7 @@ node_modules/
 libs/
 deps/
 jam/
+package-lock.json
 
 # Don't commit SpecRunner that grunt-jasmine-runner generates in base of project
 .grunt/
