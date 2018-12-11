@@ -1,1 +1,0 @@
-# A collection of assets used on IcedDev/FrozenJS websites

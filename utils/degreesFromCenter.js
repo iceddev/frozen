@@ -1,5 +1,3 @@
-'use strict';
-
 const radiansToDegrees = require('./radiansToDegrees');
 const radiansFromCenter = require('./radiansFromCenter');
 

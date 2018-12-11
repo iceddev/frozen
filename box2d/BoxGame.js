@@ -61,14 +61,6 @@ class BoxGame extends GameCore {
   }
 
   /**
-   * Updates the Box before update() is called
-   * @function preUpdate
-   * @memberOf BoxGame#
-   * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
-   * @deprecated Deprecated in favor of beforeUpdate
-   */
-
-  /**
    * Performs all physics calculations in the Box
    * @function
    * @memberOf BoxGame#

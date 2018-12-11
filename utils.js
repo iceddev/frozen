@@ -1,5 +1,3 @@
-'use strict';
-
 const averagePoints = require('./utils/averagePoints');
 const degreesToRadians = require('./utils/degreesToRadians');
 const radiansToDegrees = require('./utils/radiansToDegrees');
@@ -16,7 +14,7 @@ const insideCanvas = require('./utils/insideCanvas');
  * Math utility libraries
  * @exports utils
  */
-var utils = {
+const utils = {
   /**
    * Gets the average point value in an array of points.
    * @function

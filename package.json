@@ -3,7 +3,8 @@
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
   "version": "0.5.0",
   "dependencies": {
-    "hammerjs": "^2.0.8"
+    "hammerjs": "^2.0.8",
+    "jsdoc": "^3.5.5"
   },
   "main": "index.js",
   "devDependencies": {
@@ -17,6 +18,7 @@
   "scripts": {
     "test": "zuul test/*.js test/**/*.js --no-coverage --local --open",
     "ci": "zuul test/*.js --phantom",
-    "build": "gulp"
+    "build": "gulp",
+    "doc": "jsdoc ./**/**/**/*.js ./**/**/*.js ./**/*.js ./*.js -c jsdoc_config.json -d doc -r"
   }
 }

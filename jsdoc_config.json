@@ -3,9 +3,14 @@
   "markdown": {
     "parser": "gfm"
   },
+  "source": {
+      "includePattern": ".+\\.js(doc|x)?$",
+      "excludePattern": "node_modules|test"
+  },
+  "recurseDepth": 10,
   "templates": {
     "default": {
-      "outputSourceFiles": true
+      "outputSourceFiles": false
     }
   }
 }
