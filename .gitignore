@@ -1,4 +1,6 @@
 node_modules/
+docs/
+test/
 libs/
 deps/
 jam/
