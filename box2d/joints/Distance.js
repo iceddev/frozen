@@ -9,12 +9,9 @@
 const Joint = require('./Joint');
 
 
-var B2Vec2, B2DistanceJointDef;
-
-if(global.Box2D){
-  B2Vec2 = Box2D.b2Vec2;
-  B2DistanceJointDef = Box2D.b2DistanceJoint;
-}
+// box2d globals
+const B2Vec2 = Box2D.Common.Math.b2Vec2;
+const B2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
 
 class Distance extends Joint {
   constructor(options = {}){
@@ -55,10 +52,10 @@ class Distance extends Joint {
    */
   createB2Joint(box){
     if(box && box.bodiesMap && box.b2World && box.jointsMap && !box.jointsMap[this.id]){
-      var body1 = box.bodiesMap[this.bodyId1];
-      var body2 = box.bodiesMap[this.bodyId2];
+      const body1 = box.bodiesMap[this.bodyId1];
+      const body2 = box.bodiesMap[this.bodyId2];
       if(body1 && body2){
-        var vec1, vec2;
+        let vec1, vec2;
         if(this.bodyPoint1){
           vec1 = new B2Vec2(this.bodyPoint1.x, this.bodyPoint1.y);
         }
@@ -67,7 +64,7 @@ class Distance extends Joint {
         }
         vec1 = vec1 || body1.GetWorldCenter();
         vec2 = vec2 || body2.GetWorldCenter();
-        var joint = new B2DistanceJointDef();
+        const joint = new B2DistanceJointDef();
         joint.Initialize(body1, body2, vec1, vec2);
 
         if (this.jointAttributes) {

@@ -121,6 +121,10 @@ class GameCore {
     this.canvasPercentage = 0;
 
     Object.assign(this, options);
+
+    if(!this.resourceManager){
+      this.resourceManager = new ResourceManager();
+    }
   }
 
   /**
@@ -219,11 +223,6 @@ class GameCore {
     }
 
     this.inputManager.resize();
-
-    if(!this.resourceManager){
-      this.resourceManager = new ResourceManager();
-    }
-    // this.loadResources(this.resourceManager);
 
     this.isRunning = true;
   }

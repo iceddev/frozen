@@ -8,12 +8,9 @@
 
 const Joint = require('./Joint');
 
-var B2Vec2, B2PrismaticJointDef;
-
-if(global.Box2D){
-  B2Vec2 = Box2D.b2Vec2;
-  B2PrismaticJointDef = Box2D.b2PrismaticJointDef;
-}
+// box2d globals
+const B2Vec2 = Box2D.Common.Math.b2Vec2;
+const B2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
 class Prismatic extends Joint {
   constructor(options = {}){
@@ -39,10 +36,10 @@ class Prismatic extends Joint {
    */
   createB2Joint(box){
     if(box && box.bodiesMap && box.b2World && box.jointsMap && !box.jointsMap[this.id]){
-      var body1 = box.bodiesMap[this.bodyId1];
-      var body2 = box.bodiesMap[this.bodyId2];
+      const body1 = box.bodiesMap[this.bodyId1];
+      const body2 = box.bodiesMap[this.bodyId2];
       if(body1 && body2){
-        var vec1;
+        let vec1;
         if(this.bodyPoint1){
           vec1 = new B2Vec2(this.bodyPoint1.x, this.bodyPoint1.y);
         }

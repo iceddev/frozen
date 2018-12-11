@@ -9,7 +9,6 @@
 const has = require('./has');
 const Sound = require('./sounds/Sound');
 const WebAudio = require('./sounds/WebAudio');
-const HTML5Audio = require('./sounds/HTML5Audio');
 
 var resourceList = {};
 
@@ -106,9 +105,6 @@ class ResourceManager {
       if(has('WebAudio')){
         this.Sound = WebAudio;
       }
-      else if(has('HTML5Audio')){
-        this.Sound = HTML5Audio;
-      }
       else{
         this.Sound = Sound;
       }
@@ -191,19 +187,15 @@ class ResourceManager {
   flipImage(name, image, flipFn){
     this.allLoaded = false;
 
-    var wrapper = new ImageWrapper(name);
+    const wrapper = new ImageWrapper(name);
     this.resourceList[name] = wrapper;
-
-    on.once(image, 'load', function(){
-      wrapper.img.src = flipFn(image);
-    });
-
-    Object.keys(this.resourceList).forEach((key) => {
-      const resource = this.resourceList[key];
-      if(resource.img === image && resource.complete){
-        wrapper.img.src = flipFn(image);
-      }
-    });
+    const img2 = new Image();
+    function doFlip() {
+      wrapper.img.src = flipFn(img2);
+      img2.removeEventListener('load', doFlip);
+    }
+    img2.addEventListener('load', doFlip);
+    img2.src = image.src;
 
     return wrapper.img;
   }

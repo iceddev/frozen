@@ -23,8 +23,8 @@ function has(check){
   else if(check == 'WebAudio'){
     return !!global.AudioContext;
   }
-  else if(check === 'HTML5Audio'){
-    return !!global.Audio;
+  else if (check === 'touch') {
+    return 'ontouchstart' in document.documentElement;
   }
 
   return false;

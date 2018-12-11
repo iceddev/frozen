@@ -60,6 +60,14 @@ class Entity {
      this.center = null;
 
     /**
+     * Whether to draw the center point of an entity
+     * @type {Boolean}
+     * @memberOf Entity#
+     * @default true
+     */
+     this.drawCenter = true;
+
+    /**
      * The percentage of force in which the entity will bounce back from another based on its force pre-collision
      * @type {Number}
      * @memberOf Entity#
@@ -203,8 +211,8 @@ class Entity {
     ctx.fill();
 
     // yellow circle in entity's geometric center
-    if(this.center){
-      ctx.fillStyle = 'yellow';
+    if(this.center && this.drawCenter){
+      ctx.fillStyle = this.centerStyle || 'yellow';
       ctx.beginPath();
       ctx.arc(this.center.x * scale, this.center.y * scale, 2, 0, Math.PI * 2, true);
       ctx.closePath();

@@ -69,12 +69,12 @@ class BoxGame extends GameCore {
    */
 
   /**
-   * Updates the Box before update() is called
+   * Performs all physics calculations in the Box
    * @function
    * @memberOf BoxGame#
    * @param  {Number} millis The milliseconds that have passed since last iteration of gameLoop
    */
-  beforeUpdate(millis){
+  updateBox(millis){
     if(this.boxUpdating){
       this.box.update(millis);
       this.box.updateExternalState(this.entities);

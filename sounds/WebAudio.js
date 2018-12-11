@@ -8,7 +8,6 @@
 const Sound = require('./Sound');
 const removeExtension = require('../utils/removeExtension');
 const has = require('../has');
-const on = require('frozen-on');
 
 var audioContext = null;
 
@@ -19,12 +18,14 @@ if(has('WebAudio')){
 
 if(has('shittySound')){
   // Similar strategy to https://github.com/CreateJS/SoundJS
-  on.once(document, 'touchstart', function(){
-    var source = audioContext.createBufferSource();
+  function handleShitty() {
+    const source = audioContext.createBufferSource();
     source.buffer = audioContext.createBuffer(1, 1, 22050);
     source.connect(audioContext.destination);
     source.start(0);
-  });
+    document.removeEventListener('touchstart', handleShitty);
+  }
+  document.addEventListener('touchstart', handleShitty);
 }
 
 class WebAudio extends Sound {
@@ -84,7 +85,7 @@ class WebAudio extends Sound {
     request.open('GET', filename, true);
     request.responseType = 'arraybuffer';
 
-    on.once(request, 'load', decodeAudioData);
+    request.onload = decodeAudioData;
     request.send();
   }
 
@@ -117,7 +118,7 @@ class WebAudio extends Sound {
     source.buffer = this.buffer;
     source.loop = loop;
     if(volume){
-      var gainNode = this.audioContext.createGainNode();
+      var gainNode = this.audioContext.createGain();
       gainNode.gain.value = volume;
       source.connect(gainNode);
       gainNode.connect(this.audioContext.destination);

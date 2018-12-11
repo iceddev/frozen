@@ -15,7 +15,6 @@ var frozen = {
     Creature : require('./reiner/Creature')
   },
   sounds : {
-    HTML5Audio : require('./sounds/HTML5Audio'),
     WebAudio : require('./sounds/WebAudio')
   },
   box2d : {

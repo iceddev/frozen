@@ -10,8 +10,14 @@ const GameAction = require('./GameAction');
 const TouchAction = require('./TouchAction');
 const MouseAction = require('./MouseAction');
 const insideCanvas = require('./utils/insideCanvas');
+const keys = require('./keys');
 
-const on = require('frozen-on');
+function on (element, name, handler) {
+  element.addEventListener(name, handler);
+  return function remove() {
+    element.removeEventListener(name, handler);
+  }
+}
 
 function position(node){
   var boundingRect = node.getBoundingClientRect();
@@ -278,6 +284,18 @@ class InputManager {
   }
 
   /**
+   * Adds arrow key GameActions
+   * @function
+   * @memberOf InputManager#
+   */
+  addArrowKeyActions(){
+    this.addKeyAction(keys.UP);
+    this.addKeyAction(keys.DOWN);
+    this.addKeyAction(keys.LEFT);
+    this.addKeyAction(keys.RIGHT);
+  }
+
+  /**
    * Called upon mouseup event
    * @function
    * @memberOf InputManager#
@@ -365,7 +383,12 @@ class InputManager {
   touchstart(e){
     // Ensure touch has been released
     this.touchAction.release(null);
-    const currentPoints = e.touches.map(this.normalizePoint);
+    console.log(e.touches, e);
+    //TouchList doesn't implement .map()
+    const currentPoints = [];
+    for (let i = 0; i < e.touches.length; i++) {
+      currentPoints.push(this.normalizePoint(e.touches[i]));
+    }
     this.touchAction.insideCanvas = currentPoints.some(this.insideCanvas);
     this.touchAction.press(currentPoints);
     if(this.emulateMouse){
@@ -391,7 +414,11 @@ class InputManager {
    * @param  {Event} e Event object
    */
   touchend(e){
-    const currentPoints = e.touches.map(this.normalizePoint);
+    //TouchList doesn't implement .map()
+    const currentPoints = [];
+    for (let i = 0; i < e.touches.length; i++) {
+      currentPoints.push(this.normalizePoint(e.touches[i]));
+    }
     this.touchAction.release(currentPoints);
     if(this.emulateMouse){
       this.mouseUp(e.touches[0]);
@@ -416,7 +443,11 @@ class InputManager {
    * @param  {Event} e Event object
    */
   touchmove(e){
-    const currentPoints = e.touches.map(this.normalizePoint);
+    //TouchList doesn't implement .map()
+    const currentPoints = [];
+    for (let i = 0; i < e.touches.length; i++) {
+      currentPoints.push(this.normalizePoint(e.touches[i]));
+    }
     this.touchAction.positions = currentPoints;
     if(this.touchAction.startPositions){
       e.preventDefault();
