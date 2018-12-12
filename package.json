@@ -1,7 +1,7 @@
 {
   "name": "frozenjs",
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "dependencies": {
     "hammerjs": "^2.0.8",
     "jsdoc": "^3.5.5"
@@ -12,13 +12,13 @@
     "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git",
     "node-libs-browser": "^0.5.0",
     "phantomjs": "^1.9.16",
-    "webpack": "^1.9.4",
+    "webpack": "^1.15.0",
     "zuul": "^3.0.0"
   },
   "scripts": {
     "test": "zuul test/*.js test/**/*.js --no-coverage --local --open",
     "ci": "zuul test/*.js --phantom",
-    "build": "gulp",
+    "build": "webpack && BUILD_MODE=production webpack",
     "doc": "jsdoc ./**/**/**/*.js ./**/**/*.js ./**/*.js ./*.js -c jsdoc_config.json -d doc -r"
   }
 }
