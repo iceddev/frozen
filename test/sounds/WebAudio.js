@@ -10,7 +10,7 @@ const expect = require('expect');
   describe('WebAudio', function(){
 
     it('should add a has test for WebAudio', function(){
-      expect(has('WebAudio')).toExist();
+      expect(has('WebAudio')).toBeTruthy();
     });
 
   });
@@ -124,7 +124,7 @@ const expect = require('expect');
           }, 'buffer should have been set', 500);
 
           runs(function(){
-            expect(sound.buffer).toExist();
+            expect(sound.buffer).toBeTruthy();
           });
         });
 
@@ -266,7 +266,7 @@ const expect = require('expect');
 
         it('should return a source', function(){
           runs(function(){
-            expect(sound._initAudio()).toExist();
+            expect(sound._initAudio()).toBeTruthy();
           });
         });
 

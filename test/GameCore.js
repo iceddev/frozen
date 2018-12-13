@@ -79,21 +79,21 @@ describe('GameCore', function(){
 
   // TODO: should these be split out into their own tests?
   it('should have functions defined', function(){
-    expect(game.setHeight).toExist();
-    expect(game.setWidth).toExist();
-    expect(game.stop).toExist();
-    expect(game.run).toExist();
-    expect(game.loadResources).toExist();
-    expect(game.init).toExist();
-    expect(game.initInput).toExist();
-    expect(game.handleInput).toExist();
-    expect(game.gameLoop).toExist();
-    expect(game.launchLoop).toExist();
-    expect(game.loopRunner).toExist();
-    expect(game.update).toExist();
-    expect(game.updateLoadingScreen).toExist();
-    expect(game.draw).toExist();
-    expect(game.drawLoadingScreen).toExist();
+    expect(game.setHeight).toBeTruthy();
+    expect(game.setWidth).toBeTruthy();
+    expect(game.stop).toBeTruthy();
+    expect(game.run).toBeTruthy();
+    expect(game.loadResources).toBeTruthy();
+    expect(game.init).toBeTruthy();
+    expect(game.initInput).toBeTruthy();
+    expect(game.handleInput).toBeTruthy();
+    expect(game.gameLoop).toBeTruthy();
+    expect(game.launchLoop).toBeTruthy();
+    expect(game.loopRunner).toBeTruthy();
+    expect(game.update).toBeTruthy();
+    expect(game.updateLoadingScreen).toBeTruthy();
+    expect(game.draw).toBeTruthy();
+    expect(game.drawLoadingScreen).toBeTruthy();
   });
 
   describe('GameCore.setHeight()', function(){

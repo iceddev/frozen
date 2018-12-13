@@ -38,13 +38,13 @@ describe.skip('ResourceManager', function(){
 
   // TODO: should these be split out into their own tests?
   it('should have functions defined', function(){
-    expect(rm.loadImage).toExist();
-    expect(rm.loadSound).toExist();
-    expect(rm.flipImage).toExist();
-    expect(rm.flipImageX).toExist();
-    expect(rm.flipImageY).toExist();
-    expect(rm.resourcesReady).toExist();
-    expect(rm.getPercentComplete).toExist();
+    expect(rm.loadImage).toBeTruthy();
+    expect(rm.loadSound).toBeTruthy();
+    expect(rm.flipImage).toBeTruthy();
+    expect(rm.flipImageX).toBeTruthy();
+    expect(rm.flipImageY).toBeTruthy();
+    expect(rm.resourcesReady).toBeTruthy();
+    expect(rm.getPercentComplete).toBeTruthy();
   });
 
   it('should share the resourceList between ResourceManager instances', function(){
@@ -89,7 +89,7 @@ describe.skip('ResourceManager', function(){
       };
       var images = rm.loadImage(filenames);
 
-      expect(images).toExist();
+      expect(images).toBeTruthy();
       expect(images).toNotBe(null);
       Object.keys(filenames).forEach(function(filename){
         expect(Object.keys(images)).toContain(filename);
@@ -126,7 +126,7 @@ describe.skip('ResourceManager', function(){
     });
 
     it('should add the image into resourceList', function(){
-      expect(rm.resourceList['test/fixtures/luis_gangnam.jpg']).toExist();
+      expect(rm.resourceList['test/fixtures/luis_gangnam.jpg']).toBeTruthy();
       expect(rm.resourceList['test/fixtures/luis_gangnam.jpg'].img).toBe(image);
     });
 
@@ -174,7 +174,7 @@ describe.skip('ResourceManager', function(){
       };
       var sounds = rm.loadSound(filenames);
 
-      expect(sounds).toExist();
+      expect(sounds).toBeTruthy();
       expect(sounds).toNotBe(null);
       Object.keys(filenames).forEach(function(filename){
         expect(Object.keys(sounds)).toContain(filename);
@@ -211,7 +211,7 @@ describe.skip('ResourceManager', function(){
     });
 
     it('should add the sound into resourceList', function(){
-      expect(rm.resourceList['test/fixtures/yipee.wav']).toExist();
+      expect(rm.resourceList['test/fixtures/yipee.wav']).toBeTruthy();
     });
 
     it('should mark sound as complete when finished loading', function(){
@@ -253,7 +253,7 @@ describe.skip('ResourceManager', function(){
     });
 
     it('should cache the flipped image in the resourceList with the named passed in', function(){
-      expect(rm.resourceList.flippedXY).toExist();
+      expect(rm.resourceList.flippedXY).toBeTruthy();
     });
 
     it('should mark the flipped image as complete when finished flipping', function(){
@@ -301,7 +301,7 @@ describe.skip('ResourceManager', function(){
     });
 
     it('should cache the flipped image in the resourceList with the named passed in', function(){
-      expect(rm.resourceList.flippedX).toExist();
+      expect(rm.resourceList.flippedX).toBeTruthy();
     });
 
     it('should mark the flipped image as complete when finished flipping', function(){
@@ -349,7 +349,7 @@ describe.skip('ResourceManager', function(){
     });
 
     it('should cache the flipped image in the resourceList with the named passed in', function(){
-      expect(rm.resourceList.flippedY).toExist();
+      expect(rm.resourceList.flippedY).toBeTruthy();
     });
 
     it('should mark the flipped image as complete when finished flipping', function(){

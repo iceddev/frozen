@@ -62,13 +62,13 @@ describe('Sound', function(){
 
   // TODO: should these be split out into their own tests?
   it('should have functions defined', function(){
-    expect(sound.constructor).toExist();
-    expect(sound.load).toExist();
-    expect(sound.loop).toExist();
-    expect(sound.play).toExist();
-    expect(sound._initAudio).toExist();
-    expect(sound._chooseFormat).toExist();
-    expect(sound._nextFormat).toExist();
+    expect(sound.constructor).toBeTruthy();
+    expect(sound.load).toBeTruthy();
+    expect(sound.loop).toBeTruthy();
+    expect(sound.play).toBeTruthy();
+    expect(sound._initAudio).toBeTruthy();
+    expect(sound._chooseFormat).toBeTruthy();
+    expect(sound._nextFormat).toBeTruthy();
   });
 
   describe('Sound.constructor()', function(){

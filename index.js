@@ -1,6 +1,5 @@
-'use strict';
 
-var frozen = {
+window.frozenjs = {
   GameCore : require('./GameCore'),
   InputManager : require('./InputManager'),
   ResourceManager : require('./ResourceManager'),
@@ -23,7 +22,6 @@ var frozen = {
     Box : require('./box2d/Box'),
     BoxGame : require('./box2d/BoxGame')
   }
-
 };
 
-module.exports = frozen;
+module.exports = window.frozenjs;

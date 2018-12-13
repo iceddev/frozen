@@ -1,3 +1,4 @@
 ui: mocha-bdd
 scripts:
-  - "https://rawgit.com/kripken/box2d.js/master/build/Box2D_v2.3.1_min.js"
+  - "distB2/Box2d.min.js"
+  - "dist/frozen.bundle.min.js"

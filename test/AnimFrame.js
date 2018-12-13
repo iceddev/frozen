@@ -1,7 +1,6 @@
-'use strict';
-
-const AnimFrame = require('../AnimFrame');
 const expect = require('expect');
+const { AnimFrame, Animation } = frozenjs;
+
 
 describe('AnimFrame', function(){
   var frame;
@@ -39,7 +38,7 @@ describe('AnimFrame', function(){
     expect(frame.imgSlotX).toEqual(2);
     expect(frame.imgSlotY).toEqual(2);
     expect(frame.image instanceof Image).toEqual(true);
-    expect(frame.mock).toExist();
+    expect(frame.mock).toBeTruthy();
     expect(frame.mock).toEqual(true);
   });
 });

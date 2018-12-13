@@ -1,8 +1,5 @@
-'use strict';
-
-const AnimFrame = require('../AnimFrame');
-const Animation = require('../Animation');
 const expect = require('expect');
+const { AnimFrame, Animation } = frozenjs;
 
 describe('Animation', function(){
   var anim;
@@ -45,14 +42,14 @@ describe('Animation', function(){
 
   // TODO: should these be split out into their own tests?
   it('should have functions defined', function(){
-    expect(anim.constructor).toExist();
-    expect(anim.createFromSheet).toExist();
-    expect(anim.clone).toExist();
-    expect(anim.addFrame).toExist();
-    expect(anim.start).toExist();
-    expect(anim.update).toExist();
-    expect(anim.getCurrentFrame).toExist();
-    expect(anim.draw).toExist();
+    expect(anim.constructor).toBeTruthy();
+    expect(anim.createFromSheet).toBeTruthy();
+    expect(anim.clone).toBeTruthy();
+    expect(anim.addFrame).toBeTruthy();
+    expect(anim.start).toBeTruthy();
+    expect(anim.update).toBeTruthy();
+    expect(anim.getCurrentFrame).toBeTruthy();
+    expect(anim.draw).toBeTruthy();
   });
 
   describe('Animation.constructor()', function(){
@@ -95,7 +92,7 @@ describe('Animation', function(){
     });
 
     it('should have a frames array the length of frameCount defined', function(){
-      expect(anim2.frames).toExist();
+      expect(anim2.frames).toBeTruthy();
       expect(Array.isArray(anim2.frames)).toBe(true);
       expect(anim2.frames.length).toBe(frameCount);
     });
@@ -118,11 +115,11 @@ describe('Animation', function(){
   describe('Animation.addFrame()', function(){
 
     it('should add a frames array if none exists', function(){
-      expect(anim.frames).toNotExist();
+      expect(anim.frames).toBeFalsy();
 
       anim.addFrame(2, 1, 1);
 
-      expect(anim.frames).toExist();
+      expect(anim.frames).toBeTruthy();
       expect(Array.isArray(anim.frames)).toBe(true);
       expect(anim.frames.length).toBe(1);
     });

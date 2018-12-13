@@ -1,5 +1,5 @@
 ![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
-Frozen <sup>v0.4.0</sup>
+Frozen <sup>v0.5.3</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 
@@ -7,48 +7,27 @@ Frozen <sup>v0.4.0</sup>
 
 Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.
 
-Our goal is to apply techniques used in building modern webapps to game development, such as AMD modules, dependency management, build process, and project scaffolding.
+Our goal is to apply techniques used in building modern webapps to game development, such as ES next, dependency management, build process, and project scaffolding.
 
 ## Get Frozen
 
-* Frozen (single file - AMD loader included)<br>
-[Development](https://raw.github.com/iceddev/frozen/master/dist/frozen.js.uncompressed.js) and
-[Production](https://raw.github.com/iceddev/frozen/master/dist/frozen.js)
+* Frozen (single file - global frozenjs)<br>
+[Development](https://unpkg.com/frozenjs@0.5.3/dist/frozen.bundle.js) and
+[Production](https://unpkg.com/frozenjs@0.5.3/dist/frozen.bundle.min.js)
 
-* Frozen Source (individual modules - bring your own loader or use Dojo)<br>
-Use `volo add iceddev/frozen` to add it to your project<br>
-or grab the zip: [Frozen Source](https://github.com/iceddev/frozen/archive/master.zip) (but don't forget your dependencies)<br>
-_Note: We supply a jam package and specify dependencies. Although these should work for game creation using the engine, frozen cannot be built or run with jam deps only_
+* Frozen Source (individual modules)<br>
+Use `npm i frozenjs` to add it to your project<br>
 
-* Or just use the boilerplate!<br>
-Use `volo create your_project frozenjs/boilerplate` which will scaffold out a new project for you and install all dependencies
 
-## Documentation
-
-Documentation is available at http://frozenjs.com/docs/
 
 ## Examples
 
-Play examples at http://frozenjs.com/examples/<br>
-Examples source code can be found at https://github.com/iceddev/frozen/tree/master/examples
+Play examples at https://frozen-demos.netlify.com/<br>
+Examples source code can be found at https://github.com/iceddev/frozen-examples
 
 ## Source
 
 Source available on github: https://github.com/iceddev/frozen
-
-## Browser Support
-
-We have tested in:
-
-* Chrome 27 & 29-canary
-* Firefox 21, Aurora 23.0a2 & Nightly 24.0a1
-* IE10 (sound with supported codecs)
-* Safari 6.0.3
-* Chrome for Android 27 & Beta 28 (limited sound support) - Suggestion: in `chrome://flags`, turn on "Disable gesture requirement for media playback" & "Enable WebAudio"
-* Firefox for Android 21, Beta 22, Aurora 23.0a2 & Nightly 24.0a1 (Doesn't load some Box2d examples - unsure why)
-* PhantomJS 1.9.1
-
-__Most modern browsers should support this game engine if they support requestAnimationFrame or canvas, but YMMV with sounds__
 
 ## Rapid Development Through Tooling
 
@@ -64,38 +43,29 @@ These technologies include:
 * [Hammer.js](http://eightmedia.github.io/hammer.js/) - multi-touch library used for mouse/touch/pointer event normalization and gestures
 * [Box2d](https://box2dweb.googlecode.com/) - used for physics calculations in games
 * [JSDoc](http://usejsdoc.org/) - generates documentation for code
-* [Jasmine](http://pivotal.github.com/jasmine/) - tests all use Jasmine
 
-## Development
 
-### Dependencies
-
-All development tasks depend on having dependencies installed.
-
-Use `npm install` to get all the build process dependencies
-Use `volo add` to get all the library dependencies
 
 ### Building the dist/frozen layer
 
-`grunt build` to lint, test, doc, and run dojo build process to build the single layer
+`npm run build` to lint, test, doc, and run webpack build process to build the single file
 
 ### Generating the docs
 
-`grunt docs` will lint and generate docs
+`npm run doc` will lint and generate docs
 
 ### Running the tests
 
-`grunt test` to lint, run tests in PhantomJS and open your default browser at the test URL
+`npm run test` to lint, run tests in PhantomJS and open your default browser at the test URL
 
-### Linting the project
-
-`grunt jshint:all` to lint the project
-
-### Building when files change
-
-`grunt watch:all` to execute `grunt build` whenever a file changes
 
 ## Release Notes
+
+### <sup>v0.5.3</sup>
+
+__Breaking Changes__
+
+* ES.next re-write
 
 ### <sup>v0.4.0</sup>
 
@@ -200,7 +170,7 @@ Full changelog available: [Changelog](https://github.com/iceddev/frozen/wiki/Cha
 
 The MIT License (MIT)
 
-Copyright (c) 2013 Iced Development, LLC
+Copyright (c) 2018 Iced Development, LLC
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

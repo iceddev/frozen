@@ -29,18 +29,18 @@ describe('GameAction', function(){
   });
 
   it('should have an enumeration of statics', function(){
-    expect(gameAction.statics).toExist();
+    expect(gameAction.statics).toBeTruthy();
   });
 
   // TODO: should these be split out into their own tests?
   it('should have functions defined', function(){
-    expect(gameAction.reset).toExist();
-    expect(gameAction.tap).toExist();
-    expect(gameAction.press).toExist();
-    expect(gameAction.pressAmt).toExist();
-    expect(gameAction.release).toExist();
-    expect(gameAction.isPressed).toExist();
-    expect(gameAction.getAmount).toExist();
+    expect(gameAction.reset).toBeTruthy();
+    expect(gameAction.tap).toBeTruthy();
+    expect(gameAction.press).toBeTruthy();
+    expect(gameAction.pressAmt).toBeTruthy();
+    expect(gameAction.release).toBeTruthy();
+    expect(gameAction.isPressed).toBeTruthy();
+    expect(gameAction.getAmount).toBeTruthy();
   });
 
   describe('GameAction.reset()', function(){

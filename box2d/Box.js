@@ -10,19 +10,17 @@ const Contact = require('./listeners/Contact');
 console.log(Box2D, 'Box2D', global, window);
 
 // box2d globals
-var B2Vec2 = Box2D.Common.Math.b2Vec2;
-var B2BodyDef = Box2D.Dynamics.b2BodyDef;
-var B2Body = Box2D.Dynamics.b2Body;
-var B2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-var B2Fixture = Box2D.Dynamics.b2Fixture;
-var B2World = Box2D.Dynamics.b2World;
-var B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-var B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+const B2Vec2 = Box2D.Common.Math.b2Vec2;
+const B2BodyDef = Box2D.Dynamics.b2BodyDef;
+const B2Body = Box2D.Dynamics.b2Body;
+const B2FixtureDef = Box2D.Dynamics.b2FixtureDef;
+const B2Fixture = Box2D.Dynamics.b2Fixture;
+const B2World = Box2D.Dynamics.b2World;
+const B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+const B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
 
 class Box {
   constructor(options = {}){
-
-    console.log('box', options);
 
     /**
      * The number of cycles per second expected in update calcuations
@@ -131,7 +129,6 @@ class Box {
     this.bodiesMap = {};
     this.fixturesMap = {};
     this.jointsMap = {};
-    console.log('firing up b2world', B2World);
     Object.assign(this, options);
 
     this.b2World = new B2World(new B2Vec2(this.gravityX, this.gravityY), this.allowSleep);
@@ -351,6 +348,7 @@ class Box {
    */
   setAngle(bodyId, angle){
     var body = this.bodiesMap[bodyId];
+    console.log('set angle', body.setAngle, body);
     body.setAngle(angle);
   }
 
