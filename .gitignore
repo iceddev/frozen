@@ -1,0 +1,15 @@
+node_modules/
+docs/
+test/
+libs/
+deps/
+jam/
+package-lock.json
+
+# Don't commit SpecRunner that grunt-jasmine-runner generates in base of project
+.grunt/
+_SpecRunner.html
+
+# During Development of new version, ignore dist/
+# TODO: remove & build before release
+# dist/
