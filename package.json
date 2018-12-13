@@ -1,40 +1,24 @@
 {
-  "name": "frozen",
+  "name": "frozenjs",
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
-  "version": "0.4.3",
+  "version": "0.5.3",
+  "dependencies": {
+    "expect": "^23.6.0",
+    "hammerjs": "^2.0.8",
+    "jsdoc": "^3.5.5"
+  },
+  "main": "index.js",
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-dojo": "~0.2.3",
-    "grunt-open": "~0.2.0",
-    "grunt-jsdoc": "~0.3.2",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-watch": "~0.4.4",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-contrib-jasmine": "~0.5.0",
-    "grunt-contrib-connect": "~0.3.0",
-    "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git"
-  },
-  "volo": {
-    "baseUrl": "deps",
-    "dependencies": {
-      "dojo": "github:dojo/dojo/1.8.3",
-      "util": "github:dojo/util/1.8.3",
-      "dcl": "github:uhop/dcl/1.0.2",
-      "Box2d.min": "https://box2dweb.googlecode.com/svn/trunk/Box2d.min.js",
-      "lodash": "github:lodash/lodash/1.3.1",
-      "hammer/hammer": "github:phated/hammer.js/frozen"
-    }
-  },
-  "jam": {
-    "dependencies": {
-      "dojo": "1.8.3",
-      "dcl": "1.0.2",
-      "box2dweb": "2.1.3",
-      "lodash": "1.3.1"
-    }
+    "frozen-jsdoc-template": "git+https://github.com/frozenjs/jsdoc-template.git",
+    "node-libs-browser": "^0.5.0",
+    "phantomjs": "^1.9.16",
+    "webpack": "^1.15.0",
+    "zuul": "^3.0.0"
   },
   "scripts": {
-    "test": "grunt"
-  },
-  "dojoBuild": "frozen.profile.js"
+    "test": "zuul test/*.js test/**/*.js --no-coverage --local --open",
+    "ci": "zuul test/*.js --phantom",
+    "build": "webpack && BUILD_MODE=production webpack",
+    "doc": "jsdoc ./**/**/**/*.js ./**/**/*.js ./**/*.js ./*.js -c jsdoc_config.json -d doc -r"
+  }
 }
