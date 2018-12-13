@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "0.8"
+  - "0.10"
+notifications:
+  email:
+    recipients:
+      - info@iceddev.com
+    on_success: always
+    on_failure: always
+git:
+  depth: 1
+before_install:
+  - "npm install -g bower grunt-cli"
+  - "bower install --production"
+  - "mv deps/hammer/dist/hammer.js deps/hammer/hammer.js"
+  - "mv deps/Box2d/index.js deps/Box2d.min.js"
