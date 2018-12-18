@@ -8,6 +8,8 @@ const radiansFromCenter = require('./utils/radiansFromCenter');
 const scalePoints = require('./utils/scalePoints');
 const translatePoints = require('./utils/translatePoints');
 const insideCanvas = require('./utils/insideCanvas');
+const rotateDegreesAroundCenter = require('./utils/rotateDegreesAroundCenter');
+const rotateRadiansAroundCenter = require('./utils/rotateRadiansAroundCenter');
 
 
 /**
@@ -100,7 +102,27 @@ const utils = {
    * @param {Object} canvas Object with height and width properties
    * @return {Boolean} True if inside canvas else false
    */
-  insideCanvas
+  insideCanvas,
+
+  /**
+   * Get a point based around the rotation in radians of one point around a center
+   * @function
+   * @param {Object} center Object with an x and y value
+   * @param {Object} point Object with an x and y value
+   * @param {Number} angle an angle in radians
+   * @return {Object} A new point that has been rotated
+   */
+  rotateRadiansAroundCenter,
+
+  /**
+   * Get a point based around the rotation in degrees of one point around a center
+   * @function
+   * @param {Object} center Object with an x and y value
+   * @param {Object} point Object with an x and y value
+   * @param {Number} angle an angle in degrees
+   * @return {Object} A new point that has been rotated
+   */
+  rotateDegreesAroundCenter,
 };
 
 module.exports = utils;

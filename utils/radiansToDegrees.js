@@ -1,4 +1,3 @@
-'use strict';
 
 const degConst = 180.0 / Math.PI;
 

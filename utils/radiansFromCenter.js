@@ -1,11 +1,5 @@
-'use strict';
 
-const origin = {x: 0.0, y: 0.0};
-
-function radiansFromCenter(center, pt){
-
-  //if null or zero is passed in for center, we'll use the origin
-  center = center || origin;
+function radiansFromCenter(center = {x: 0.0, y: 0.0}, pt){
 
   //same point
   if((center.x === pt.x) && (center.y === pt.y)){

@@ -73,6 +73,7 @@ class BoxGame extends GameCore {
     }
   }
 
+
   /**
    * Adds an Entity object to entities and box
    * @function
