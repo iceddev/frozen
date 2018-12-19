@@ -13,7 +13,7 @@ class Entity {
 
     /**
      * The id in which to reference this object. Also the userData property for box2d bodies.
-     * @type {Number}
+     * @type {String}
      * @memberOf Entity#
      * @default
      */

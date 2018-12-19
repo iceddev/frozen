@@ -1,3 +1,7 @@
+function genId() {
+  return Math.random() + '_' + Date.now();
+}
+
 /**
  * This represents a joint between two bodies.
  * @name Joint
@@ -7,6 +11,14 @@
 
 class Joint {
   constructor(options = {}){
+
+    /**
+     * The id in which to reference this object. Also the userData property for box2d bodies.
+     * @type {String}
+     * @memberOf Entity#
+     * @default
+     */
+    this.id = options.id || genId();
 
     /**
      * The id of the first entity that will be attached to this joint

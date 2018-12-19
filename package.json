@@ -1,7 +1,7 @@
 {
   "name": "frozenjs",
   "description": "Frozen is an open-source HTML5 game engine delivering ease-of-use, rapid development through tooling and modularity.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "dependencies": {
     "hammerjs": "^2.0.8"
   },

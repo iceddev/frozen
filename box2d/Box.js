@@ -464,6 +464,37 @@ class Box {
   }
 
   /**
+   * Set the angle of a dynamic body in radians
+   *
+   * This must be done outside of the update() iteration!
+   *
+   * @function
+   * @memberOf Box#
+   * @param {Number} bodyId The id of the Entity/Body
+   * @param {Number} radians The angle to set the body to.
+   */
+  setAngle(bodyId, radians) {
+    var body = this.bodiesMap[bodyId];
+    body.SetAngle(radians);
+  }
+
+  /**
+   * Set the angulary velocity of a dynamic body
+   *
+   * This must be done outside of the update() iteration!
+   *
+   * @function
+   * @memberOf Box#
+   * @param {Number} bodyId The id of the Entity/Body
+   * @param {Number} velocity The velocity to set the body to.
+   */
+  setAnglularVelocity(bodyId, velocity) {
+    var body = this.bodiesMap[bodyId];
+    body.SetAngularVelocity(velocity);
+  }
+
+
+  /**
    * Apply torque (rotation force) to a body.
    * Positive values are clockwise, negative values are counter-clockwise.
    *
