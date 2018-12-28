@@ -282,7 +282,7 @@ class InputManager {
       if(initialPressOnly){
         ga.behavior = ga.detectInitialPressOnly;
       }
-      this.mapToKey(ga,keyCode);
+      this.mapToKey(ga, kc);
       return ga;
     });
     
