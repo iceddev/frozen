@@ -1,5 +1,5 @@
 ![FrozenJS Logo](https://secure.gravatar.com/avatar/272e5230cf45370ed751878105330f3c?s=200)
-Frozen <sup>v0.7.0</sup>
+Frozen <sup>v0.8.0</sup>
 ========================
 [![build status](https://secure.travis-ci.org/iceddev/frozen.png?branch=master)](http://travis-ci.org/iceddev/frozen)
 

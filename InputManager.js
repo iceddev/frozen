@@ -269,18 +269,28 @@ class InputManager {
    * Adds a GameAction to a key
    * @function
    * @memberOf InputManager#
-   * @param {Object} keyCode Key character or dojo/keys key code
-   * @param {Boolean=} initialPressOnly Do only one fire of the action per keypress
+   * @param {Object||Array} keyCode Key character or dojo/keys key code
+   * @param {Boolean} initialPressOnly Do only one fire of the action per keypress
    * @return {GameAction} GameAction that is mapped to keyCode
    */
   addKeyAction(keyCode, initialPressOnly){
-    var ga = new GameAction();
-    if(initialPressOnly){
-      ga.behavior = ga.detectInitialPressOnly;
+    if(!Array.isArray(keyCode)) {
+      keyCode = [keyCode];
     }
-    this.mapToKey(ga,keyCode);
+    const gas = keyCode.map((kc) => {
+      const ga = new GameAction();
+      if(initialPressOnly){
+        ga.behavior = ga.detectInitialPressOnly;
+      }
+      this.mapToKey(ga,keyCode);
+      return ga;
+    });
+    
+    if(gas.length > 1) {
+      return gas;
+    }
 
-    return ga;
+    return gas[0];
   }
 
   /**

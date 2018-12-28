@@ -60,6 +60,14 @@ class Entity {
      this.center = null;
 
     /**
+     * Whether to draw the x,y location of an entity
+     * @type {Boolean}
+     * @memberOf Entity#
+     * @default true
+     */
+    this.drawLocation = true;
+
+    /**
      * Whether to draw the center point of an entity
      * @type {Boolean}
      * @memberOf Entity#
@@ -203,13 +211,16 @@ class Entity {
     scale = scale || this.scale || 1;
     var ogLineWidth = ctx.lineWidth;
     ctx.lineWidth = this.lineWidth;
-    // black circle in entity's location
-    ctx.fillStyle = this.strokeStyle;
-    ctx.beginPath();
-    ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fill();
 
+    // black circle in entity's location
+    if(this.drawLocation) {
+      ctx.fillStyle = this.strokeStyle;
+      ctx.beginPath();
+      ctx.arc(this.x * scale, this.y * scale, 4, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
     // yellow circle in entity's geometric center
     if(this.center && this.drawCenter){
       ctx.fillStyle = this.centerStyle || 'yellow';
